@@ -42,4 +42,4 @@ Creation specialist that builds and modifies Copilot customization artifacts (`S
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.
+This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./cursor-orchestrator) as part of multi-step customization workflows.

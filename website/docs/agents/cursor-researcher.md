@@ -8,12 +8,12 @@ title: Cursor Researcher (internal)
 **File:** `.cursor/skills/agents/tsh-cursor-researcher/SKILL.md`
 **Type:** Internal worker — not user-invocable
 
-Research specialist that gathers, analyzes, and summarizes information from codebases and documentation for Copilot engineering tasks. Returns structured research summaries — read-only, does not create or modify files.
+Research specialist that gathers, analyzes, and summarizes information from codebases and documentation for Cursor engineering tasks. Returns structured research summaries — read-only, does not create or modify files.
 
 ## Responsibilities
 
 - Analyze codebase structure, existing agent/skill/prompt/instruction files, and workspace patterns.
-- Fetch and summarize external documentation (VS Code Copilot docs, MCP server docs, best practices).
+- Fetch and summarize external documentation (Cursor docs, MCP server docs, best practices).
 - Identify patterns, conventions, and inconsistencies across multiple files.
 - Return structured, concise findings organized by topic with file paths for traceability.
 
@@ -38,9 +38,9 @@ Every research response includes:
 |---|---|
 | **read** | Examine specific files in detail after discovery |
 | **search** | Discover patterns across files, locate artifacts by name or content |
-| **web/fetch** | Fetch external documentation (VS Code Copilot docs, MCP server docs) |
+| **web/fetch** | Fetch external documentation (Cursor docs, MCP server docs) |
 | **Context7** | Library-specific documentation lookup, API specs, MCP server capabilities |
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.
+This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./cursor-orchestrator) as part of multi-step customization workflows.

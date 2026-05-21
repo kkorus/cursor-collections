@@ -7,7 +7,7 @@ title: Cursor Orchestrator
 
 **File:** `.cursor/skills/agents/tsh-cursor-orchestrator/SKILL.md`
 
-The Cursor Orchestrator coordinates complex, multi-step Copilot customization tasks using specialized sub-agents. It decomposes work into focused subtasks, delegates to workers, and synthesizes results.
+The Cursor Orchestrator coordinates complex, multi-step Cursor customization tasks using specialized sub-agents. It decomposes work into focused subtasks, delegates to workers, and synthesizes results.
 
 ## When to Use
 
