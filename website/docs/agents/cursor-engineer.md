@@ -41,12 +41,12 @@ When any artifact crosses these boundaries, the Cursor Engineer identifies and c
 
 | Tool | Usage |
 |---|---|
-| **Context7** | Research VS Code Copilot customization API, agent file format, MCP server docs |
+| **Context7** | Research Cursor customization docs, agent skill format, MCP server docs |
 | **Sequential Thinking** | Design agent architecture, analyze multi-artifact interactions, evaluate trade-offs |
 | **Web Fetch** | Fetch external documentation and reference materials |
 | **Mermaid Diagrams** | Render architecture and workflow diagrams |
 | **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **Terminal commands** | Execute VS Code commands and run tasks |
+| **Terminal commands** | Execute shell commands and run project tasks |
 | **Sub-agents** | Delegate subtasks to specialized agents |
 | **Todo** | Track task progress with structured checklists |
 

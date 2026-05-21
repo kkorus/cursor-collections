@@ -8,12 +8,12 @@ title: Cursor Artifact Creator (internal)
 **File:** `.cursor/skills/agents/tsh-cursor-artifact-creator/SKILL.md`
 **Type:** Internal worker — not user-invocable
 
-Creation specialist that builds and modifies Copilot customization artifacts (`SKILL.md`, `SKILL.md`, `/SKILL.md`, `.rules.mdc`) based on detailed specifications from the orchestrator. Executes creation tasks only — does not research or review.
+Creation specialist that builds and modifies Cursor customization artifacts (`SKILL.md`, `/SKILL.md`, `.mdc rules`) based on detailed specifications from the orchestrator. Executes creation tasks only — does not research or review.
 
 ## Responsibilities
 
-- Create and modify Copilot customization artifacts based on specifications provided in the delegation prompt.
-- Apply the relevant creation skill (`tsh-creating-agents`, `tsh-creating-skills`, `tsh-creating-prompts`, `tsh-creating-instructions`) based on the artifact type.
+- Create and modify Cursor customization artifacts based on specifications provided in the delegation prompt.
+- Apply the relevant creation skill (`tsh-creating-agents`, `tsh-creating-skills`, `tsh-creating-prompts`, `tsh-creating-rules`) based on the artifact type.
 - Follow workspace conventions — match structure, formatting, and patterns of existing files.
 - Validate created files before returning — ensure YAML frontmatter is valid, required sections are present, and the file follows the skill's checklist.
 
@@ -38,7 +38,7 @@ Creation specialist that builds and modifies Copilot customization artifacts (`S
 - `tsh-creating-agents` — Agent file template, structural conventions, and validation checklist.
 - `tsh-creating-skills` — Naming conventions, body structure, progressive disclosure patterns.
 - `tsh-creating-prompts` — Prompt file template, workflow focus guidelines, validation checklist.
-- `tsh-creating-instructions` — Templates for repository-level and granular instruction files, decision framework.
+- `tsh-creating-rules` — Templates for repository-level and granular rule files, decision framework.
 
 ## Invocation
 

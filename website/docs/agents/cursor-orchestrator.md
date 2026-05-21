@@ -18,7 +18,7 @@ Use the Orchestrator **instead of** the Cursor Engineer when the task involves:
 - Designing multi-agent systems.
 - Any task that spans multiple phases of research, creation, and review.
 
-For simple and medium tasks, the [Cursor Engineer](./copilot-engineer) may produce better results.
+For simple and medium tasks, the [Cursor Engineer](./cursor-engineer) may produce better results.
 
 ## How It Works
 

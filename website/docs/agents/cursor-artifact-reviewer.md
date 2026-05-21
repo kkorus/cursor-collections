@@ -8,11 +8,11 @@ title: Cursor Artifact Reviewer (internal)
 **File:** `.cursor/skills/agents/tsh-cursor-artifact-reviewer/SKILL.md`
 **Type:** Internal worker — not user-invocable
 
-Review specialist that evaluates Copilot customization artifacts (`SKILL.md`, `SKILL.md`, `/SKILL.md`, `.rules.mdc`) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
+Review specialist that evaluates Cursor customization artifacts (`SKILL.md`, `/SKILL.md`, `.mdc rules`) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
 
 ## Responsibilities
 
-- Evaluate Copilot customization artifacts against quality criteria provided in the delegation prompt.
+- Evaluate Cursor customization artifacts against quality criteria provided in the delegation prompt.
 - Compare artifacts against existing workspace patterns for consistency in naming, structure, formatting, and tool configuration.
 - Identify separation of concerns violations — flag when artifacts cross their defined boundaries.
 - Produce structured review findings categorized by severity with specific, actionable recommendations.

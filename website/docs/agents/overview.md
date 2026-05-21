@@ -82,7 +82,7 @@ Agent skills are automatically invoked by Cursor when relevant, or manually via 
 
 | Agent | Skill path | Role | Key Tools |
 |-------|-----------|------|-----------|
-| [Cursor Engineer](./copilot-engineer) | `agents/tsh-cursor-engineer/` | Designs, creates, reviews Cursor customization artifacts | Context7, Sequential Thinking |
+| [Cursor Engineer](./cursor-engineer) | `agents/tsh-cursor-engineer/` | Designs, creates, reviews Cursor customization artifacts | Context7, Sequential Thinking |
 | [Cursor Orchestrator](./cursor-orchestrator) | `agents/tsh-cursor-orchestrator/` | Coordinates complex multi-step Cursor customization tasks | Sequential Thinking |
 
 ### Internal Sub-Agents
@@ -93,5 +93,5 @@ These agent skills are not invoked directly by users. They are delegated to auto
 |-------|-----------|------|
 | [Architect Reviewer](./architect-reviewer) | `agents/tsh-architect-reviewer/` | Validates implementation plans before implementation begins |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
-| [Cursor Artifact Creator](./copilot-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |
-| [Cursor Artifact Reviewer](./copilot-artifact-reviewer) | `agents/tsh-cursor-artifact-reviewer/` | Validates quality and consistency of artifacts |
+| [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |
+| [Cursor Artifact Reviewer](./cursor-artifact-reviewer) | `agents/tsh-cursor-artifact-reviewer/` | Validates quality and consistency of artifacts |
