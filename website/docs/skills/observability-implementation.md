@@ -5,7 +5,7 @@ title: Observability Implementation
 
 # Observability Implementation
 
-**Folder:** `.github/skills/tsh-implementing-observability/`
+**Folder:** `.cursor/skills/workflows/tsh-implementing-observability/`
 **Used by:** DevOps Engineer
 
 Provides patterns for logging, monitoring, alerting, and distributed tracing across services.

@@ -5,15 +5,15 @@ title: Technical Context Discovery
 
 # Technical Context Discovery
 
-**Folder:** `.github/skills/tsh-technical-context-discovering/`  
-**Used by:** Architect, Code Reviewer, Software Engineer, E2E Engineer, Copilot Engineer, Context Engineer
+**Folder:** `.cursor/skills/workflows/tsh-technical-context-discovering/`  
+**Used by:** Architect, Code Reviewer, Software Engineer, E2E Engineer, Cursor Engineer, Context Engineer
 
 Provides a systematic process for understanding project context before any code changes. Enforces a strict priority hierarchy to ensure consistency.
 
 ## Priority Hierarchy
 
 ```
-1. Project instructions (*.instructions.md)     ← HIGHEST
+1. Project instructions (*.mdc rules)     ← HIGHEST
 2. Existing codebase patterns
 3. External documentation (context7, OWASP, etc.)
 4. General best practices                        ← LOWEST
@@ -25,13 +25,12 @@ Never introduce new patterns unless explicitly requested by the user. Always rep
 
 ## Process
 
-### Step 1: Discover Copilot Instructions
+### Step 1: Discover Cursor Instructions
 
 Search for instruction files:
 
-- `.github/copilot-instructions.md` — Global project instructions.
-- `*.instructions.md` — Feature or module-specific instructions.
-- `.copilot/` — Additional configuration directory.
+- `.cursor/rules/cursor-instructions.md` — Global project instructions.
+- `.cursor/rules/*.mdc` — Feature or module-specific instructions.
 
 ### Step 2: Analyse Codebase Patterns
 

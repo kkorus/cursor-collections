@@ -20,14 +20,14 @@ const HeroSection = () => {
         </p>
         <div className={styles.heroActions}>
           <Link
-            className={styles.btnPrimary}
-            href="https://github.com/TheSoftwareHouse/copilot-collections"
+            className="tsh-btn-primary"
+            href="https://github.com/kkorus/cursor-collections"
             target="_blank"
             rel="noopener noreferrer"
           >
             See on GitHub
           </Link>
-          <Link className={styles.btnSecondary} to="/docs/">
+          <Link className="tsh-btn-secondary" to="/docs/">
             Read the docs
           </Link>
         </div>

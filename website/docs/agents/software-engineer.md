@@ -5,7 +5,7 @@ title: Software Engineer
 
 # Software Engineer Agent
 
-**File:** `.github/agents/tsh-software-engineer.agent.md`
+**File:** `.cursor/skills/agents/tsh-software-engineer/SKILL.md`
 
 The Software Engineer agent implements software solutions based on provided requirements and technical designs. It executes against implementation plans created by the Architect.
 
@@ -36,7 +36,7 @@ The Software Engineer agent implements software solutions based on provided requ
 | **Sequential Thinking**   | Implement complex algorithms, debug issues, plan refactoring                |
 | **Terminal**              | Run build tools, tests, linters, and scripts                                |
 | **File Read/Edit/Search** | Read, modify, and search workspace files                                    |
-| **VS Code Commands**      | Execute VS Code commands and preview in browser                             |
+| **Terminal commands**      | Execute VS Code commands and preview in browser                             |
 | **Sub-agents**            | Delegate subtasks to specialized agents                                     |
 | **Todo**                  | Track implementation progress with structured checklists                    |
 

@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger UI implementation, use [`/tsh-implemen
 :::
 
 **Agent:** Software Engineer
-**File:** `.github/internal-prompts/tsh-implement-ui-common-task.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-ui-common-task/SKILL.md`
 
 Extends the standard implementation workflow with UI-specific behaviors — Figma design references, frontend component patterns, and accessibility compliance.
 

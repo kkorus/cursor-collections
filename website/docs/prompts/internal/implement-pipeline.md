@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger CI/CD pipeline implementation, use [`/
 :::
 
 **Agent:** DevOps Engineer
-**File:** `.github/internal-prompts/tsh-implement-pipeline.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-pipeline/SKILL.md`
 
 Creates or modifies CI/CD pipelines with proper deployment stages, environment protection, and secure authentication.
 

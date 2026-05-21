@@ -5,7 +5,7 @@ title: Implementing Forms
 
 # Implementing Forms
 
-**Folder:** `.github/skills/tsh-implementing-forms/`  
+**Folder:** `.cursor/skills/workflows/tsh-implementing-forms/`  
 **Used by:** Software Engineer
 
 Provides form architecture patterns including schema-based validation, field composition, error handling, multi-step form flows, and accessible form patterns.

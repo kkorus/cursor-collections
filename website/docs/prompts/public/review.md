@@ -6,7 +6,7 @@ title: /tsh-review
 # /tsh-review
 
 **Agent:** Code Reviewer  
-**File:** `.github/prompts/tsh-review.prompt.md`
+**File:** `.cursor/skills/commands/tsh-review/SKILL.md`
 
 Performs a structured code review against the implementation plan and feature context.
 
@@ -18,7 +18,7 @@ Performs a structured code review against the implementation plan and feature co
 
 ## What It Does
 
-1. **Understands context** — Loads `.research.md` and `.plan.md` files, reviews `*.instructions.md` for project guidelines.
+1. **Understands context** — Loads `.research.md` and `.plan.md` files, reviews `*.mdc rules` for project guidelines.
 2. **Reviews implementation** — Focuses on correctness, code quality, security, testing, and documentation.
 3. **Verifies definition of done** — Checks each item from the plan's task definitions; marks completed items.
 4. **Verifies acceptance criteria** — Checks each item from the plan's acceptance criteria checklist.

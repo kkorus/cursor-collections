@@ -5,7 +5,7 @@ title: Architect
 
 # Architect Agent
 
-**File:** `.github/agents/tsh-architect.agent.md`
+**File:** `.cursor/skills/agents/tsh-architect/SKILL.md`
 
 The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications.
 
@@ -38,7 +38,7 @@ Each technical specification includes:
 | **Sequential Thinking**   | Design complex architectures, evaluate trade-offs, break down features |
 | **Terminal**              | Run build tools, scripts, and validation commands                      |
 | **File Read/Edit/Search** | Read, modify, and search workspace files                               |
-| **VS Code Commands**      | Execute VS Code commands and run tasks                                 |
+| **Terminal commands**      | Execute VS Code commands and run tasks                                 |
 | **Sub-agents**            | Delegate subtasks to specialized agents                                |
 | **Todo**                  | Track task progress with structured checklists                         |
 
@@ -60,7 +60,8 @@ Each technical specification includes:
 
 ## Handoffs
 
-After creating the plan, the Architect can hand off to:
+After creating the plan, the Architect hands off to:
 
-- **Software Engineer** → `/tsh-implement` (standard implementation)
-- **Software Engineer** → `/tsh-implement` (frontend implementation with Figma verification via internal UI prompt)
+- **Architect Reviewer** — The Engineering Manager automatically invokes the [Architect Reviewer](./architect-reviewer) to validate the produced `.plan.md` before implementation begins. If `REVISIONS NEEDED` with BLOCKERs, the plan is returned to the Architect for revision.
+- **Software Engineer** → `/tsh-implement` (standard implementation, after plan is approved)
+- **Software Engineer** → `/tsh-implement` (frontend implementation with Figma verification via internal UI prompt, after plan is approved)

@@ -5,7 +5,7 @@ title: Code Review
 
 # Code Review
 
-**Folder:** `.github/skills/tsh-code-reviewing/`  
+**Folder:** `.cursor/skills/workflows/tsh-code-reviewing/`  
 **Used by:** Code Reviewer
 
 Provides a structured 9-step code review process covering correctness, quality, security, testing, and scalability.

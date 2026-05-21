@@ -5,7 +5,7 @@ title: E2E Testing
 
 # E2E Testing
 
-**Folder:** `.github/skills/tsh-e2e-testing/`  
+**Folder:** `.cursor/skills/workflows/tsh-e2e-testing/`  
 **Used by:** E2E Engineer
 
 Provides Playwright-specific E2E testing patterns, Page Object conventions, mocking strategies, error recovery, and CI readiness checklists.

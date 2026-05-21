@@ -6,7 +6,7 @@ title: /tsh-analyze-aws-costs
 # /tsh-analyze-aws-costs
 
 **Agent:** DevOps Engineer
-**File:** `.github/prompts/tsh-analyze-aws-costs.prompt.md`
+**File:** `.cursor/skills/commands/tsh-analyze-aws-costs/SKILL.md`
 
 Performs a comprehensive AWS cost optimization and tagging compliance audit using a hybrid approach — analyzes IaC code first, then validates against live AWS infrastructure via API.
 

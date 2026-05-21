@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger observability implementation, use [`/t
 :::
 
 **Agent:** DevOps Engineer
-**File:** `.github/internal-prompts/tsh-implement-observability.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-observability/SKILL.md`
 
 Implements comprehensive observability solutions covering metrics, logs, traces, and alerting.
 

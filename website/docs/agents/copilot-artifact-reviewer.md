@@ -1,14 +1,14 @@
 ---
 sidebar_position: 12
-title: Copilot Artifact Reviewer (internal)
+title: Cursor Artifact Reviewer (internal)
 ---
 
-# Copilot Artifact Reviewer Agent
+# Cursor Artifact Reviewer Agent
 
-**File:** `.github/agents/tsh-copilot-artifact-reviewer.agent.md`
+**File:** `.cursor/skills/agents/tsh-cursor-artifact-reviewer/SKILL.md`
 **Type:** Internal worker — not user-invocable
 
-Review specialist that evaluates Copilot customization artifacts (`.agent.md`, `SKILL.md`, `.prompt.md`, `.instructions.md`) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
+Review specialist that evaluates Copilot customization artifacts (`SKILL.md`, `SKILL.md`, `/SKILL.md`, `.rules.mdc`) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
 
 ## Responsibilities
 
@@ -42,4 +42,4 @@ Review specialist that evaluates Copilot customization artifacts (`.agent.md`, `
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Copilot Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.
+This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.

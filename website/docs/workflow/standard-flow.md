@@ -29,7 +29,14 @@ The Engineering Manager automatically handles the full development cycle:
 - **Delegated to:** Architect
 - **What it does:** Creates a multi-step implementation plan grouped into phases and tasks aligned with your repo structure.
 - **What it produces:** A `.plan.md` file with checklist-style phases that can be executed by specialized agents.
-- **Your action:** Review the implementation plan. Confirm scope, phases, and acceptance criteria.
+- **Your action:** Wait for the plan validation phase to complete before reviewing.
+
+#### Plan Validation Phase (internal)
+
+- **Delegated to:** Architect Reviewer
+- **What it does:** Validates the `.plan.md` for correctness, feasibility, and simplicity. Verifies codebase assumptions, checks requirement coverage, and assesses pattern consistency. Returns the plan to the Architect if BLOCKERs are found (up to 3 iterations).
+- **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings.
+- **Your action:** Review the implementation plan and review report together. Confirm scope, phases, and acceptance criteria.
 
 #### Implementation Phase
 
@@ -61,7 +68,8 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
    ↳ 📖 Review the generated research document
    ↳ ✅ Confirm to proceed to planning
    ↳ 🧱 Engineering Manager delegates to Architect for planning
-   ↳ 📖 Review the implementation plan
+   ↳ 🔎 Engineering Manager delegates to Architect Reviewer for plan validation
+   ↳ 📖 Review the implementation plan + review report
    ↳ ✅ Confirm scope, phases, and acceptance criteria
    ↳ 💻 Engineering Manager delegates implementation to specialized agents
    ↳ 📖 Review code changes after each phase

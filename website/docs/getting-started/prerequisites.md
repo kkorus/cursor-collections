@@ -5,30 +5,42 @@ title: Prerequisites
 
 # Prerequisites
 
-Before using Copilot Collections, make sure you meet the following requirements.
+Before using Cursor Collections, make sure you meet the following requirements.
 
-## GitHub Copilot License
+## Cursor AI IDE
 
-**This configuration requires a GitHub Copilot Pro license (or higher)** to use custom agents and MCP integrations.
+**This configuration requires Cursor IDE** (version 0.40 or later recommended).
 
-GitHub Copilot Pro provides access to:
+Download the latest version from [cursor.com](https://cursor.com).
 
-- Custom agents (`.agent.md` files)
-- Custom prompts (`.prompt.md` files)
-- Custom skills (`.github/skills/`)
+Cursor provides access to:
+
+- Agent Skills (`.cursor/skills/`)
+- Cursor Rules (`.cursor/rules/`)
 - MCP server integrations
-- Subagent orchestration
+- Agent mode with subagent orchestration
 
-If you only have a free or individual Copilot license, some features — particularly agents and MCP integrations — will not be available.
+## Cursor Subscription
 
-## VS Code Version
+A **Cursor Pro subscription** (or higher) is recommended to use all features:
 
-**This configuration requires VS Code version 1.109 or later.**
+- Agent mode with unlimited requests
+- MCP server integrations
+- Subagent orchestration in complex workflows
 
-Features used by Copilot Collections (such as agent skills, prompt file locations, and MCP support) require recent VS Code releases. To check your version:
+The free Cursor plan may have rate limits that affect complex multi-step workflows like `/tsh-implement`.
 
-1. Open VS Code.
-2. Go to **Code → About Visual Studio Code** (macOS) or **Help → About** (Windows/Linux).
-3. Verify the version is **1.109** or higher.
+## Required CLI Tools
 
-If you need to update, download the latest version from [code.visualstudio.com](https://code.visualstudio.com).
+Some MCP servers require Node.js and Python:
+
+- **Node.js 18+** — required for Playwright, Context7, Sequential Thinking MCPs
+- **Python 3.10+** with `uvx` — required for AWS API MCPs
+
+Check your versions:
+
+```bash
+node --version    # 18+
+python --version  # 3.10+
+uvx --version     # install via: pip install uv
+```

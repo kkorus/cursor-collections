@@ -5,7 +5,7 @@ title: Task Quality Review
 
 # Task Quality Review
 
-**Folder:** `.github/skills/tsh-task-quality-reviewing/`  
+**Folder:** `.cursor/skills/workflows/tsh-task-quality-reviewing/`  
 **Used by:** Business Analyst
 
 Performs a systematic quality analysis on an approved task list (epics and user stories) to identify gaps, missing edge cases, and improvement opportunities. Runs 10 domain-agnostic analysis passes and produces structured suggestions the user can individually accept or reject.

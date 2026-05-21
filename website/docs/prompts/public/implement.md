@@ -6,7 +6,7 @@ title: /tsh-implement
 # /tsh-implement
 
 **Agent:** Engineering Manager  
-**File:** `.github/prompts/tsh-implement.prompt.md`
+**File:** `.cursor/skills/commands/tsh-implement/SKILL.md`
 
 Orchestrates the implementation of a feature by delegating tasks from the plan to specialized agents.
 
@@ -18,16 +18,18 @@ Orchestrates the implementation of a feature by delegating tasks from the plan t
 
 ## What It Does
 
-1. Reviews the implementation plan and feature context thoroughly.
-2. Creates a **todo for every task** in the plan — each task gets its own tracked item.
-3. Delegates codebase analysis to the **Architect** agent to establish project conventions and patterns.
-4. Processes each task in plan order, delegating based on task type:
+1. Reviews the current state of the task — checks what's already done, gathers missing context via Context Engineer, creates a plan via Architect if missing.
+2. **Validates the plan** — Invokes the **Architect Reviewer** to verify correctness, feasibility, and simplicity. Returns plan to Architect if BLOCKERs found (max 3 iterations). Presents approved plan to user for confirmation.
+3. Reviews the implementation plan and feature context thoroughly.
+4. Creates a **todo for every task** in the plan — each task gets its own tracked item.
+5. Delegates codebase analysis to the **Architect** agent to establish project conventions and patterns (if technical context is missing from the plan).
+6. Processes each task in plan order, delegating based on task type:
    - **`[CREATE]` / `[MODIFY]`** → delegates to **Software Engineer** (app code), **DevOps Engineer** (infrastructure), or **E2E Engineer** (tests).
    - **`[REUSE]`** → executes as described in the task definition (e.g., UI verification via **UI Reviewer**).
-5. After each task, updates plan checkboxes and runs quality checks (tsc, lint, build).
-6. Asks for confirmation before deviating from the plan.
-7. Documents all changes in the plan's Changelog section.
-8. **Automatically runs Code Reviewer** at the end if no review phase is defined.
+7. After each task, updates plan checkboxes and runs quality checks (tsc, lint, build).
+8. Asks for confirmation before deviating from the plan.
+9. Documents all changes in the plan's Changelog section.
+10. **Automatically runs Code Reviewer** at the end if no review phase is defined.
 
 ## How Delegation Works
 
@@ -35,6 +37,7 @@ The Engineering Manager automatically delegates each task to the right agent bas
 
 | Task Type | Agent |
 |---|---|
+| Plan validation | Architect Reviewer |
 | Backend / general code | Software Engineer |
 | Frontend with Figma | Software Engineer |
 | E2E tests | E2E Engineer |

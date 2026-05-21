@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger Kubernetes deployments, use [`/tsh-imp
 :::
 
 **Agent:** DevOps Engineer
-**File:** `.github/internal-prompts/tsh-deploy-kubernetes.prompt.md`
+**File:** `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
 
 Creates Kubernetes deployments, Helm charts, and configures workload resources following production-ready patterns.
 

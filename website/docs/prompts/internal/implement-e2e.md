@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger E2E test implementation, use [`/tsh-im
 :::
 
 **Agent:** E2E Engineer  
-**File:** `.github/internal-prompts/tsh-implement-e2e.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-e2e/SKILL.md`
 
 Creates comprehensive end-to-end tests for a feature using Playwright.
 
@@ -27,7 +27,7 @@ The Engineering Manager identifies E2E test tasks in the plan and delegates them
 ### 1. Context Gathering
 
 - Determines input source (research/plan files, Jira ID, or prompt message).
-- Checks `*.instructions.md` for project-specific conventions.
+- Checks `*.mdc rules` for project-specific conventions.
 - Analyzes `playwright.config.ts` and existing Page Objects.
 - Discovers existing test patterns and locator strategies.
 

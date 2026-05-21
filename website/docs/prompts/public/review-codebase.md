@@ -6,7 +6,7 @@ title: /tsh-review-codebase
 # /tsh-review-codebase
 
 **Agent:** Architect  
-**File:** `.github/prompts/tsh-review-codebase.prompt.md`
+**File:** `.cursor/skills/commands/tsh-review-codebase/SKILL.md`
 
 Performs a comprehensive code quality analysis covering dead code, duplications, and improvement opportunities.
 

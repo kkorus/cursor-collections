@@ -5,7 +5,7 @@ title: Frontend Implementation
 
 # Frontend Implementation
 
-**Folder:** `.github/skills/tsh-implementing-frontend/`  
+**Folder:** `.cursor/skills/workflows/tsh-implementing-frontend/`  
 **Used by:** Software Engineer
 
 Provides comprehensive frontend guidelines covering component design, design system usage, accessibility, and performance.

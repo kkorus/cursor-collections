@@ -15,7 +15,8 @@ For UI-heavy tasks with Figma designs, use the specialized frontend workflow. Th
    ↳ 📖 Review research doc – verify Figma links, requirements
    ↳ ✅ Confirm to proceed to planning
    ↳ 🧱 Engineering Manager delegates to Architect for planning
-   ↳ 📖 Review plan – check component breakdown, design references
+   ↳ 🔎 Engineering Manager delegates to Architect Reviewer via tsh-review-plan
+   ↳ 📖 Review plan + review report – check component breakdown, design references
    ↳ ✅ Confirm phases align with Figma structure
    ↳ 💻 Engineering Manager delegates UI tasks to Software Engineer
    ↳ 📖 Review code changes and UI Verification Summary

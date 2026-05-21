@@ -5,7 +5,7 @@ title: CI/CD Implementation
 
 # CI/CD Implementation
 
-**Folder:** `.github/skills/tsh-implementing-ci-cd/`
+**Folder:** `.cursor/skills/workflows/tsh-implementing-ci-cd/`
 **Used by:** DevOps Engineer
 
 Provides CI/CD pipeline design patterns and deployment strategies for GitHub Actions, GitLab CI, Bitbucket Pipelines, and other platforms.

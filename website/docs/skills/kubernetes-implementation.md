@@ -5,7 +5,7 @@ title: Kubernetes Implementation
 
 # Kubernetes Implementation
 
-**Folder:** `.github/skills/tsh-implementing-kubernetes/`
+**Folder:** `.cursor/skills/workflows/tsh-implementing-kubernetes/`
 **Used by:** DevOps Engineer
 
 Provides Kubernetes deployment patterns, Helm chart conventions, and cluster management best practices.

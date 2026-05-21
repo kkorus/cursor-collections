@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger prompt engineering, use [`/tsh-impleme
 :::
 
 **Agent:** Prompt Engineer  
-**File:** `.github/internal-prompts/tsh-engineer-prompt.prompt.md`
+**File:** `.cursor/skills/internal/tsh-engineer-prompt/SKILL.md`
 
 Designs, optimizes, audits, or reviews LLM application prompts for quality, security, and consistency.
 

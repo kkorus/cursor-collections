@@ -7,7 +7,7 @@ title: Changelog
 All notable changes to this project will be documented in this file.
 
 :::note
-The canonical source for this changelog is [CHANGELOG.md](https://github.com/TheSoftwareHouse/copilot-collections/blob/main/CHANGELOG.md) in the repository root. This page is a snapshot — check the repository for the latest entries.
+The canonical source for this changelog is [CHANGELOG.md](https://github.com/kkorus/cursor-collections/blob/main/CHANGELOG.md) in the repository root. This page is a snapshot — check the repository for the latest entries.
 :::
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).

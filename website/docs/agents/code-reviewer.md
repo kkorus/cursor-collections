@@ -5,7 +5,7 @@ title: Code Reviewer
 
 # Code Reviewer Agent
 
-**File:** `.github/agents/tsh-code-reviewer.agent.md`
+**File:** `.cursor/skills/agents/tsh-code-reviewer/SKILL.md`
 
 The Code Reviewer agent performs structured code reviews against the implementation plan, requirements, and project standards.
 
@@ -20,7 +20,7 @@ The Code Reviewer agent performs structured code reviews against the implementat
 
 ## Review Process
 
-1. Reads coding guidelines from `copilot-instructions.md` and related `*.instructions.md` files.
+1. Reads coding guidelines from `cursor-rules.mdc` and related `*.mdc rules` files.
 2. Understands project coding standards and best practices.
 3. Loads relevant skills for the review domain.
 4. Runs all necessary checks and tests.
@@ -45,7 +45,7 @@ A structured review containing:
 | **Sequential Thinking**   | Analyze complex security vulnerabilities, performance bottlenecks, race conditions |
 | **Terminal**              | Run tests, linters, and build commands for verification                            |
 | **File Read/Edit/Search** | Read, modify, and search workspace files                                           |
-| **VS Code Commands**      | Execute VS Code commands and preview in browser                                    |
+| **Terminal commands**      | Execute VS Code commands and preview in browser                                    |
 | **Sub-agents**            | Delegate subtasks to specialized agents                                            |
 | **Todo**                  | Track review progress with structured checklists                                   |
 

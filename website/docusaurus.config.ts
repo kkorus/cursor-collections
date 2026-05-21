@@ -154,7 +154,7 @@ const config: Config = {
           className: 'navbar__link--meta',
         },
         {
-          href: 'https://github.com/TheSoftwareHouse/copilot-collections',
+          href: 'https://github.com/kkorus/cursor-collections',
           html: `
             <span class="navbar__github-content">
               <svg class="navbar__github-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -179,7 +179,7 @@ const config: Config = {
           title: ' ',
           items: [
             {
-              href: 'https://github.com/TheSoftwareHouse/copilot-collections',
+              href: 'https://github.com/kkorus/cursor-collections',
               label: 'GitHub',
             },
             { label: 'Docs', to: '/docs/' },

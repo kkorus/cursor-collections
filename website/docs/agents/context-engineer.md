@@ -5,7 +5,7 @@ title: Context Engineer
 
 # Context Engineer Agent
 
-**File:** `.github/agents/tsh-context-engineer.agent.md`
+**File:** `.cursor/skills/agents/tsh-context-engineer/SKILL.md`
 
 The Context Engineer agent specializes in gathering requirements, analyzing processes, and building detailed context for development tasks.
 
@@ -44,7 +44,7 @@ A `.research.md` document containing:
 | **PDF Reader** | Read and extract content from PDF requirement documents |
 | **Sequential Thinking** | Analyze complex business rules, identify edge cases, map dependencies |
 | **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **VS Code Commands** | Execute VS Code commands and run tasks |
+| **Terminal commands** | Execute VS Code commands and run tasks |
 | **Sub-agents** | Delegate subtasks to specialized agents |
 | **Todo** | Track research progress with structured checklists |
 

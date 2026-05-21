@@ -5,7 +5,7 @@ title: Frontend Review
 
 # Frontend Review
 
-**Folder:** `.github/skills/tsh-reviewing-frontend/`  
+**Folder:** `.cursor/skills/workflows/tsh-reviewing-frontend/`  
 **Used by:** Code Reviewer
 
 Provides frontend-specific code review criteria covering component anti-patterns, hooks quality, rendering correctness, accessibility and performance spot-checks, and module organization issues.

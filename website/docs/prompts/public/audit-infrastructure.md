@@ -6,7 +6,7 @@ title: /tsh-audit-infrastructure
 # /tsh-audit-infrastructure
 
 **Agent:** DevOps Engineer
-**File:** `.github/prompts/tsh-audit-infrastructure.prompt.md`
+**File:** `.cursor/skills/commands/tsh-audit-infrastructure/SKILL.md`
 
 Performs a comprehensive infrastructure audit to identify security vulnerabilities, cost optimization opportunities, and best practices violations.
 

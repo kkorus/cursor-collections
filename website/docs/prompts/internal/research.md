@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger research, use [`/tsh-implement`](../pu
 :::
 
 **Agent:** Context Engineer  
-**File:** `.github/internal-prompts/tsh-research.prompt.md`
+**File:** `.cursor/skills/internal/tsh-research/SKILL.md`
 
 Prepares a comprehensive context document for a task from a context engineering perspective.
 

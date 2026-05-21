@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger implementation planning, use [`/tsh-im
 :::
 
 **Agent:** Architect  
-**File:** `.github/internal-prompts/tsh-plan.prompt.md`
+**File:** `.cursor/skills/internal/tsh-plan/SKILL.md`
 
 Creates a detailed, phased implementation plan from the research context.
 
@@ -27,7 +27,7 @@ The Engineering Manager identifies that no implementation plan exists and delega
 1. **Analyzes context** — Reviews the `.research.md` file and cross-checks with best practices.
 2. **Analyzes tech stack** — Identifies domain-specific best practices.
 3. **Verifies current implementation** — Searches the codebase for existing components, functions, and utilities related to the feature.
-4. **Understands project standards** — Reviews `*.instructions.md` files.
+4. **Understands project standards** — Reviews `*.mdc rules` files.
 5. **Prepares implementation plan** — Creates detailed phases with code changes.
 6. **Defines tasks** — Each task has a clear title, description, action type (`[CREATE]`/`[MODIFY]`/`[REUSE]`), and definition of done checklist.
 7. **Addresses security** — Includes security considerations.
@@ -50,11 +50,14 @@ A `.plan.md` file placed in `specifications/<task-name>/`:
 specifications/
   user-authentication/
     user-authentication.research.md
-    user-authentication.plan.md    ← new
+    user-authentication.plan.md        ← new (Architect)
+    user-authentication.plan-review.md ← new (Architect Reviewer, after validation)
 ```
 
 The plan includes checklist-style phases, tasks with `[CREATE]`/`[MODIFY]`/`[REUSE]` action types, acceptance criteria, security considerations, and testing guidelines.
 
+After the plan is produced, the Engineering Manager automatically invokes the [Architect Reviewer](../../agents/architect-reviewer) to validate it. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
+
 :::tip
-Review the plan thoroughly. Confirm scope, phases, and acceptance criteria before starting implementation.
+Review both the plan and the review report. Confirm scope, phases, and acceptance criteria before starting implementation.
 :::

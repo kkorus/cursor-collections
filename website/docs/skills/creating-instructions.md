@@ -5,20 +5,20 @@ title: Creating Instructions
 
 # Creating Instructions
 
-**Folder:** `.github/skills/tsh-creating-instructions/`
-**Used by:** Copilot Engineer
+**Folder:** `.cursor/skills/workflows/tsh-creating-instructions/`
+**Used by:** Cursor Engineer
 
-Covers repository-level instructions (`copilot-instructions.md`) and granular file-based instructions with `applyTo` glob patterns. Provides templates and a decision framework for instruction vs. skill placement.
+Covers repository-level instructions (`cursor-rules.mdc`) and granular file-based instructions with `applyTo` glob patterns. Provides templates and a decision framework for instruction vs. skill placement.
 
 ## Instruction Types
 
 | Aspect | Repository-level | Granular custom |
 |---|---|---|
-| **File** | `.github/copilot-instructions.md` | `*.instructions.md` |
+| **File** | `.cursor/rules/cursor-instructions.md` | `*.mdc rules` |
 | **Count per repo** | Exactly one | Multiple |
-| **Frontmatter** | Not required | Recommended (`applyTo`, `name`, `description`) |
-| **Applied when** | Every Copilot interaction | Files matching `applyTo` pattern are in context |
-| **Location** | `.github/copilot-instructions.md` | `.github/instructions/` folder |
+| **Frontmatter** | Not required | Recommended (`globs`, `name`, `description`) |
+| **Applied when** | Every Cursor Agent interaction | Files matching `globs` pattern are in context |
+| **Location** | `.cursor/rules/cursor-instructions.md` | `.cursor/rules/` folder |
 | **Purpose** | Project constitution — architecture, stack, fundamental rules | Scoped conventions — file-type or domain-specific rules |
 
 ## Decision Framework: Instructions vs. Skills
@@ -39,7 +39,7 @@ Covers repository-level instructions (`copilot-instructions.md`) and granular fi
 
 ## Validation Checklist
 
-- Correct file location (`.github/copilot-instructions.md` or `.github/instructions/`)
+- Correct file location (`.cursor/rules/cursor-instructions.md` or `.cursor/rules/*.mdc`)
 - `applyTo` pattern is valid and scoped appropriately (granular only)
 - No workflow steps (skill territory)
 - No personality or behavioral content (agent territory)

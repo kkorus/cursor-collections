@@ -5,7 +5,7 @@ title: Implementation Gap Analysis
 
 # Implementation Gap Analysis
 
-**Folder:** `.github/skills/tsh-implementation-gap-analysing/`  
+**Folder:** `.cursor/skills/workflows/tsh-implementation-gap-analysing/`  
 **Used by:** Architect, Code Reviewer, Software Engineer
 
 Provides a 4-step process for comparing the current system state to the expected implementation, ensuring no duplicate work.

@@ -49,7 +49,7 @@ export default function SdlcDiagram(): React.JSX.Element {
           <div className={styles.card}>
             <div className={styles.cardCmd}>
               <strong className={styles.cardCmdStrong}>/tsh-implement</strong>
-              <span style={{fontSize: '0.7rem', opacity: 0.7, marginLeft: '0.5rem'}}>Engineering Manager</span>
+              <span className={styles.cardCmdMeta}>Engineering Manager</span>
             </div>
             <div className={styles.cardDesc}>
               Orchestrates the full cycle — research, planning, and

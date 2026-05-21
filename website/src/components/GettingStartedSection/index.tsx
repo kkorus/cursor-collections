@@ -6,33 +6,35 @@ import styles from './styles.module.css';
 const steps = [
   {
     num: 1,
-    title: 'Clone the repo',
+    title: 'Import via Cursor Settings',
     description: (
       <>
-        <code>git clone [repo] copilot-collections</code> alongside your
-        existing projects
+        Open <strong>Cursor Settings</strong> → <strong>Rules</strong> → Add
+        Rule → <strong>Remote Rule (GitHub)</strong> → enter{' '}
+        <code>kkorus/cursor-collections</code>. Skills are available
+        globally across every workspace immediately.
       </>
     ),
   },
   {
     num: 2,
-    title: 'Configure VS Code',
+    title: 'Configure MCP servers',
     description: (
       <>
-        Open User Settings (JSON) → add{' '}
-        <code>chat.promptFilesLocations</code> and{' '}
-        <code>chat.modeFilesLocations</code> pointing to the cloned folder.
-        Done once — works globally.
+        Open <strong>Cursor Settings → MCP</strong> → Add MCP Server → copy
+        the contents of <code>.cursor/mcp.json</code> into your user MCP
+        config. Connects Jira, Figma, Playwright, and Context7.
       </>
     ),
   },
   {
     num: 3,
-    title: 'Configure MCP servers',
+    title: 'Open Agent chat',
     description: (
       <>
-        Copy <code>.vscode/mcp.json</code> to your User MCP config. Connects
-        Jira, Figma, Playwright, and Context7.
+        Press <code>Cmd/Ctrl + Shift + I</code>, switch to{' '}
+        <strong>Agent mode</strong>, then type <code>/</code> to see all
+        available slash commands.
       </>
     ),
   },
@@ -41,9 +43,9 @@ const steps = [
     title: 'Run your first command',
     description: (
       <>
-        Open Copilot Chat → select an agent → type{' '}
-        <code>/tsh-implement [JIRA_ID]</code>. If agents appear in the dropdown,
-        you're ready.
+        Type <code>/tsh-implement [JIRA_ID]</code> to implement a task, or{' '}
+        <code>/tsh-review</code> to review changes. If commands appear in the
+        dropdown, you&apos;re ready.
       </>
     ),
   },
@@ -62,20 +64,19 @@ export default function GettingStartedSection(): React.JSX.Element {
             every project.
           </h2>
           <p className={styles.sub}>
-            Clone the repo next to your projects, configure VS Code User
-            Settings once, and start using <code>/tsh-implement</code> in any
-            workspace immediately.
+            Import once via Cursor Settings, configure MCP servers, and start
+            using <code>/tsh-implement</code> in any workspace immediately.
           </p>
           <div className={styles.gsActions}>
             <Link
-              className={styles.btnPrimary}
-              href="https://github.com/TheSoftwareHouse/copilot-collections"
+              className="tsh-btn-primary"
+              href="https://github.com/kkorus/cursor-collections"
               target="_blank"
               rel="noopener noreferrer"
             >
               Get the repo on GitHub
             </Link>
-            <Link className={styles.btnSecondary} to="/docs/">
+            <Link className="tsh-btn-secondary" to="/docs/">
               Read the docs
             </Link>
           </div>

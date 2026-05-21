@@ -1,11 +1,11 @@
 ---
 sidebar_position: 13
-title: Copilot Researcher (internal)
+title: Cursor Researcher (internal)
 ---
 
-# Copilot Researcher Agent
+# Cursor Researcher Agent
 
-**File:** `.github/agents/tsh-copilot-researcher.agent.md`
+**File:** `.cursor/skills/agents/tsh-cursor-researcher/SKILL.md`
 **Type:** Internal worker — not user-invocable
 
 Research specialist that gathers, analyzes, and summarizes information from codebases and documentation for Copilot engineering tasks. Returns structured research summaries — read-only, does not create or modify files.
@@ -43,4 +43,4 @@ Every research response includes:
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Copilot Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.
+This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.

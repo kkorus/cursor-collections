@@ -5,7 +5,7 @@ title: Transcript Processing
 
 # Transcript Processing
 
-**Folder:** `.github/skills/tsh-transcript-processing/`  
+**Folder:** `.cursor/skills/workflows/tsh-transcript-processing/`  
 **Used by:** Business Analyst
 
 Cleans raw workshop or meeting transcripts from small talk, filler words, and off-topic tangents. Extracts and structures business-relevant content into a standardized format.

@@ -6,7 +6,7 @@ title: /tsh-analyze-gcp-costs
 # /tsh-analyze-gcp-costs
 
 **Agent:** DevOps Engineer
-**File:** `.github/prompts/tsh-analyze-gcp-costs.prompt.md`
+**File:** `.cursor/skills/commands/tsh-analyze-gcp-costs/SKILL.md`
 
 Performs a comprehensive GCP cost optimization and labeling compliance audit using a hybrid approach — analyzes IaC code first, then validates against live GCP infrastructure via API.
 

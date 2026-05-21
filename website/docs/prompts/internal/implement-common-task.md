@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger implementation, use [`/tsh-implement`]
 :::
 
 **Agent:** Software Engineer
-**File:** `.github/internal-prompts/tsh-implement-common-task.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-common-task/SKILL.md`
 
 The standard delegation prompt for general implementation tasks — backend logic, APIs, database changes, and non-UI frontend work.
 
@@ -27,7 +27,7 @@ The Engineering Manager identifies application code tasks in the plan and delega
 ### 1. Context Discovery
 
 - Reviews the implementation plan and feature context.
-- Checks `*.instructions.md` for project-specific conventions and coding standards.
+- Checks `*.mdc rules` for project-specific conventions and coding standards.
 - Loads the `tsh-technical-context-discovering` and `tsh-implementation-gap-analysing` skills.
 - Gathers build, test, and lint commands for the project.
 

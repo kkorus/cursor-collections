@@ -5,10 +5,10 @@ title: Creating Agents
 
 # Creating Agents
 
-**Folder:** `.github/skills/tsh-creating-agents/`
-**Used by:** Copilot Engineer
+**Folder:** `.cursor/skills/workflows/tsh-creating-agents/`
+**Used by:** Cursor Engineer
 
-Provides templates, guidelines, and a structured process for building custom agent definitions (`.agent.md`) that describe behavior, personality, responsibilities, and problem-solving approaches.
+Provides templates, guidelines, and a structured process for building custom agent definitions (`SKILL.md`) that describe behavior, personality, responsibilities, and problem-solving approaches.
 
 ## Core Design Principles
 

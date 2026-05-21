@@ -5,8 +5,8 @@ title: /tsh-create-custom-skill
 
 # /tsh-create-custom-skill
 
-**Agent:** Copilot Orchestrator  
-**File:** `.github/prompts/tsh-create-custom-skill.prompt.md`
+**Agent:** Cursor Orchestrator  
+**File:** `.cursor/skills/commands/tsh-create-custom-skill/SKILL.md`
 
 Creates a new custom skill (`SKILL.md`) for VS Code Copilot. Analyzes existing skills for patterns, enforces gerund naming convention, creates the skill file with supporting resources, and validates against best practices.
 
@@ -18,7 +18,7 @@ Creates a new custom skill (`SKILL.md`) for VS Code Copilot. Analyzes existing s
 
 ## What It Does
 
-1. **Research existing skills** — Analyzes skills in `.github/skills/` for naming conventions (gerund form), folder structure, progressive disclosure patterns, and content structure.
+1. **Research existing skills** — Analyzes skills in `.cursor/skills/workflows/` for naming conventions (gerund form), folder structure, progressive disclosure patterns, and content structure.
 2. **Clarify requirements** — Determines the skill's domain, purpose, trigger conditions, target workflows, and supporting resources needed.
 3. **Design the skill** — Skill name in gerund form (e.g., `creating-agents`, `analyzing-performance`), folder structure, and supporting resource types.
 4. **Create the skill** — Delegates creation to the artifact creator worker.
@@ -32,8 +32,8 @@ Creates a new custom skill (`SKILL.md`) for VS Code Copilot. Analyzes existing s
 
 ## Output
 
-A skill directory with `SKILL.md` and supporting files in `.github/skills/`.
+A skill directory with `SKILL.md` and supporting files in `.cursor/skills/workflows/`.
 
 :::info Orchestrator Workflow
-This command routes to the Copilot Orchestrator which handles the full research → create → review workflow automatically using specialized sub-agents.
+This command routes to the Cursor Orchestrator which handles the full research → create → review workflow automatically using specialized sub-agents.
 :::

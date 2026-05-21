@@ -10,7 +10,7 @@ Not invoked directly by users. The UI implementation workflow is triggered via [
 :::
 
 **Agent:** Engineering Manager  
-**File:** `.github/internal-prompts/tsh-implement-ui.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-ui/SKILL.md`
 
 Orchestrates the implementation of UI features with iterative Figma verification, delegating to specialized agents.
 

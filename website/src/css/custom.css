@@ -551,6 +551,50 @@ kbd[class*='searchHint_'] {
   --ifm-background-color: #111116;
 }
 
+/* ── Shared CTA buttons — used across landing page sections ── */
+.tsh-btn-primary {
+  background: rgba(180, 180, 255, 0.2);
+  border: 1px solid rgba(180, 180, 255, 0.4);
+  color: #B4B4FF;
+  padding: 11px 22px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s;
+  display: inline-block;
+}
+.tsh-btn-primary:hover {
+  background: #D7D6FF;
+  color: #313435;
+  text-decoration: none;
+}
+
+.tsh-btn-secondary {
+  background: transparent;
+  color: #EDF1F4;
+  padding: 11px 22px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background 0.15s;
+  display: inline-block;
+}
+.tsh-btn-secondary:hover {
+  background: rgba(237, 241, 244, 0.08);
+  color: #EDF1F4;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .tsh-btn-primary,
+  .tsh-btn-secondary {
+    text-align: center;
+  }
+}
+
 /* ── Custom admonition: "brand" — TSH purple accent ── */
 .alert--brand {
   --ifm-alert-background-color: rgba(109, 40, 217, 0.1);

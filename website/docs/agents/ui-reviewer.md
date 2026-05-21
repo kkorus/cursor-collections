@@ -5,7 +5,7 @@ title: UI Reviewer
 
 # UI Reviewer Agent
 
-**File:** `.github/agents/tsh-ui-reviewer.agent.md`
+**File:** `.cursor/skills/agents/tsh-ui-reviewer/SKILL.md`
 
 The UI Reviewer agent performs read-only verification comparing implemented UI against Figma designs and reports differences. It is called either directly by a user or as a subagent by the Software Engineer during the UI implementation loop. It does **not** fix code.
 
@@ -47,7 +47,7 @@ The UI Reviewer never modifies code. It only reports differences so the Software
 | **Sequential Thinking**   | Analyze complex layout discrepancies, evaluate tolerance decisions   |
 | **Terminal**              | Run commands to verify application state                             |
 | **File Read/Edit/Search** | Read, modify, and search workspace files                             |
-| **VS Code Commands**      | Execute VS Code commands and preview in browser                      |
+| **Terminal commands**      | Execute VS Code commands and preview in browser                      |
 | **Sub-agents**            | Delegate subtasks to specialized agents                              |
 | **Todo**                  | Track verification progress with structured checklists               |
 

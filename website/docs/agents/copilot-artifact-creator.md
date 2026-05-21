@@ -1,14 +1,14 @@
 ---
 sidebar_position: 11
-title: Copilot Artifact Creator (internal)
+title: Cursor Artifact Creator (internal)
 ---
 
-# Copilot Artifact Creator Agent
+# Cursor Artifact Creator Agent
 
-**File:** `.github/agents/tsh-copilot-artifact-creator.agent.md`
+**File:** `.cursor/skills/agents/tsh-cursor-artifact-creator/SKILL.md`
 **Type:** Internal worker — not user-invocable
 
-Creation specialist that builds and modifies Copilot customization artifacts (`.agent.md`, `SKILL.md`, `.prompt.md`, `.instructions.md`) based on detailed specifications from the orchestrator. Executes creation tasks only — does not research or review.
+Creation specialist that builds and modifies Copilot customization artifacts (`SKILL.md`, `SKILL.md`, `/SKILL.md`, `.rules.mdc`) based on detailed specifications from the orchestrator. Executes creation tasks only — does not research or review.
 
 ## Responsibilities
 
@@ -42,4 +42,4 @@ Creation specialist that builds and modifies Copilot customization artifacts (`.
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Copilot Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.
+This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./copilot-orchestrator) as part of multi-step customization workflows.

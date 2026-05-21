@@ -6,7 +6,7 @@ title: /tsh-review-ui
 # /tsh-review-ui
 
 **Agent:** UI Reviewer  
-**File:** `.github/prompts/tsh-review-ui.prompt.md`
+**File:** `.cursor/skills/commands/tsh-review-ui/SKILL.md`
 
 Performs a single-pass, read-only verification comparing the implemented UI against the Figma design.
 

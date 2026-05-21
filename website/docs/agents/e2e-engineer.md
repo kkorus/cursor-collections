@@ -5,7 +5,7 @@ title: E2E Engineer
 
 # E2E Engineer Agent
 
-**File:** `.github/agents/tsh-e2e-engineer.agent.md`
+**File:** `.cursor/skills/agents/tsh-e2e-engineer/SKILL.md`
 
 The E2E Engineer agent creates, maintains, and debugs end-to-end tests using Playwright. It produces reliable, maintainable, and meaningful test suites.
 
@@ -47,7 +47,7 @@ The E2E Engineer agent creates, maintains, and debugs end-to-end tests using Pla
 | **Sequential Thinking** | Analyze complex test scenarios, debug flaky tests, plan mocking strategies |
 | **Terminal** | Run Playwright tests, install dependencies, execute scripts |
 | **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **VS Code Commands** | Execute VS Code commands and preview in browser |
+| **Terminal commands** | Execute VS Code commands and preview in browser |
 | **Sub-agents** | Delegate subtasks to specialized agents |
 | **Todo** | Track testing progress with structured checklists |
 

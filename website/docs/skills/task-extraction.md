@@ -5,7 +5,7 @@ title: Task Extraction
 
 # Task Extraction
 
-**Folder:** `.github/skills/tsh-task-extracting/`  
+**Folder:** `.cursor/skills/workflows/tsh-task-extracting/`  
 **Used by:** Business Analyst
 
 Identifies and structures epics and user stories from workshop materials (cleaned transcripts, Figma designs, codebase analysis, and other documents). Produces a business-oriented task breakdown with dependencies, assumptions, and open questions.

@@ -5,10 +5,10 @@ title: Creating Prompts
 
 # Creating Prompts
 
-**Folder:** `.github/skills/tsh-creating-prompts/`
-**Used by:** Copilot Engineer
+**Folder:** `.cursor/skills/workflows/tsh-creating-prompts/`
+**Used by:** Cursor Engineer
 
-Provides templates, guidelines, and a structured process for building custom prompt files (`.prompt.md`) that trigger specific workflows routed to the right custom agent and AI model.
+Provides templates, guidelines, and a structured process for building custom prompt files (`/SKILL.md`) that trigger specific workflows routed to the right custom agent and AI model.
 
 ## Core Design Principles
 
@@ -29,7 +29,7 @@ Provides templates, guidelines, and a structured process for building custom pro
 
 - Every prompt must specify an `agent` field routing to a `tsh-` prefixed agent name
 - Every prompt must specify a `model` field (e.g., `GPT-5.4`)
-- Prompt filenames follow `tsh-<action>.prompt.md` convention
+- Prompt filenames follow `tsh-<action>/SKILL.md` convention
 - Prompts should not redefine, override, or contradict the agent's identity
 
 ## Validation Checklist

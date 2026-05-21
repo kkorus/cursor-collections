@@ -5,7 +5,7 @@ title: Business Analyst
 
 # Business Analyst Agent
 
-**File:** `.github/agents/tsh-business-analyst.agent.md`
+**File:** `.cursor/skills/agents/tsh-business-analyst/SKILL.md`
 
 The Business Analyst agent specializes in converting discovery workshop materials (transcripts, Figma designs, codebase context) into structured, Jira-ready epics and user stories. It can also import and iterate on existing Jira backlogs.
 

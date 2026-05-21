@@ -5,7 +5,7 @@ title: DevOps Engineer
 
 # DevOps Engineer Agent
 
-**File:** `.github/agents/tsh-devops-engineer.agent.md`
+**File:** `.cursor/skills/agents/tsh-devops-engineer/SKILL.md`
 
 The DevOps Engineer agent is a Senior DevOps Engineer and Consultant that propagates DevOps culture, builds "Golden Path" templates, and manages cloud infrastructure, CI/CD pipelines, observability, and cost optimization.
 
@@ -57,7 +57,7 @@ The DevOps Engineer agent is a Senior DevOps Engineer and Consultant that propag
 
 Before implementing, the agent discovers context in this order:
 
-1. **Project instructions** — `.devops/instructions.md`, `infrastructure/README.md`, `*.instructions.md`.
+1. **Project instructions** — `.devops/rules.mdc`, `infrastructure/README.md`, `*.mdc rules`.
 2. **CI/CD platform** — GitHub Actions, Bitbucket Pipelines, GitLab CI, Jenkins.
 3. **IaC patterns** — Terraform, Terragrunt, Kubernetes, Helm, Kustomize, CloudFormation, CDK.
 4. **Policy & secrets** — `.rego`, `.sops.yaml`, `sealed-secrets/`, `vault-config/`.

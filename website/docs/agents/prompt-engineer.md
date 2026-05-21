@@ -5,11 +5,11 @@ title: Prompt Engineer
 
 # Prompt Engineer Agent
 
-**File:** `.github/agents/tsh-prompt-engineer.agent.md`
+**File:** `.cursor/skills/agents/tsh-prompt-engineer/SKILL.md`
 
 The Prompt Engineer agent designs, writes, optimizes, and secures LLM application prompts — system prompts, user prompt templates, RAG context injection templates, agent tool-calling instructions, and classification/extraction prompts.
 
-This agent handles **LLM application prompts** (prompts consumed by LLM APIs at runtime). It does NOT handle Copilot customization files (`.prompt.md`, `.agent.md`, `SKILL.md`) — that is `tsh-copilot-engineer`.
+This agent handles **LLM application prompts** (prompts consumed by LLM APIs at runtime). It does NOT handle Copilot customization files (`/SKILL.md`, `SKILL.md`, `SKILL.md`) — that is `tsh-cursor-engineer`.
 
 ## Responsibilities
 

@@ -5,7 +5,7 @@ title: Workflow Overview
 
 # Workflow Overview
 
-Copilot Collections is an AI product engineering framework that covers the **full product lifecycle** through a structured workflow:
+Cursor Collections is an AI product engineering framework that covers the **full product lifecycle** through a structured workflow:
 
 > **Ideate → Implement → Review**
 

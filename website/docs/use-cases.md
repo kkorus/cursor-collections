@@ -5,7 +5,7 @@ title: Use Cases
 
 # Use Cases
 
-Nine scenarios where Copilot Collections changes how work actually gets done.
+Nine scenarios where Cursor Collections changes how work actually gets done.
 
 ---
 
@@ -118,6 +118,6 @@ The DevOps Engineer agent covers the full infrastructure lifecycle:
 
 Generic AI tools don't know your codebase conventions, your internal tooling, or your team's specific way of working. That gap shows up as suggestions you have to discard, context you have to re-explain every session, and patterns that don't fit.
 
-The Copilot Engineer and Copilot Orchestrator agents help you encode your team's domain knowledge into the framework itself — custom agents, skills, prompts, and instructions that persist across sessions. The `/tsh-create-custom-*` commands guide the process: research the domain, create the artifact, review for consistency with the existing framework.
+The Cursor Engineer and Cursor Orchestrator agents help you encode your team's domain knowledge into the framework itself — custom agents, skills, prompts, and instructions that persist across sessions. The `/tsh-create-custom-*` commands guide the process: research the domain, create the artifact, review for consistency with the existing framework.
 
 **~15 min per custom artifact**

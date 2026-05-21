@@ -6,7 +6,7 @@ title: /tsh-analyze-materials
 # /tsh-analyze-materials
 
 **Agent:** Business Analyst  
-**File:** `.github/prompts/tsh-analyze-materials.prompt.md`
+**File:** `.cursor/skills/commands/tsh-analyze-materials/SKILL.md`
 
 Processes discovery workshop materials and converts them into structured, Jira-ready epics and user stories. Can also import an existing Jira backlog for local iteration.
 

@@ -44,57 +44,6 @@
   flex-wrap: wrap;
 }
 
-.btnPrimary {
-  background: rgba(180, 180, 255, 0.2);
-  border: 1px solid rgba(180, 180, 255, 0.4);
-  color: #B4B4FF;
-  padding: 11px 22px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.15s;
-}
-.btnPrimary:hover {
-  background: #D7D6FF;
-  color: #313435;
-  text-decoration: none;
-}
-
-[data-theme='dark'] .btnPrimary {
-  background: rgba(180, 180, 255, 0.2);
-  border-color: rgba(180, 180, 255, 0.4);
-  color: #B4B4FF;
-}
-[data-theme='dark'] .btnPrimary:hover {
-  background: #D7D6FF;
-  color: #313435;
-}
-
-.btnSecondary {
-  background: transparent;
-  color: #EDF1F4;
-  padding: 11px 22px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.15s;
-}
-.btnSecondary:hover {
-  background: rgba(237, 241, 244, 0.08);
-  color: #EDF1F4;
-  text-decoration: none;
-}
-
-[data-theme='dark'] .btnSecondary {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-[data-theme='dark'] .btnSecondary:hover {
-  background: rgba(237, 241, 244, 0.08);
-}
-
 .steps {
   display: flex;
   flex-direction: column;
@@ -179,10 +128,5 @@
 
   .gsActions {
     flex-direction: column;
-  }
-
-  .btnPrimary,
-  .btnSecondary {
-    text-align: center;
   }
 }

@@ -5,7 +5,7 @@ title: Secrets Management
 
 # Secrets Management
 
-**Folder:** `.github/skills/tsh-managing-secrets/`
+**Folder:** `.cursor/skills/workflows/tsh-managing-secrets/`
 **Used by:** DevOps Engineer
 
 Provides patterns for secure credential storage, rotation, and CI/CD authentication across cloud and Kubernetes environments.

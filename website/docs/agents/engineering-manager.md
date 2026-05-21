@@ -5,7 +5,7 @@ title: Engineering Manager
 
 # Engineering Manager Agent
 
-**File:** `.github/agents/tsh-engineering-manager.agent.md`
+**File:** `.cursor/skills/agents/tsh-engineering-manager/SKILL.md`
 
 The Engineering Manager agent orchestrates the implementation phase. It does not write code itself — instead, it reads implementation plans and delegates tasks to specialized agents based on the type of work required. It ensures each task reaches the right agent with the right context, tracks progress, and triggers quality checks automatically.
 
@@ -52,7 +52,7 @@ All delegation happens automatically when you run [`/tsh-implement`](../prompts/
 | **Terminal** | Runs commands to verify environment state |
 | **File Read/Edit/Search** | Navigates the codebase and implementation plan |
 | **Todo** | Tracks task completion within the plan |
-| **VS Code Commands** | Executes VS Code commands and asks user for clarification |
+| **Terminal commands** | Executes VS Code commands and asks user for clarification |
 
 ## Key Behaviors
 

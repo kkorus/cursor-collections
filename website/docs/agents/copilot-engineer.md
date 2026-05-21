@@ -1,17 +1,17 @@
 ---
 sidebar_position: 8
-title: Copilot Engineer
+title: Cursor Engineer
 ---
 
-# Copilot Engineer Agent
+# Cursor Engineer Agent
 
-**File:** `.github/agents/tsh-copilot-engineer.agent.md`
+**File:** `.cursor/skills/agents/tsh-cursor-engineer/SKILL.md`
 
-The Copilot Engineer agent specializes in designing, creating, reviewing, and improving all GitHub Copilot customization artifacts — custom agents, skills, prompts, and instructions.
+The Cursor Engineer agent specializes in designing, creating, reviewing, and improving all Cursor customization artifacts — custom agents, skills, prompts, and instructions.
 
 ## Responsibilities
 
-- Creating, reviewing, and improving custom agents (`.agent.md`), skills (`SKILL.md`), prompt files (`.prompt.md`), and instruction files (`.instructions.md`).
+- Creating, reviewing, and improving custom agents (`SKILL.md`), skills (`SKILL.md`), prompt files (`/SKILL.md`), and instruction files (`.rules.mdc`).
 - Applying prompt engineering best practices: clarity, structure, token efficiency, progressive disclosure.
 - Designing context architecture: what information flows where, at which layer, and with what priority.
 - Enforcing strict separation of concerns between customization types.
@@ -20,16 +20,16 @@ The Copilot Engineer agent specializes in designing, creating, reviewing, and im
 
 ## Separation of Concerns
 
-The Copilot Engineer enforces a strict boundary model:
+The Cursor Engineer enforces a strict boundary model:
 
 | Artifact | Role | Contains |
 |---|---|---|
-| **Agent** (`.agent.md`) | WHO | Persona, behavior, responsibilities, tool access |
+| **Agent** (`SKILL.md`) | WHO | Persona, behavior, responsibilities, tool access |
 | **Skill** (`SKILL.md`) | HOW | Reusable workflows, domain knowledge, step-by-step processes |
-| **Prompt** (`.prompt.md`) | WHAT | Workflow trigger, task starter, routes to agent + model |
-| **Instructions** (`.instructions.md`) | RULES | Coding standards, project conventions, always-applied |
+| **Prompt** (`/SKILL.md`) | WHAT | Workflow trigger, task starter, routes to agent + model |
+| **Instructions** (`.rules.mdc`) | RULES | Coding standards, project conventions, always-applied |
 
-When any artifact crosses these boundaries, the Copilot Engineer identifies and corrects the violation.
+When any artifact crosses these boundaries, the Cursor Engineer identifies and corrects the violation.
 
 ## Key Design Principles
 
@@ -46,7 +46,7 @@ When any artifact crosses these boundaries, the Copilot Engineer identifies and 
 | **Web Fetch** | Fetch external documentation and reference materials |
 | **Mermaid Diagrams** | Render architecture and workflow diagrams |
 | **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **VS Code Commands** | Execute VS Code commands and run tasks |
+| **Terminal commands** | Execute VS Code commands and run tasks |
 | **Sub-agents** | Delegate subtasks to specialized agents |
 | **Todo** | Track task progress with structured checklists |
 

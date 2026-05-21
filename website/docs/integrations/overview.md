@@ -5,11 +5,11 @@ title: Integrations Overview
 
 # Integrations Overview
 
-Copilot Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Copilot sessions — enabling the end-to-end product engineering workflow.
+Cursor Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Copilot sessions — enabling the end-to-end product engineering workflow.
 
 ## What is MCP?
 
-The Model Context Protocol allows VS Code Copilot agents to call external tools as part of their workflow. Each MCP server exposes specific capabilities (search, navigate, execute) that agents can use to gather information or perform actions.
+The Model Context Protocol allows Cursor agents to call external tools as part of their workflow. Each MCP server exposes specific capabilities (search, navigate, execute) that agents can use to gather information or perform actions.
 
 ## Configured Servers
 
@@ -29,7 +29,7 @@ The Model Context Protocol allows VS Code Copilot agents to call external tools 
 
 ## Configuration
 
-All servers are configured in `.vscode/mcp.json`:
+All servers are configured in `.cursor/mcp.json`:
 
 ```json
 {

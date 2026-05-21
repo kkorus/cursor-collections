@@ -5,7 +5,7 @@ title: Multi-Cloud Architecture
 
 # Multi-Cloud Architecture Design
 
-**Folder:** `.github/skills/tsh-designing-multi-cloud-architecture/`
+**Folder:** `.cursor/skills/workflows/tsh-designing-multi-cloud-architecture/`
 **Used by:** DevOps Engineer, Architect
 
 Provides a decision framework for designing multi-cloud architectures across AWS, Azure, and GCP — selecting and integrating best-of-breed services while avoiding vendor lock-in.

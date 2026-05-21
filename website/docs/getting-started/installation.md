@@ -5,71 +5,93 @@ title: Installation
 
 # Installation
 
-Follow these steps to install and configure Copilot Collections for use across all your VS Code workspaces.
+Follow these steps to install Cursor Collections and make it available across all your projects.
 
-## 1. Clone the Repository
+## Option 1 — GitHub Import (recommended)
 
-```bash
-cd ~/projects
-git clone https://github.com/TheSoftwareHouse/copilot-collections.git copilot-collections
-```
+The fastest way to get started — no cloning required.
 
-The important part is that VS Code can see the `.github/prompts`, `.github/agents`, and `.github/skills` folders from this repository.
+1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`)
+2. Navigate to **Rules**
+3. In the **Project Rules** section, click **Add Rule → Remote Rule (GitHub)**
+4. Enter: `https://github.com/TheSoftwareHouse/cursor-collections`
 
-## 2. Configure Global Copilot Locations (User Settings)
-
-You can configure this once at the **user level** and reuse it across all workspaces.
-
-1. Open the **Command Palette**: `CMD` + `Shift` + `P` (macOS) or `Ctrl` + `Shift` + `P` (Windows/Linux).
-2. Select **"Preferences: Open User Settings (JSON)"**.
-3. Add or merge the following configuration:
-
-```jsonc
-{
-  "chat.promptFilesLocations": {
-    "~/projects/copilot-collections/.github/prompts": true
-  },
-  "chat.agentFilesLocations": {
-    "~/projects/copilot-collections/.github/agents": true
-  },
-  "chat.agentSkillsLocations": {
-    "~/projects/copilot-collections/.github/skills": true
-  },
-  "chat.useAgentSkills": true,
-  "github.copilot.chat.searchSubagent.enabled": true,
-  "chat.experimental.useSkillAdherencePrompt": true,
-  "chat.customAgentInSubagent.enabled": true,
-  "github.copilot.chat.agentCustomizationSkill.enabled": true
-}
-```
+Skills are imported globally and available in every workspace immediately.
 
 :::tip
-Adjust the path (`~/projects/copilot-collections/...`) if your folder layout differs. Once set, these locations are available in **all VS Code workspaces**.
+Cursor's GitHub import keeps skills in sync with the repository. You can re-import to pick up updates.
 :::
 
-## 3. Enable Copilot Experimental Features (UI)
+---
 
-If you prefer the UI instead of editing JSON directly:
+## Option 2 — Clone + Symlink (recommended for teams who want full control)
 
-1. Open **Settings** (`CMD` + `,` on macOS or `Ctrl` + `,` on Windows/Linux).
-2. Search for **"promptFilesLocations"** and add an entry pointing to `~/projects/copilot-collections/.github/prompts`.
-3. Search for **"agentFilesLocations"** and add an entry pointing to `~/projects/copilot-collections/.github/agents`.
-4. Search for **"agentSkillsLocations"** and add an entry pointing to `~/projects/copilot-collections/.github/skills`.
-5. Search for **"chat.useAgentSkills"** and enable it — allows Copilot to use Skills.
-6. Search for **"chat.customAgentInSubagent.enabled"** and enable it — allows custom agents in subagents.
-7. Search for **"github.copilot.chat.searchSubagent.enabled"** and enable it — enables the search subagent for better codebase analysis.
-8. Search for **"chat.experimental.useSkillAdherencePrompt"** and enable it — forces Copilot to use Skills more often.
-9. Search for **"github.copilot.chat.agentCustomizationSkill.enabled"** and enable it — enables the agent customization skill.
+This approach lets you pin a specific version, review changes before updating, and contribute back.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/TheSoftwareHouse/cursor-collections ~/cursor-collections
+```
+
+### 2. Link skills globally
+
+```bash
+mkdir -p ~/.cursor/skills
+
+# Agent skills
+for d in ~/cursor-collections/.cursor/skills/agents/*/; do
+  ln -sf "$d" ~/.cursor/skills/
+done
+
+# Workflow skills
+for d in ~/cursor-collections/.cursor/skills/workflows/*/; do
+  ln -sf "$d" ~/.cursor/skills/
+done
+
+# Slash command skills
+for d in ~/cursor-collections/.cursor/skills/commands/*/; do
+  ln -sf "$d" ~/.cursor/skills/
+done
+```
+
+Skills at `~/.cursor/skills/` are available globally in every Cursor workspace.
+
+To update later:
+
+```bash
+git -C ~/cursor-collections pull
+```
+
+---
+
+## MCP Server Configuration
+
+MCP servers unlock Jira, Figma, code search, and browser automation.
+
+### User Profile (recommended — global across all projects)
+
+1. Open **Cursor Settings → MCP**
+2. Click **Add MCP Server**
+3. Copy the contents of [`.cursor/mcp.json`](https://github.com/TheSoftwareHouse/cursor-collections/blob/main/.cursor/mcp.json) into your user MCP configuration
+
+### Workspace (project-specific)
+
+Copy `.cursor/mcp.json` to your project's `.cursor/mcp.json`.
+
+---
 
 ## Using in Your Projects
 
-Once the repo is cloned and VS Code User Settings are configured:
+Once installed:
 
-1. Open your project in VS Code.
-2. Open **GitHub Copilot Chat**.
-3. Switch to one of the configured **agents** (Architect, Business Analyst, Software Engineer, Code Reviewer).
-4. Use the workflow prompts:
-   - `/tsh-implement <JIRA_ID or task description>` (handles research, planning, and implementation)
-   - `/tsh-review <JIRA_ID or task description>`
+1. Open your project in **Cursor**
+2. Open **Agent chat** (`Cmd/Ctrl + Shift + I`, switch to Agent mode)
+3. Type `/` to see available slash commands
+4. Start with `/tsh-implement` to implement a task, or `/tsh-review` to review changes
 
-All of these will leverage the shared configuration from Copilot Collections while still respecting your project's own code and context.
+All skills leverage context from your project while respecting your own code patterns.
+
+:::info
+Skills work in **Agent mode** only, not Ask mode. Make sure Agent mode is selected in the chat panel.
+:::

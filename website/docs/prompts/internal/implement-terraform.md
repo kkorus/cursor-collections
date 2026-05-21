@@ -10,7 +10,7 @@ Not invoked directly by users. To trigger Terraform implementation, use [`/tsh-i
 :::
 
 **Agent:** DevOps Engineer
-**File:** `.github/internal-prompts/tsh-implement-terraform.prompt.md`
+**File:** `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
 
 Creates Terraform modules and provisions cloud infrastructure safely following established IaC patterns and safety guardrails.
 

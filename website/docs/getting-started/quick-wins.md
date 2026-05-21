@@ -6,7 +6,7 @@ title: Quick Wins
 # Quick Wins
 
 :::tip From Theory to Practice
-This page shows how teams integrate Copilot Collections into their daily routines. Each workflow maps a real need to the specific agents, prompts, and skills that address it — organized by the role that benefits the most.
+This page shows how teams integrate Cursor Collections into their daily routines. Each workflow maps a real need to the specific agents, prompts, and skills that address it — organized by the role that benefits the most.
 :::
 
 ---
@@ -19,7 +19,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Manually re-read the transcript, extract action items into a spreadsheet, copy-paste into Jira one by one, miss half the edge cases, and spend the next grooming session fixing vague stories.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-analyze-materials <paste transcript or attach materials>
@@ -48,7 +48,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Start implementing with assumptions. Discover ambiguities halfway through. Go back to the PM. Lose half a sprint.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement PROJ-101
@@ -76,7 +76,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Open dozens of files, grep for function names, read outdated Confluence pages, ask colleagues on Slack, and piece together a mental model over hours.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement PROJ-456
@@ -98,7 +98,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Sketch something in a quick meeting, start coding, discover edge cases mid-sprint, refactor, repeat.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement PROJ-789
@@ -121,7 +121,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Eyeball the Figma spec, implement the component, get "doesn't match" feedback in design review, fix, re-submit, repeat 3–5 times.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement PROJ-321
@@ -147,7 +147,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Write the migration, run it in staging, hope nothing breaks. Discover missing indexes in production. ORM hides the N+1 query until load testing.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement PROJ-555
@@ -175,7 +175,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Skim the diff, check for obvious bugs, approve. Miss the SQL injection, the missing error handling, and the N+1 query.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-review PROJ-789
@@ -201,7 +201,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Manually cross-reference the Jira ticket, the implementation plan, and your code changes. Hope you didn't miss anything. Find out during QA.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-review PROJ-456
@@ -226,7 +226,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Nobody knows where the dead code is. Duplicate utilities are scattered across packages. "We'll clean it up later" never comes.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-review-codebase
@@ -252,7 +252,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Read a stale README, ask teammates for a walkthrough, spend the first week just getting oriented.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-review-codebase
@@ -281,7 +281,7 @@ This page shows how teams integrate Copilot Collections into their daily routine
 
 **The old way:** Write tests with brittle CSS selectors, fight with timing issues, add `waitForTimeout` hacks, watch tests pass locally but fail in CI.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement Add E2E tests for the checkout flow in PROJ-654
@@ -313,7 +313,7 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 
 **The old way:** Export cost reports from the console, manually cross-reference with running resources, build spreadsheets, present them in a meeting, and then nothing changes.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-analyze-aws-costs us-east-1 everything
@@ -338,7 +338,7 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 
 **The old way:** Copy Terraform from a blog post, skip cost estimation, realize the naming doesn't match your conventions, spend a day refactoring.
 
-**With Copilot Collections:**
+**With Cursor Collections:**
 
 ```text
 /tsh-implement Create a VPC with public and private subnets for EKS

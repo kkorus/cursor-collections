@@ -5,7 +5,7 @@ title: Task Analysis
 
 # Task Analysis
 
-**Folder:** `.github/skills/tsh-task-analysing/`  
+**Folder:** `.cursor/skills/workflows/tsh-task-analysing/`  
 **Used by:** Context Engineer, E2E Engineer
 
 Provides a structured process for gathering and expanding task context from multiple sources.
