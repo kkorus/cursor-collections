@@ -9,8 +9,7 @@
 </p>
 
 <p align="center">
-  <b>Product Ideation → Development → Quality – one toolchain, end to end.</b><br/>
-  Built by <a href="https://tsh.io" target="_blank">The Software House</a>.
+  <b>Product Ideation → Development → Quality – one toolchain, end to end.</b>
 </p>
 
 ---
@@ -39,7 +38,7 @@ This repository supports the **full product development lifecycle** with AI-powe
 
 ### Developer Utilities
 
-- **Commands** – `/tsh-ask` (architectural decisions as ADRs), `/tsh-debug` (systematic root-cause analysis), `/tsh-refactor` (structural refactoring without behavior change)
+- **Commands** – `/tsh-ask` (architectural decisions as ADRs), `/tsh-debug` (systematic root-cause analysis), `/tsh-refactor` (structural refactoring without behavior change), `/tsh-commit` ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with mandatory approval before `git commit`)
 
 ### Cursor Customization – Extending the Toolchain
 
@@ -291,6 +290,17 @@ Creates an atomic, step-by-step refactoring plan in `specifications/refactoring/
 
 ---
 
+### Commit changes (Conventional Commits)
+
+```
+/tsh-commit
+/tsh-commit docs: README branding cleanup
+```
+
+Analyzes `git status` and diffs, drafts a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) message, and shows a proposal. Runs `git add` and `git commit` only after you explicitly approve (or after you edit the message and approve again).
+
+---
+
 ### Create a new Cursor customization artifact
 
 ```
@@ -393,4 +403,4 @@ The `tsh-migrating-copilot-to-cursor` workflow skill is loaded automatically and
 
 ## License
 
-MIT License — © 2026 The Software House
+MIT License — © 2026
