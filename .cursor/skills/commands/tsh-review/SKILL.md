@@ -13,7 +13,7 @@ Make sure to review not only the code and its acceptance criteria but also consi
 
 Before starting, load and follow these skills:
 
-- `tsh-code-reviewing` - for the structured code review process covering correctness, quality, security, testing, best practices, and scalability
+- Read [references/code-reviewing.md](references/code-reviewing.md) — structured code review process (correctness, quality, security, testing, best practices, scalability)
 - `tsh-implementation-gap-analysing` - to compare the implemented solution against the plan and verify completeness
 - `tsh-technical-context-discovering` - to understand project conventions and coding standards to review against
 - `tsh-sql-and-database-understanding` - when reviewing database-related changes: schema design, migration safety, query performance, index coverage, and ORM usage

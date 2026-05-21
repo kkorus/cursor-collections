@@ -83,7 +83,7 @@ Apply barrel file rules from the Barrel File Guidelines table below:
 **Step 5: Verify implementation**
 
 - If a calling workflow provides a verification loop (e.g., the Engineering Manager runs `tsh-ui-reviewer` automatically during `/tsh-implement`), defer to that workflow — do not duplicate verification here.
-- If no verification workflow is active, use the `ui-verifying` skill directly to compare the implementation against the Figma design.
+- If no verification workflow is active, read `.cursor/skills/commands/tsh-review-ui/references/ui-verifying.md` to compare the implementation against the Figma design.
 - Walk through each interaction state (hover, focus, disabled, error, loading, empty) and verify correctness.
 - Iterate on differences until the implementation matches the design within acceptable tolerances.
 
@@ -143,7 +143,7 @@ The patterns above are framework-agnostic. For framework-specific implementation
 
 ## Connected Skills
 
-- `tsh-ui-verifying` - for verifying implementation against Figma designs
+- `.cursor/skills/commands/tsh-review-ui/references/ui-verifying.md` — verifying implementation against Figma designs
 - `tsh-technical-context-discovering` - for understanding project conventions before implementing
 - `tsh-ensuring-accessibility` — to ensure components meet WCAG 2.1 AA standards
 - `tsh-optimizing-frontend` — for performance considerations during component implementation

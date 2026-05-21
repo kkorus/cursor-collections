@@ -11,8 +11,9 @@ alwaysApply: false
 Every Cursor customization artifact in this repository must use the `tsh-` prefix:
 
 - **Commands (entry-point skills):** `tsh-<action>/SKILL.md` — e.g., `tsh-implement/`, `tsh-review/`
+- **Command references (not skills):** `tsh-<action>/references/<topic>.md` — backing docs that must not appear as separate `/` entries (e.g. `tsh-review/references/code-reviewing.md`)
 - **Agent skills:** `tsh-<role>/SKILL.md` — e.g., `tsh-software-engineer/`, `tsh-architect/` (applies to both user-facing and internal worker agents)
-- **Workflow skill directories:** `tsh-<gerund-subject>/` — e.g., `tsh-code-reviewing/`, `tsh-creating-skills/`
+- **Workflow skill directories:** `tsh-<gerund-subject>/` — e.g., `tsh-creating-skills/`, `tsh-technical-context-discovering/`
 - **Rules:** `tsh-<topic>.mdc` — e.g., `tsh-naming-conventions.mdc`
 
 ## Why the prefix exists
@@ -21,7 +22,7 @@ These artifacts are designed to be installed into other projects (via GitHub imp
 
 ## Frontmatter `name` fields must match the prefixed folder name
 
-Skills use a `name` field in SKILL.md frontmatter — it must include the `tsh-` prefix and match the directory name. For example, skill directory `tsh-code-reviewing/` must have `name: tsh-code-reviewing` in its SKILL.md frontmatter.
+Skills use a `name` field in SKILL.md frontmatter — it must include the `tsh-` prefix and match the directory name. For example, `tsh-creating-skills/SKILL.md` must have `name: tsh-creating-skills`. Files under `commands/*/references/` are not skills and have no frontmatter `name`.
 
 ## Cross-references must use prefixed names
 

@@ -13,7 +13,7 @@ Plan and execute a structural code change that improves the codebase without alt
 - `tsh-codebase-analysing` — to understand the current structure, identify coupling, and scope the refactoring
 - `tsh-technical-context-discovering` — to establish project conventions that the refactored code must follow
 - `tsh-implementation-gap-analysing` — to verify what exists, what must change, and what must stay the same
-- `tsh-code-reviewing` — for the post-refactor quality gate (step 5): verify no regressions, code quality standards met, no new smells introduced
+- Read `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — post-refactor quality gate (step 5): verify no regressions, code quality standards met, no new smells introduced
 
 ## Key Distinction
 
@@ -67,6 +67,6 @@ Refactoring changes **structure**, not **behavior**. If a task adds new function
 - `tsh-codebase-analysing` — loaded to understand current structure and scope
 - `tsh-technical-context-discovering` — loaded to establish conventions the refactored code must follow
 - `tsh-implementation-gap-analysing` — loaded to identify what changes vs. what stays the same
-- `tsh-code-reviewing` — loaded for the post-refactor quality gate
+- `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — post-refactor quality gate
 - `tsh-debug` — when the refactoring uncovers a bug; handle it separately before continuing
 - `tsh-ask` — when the refactoring raises an architectural question worth recording as a decision

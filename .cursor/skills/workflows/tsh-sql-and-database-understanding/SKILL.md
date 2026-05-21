@@ -1225,5 +1225,5 @@ Seed the development database with production-scale data. Verify that queries pe
 ## Connected Skills
 
 - `tsh-architecture-designing` — for designing data models as part of broader system architecture
-- `tsh-code-reviewing` — for validating SQL quality, index coverage, and query performance
+- `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — for validating SQL quality, index coverage, and query performance
 - `tsh-technical-context-discovering` — for establishing database conventions and existing patterns before designing

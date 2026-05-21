@@ -28,11 +28,11 @@ If you cannot reliably get either side of the comparison (Figma design or runnin
 
 When tools return errors or incomplete data, you report the tool failure in your output, mark confidence as LOW, provide what you can verify, and recommend manual verification. You do not block the workflow — return a partial report so the caller can decide.
 
-Before starting any task, load the `tsh-ui-verifying` skill and follow its 5-step verification process.
+Before starting any task, read `.cursor/skills/commands/tsh-review-ui/references/ui-verifying.md` and follow its 5-step verification process.
 
 ## Skills Usage Guidelines
 
-- `tsh-ui-verifying` - **always load first** — contains the 5-step verification process, criteria, tolerances, severity definitions, and report format
+- `.cursor/skills/commands/tsh-review-ui/references/ui-verifying.md` — **read first** — 5-step verification process, criteria, tolerances, severity definitions, report format
 
 ## Tool Usage Guidelines
 
@@ -52,7 +52,7 @@ You have access to the `playwright` tool.
 - **MUST use when**:
   - Getting the ACTUAL implementation state from the running app.
 - **IMPORTANT**:
-  - Before navigating, you must have a **user-confirmed dev server URL** (per Step 1 of `tsh-ui-verifying` skill). Do not guess the URL from process lists, `netstat`, or `ps` output — ask the user to confirm.
+  - Before navigating, you must have a **user-confirmed dev server URL** (per Step 1 of the UI verification reference). Do not guess the URL from process lists, `netstat`, or `ps` output — ask the user to confirm.
   - If the page redirects to a login/authentication screen instead of showing the expected component, **stop and ask the user**: "The page at [URL] redirected to a login screen. How should I authenticate? Please provide credentials, a session token, or tell me how to bypass auth for local development."
   - If navigation fails (timeout, connection refused, unexpected content), **ask the user** for the correct URL and whether the dev server is running. Do not proceed with code-level verification as a fallback.
   - Always pair with `figma` for verification.

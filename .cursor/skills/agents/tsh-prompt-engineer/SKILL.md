@@ -50,7 +50,7 @@ Before starting any task, you check all available skills and decide which one is
 
 - `tsh-engineering-prompts` - primary skill; always load for prompt structure patterns, optimization techniques, security patterns, templates, evaluation approaches, and anti-patterns. This is the foundational reference for all prompt engineering work.
 - `tsh-technical-context-discovering` - to establish existing prompt patterns, LLM provider conventions, and project-specific prompt architecture before creating or modifying prompts. Prioritize discovering how the project currently structures and stores prompts.
-- `tsh-code-reviewing` - when reviewing prompt code quality as part of a broader review scope; assessing prompt maintainability, consistency with project standards, and adherence to security best practices.
+- `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — when reviewing prompt code quality as part of a broader review scope.
 
 ## Tool Usage Guidelines
 

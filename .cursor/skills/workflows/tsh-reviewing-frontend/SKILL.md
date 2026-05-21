@@ -5,7 +5,7 @@ description: Frontend-specific code review criteria, component anti-patterns, ho
 
 # Reviewing Frontend
 
-Provides frontend-specific review criteria for evaluating component quality, hooks correctness, rendering behavior, accessibility compliance, and performance — to be used alongside the general `tsh-code-reviewing` skill.
+Provides frontend-specific review criteria for evaluating component quality, hooks correctness, rendering behavior, accessibility compliance, and performance — use alongside `.cursor/skills/commands/tsh-review/references/code-reviewing.md`.
 
 <principles>
 
@@ -218,7 +218,7 @@ The review criteria above are framework-agnostic. For framework-specific anti-pa
 
 ## Connected Skills
 
-- `tsh-code-reviewing` — the general review process; this skill provides the frontend-specific checks
+- `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — general review process; this skill provides frontend-specific checks
 - `tsh-implementing-frontend` — the patterns being reviewed against
 - `tsh-implementing-forms` — for form-specific patterns (validation schemas, field composition, multi-step flows) being reviewed against
 - `tsh-ensuring-accessibility` — for comprehensive accessibility audits beyond spot-checks

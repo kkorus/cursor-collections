@@ -13,11 +13,11 @@ This skill can be used standalone (user invokes directly) or the same verificati
 
 Before starting, load and follow these skills:
 
-- `tsh-ui-verifying` - verification process, criteria, tolerances, severity definitions, report format
+- Read [references/ui-verifying.md](references/ui-verifying.md) — verification process, criteria, tolerances, severity definitions, report format
 
 ## Workflow
 
-Follow the 5-step verification process defined in the `tsh-ui-verifying` skill. The skill contains the complete workflow including:
+Follow the 5-step verification process in [references/ui-verifying.md](references/ui-verifying.md). The reference contains the complete workflow including:
 
 1. Validate inputs (Figma URL + running dev server)
 2. Get EXPECTED from Figma via `figma`

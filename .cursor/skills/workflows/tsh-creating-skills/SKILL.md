@@ -16,7 +16,7 @@ A skill is a folder containing a `SKILL.md` file with YAML frontmatter and Markd
 
 - **Skills** = reusable workflows, domain knowledge, step-by-step processes, templates (SKILL.md files)
 - **Agents** = behavior, personality, responsibilities, problem-solving approach (SKILL.md in `.cursor/skills/agents/`)
-- **Commands** = workflow entry-point triggers with `disable-model-invocation: true` (SKILL.md in `.cursor/skills/commands/`)
+- **Commands** = workflow entry-point triggers with `disable-model-invocation: true` (SKILL.md in `.cursor/skills/commands/`); backing docs for a single command live in `commands/<name>/references/` (not a separate workflow skill — avoids duplicate `/` menu entries)
 
 A skill must NOT define who the agent is — that belongs in the agent file. A skill defines HOW to perform a specific task or workflow.
 </what-is-a-skill>
@@ -212,6 +212,14 @@ description: "Processes data from various sources."
 
 The Markdown body after the frontmatter contains the skill instructions. There are no strict format restrictions — write whatever helps the agent perform the task effectively.
 
+### Optional Frontmatter Fields
+
+| Field | When to use |
+|---|---|
+| `paths` | Scope the skill to specific file types (e.g. `"**/*.tsx"`). Only surfaced when the agent works with matching files. Leave unset for globally available skills. |
+| `disable-model-invocation` | Set to `true` for entry-point commands that should only trigger on explicit `/skill-name` invocation. See `tsh-creating-commands` for the full command pattern. |
+| `metadata` | Arbitrary key-value metadata (author, version). Informational only. |
+
 ### Content Guidelines
 
 <body-guidelines>
@@ -296,6 +304,7 @@ Validation:
 - [ ] Frontmatter: `description` describes WHAT the skill does and WHEN to use it
 - [ ] Frontmatter: `description` is in third person (no "I", "you", "we")
 - [ ] Frontmatter: `description` includes specific trigger keywords
+- [ ] Frontmatter: `paths` set if skill should be scoped to specific file types (omitted otherwise)
 - [ ] Body: Under 500 lines total
 - [ ] Body: Introduction is 1-2 sentences
 - [ ] Body: Process/workflow has a trackable checklist

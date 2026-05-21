@@ -127,7 +127,19 @@ Copy `.cursor/mcp.json` to your project's `.cursor/mcp.json`.
 
 ## How to Use
 
-All commands work in **Cursor Agent chat** (not Ask mode). Type `/` to see available slash commands.
+All commands work in **Cursor Agent chat** (not Ask mode). Type `/` to open the slash palette.
+
+### Slash menu: commands vs workflow skills
+
+The `/` list includes **slash commands** (`.cursor/skills/commands/`) — these are what you should run — and often **workflow skills** (`.cursor/skills/workflows/`) that agents load automatically. Workflow entries are **not** recommended for manual invocation.
+
+| Use this (command) | Not this (workflow in `/`) |
+| ------------------ | --------------------------- |
+| `/tsh-commit` | ~~`tsh-committing`~~ (moved to command reference) |
+| `/tsh-review` | ~~`tsh-code-reviewing`~~ (moved to command reference) |
+| `/tsh-review-ui` | ~~`tsh-ui-verifying`~~ (moved to command reference) |
+
+Other workflows (e.g. `tsh-technical-context-discovering`, `tsh-implementing-backend`) may still appear in `/` — that is expected; agents use them during `/tsh-implement` and related commands.
 
 ---
 
@@ -361,7 +373,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 | **Backend** | tsh-implementing-backend, tsh-sql-and-database-understanding, tsh-engineering-prompts |
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
-| **Quality** | tsh-code-reviewing, tsh-ui-verifying, tsh-e2e-testing, tsh-codebase-analysing |
+| **Quality** | tsh-e2e-testing, tsh-codebase-analysing, tsh-reviewing-frontend (code/UI review processes live under `/tsh-review` and `/tsh-review-ui` references) |
 | **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-prompts, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
 
 ---
@@ -374,8 +386,8 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
 │   ├── agents/                    # 16 agent skill definitions
-│   ├── workflows/                 # 34 domain workflow skills
-│   ├── commands/                  # 15 user-invokable slash commands
+│   ├── workflows/                 # 32 domain workflow skills (agent-invoked; may appear in /)
+│   ├── commands/                  # 16 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 11 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration
 ```

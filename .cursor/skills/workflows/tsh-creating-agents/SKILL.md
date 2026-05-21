@@ -121,6 +121,7 @@ Verify the agent file against this checklist:
 - [ ] No coding standards are embedded (those belong in `.cursor/rules/*.mdc` rule files)
 - [ ] Agent role is focused and distinct from existing agents
 - [ ] Handoffs (if present) target valid agent names
+- [ ] Connected Skills section present at end of file (outside XML tags)
 
 ## Agent File Structure Reference
 
@@ -149,6 +150,7 @@ Verify the agent file against this checklist:
 | `<collaboration>` | No | Interaction patterns with other agents or team members. |
 | `<constraints>` | No | Explicit limitations and anti-patterns for the agent. |
 | `<output-format>` | No | Expected structure or format of the agent's deliverables. |
+| Connected Skills | **Yes** | Links to related skills with brief rationale for each. Placed after all XML sections (outside XML tags, at end of file). |
 
 ## XML Syntax Guidelines
 

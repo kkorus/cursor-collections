@@ -22,17 +22,29 @@ description: "<What the skill does — core capabilities>. <When to use it — t
 # ============================================================
 # OPTIONAL FIELDS
 # ============================================================
-# license: Apache-2.0
-# compatibility: "Designed for VS Code GitHub Copilot"
+# paths:
+#   Glob patterns that scope this skill to specific files.
+#   When set, the skill is only surfaced when the agent works with matching files.
+#   Examples:
+#     paths: "**/*.tsx"
+#     paths:
+#       - "**/*.tsx"
+#       - "packages/ui/**/*.ts"
+#   Leave unset for skills available regardless of which files are open.
+#
+# disable-model-invocation: true
+#   When true, this skill is only included when explicitly invoked via /skill-name.
+#   The agent will not automatically apply it based on context.
+#   Use for entry-point commands that should never auto-trigger.
+#
 # metadata:
 #   author: your-org
 #   version: "1.0"
-# allowed-tools: Bash(git:*) Read
 ---
 
 <!-- GUARD: This file defines HOW to perform a specific task. Do NOT define
-     agent personality or behavior here (those belong in .agent.md files).
-     Do NOT define workflow triggers here (those belong in .prompt.md files).
+     agent personality or behavior here (those belong in .cursor/skills/agents/).
+     Do NOT define workflow entry points here (those belong in .cursor/skills/commands/).
      Keep instructions concise — only add context the LLM doesn't already have. -->
 
 <!-- Skill Title -->

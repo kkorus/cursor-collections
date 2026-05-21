@@ -32,14 +32,17 @@ The key difference between a command and a workflow skill:
 | Body | Workflow steps + skill references | Domain knowledge + patterns + procedures |
 
 Use a command when the workflow is user-initiated and should not trigger automatically. Use a workflow skill when the agent should auto-detect when to apply it.
-</command-vs-workflow>
+
+<slash-menu-clutter>
+When a command has a **1:1 backing** process with a similar name (e.g. `/tsh-review` vs `tsh-code-reviewing`), do **not** add a separate workflow `SKILL.md` — Cursor lists every skill in the `/` palette. Put the process in `commands/<name>/references/<topic>.md` and point the command body to `Read references/...`. See `specifications/decisions/slash-menu-visibility-policy.decision.md` (Tier A).
+</slash-menu-clutter>
 
 <workflow-focus>
 A command skill must:
 
 - Have `disable-model-invocation: true` in frontmatter
 - Describe the **workflow steps** for the specific task
-- Reference the **workflow skills** the agent should load
+- Reference **workflow skills** the agent should load, or **`references/*.md`** under the command when the content must not appear as a separate slash entry
 - Define the **expected outcome** of the workflow
 - Optionally configure which agent context or tools apply
 
@@ -126,6 +129,7 @@ Verify the command skill against this checklist:
 - [ ] No coding standards embedded (reference `.cursor/rules/*.mdc` instead)
 - [ ] Workflow steps are clear, sequential, and actionable
 - [ ] The command is distinct from existing commands and does not duplicate their workflows
+- [ ] Connected Skills section present and references existing skills
 
 ## Command Skill Structure Reference
 
@@ -146,6 +150,7 @@ Verify the command skill against this checklist:
 | Workflow | **Yes** | Numbered steps defining the workflow sequence. |
 | Output expectations | No | File naming, document structure, success criteria. |
 | Constraints | No | Workflow-specific limitations, anti-patterns, or scope boundaries. |
+| Connected Skills | **Yes** | Links to related skills with brief rationale for each. |
 
 ## Connected Skills
 

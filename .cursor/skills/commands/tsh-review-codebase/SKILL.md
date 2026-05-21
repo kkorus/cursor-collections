@@ -12,7 +12,7 @@ Load and follow the tsh-architect agent skill. Your goal is to perform a thoroug
 Before starting, load and follow these skills:
 - `tsh-codebase-analysing` - for the structured codebase analysis process only (note: this skill's "Report Structure" section overrides any report/template instructions from the skill)
 - `tsh-technical-context-discovering` - to understand project conventions, architecture patterns, and established practices
-- `tsh-code-reviewing` - for code quality standards, best practices verification, and security considerations
+- Read `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — code quality standards, best practices verification, and security considerations
 
 ## Workflow
 
@@ -27,7 +27,7 @@ Before starting, load and follow these skills:
 Run `tsh-architect` subagents in parallel — one per layer/app identified. Each subagent should receive detailed instructions including:
 - The specific layer/app path and tech stack to analyze
 - What to search for (dead code, duplications, improvement areas)
-- The skills to load (`tsh-codebase-analysing`, `tsh-code-reviewing`)
+- The skills to load (`tsh-codebase-analysing`) and review reference (`.cursor/skills/commands/tsh-review/references/code-reviewing.md`)
 - To return structured findings in the format matching the report template
 
 For each layer/app, the subagent should:

@@ -1,9 +1,6 @@
----
-name: tsh-ui-verifying
-description: UI verification criteria, structure checklists, severity definitions, and tolerance rules for comparing implementations against Figma designs. Use for verifying UI matches design, understanding what to check, and determining acceptable differences.
----
+# UI verification (reference)
 
-# UI Verification
+> **Not a slash command.** Use `/tsh-review-ui`. This file is loaded by the agent during UI verification.
 
 Verification process, criteria, and tolerances for comparing UI implementations against Figma designs.
 

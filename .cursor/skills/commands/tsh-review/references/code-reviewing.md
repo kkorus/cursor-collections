@@ -1,11 +1,8 @@
----
-name: tsh-code-reviewing
-description: Perform code review. Quality analysis. Acceptance criteria verification. Best practices review.
----
+# Code review (reference)
 
-# Code review
+> **Not a slash command.** Use `/tsh-review`. This file is loaded by the agent during review commands.
 
-This skill helps you verify that the implemented code follows all best practices and quality standards.
+Structured process to verify that implemented code follows best practices and quality standards.
 
 ## Code Review Process
 
