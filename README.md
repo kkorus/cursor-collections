@@ -17,7 +17,7 @@
 
 ## What This Repo Provides
 
-This repository supports the **full product development lifecycle** with AI-powered agent skills, workflow skills, and slash commands organized into three lifecycle phases — plus a cross-cutting track for Cursor customization:
+This repository supports the **full product development lifecycle** with AI-powered agent skills, workflow skills, and slash commands organized into four lifecycle phases — plus a cross-cutting track for Cursor customization:
 
 ### Product Ideation – Requirements & Planning
 
@@ -37,11 +37,15 @@ This repository supports the **full product development lifecycle** with AI-powe
 - **Commands** – `/tsh-review`, `/tsh-review-ui`, `/tsh-review-codebase`
 - **Workflow skills** – Code Review, UI Verification, E2E Testing
 
+### Developer Utilities
+
+- **Commands** – `/tsh-ask` (architectural decisions as ADRs), `/tsh-debug` (systematic root-cause analysis), `/tsh-refactor` (structural refactoring without behavior change)
+
 ### Cursor Customization – Extending the Toolchain
 
 - **Agent skills** – Cursor Engineer, Cursor Orchestrator
 - **Commands** – `/tsh-create-custom-agent`, `/tsh-create-custom-skill`, `/tsh-create-custom-rules`
-- **Workflow skills** – Creating Agent Skills, Creating Skills, Creating Commands, Creating Rules
+- **Workflow skills** – Creating Agent Skills, Creating Skills, Creating Commands, Creating Prompts, Creating Rules
 
 ### Infrastructure
 
@@ -254,6 +258,39 @@ The Engineering Manager's Context Engineer automatically gathers all context fro
 
 ---
 
+### Ask an architectural question
+
+```
+/tsh-ask Why does the payment module use optimistic locking?
+/tsh-ask Should we split the notifications module into a separate service?
+```
+
+Researches the codebase, evaluates options, and saves the answer as a structured ADR in `specifications/decisions/{topic}.decision.md`.
+
+---
+
+### Debug a bug
+
+```
+/tsh-debug Login fails silently when session expires
+/tsh-debug The useCart hook triggers an infinite re-render on mobile
+```
+
+Reproduces → isolates root cause → delegates fix to Software Engineer → verifies with regression tests. Never fixes symptoms — always finds the root cause first.
+
+---
+
+### Refactor code structure
+
+```
+/tsh-refactor Extract shared validation logic from all form handlers
+/tsh-refactor Split the UserService class — it has too many responsibilities
+```
+
+Creates an atomic, step-by-step refactoring plan in `specifications/refactoring/`. Each step keeps tests green. Delegates implementation to Software Engineer.
+
+---
+
 ### Create a new Cursor customization artifact
 
 ```
@@ -303,7 +340,7 @@ The Cursor Orchestrator handles research → design → creation → review auto
 
 ---
 
-## Workflow skills (33)
+## Workflow skills (34)
 
 Skills are automatically loaded by agents when relevant to the task. No manual invocation needed.
 
@@ -315,7 +352,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
 | **Quality** | tsh-code-reviewing, tsh-ui-verifying, tsh-e2e-testing, tsh-codebase-analysing |
-| **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
+| **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-prompts, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
 
 ---
 
@@ -327,8 +364,8 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
 │   ├── agents/                    # 16 agent skill definitions
-│   ├── workflows/                 # 33 domain workflow skills
-│   ├── commands/                  # 12 user-invokable slash commands
+│   ├── workflows/                 # 34 domain workflow skills
+│   ├── commands/                  # 15 user-invokable slash commands
 │   └── internal/                  # 11 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration
 ```
