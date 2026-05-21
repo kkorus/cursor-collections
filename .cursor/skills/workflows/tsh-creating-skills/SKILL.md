@@ -16,7 +16,7 @@ A skill is a folder containing a `SKILL.md` file with YAML frontmatter and Markd
 
 - **Skills** = reusable workflows, domain knowledge, step-by-step processes, templates (SKILL.md files)
 - **Agents** = behavior, personality, responsibilities, problem-solving approach (SKILL.md in `.cursor/skills/agents/`)
-- **Commands** = workflow entry-point triggers with `disable-model-invocation: true` (SKILL.md in `.cursor/skills/commands/`); backing docs for a single command live in `commands/<name>/references/` (not a separate workflow skill — avoids duplicate `/` menu entries)
+- **Commands** = workflow entry-point triggers with `disable-model-invocation: true` (SKILL.md in `.cursor/skills/commands/`); command-only backing docs may live in `commands/<name>/references/` when the content must not appear as a separate `/` entry. Shared processes used by multiple agents/commands stay as workflow skills (e.g. `tsh-code-reviewing`, `tsh-ui-verifying`).
 
 A skill must NOT define who the agent is — that belongs in the agent file. A skill defines HOW to perform a specific task or workflow.
 </what-is-a-skill>

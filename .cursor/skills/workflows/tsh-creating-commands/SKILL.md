@@ -34,7 +34,9 @@ The key difference between a command and a workflow skill:
 Use a command when the workflow is user-initiated and should not trigger automatically. Use a workflow skill when the agent should auto-detect when to apply it.
 
 <slash-menu-clutter>
-When a command has a **1:1 backing** process with a similar name (e.g. `/tsh-review` vs `tsh-code-reviewing`), do **not** add a separate workflow `SKILL.md` — Cursor lists every skill in the `/` palette. Put the process in `commands/<name>/references/<topic>.md` and point the command body to `Read references/...`. See `specifications/decisions/slash-menu-visibility-policy.decision.md` (Tier A).
+When a command has a **1:1 backing** process used only by that command, never auto-loaded elsewhere, and must not appear in `/`, put it in `commands/<name>/references/<topic>.md`.
+
+When the process is domain knowledge loaded by a command or agents (e.g. `tsh-committing`, `tsh-code-reviewing`, `tsh-ui-verifying`), keep it as a **workflow skill** and reference it by name. Users invoke `/tsh-commit`, `/tsh-review`, or `/tsh-review-ui` — not the workflow directly. See `specifications/decisions/slash-menu-visibility-policy.decision.md`.
 </slash-menu-clutter>
 
 <workflow-focus>

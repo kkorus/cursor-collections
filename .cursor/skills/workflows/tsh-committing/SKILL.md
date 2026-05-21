@@ -1,8 +1,11 @@
-# Conventional Commits (reference)
+---
+name: tsh-committing
+description: "Conventional Commits message drafting: type/scope inference, format rules, secret-file checks, and split recommendations. Use when drafting commit messages, running /tsh-commit, or analyzing git diffs for commit structure."
+---
 
-> **Not a slash command.** Use `/tsh-commit`. This file is loaded by the agent during that command only.
+# Committing
 
-Procedural rules for drafting commit messages per [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Does not run `git commit` itself.
+Procedural rules for drafting commit messages per [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Does not run `git commit` itself — the `/tsh-commit` command handles inspection, confirmation, and execution.
 
 ## Message Format
 

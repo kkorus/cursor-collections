@@ -33,7 +33,7 @@ Before starting any task, you check all available skills and decide which one is
 
 ## Skills Usage Guidelines
 
-- Read `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — structured code review process (correctness, quality, security, testing, best practices, scalability).
+- `tsh-code-reviewing` — structured code review process (correctness, quality, security, testing, best practices, scalability).
 - `tsh-implementation-gap-analysing` - to compare the implemented solution against the plan and verify completeness of all required changes.
 - `tsh-technical-context-discovering` - to understand project conventions, coding standards, and established patterns to review against.
 - `tsh-sql-and-database-understanding` - when reviewing database-related code: validating SQL quality, index coverage, query performance, schema design, migration safety, ORM usage patterns, and transaction/locking strategies.

@@ -1,6 +1,9 @@
-# UI verification (reference)
+---
+name: tsh-ui-verifying
+description: "UI verification criteria, tolerances, and report format for comparing implementations against Figma designs. Use when verifying UI components, reviewing Figma vs implementation, or running /tsh-review-ui."
+---
 
-> **Not a slash command.** Use `/tsh-review-ui`. This file is loaded by the agent during UI verification.
+# UI Verifying
 
 Verification process, criteria, and tolerances for comparing UI implementations against Figma designs.
 
@@ -84,7 +87,7 @@ Always verify in this order — **complete ALL categories regardless of findings
 | **Grouping**            | Are related elements grouped together as in design?      |
 | **Element order**       | Is the visual order of elements the same?                |
 | **Wrapper elements**    | Are there extra/missing wrapper divs that change layout? |
-| **Sections present**    | Are ALL sections from Figma present in implementation?   |
+| **Sections present**    | Are ALL sections from Figma present in implementation? |
 
 ### Layout (CRITICAL)
 

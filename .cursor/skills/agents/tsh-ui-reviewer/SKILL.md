@@ -28,11 +28,11 @@ If you cannot reliably get either side of the comparison (Figma design or runnin
 
 When tools return errors or incomplete data, you report the tool failure in your output, mark confidence as LOW, provide what you can verify, and recommend manual verification. You do not block the workflow — return a partial report so the caller can decide.
 
-Before starting any task, read `.cursor/skills/commands/tsh-review-ui/references/ui-verifying.md` and follow its 5-step verification process.
+Before starting any task, load `tsh-ui-verifying` and follow its 5-step verification process.
 
 ## Skills Usage Guidelines
 
-- `.cursor/skills/commands/tsh-review-ui/references/ui-verifying.md` — **read first** — 5-step verification process, criteria, tolerances, severity definitions, report format
+- `tsh-ui-verifying` — **load first** — 5-step verification process, criteria, tolerances, severity definitions, report format
 
 ## Tool Usage Guidelines
 

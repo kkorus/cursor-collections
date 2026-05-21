@@ -418,5 +418,5 @@ Always test prompts against adversarial and boundary inputs:
 ## Connected Skills
 
 - `tsh-creating-commands` — for Cursor command skills (entry-point slash commands; different domain, complementary)
-- `.cursor/skills/commands/tsh-review/references/code-reviewing.md` — for reviewing prompt code quality alongside application code
+- `tsh-code-reviewing` — for reviewing prompt code quality alongside application code
 - `tsh-architecture-designing` — for prompt strategy decisions as part of system architecture

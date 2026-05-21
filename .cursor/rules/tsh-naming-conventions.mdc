@@ -11,7 +11,7 @@ alwaysApply: false
 Every Cursor customization artifact in this repository must use the `tsh-` prefix:
 
 - **Commands (entry-point skills):** `tsh-<action>/SKILL.md` — e.g., `tsh-implement/`, `tsh-review/`
-- **Command references (not skills):** `tsh-<action>/references/<topic>.md` — backing docs that must not appear as separate `/` entries (e.g. `tsh-review/references/code-reviewing.md`)
+- **Command references (not skills):** `tsh-<action>/references/<topic>.md` — optional backing docs that must not appear as separate `/` entries. Prefer a workflow skill when the process is shared or should be auto-loaded (e.g. `tsh-committing`, `tsh-code-reviewing`, `tsh-ui-verifying`).
 - **Agent skills:** `tsh-<role>/SKILL.md` — e.g., `tsh-software-engineer/`, `tsh-architect/` (applies to both user-facing and internal worker agents)
 - **Workflow skill directories:** `tsh-<gerund-subject>/` — e.g., `tsh-creating-skills/`, `tsh-technical-context-discovering/`
 - **Rules:** `tsh-<topic>.mdc` — e.g., `tsh-naming-conventions.mdc`

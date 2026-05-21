@@ -8,9 +8,9 @@ disable-model-invocation: true
 
 Analyze the working tree, draft a [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) message, and run `git commit` **only after the user explicitly approves** the proposal.
 
-## Required References
+## Required Skills
 
-- [references/conventional-commits.md](references/conventional-commits.md) — type/scope inference, message format, secret-file rules, split recommendations
+- `tsh-committing` — type/scope inference, message format, secret-file rules, split recommendations
 
 ## Workflow
 
@@ -29,7 +29,7 @@ If there are no staged or unstaged changes to tracked files (and no untracked fi
 
 ### 2. Draft the commit message
 
-Read [references/conventional-commits.md](references/conventional-commits.md) and analyze the combined diff (staged + unstaged unless the user specified staged-only).
+Load `tsh-committing` and analyze the combined diff (staged + unstaged unless the user specified staged-only).
 
 - Apply any user hint from the command invocation (type, scope, `Refs:`, subject override).
 - If unrelated change domains appear, present **Option A** (single commit) and **Option B** (split into N commits with separate messages and file lists).
@@ -106,12 +106,12 @@ Hints influence drafting; they do not bypass the confirmation gate.
 - Never update `git config`.
 - Never use `--no-verify`, `--no-gpg-sign`, or `--amend` unless the user explicitly requests it and user rules allow amend.
 - Never `git push`, force push, or destructive commands (`reset --hard`, etc.) unless explicitly requested.
-- Never commit secret or credential files (see [references/conventional-commits.md](references/conventional-commits.md)).
+- Never commit secret or credential files (see `tsh-committing`).
 - Never commit unless the user asked to commit in this conversation (invoking `/tsh-commit` counts as intent to commit **after** approval).
 - Match the approved message byte-for-byte in `git commit` unless the user edited it in step 4.
 
 ## Connected Skills
 
-- [references/conventional-commits.md](references/conventional-commits.md) — message drafting rules
+- `tsh-committing` — message drafting rules
 - `tsh-refactor` — when changes need structural work before committing
 - `tsh-debug` — when the diff includes a bug fix that should be verified first

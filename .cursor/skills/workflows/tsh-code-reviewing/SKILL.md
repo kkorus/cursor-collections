@@ -1,6 +1,9 @@
-# Code review (reference)
+---
+name: tsh-code-reviewing
+description: "Structured code review process covering correctness, quality, security, testing, best practices, and scalability. Use when reviewing implementations, running quality gates, or verifying code against a plan."
+---
 
-> **Not a slash command.** Use `/tsh-review`. This file is loaded by the agent during review commands.
+# Code Reviewing
 
 Structured process to verify that implemented code follows best practices and quality standards.
 

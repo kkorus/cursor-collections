@@ -34,14 +34,19 @@ Cursor discovers every `SKILL.md` under `.cursor/skills/` and exposes `name` + `
 
 **Tier A implemented (2026-05-21):**
 
-- `tsh-committing` → `commands/tsh-commit/references/conventional-commits.md`
-- `tsh-code-reviewing` → `commands/tsh-review/references/code-reviewing.md`
-- `tsh-ui-verifying` → `commands/tsh-review-ui/references/ui-verifying.md`
+**Tier A reverted (2026-05-21):** shared processes restored as workflow skills:
+
+- `tsh-committing` → `workflows/tsh-committing/SKILL.md` (was `commands/tsh-commit/references/conventional-commits.md`)
+
+- `tsh-code-reviewing` → restored as `workflows/tsh-code-reviewing/SKILL.md` (was `commands/tsh-review/references/code-reviewing.md`)
+- `tsh-ui-verifying` → restored as `workflows/tsh-ui-verifying/SKILL.md` (was `commands/tsh-review-ui/references/ui-verifying.md`)
+
+Rationale: agents and multiple commands share these processes; workflow skills enable auto-invocation and a single canonical path. Users still invoke slash commands (`/tsh-commit`, `/tsh-review`, `/tsh-review-ui`), not workflow names directly.
 
 ## Consequences
 
-- `/` palette has fewer near-duplicate entries for commit and review flows.
-- New command-specific knowledge should default to `references/` when there is no need for a separate discovered skill.
+- `tsh-committing`, `tsh-code-reviewing`, and `tsh-ui-verifying` may appear in `/` — document in README that users should prefer the matching command.
+- Reserve `commands/*/references/` for command-only knowledge that must not be a discovered skill.
 - `tsh-creating-commands` and `tsh-creating-skills` document the anti-pattern.
 - Website docs under `website/docs/skills/` may still list old paths until a docs pass.
 

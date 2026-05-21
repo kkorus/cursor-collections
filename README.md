@@ -135,9 +135,9 @@ The `/` list includes **slash commands** (`.cursor/skills/commands/`) — these 
 
 | Use this (command) | Not this (workflow in `/`) |
 | ------------------ | --------------------------- |
-| `/tsh-commit` | ~~`tsh-committing`~~ (moved to command reference) |
-| `/tsh-review` | ~~`tsh-code-reviewing`~~ (moved to command reference) |
-| `/tsh-review-ui` | ~~`tsh-ui-verifying`~~ (moved to command reference) |
+| `/tsh-commit` | ~~`tsh-committing`~~ (agent loads workflow; use command) |
+| `/tsh-review` | ~~`tsh-code-reviewing`~~ (agent loads workflow; use command) |
+| `/tsh-review-ui` | ~~`tsh-ui-verifying`~~ (agent loads workflow; use command) |
 
 Other workflows (e.g. `tsh-technical-context-discovering`, `tsh-implementing-backend`) may still appear in `/` — that is expected; agents use them during `/tsh-implement` and related commands.
 
