@@ -6,13 +6,13 @@ title: Cursor Researcher (internal)
 # Cursor Researcher Agent
 
 **File:** `.cursor/skills/agents/tsh-cursor-researcher/SKILL.md`
-**Type:** Internal worker — not user-invocable
+**Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
 Research specialist that gathers, analyzes, and summarizes information from codebases and documentation for Cursor engineering tasks. Returns structured research summaries — read-only, does not create or modify files.
 
 ## Responsibilities
 
-- Analyze codebase structure, existing agent/skill/prompt/instruction files, and workspace patterns.
+- Analyze codebase structure, existing agent/workflow/command skill and instruction files, and workspace patterns.
 - Fetch and summarize external documentation (Cursor docs, MCP server docs, best practices).
 - Identify patterns, conventions, and inconsistencies across multiple files.
 - Return structured, concise findings organized by topic with file paths for traceability.
@@ -43,4 +43,4 @@ Every research response includes:
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./cursor-orchestrator) as part of multi-step customization workflows.
+Delegated by the [Cursor Orchestrator](./cursor-orchestrator) via the Cursor **Task** tool (`@tsh-cursor-researcher` with a full delegation prompt). Not intended for direct user invocation; may still appear in `/` search but should not be auto-loaded for unrelated tasks.

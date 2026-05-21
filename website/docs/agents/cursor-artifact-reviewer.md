@@ -6,7 +6,7 @@ title: Cursor Artifact Reviewer (internal)
 # Cursor Artifact Reviewer Agent
 
 **File:** `.cursor/skills/agents/tsh-cursor-artifact-reviewer/SKILL.md`
-**Type:** Internal worker — not user-invocable
+**Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
 Review specialist that evaluates Cursor customization artifacts (`SKILL.md`, `/SKILL.md`, `.mdc rules`) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
 
@@ -24,7 +24,7 @@ Review specialist that evaluates Cursor customization artifacts (`SKILL.md`, `/S
 | **Structural Correctness** | Valid YAML frontmatter, required sections present, proper tag usage |
 | **Best Practice Adherence** | Token efficiency, progressive disclosure, no redundant content |
 | **Workspace Consistency** | Naming conventions, tool arrays, section ordering, formatting |
-| **Separation of Concerns** | Agent (WHO), Skill (HOW), Prompt (WHAT), Instructions (RULES) boundaries |
+| **Separation of Concerns** | Agent (WHO), workflow skill (HOW), command skill (WHAT), Instructions (RULES) boundaries |
 | **Tool Configuration** | Tools match stated role, appropriate access boundaries |
 
 ## Boundaries
@@ -42,4 +42,4 @@ Review specialist that evaluates Cursor customization artifacts (`SKILL.md`, `/S
 
 ## Invocation
 
-This agent is not directly invocable by users. It is delegated to by the [Cursor Orchestrator](./cursor-orchestrator) as part of multi-step customization workflows.
+Delegated by the [Cursor Orchestrator](./cursor-orchestrator) via the Cursor **Task** tool (`@tsh-cursor-artifact-reviewer` with review criteria in the prompt). Not intended for direct user invocation.

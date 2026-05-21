@@ -5,7 +5,8 @@ title: Architect Reviewer
 
 # Architect Reviewer Agent
 
-**File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`
+**File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`  
+**Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
 The Architect Reviewer validates implementation plans produced by the [Architect](./architect) agent before implementation begins. It is the quality gate between planning and implementation — catching over-engineering, incorrect assumptions, pattern violations, and missing requirements before any code is written.
 
@@ -63,13 +64,17 @@ The report includes:
 - `tsh-implementation-gap-analysing` — Validate what exists vs. what the plan proposes to build.
 - `tsh-sql-and-database-understanding` — Review database-related plan sections: schema design, migrations, indexing.
 
+## Invocation
+
+Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-architect-reviewer` use). The reviewer loads `.cursor/skills/internal/tsh-review-plan/SKILL.md` when validating a plan.
+
 ## Handoffs
 
 The Architect Reviewer is the middle step in the planning→implementation chain:
 
 ```mermaid
 flowchart LR
-  Architect["Architect\n(tsh-plan)"] --> ArchitectReviewer["Architect Reviewer\n(tsh-review-plan)"]
+  Architect["Architect\n(internal/tsh-plan)"] --> ArchitectReviewer["Architect Reviewer\n(internal/tsh-review-plan)"]
   ArchitectReviewer -->|"APPROVED"| EM["Engineering Manager\n→ implementation"]
   ArchitectReviewer -->|"REVISIONS NEEDED"| Architect
 ```

@@ -1,6 +1,7 @@
 ---
 name: tsh-architect-reviewer
-description: "Reviews architect implementation plans (.plan.md) for correctness, feasibility, and alignment with project patterns before implementation begins. Returns APPROVED or REVISIONS NEEDED verdict with actionable findings. Use when validating a plan produced by tsh-architect, or when the Engineering Manager needs a quality gate between planning and implementation. Invoke with @tsh-architect-reviewer."
+description: "Reviews architect implementation plans (.plan.md) for correctness, feasibility, and alignment with project patterns before implementation begins. Returns APPROVED or REVISIONS NEEDED verdict with actionable findings. Internal worker delegated by tsh-engineering-manager — not for direct user invocation."
+disable-model-invocation: true
 ---
 
 # Architect Reviewer

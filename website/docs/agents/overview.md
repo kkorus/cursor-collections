@@ -5,7 +5,18 @@ title: Agents Overview
 
 # Agents Overview
 
-Cursor Collections provides **12 specialized agent skills** (plus 4 internal sub-agents) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor loads them automatically based on context.
+Cursor Collections provides **12 specialized agent skills** (plus 4 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
+
+## Agent Skills vs Cursor Subagents
+
+| | **Agent skills** (this collection) | **Cursor subagents** ([docs](https://cursor.com/docs/subagents)) |
+| --- | --- | --- |
+| Location | `.cursor/skills/agents/<name>/SKILL.md` | `.cursor/agents/<name>.md` |
+| Purpose | Persona, responsibilities, when to load workflow skills | Isolated context window via Task tool |
+| Invocation | `@tsh-architect` in chat; may auto-apply from `description` | `/verifier` or automatic Task delegation |
+| Commands | `/tsh-implement`, `/tsh-review` in `.cursor/skills/commands/` | Not used for slash workflows here |
+
+This repository uses **agent skills**, not project-level `.cursor/agents/` files. Orchestrators delegate with the **Task** tool and `@tsh-*` agent skills.
 
 ## How Agent Skills Work
 
@@ -16,7 +27,7 @@ Each agent skill has:
 - **Workflow skills** — Which domain skills it loads for specialized knowledge.
 - **Delegation logic** — When and how to hand off to other agent skills.
 
-Agent skills are automatically invoked by Cursor when relevant, or manually via `/agent-name` in chat.
+User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Workflow entry points use `/tsh-<action>` command skills in `.cursor/skills/commands/`. Internal workers (`tsh-architect-reviewer`, Cursor researcher/creator/reviewer) use `disable-model-invocation: true` and are meant for orchestrator delegation only.
 
 ## Agent Delegation Diagram
 
@@ -85,9 +96,9 @@ Agent skills are automatically invoked by Cursor when relevant, or manually via 
 | [Cursor Engineer](./cursor-engineer) | `agents/tsh-cursor-engineer/` | Designs, creates, reviews Cursor customization artifacts | Context7, Sequential Thinking |
 | [Cursor Orchestrator](./cursor-orchestrator) | `agents/tsh-cursor-orchestrator/` | Coordinates complex multi-step Cursor customization tasks | Sequential Thinking |
 
-### Internal Sub-Agents
+### Internal delegate-only agent skills
 
-These agent skills are not invoked directly by users. They are delegated to automatically by the Engineering Manager or Cursor Orchestrator.
+These skills have `disable-model-invocation: true`. They are delegated by the Engineering Manager or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation.
 
 | Agent | Skill path | Role |
 |-------|-----------|------|
