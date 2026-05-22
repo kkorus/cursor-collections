@@ -1,16 +1,16 @@
 ---
 sidebar_position: 11
-title: tsh-review-plan
+title: tsh-architect-reviewer (plan review)
 ---
 
-# tsh-review-plan
+# Plan review (Architect Reviewer)
 
 :::info
-Not invoked directly by users. To trigger plan validation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) will automatically delegate to the [Architect Reviewer](../../agents/architect-reviewer) after the Architect produces or updates a plan.
+Not invoked directly by users. To trigger plan validation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) delegates to the [Architect Reviewer](../../agents/architect-reviewer) after the Architect produces or updates a plan.
 :::
 
 **Agent:** Architect Reviewer  
-**File:** `.cursor/skills/internal/tsh-review-plan/SKILL.md`
+**File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`
 
 Reviews the architect's implementation plan for correctness, feasibility, and simplicity before proceeding to implementation.
 

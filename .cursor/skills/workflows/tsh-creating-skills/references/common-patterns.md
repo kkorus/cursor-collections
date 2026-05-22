@@ -105,7 +105,7 @@ Keep the skill body framework-agnostic. Place framework-specific APIs, examples,
 
 The patterns above are framework-agnostic. For framework-specific implementation guidance, load the appropriate reference:
 
-- **React**: See `./references/react-patterns.md` — hooks, JSX composition, memoization APIs.
+- **React**: See [`../../tsh-implementing-frontend/references/react-patterns.md`](../../tsh-implementing-frontend/references/react-patterns.md) — hooks, JSX composition, memoization APIs.
 - **Vue**: See `./references/vue-patterns.md` — composables, template syntax, reactivity API.
 
 This pattern enables skill reuse across projects using different frameworks while keeping framework-specific details precise and up to date. Use when the skill's core process (composition, testing, performance) applies universally but the API syntax varies by framework.

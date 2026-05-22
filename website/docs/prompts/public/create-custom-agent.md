@@ -8,7 +8,7 @@ title: /tsh-create-custom-agent
 **Agent:** Cursor Orchestrator  
 **File:** `.cursor/skills/commands/tsh-create-custom-agent/SKILL.md`
 
-Creates a new custom agent (`SKILL.md`) for VS Code Copilot. Analyzes existing agents for patterns, guides through design decisions, creates the agent file, and validates against best practices.
+Creates a new custom agent skill (`SKILL.md` in `.cursor/skills/agents/`). Analyzes existing agents for patterns, guides through design decisions, creates the agent file, and validates against best practices.
 
 ## Usage
 

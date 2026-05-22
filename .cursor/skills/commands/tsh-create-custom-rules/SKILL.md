@@ -5,7 +5,7 @@ disable-model-invocation: true
 ---
 # /tsh-create-custom-rules
 
-Load and follow the tsh-cursor-orchestrator agent skill. Create custom rules for Cursor. There are two types: repository-level rules (`cursor-instructions.md`) that apply to all Cursor interactions, and file-scoped rules (`.mdc` files with `applyTo` glob patterns in `.cursor/rules/`) that target specific files or directories. The user's message following this skill may contain specific requirements or conventions to encode.
+Load and follow the tsh-cursor-orchestrator agent skill. Create custom rules for Cursor. There are two types: repository-level rules (`cursor-instructions.md`) that apply to all Cursor interactions, and file-scoped rules (`.mdc` files with `globs` patterns in `.cursor/rules/`) that target specific files or directories. The user's message following this skill may contain specific requirements or conventions to encode.
 
 ## Required Skills
 
@@ -23,7 +23,7 @@ Before starting, load and follow these skills:
    - Note: this repository currently has NO rule files of either type
 2. **Determine rule type**: Help the user choose the appropriate rule type:
    - **Repo-level** (`cursor-instructions.md`): applies to all Cursor interactions in the workspace
-   - **File-scoped** (`.mdc` files in `.cursor/rules/` with `applyTo` glob patterns): applies only to interactions involving matching files
+   - **File-scoped** (`.mdc` files in `.cursor/rules/` with `globs` patterns): applies only when matching files are in context
    - Guide the decision based on the user's needs and scope
 3. **Clarify requirements**: Determine what conventions, standards, or behaviors to encode:
    - Coding standards and style preferences
@@ -34,12 +34,12 @@ Before starting, load and follow these skills:
 5. **Review and validate**: Review the created rules against best practices:
    - Verify scope is appropriate for the rule type
    - Confirm guidelines are clear and actionable for Cursor
-   - Check that file-scoped `applyTo` patterns match intended files (if applicable)
+   - Check that file-scoped `globs` patterns match intended files (if applicable)
 
 ## Guidelines
 
-- **Repo-level rules** (`cursor-instructions.md`): Place in `.cursor/` directory. Apply to all Cursor interactions — use for project-wide coding standards, naming conventions, architecture decisions.
-- **File-scoped rules** (`.mdc` files with `applyTo`): Place in `.cursor/rules/` directory. Use `applyTo` glob patterns to target specific files or directories.
+- **Repo-level rules** (`cursor-instructions.md`): Place in `.cursor/rules/cursor-instructions.md`. Apply to all Cursor interactions — use for project-wide coding standards, naming conventions, architecture decisions.
+- **File-scoped rules** (`.mdc` files with `globs`): Place in `.cursor/rules/` directory. Use `globs` glob patterns (relative to workspace root) to target specific files or directories.
 - This repository currently has NO rule files — the user is starting from scratch. Communicate this context during the research step.
 
 If the user attaches files or provides a description, use them as input for rule design.

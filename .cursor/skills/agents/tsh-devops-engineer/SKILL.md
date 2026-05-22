@@ -232,4 +232,4 @@ When you need to ask questions to the user:
 
 After completing infrastructure work:
 
-- **Review IaC/Pipeline code**: Invoke @tsh-code-reviewer with `/review Review the infrastructure-as-code and CI/CD pipeline changes`
+- **Review IaC/Pipeline code**: Invoke @tsh-code-reviewer with `/tsh-review Review the infrastructure-as-code and CI/CD pipeline changes`

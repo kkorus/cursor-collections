@@ -21,7 +21,7 @@ Use the checklist below and track your progress:
 ```
 Discovery progress:
 - [ ] Step 0: Check plan file for persisted context
-- [ ] Step 1: Check Copilot instruction files
+- [ ] Step 1: Check Cursor rule files
 - [ ] Step 2: Analyze existing codebase patterns
 - [ ] Step 3: Consult external documentation (if needed)
 - [ ] Step 4: Apply the implementation rule
@@ -75,7 +75,7 @@ If no Cursor rules are found, or if they don't cover specific aspects, **analyze
 
 **Step 3: Consult External Documentation**
 
-If neither Copilot instructions nor sufficient existing codebase patterns are available (e.g., new project, greenfield feature, or first implementation of a specific pattern), **use external documentation and industry best practices**:
+If neither Cursor rules nor sufficient existing codebase patterns are available (e.g., new project, greenfield feature, or first implementation of a specific pattern), **use external documentation and industry best practices**:
 
 - **Use `context7` tool** to search for official documentation of the framework/library being used (check project config for exact versions first).
 - Apply **industry-standard best practices** for the technology stack.

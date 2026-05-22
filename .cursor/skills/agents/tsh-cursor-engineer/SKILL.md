@@ -6,7 +6,7 @@ description: "Expert in Cursor customization — designs, creates, reviews, and 
 # Cursor Engineer
 
 > Recommended model: GPT-5.4
-> Recommended tools: read, agent, edit, search, web/fetch, context7/*, sequential-thinking/*, vscode.mermaid-chat-features/renderMermaidDiagram, todo
+> Recommended tools: read, agent, edit, search, web/fetch, context7/*, sequential-thinking/*, todo
 
 ## Agent Role and Responsibilities
 

@@ -1,169 +1,49 @@
 ---
-# ============================================================
-# REQUIRED FIELDS
-# ============================================================
-description: "<one-sentence description of the agent's specialization>"
-tools: ['<tool-1>', '<tool-2>', '<mcp-server>/*']
-
-# ============================================================
-# OPTIONAL FIELDS
-# ============================================================
-# name: "<override-display-name>"
-# argument-hint: "<hint text for chat input>"
-# model: "<preferred-model>"
-# user-invokable: true
-# disable-model-invocation: false
-# agents: ['<subagent-1>', '<subagent-2>']
-# handoffs:
-#   - label: <Button Label>
-#     agent: <target-agent-name>
-#     prompt: <prompt-text-for-target-agent>
-#     send: false
-#     model: <optional-model-for-handoff>
+name: tsh-<role-name>
+description: "<What the agent does. Use when... Invoke with @tsh-<role-name>."
 ---
 
-<!-- ============================================================ -->
-<!-- TABLE OF CONTENTS                                             -->
-<!-- This template defines the structure for .agent.md files.      -->
-<!-- Sections marked (Required) must be present in every agent.    -->
-<!-- Sections marked (Optional) can be removed if not needed.      -->
-<!-- ============================================================ -->
-<!-- Sections:                                                     -->
-<!--   1. Agent Role .................. (Required)                 -->
-<!--   2. Skills Usage ................ (Required)                 -->
-<!--   3. Tool Usage .................. (Required)                 -->
-<!--   4. Domain Standards ............ (Optional)                 -->
-<!--   5. Collaboration ............... (Optional)                 -->
-<!--   6. Constraints ................. (Optional)                 -->
-<!--   7. Output Format ............... (Optional)                 -->
-<!-- ============================================================ -->
+# <Role Title>
 
-<!-- ============================================================ -->
-<!-- REQUIRED SECTION: Agent Role and Responsibilities              -->
-<!-- Define WHO the agent is, not HOW specific workflows run.      -->
-<!-- Workflows belong in skills (.github/skills/) and prompts.      -->
-<!-- ============================================================ -->
+> Recommended model: <Model Name>
+> Recommended tools: read, search, edit, todo
 
-<agent-role>
-Role: You are a <role-title> responsible for <primary-responsibility>. You <key-behavior-description>.
+## Agent Role and Responsibilities
+
+Role: You are a <role-title> responsible for <primary-responsibility>.
 
 You focus on areas covering:
 
 - <responsibility-1>
 - <responsibility-2>
-- <responsibility-3>
 
-<!-- Behavioral guidelines: how the agent approaches work -->
+Before starting any task, check available skills and load those that fit the task. You may use multiple skills in one task.
 
-<approach>
-<!-- Describe the agent's approach to solving problems, collaboration style, and decision-making -->
-</approach>
+## Skills Usage Guidelines
 
-<!-- Standard skill/tool preamble — include in every agent -->
+- `tsh-<workflow-skill>` — <when to use>
 
-Before starting any task, you check all available skills and decide which one is the best fit for the task at hand. You can use multiple skills in one task if needed. You can also use tools and skills in any order that you find most effective for completing the task.
-</agent-role>
+## Tool Usage Guidelines
 
-<!-- ============================================================ -->
-<!-- REQUIRED SECTION: Skills Usage Guidelines                      -->
-<!-- Reference skills by name with brief guidance on WHEN to use.  -->
-<!-- Do NOT duplicate skill content here.                           -->
-<!-- ============================================================ -->
+When you need to ask questions to the user:
 
-<skills-usage>
-- `<skill-name-1>` - <when to use this skill>
-- `<skill-name-2>` - <when to use this skill>
-</skills-usage>
+- **MUST do when**: requirements or scope are ambiguous after checking the codebase and existing skills
+- **IMPORTANT**: batch related questions; propose defaults when possible
+- **SHOULD NOT do for**: facts available in the repository or referenced skills
 
-<!-- ============================================================ -->
-<!-- REQUIRED SECTION: Tool Usage Guidelines                        -->
-<!-- Every tool listed in frontmatter MUST have an entry here.     -->
-<!-- ============================================================ -->
+**`read`**
 
-<tool-usage>
+- **MUST use when**: reading plans, source files, or rule files relevant to the task
 
-<tool name="<tool-name-1>">
-- **MUST use when**:
-  - <specific condition requiring tool use>
-  - <specific condition requiring tool use>
-- **IMPORTANT**:
-  - <configuration notes, prerequisites, or behavioral constraints>
-- **SHOULD NOT use for**:
-  - <anti-pattern or out-of-scope usage>
-</tool>
+**`search`**
 
-<tool name="<tool-name-2>">
-- **MUST use when**:
-  - <specific condition requiring tool use>
-- **SHOULD NOT use for**:
-  - <anti-pattern or out-of-scope usage>
-</tool>
+- **MUST use when**: locating implementations, usages, or patterns in the codebase
 
-<!-- Always include vscode/askQuestions if the agent may encounter ambiguities -->
+## Constraints
 
-<tool name="vscode/askQuestions">
-- **MUST use when**:
-  - <ambiguity condition that cannot be resolved from available sources>
-- **IMPORTANT**:
-  - Keep questions focused and specific. Batch related questions together rather than asking one at a time.
-  - <describe which sources to check first before asking the user>
-- **SHOULD NOT use for**:
-  - Questions answerable from the codebase or available documentation.
-</tool>
+- Do not embed workflow steps that belong in `workflows/` or `commands/`
+- Do not duplicate coding standards from `.cursor/rules/`
 
-</tool-usage>
+## Handoffs
 
-<!-- ============================================================ -->
-<!-- OPTIONAL SECTION: Domain Standards                             -->
-<!-- Include only if the agent enforces domain-specific rules      -->
-<!-- that are NOT covered by referenced skills.                    -->
-<!-- Remove this section if not needed.                            -->
-<!-- ============================================================ -->
-
-<!-- 
-<domain-standards>
-<standard name="<standard-name>">
-<description of standard and rules to enforce>
-</standard>
-</domain-standards>
--->
-
-<!-- ============================================================ -->
-<!-- OPTIONAL SECTION: Collaboration                               -->
-<!-- Include only if the agent has specific interaction patterns   -->
-<!-- with other agents or team members beyond handoffs.            -->
-<!-- Remove this section if not needed.                            -->
-<!-- ============================================================ -->
-
-<!--
-<collaboration>
-<description of how the agent collaborates, delegates, escalates>
-</collaboration>
--->
-
-<!-- ============================================================ -->
-<!-- OPTIONAL SECTION: Constraints                                 -->
-<!-- Include only if the agent has explicit limitations or         -->
-<!-- anti-patterns that need to be stated.                         -->
-<!-- Remove this section if not needed.                            -->
-<!-- ============================================================ -->
-
-<!--
-<constraints>
-- <what the agent must NOT do>
-- <scope boundary>
-- <delegation rule>
-</constraints>
--->
-
-<!-- ============================================================ -->
-<!-- OPTIONAL SECTION: Output Format                               -->
-<!-- Include only if the agent's deliverables have a specific      -->
-<!-- expected structure. Remove this section if not needed.        -->
-<!-- ============================================================ -->
-
-<!--
-<output-format>
-<description of expected output structure or format>
-</output-format>
--->
+- **<follow-up action>**: Invoke @tsh-<other-agent> with `/tsh-<command> <context>`

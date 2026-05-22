@@ -75,7 +75,7 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 |-------|-------------|---------|
 | [tsh-creating-agents](./creating-agents) | Creating Cursor agent skills (`SKILL.md` in `agents/`) | Cursor Engineer |
 | [tsh-creating-skills](./creating-skills) | Creating workflow skills (`SKILL.md` in `workflows/`) | Cursor Engineer |
-| [tsh-creating-commands](./creating-prompts) | Creating Cursor slash command skills (`disable-model-invocation: true`) | Cursor Engineer |
+| [tsh-creating-commands](./creating-commands) | Creating Cursor slash command skills (`disable-model-invocation: true`) | Cursor Engineer |
 | [tsh-creating-rules](./creating-instructions) | Creating Cursor rules (`.cursor/rules/*.mdc`) | Cursor Engineer |
 
 ## Agent–Skill Matrix

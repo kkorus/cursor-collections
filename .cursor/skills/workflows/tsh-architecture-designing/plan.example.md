@@ -48,7 +48,7 @@ Project conventions, coding standards, and patterns discovered during planning. 
 
 ### Project Instructions
 
-- <summary of relevant `.instructions.md` rules — file path + key rules>
+- <summary of relevant `.cursor/rules/*.mdc` rules — file path + key rules>
 
 ### Architecture & Patterns
 
@@ -114,7 +114,7 @@ Project conventions, coding standards, and patterns discovered during planning. 
 
 #### Task 2.2 - [REUSE] UI Verification of <ui-component-name> by `tsh-ui-reviewer` agent
 
-**Description**: Run `tsh-ui-reviewer` agent via `tsh-review-ui.prompt.md` to verify <ui-component-name> against Figma design. Pass the Figma URL and dev server URL. If verification fails, delegate fix to `tsh-software-engineer` and re-verify (max 5 iterations per component).
+**Description**: Run `tsh-ui-reviewer` agent via `.cursor/skills/commands/tsh-review-ui/SKILL.md` to verify <ui-component-name> against Figma design. Pass the Figma URL and dev server URL. If verification fails, delegate fix to `tsh-software-engineer` and re-verify (max 5 iterations per component).
 
 **Figma URL**: <figma-url-for-this-component>
 

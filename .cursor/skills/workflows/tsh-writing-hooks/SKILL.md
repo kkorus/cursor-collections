@@ -214,7 +214,7 @@ Hook:
 
 The patterns above are framework-agnostic. For framework-specific hook/composable syntax, load the appropriate reference:
 
-- **React**: See `./references/react-patterns.md` — `useEffect`, `useMemo`, `useCallback`, dependency arrays, rules of hooks.
+- **React**: See [`../tsh-implementing-frontend/references/react-patterns.md`](../tsh-implementing-frontend/references/react-patterns.md) — `useEffect`, `useMemo`, `useCallback`, dependency arrays, rules of hooks.
 
 ## Connected Skills
 

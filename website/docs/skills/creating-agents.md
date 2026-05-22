@@ -20,7 +20,8 @@ Provides templates, guidelines, and a structured process for building custom age
 
 | Section | Purpose |
 |---|---|
-| **YAML Frontmatter** | `description`, `tools`, `model` (optional), `user-invocable` flag |
+| **YAML Frontmatter** | `name`, `description`; optional `disable-model-invocation: true` for delegate-only workers |
+| **Body** | `> Recommended model:` and `> Recommended tools:` lines (Cursor convention) |
 | **Agent Role** | WHO the agent is, responsibilities, boundaries |
 | **Behavior Guidelines** | Decision-making rules, communication style |
 | **Skills Usage** | Which skills to load and when |
@@ -39,5 +40,5 @@ Provides templates, guidelines, and a structured process for building custom age
 ## Connected Skills
 
 - `tsh-creating-skills` — For creating matching skills that complement the agent.
-- `tsh-creating-prompts` — For creating prompts that route to the agent.
+- `tsh-creating-commands` — For creating slash commands that route to the agent.
 - `tsh-creating-instructions` — For scoped coding conventions the agent should follow.

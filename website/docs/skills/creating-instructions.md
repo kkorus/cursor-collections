@@ -8,7 +8,7 @@ title: Creating Instructions
 **Folder:** `.cursor/skills/workflows/tsh-creating-instructions/`
 **Used by:** Cursor Engineer
 
-Covers repository-level instructions (`cursor-rules.mdc`) and granular file-based instructions with `applyTo` glob patterns. Provides templates and a decision framework for instruction vs. skill placement.
+Covers repository-level instructions (`cursor-instructions.md`) and granular file-based rules with `globs` patterns. Provides templates and a decision framework for rules vs. skill placement.
 
 ## Instruction Types
 
@@ -26,7 +26,7 @@ Covers repository-level instructions (`cursor-rules.mdc`) and granular file-base
 | Content Type | Belongs In |
 |---|---|
 | Always-applied project conventions | Instructions |
-| File-type-specific coding standards | Granular instructions with `applyTo` |
+| File-type-specific coding standards | Granular rules with `globs` |
 | Reusable multi-step workflows | Skills |
 | Domain-specific knowledge and templates | Skills |
 | Workflow triggers and task definitions | Prompts |
@@ -34,13 +34,13 @@ Covers repository-level instructions (`cursor-rules.mdc`) and granular file-base
 ## Key Guidelines
 
 - Repository-level instructions are the "constitution" — the first file any developer or AI agent should read.
-- Granular instructions use `applyTo` glob patterns to automatically apply when matching files are in context.
+- Granular rules use `globs` patterns to apply when matching files are in context.
 - Instructions must NOT trigger workflows (prompt territory) or define agent behavior (agent territory).
 
 ## Validation Checklist
 
 - Correct file location (`.cursor/rules/cursor-instructions.md` or `.cursor/rules/*.mdc`)
-- `applyTo` pattern is valid and scoped appropriately (granular only)
+- `globs` pattern is valid and scoped appropriately (granular only)
 - No workflow steps (skill territory)
 - No personality or behavioral content (agent territory)
 - Content is concise and focused on conventions/constraints

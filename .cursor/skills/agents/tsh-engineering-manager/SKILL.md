@@ -109,7 +109,7 @@ You have access to the `tsh-architect-reviewer` agent.
   - The Full Implementation Flow planning phase has completed.
   - A plan has been revised by the architect after receiving review feedback — re-validate it.
 - **IMPORTANT**:
-  - Always invoke the agent skill `.cursor/skills/internal/tsh-review-plan/SKILL.md`, passing the path to the `.plan.md` and its corresponding `.research.md`.
+  - Always invoke the agent skill `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`, passing the path to the `.plan.md` and its corresponding `.research.md`.
   - If REVISIONS NEEDED with BLOCKERs → delegate back to `tsh-architect` with the report. Re-submit. Max 3 iterations, then escalate to user.
   - If APPROVED → present plan + review summary to user for confirmation before implementation.
   - If plan already approved and unchanged → skip re-validation.

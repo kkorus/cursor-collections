@@ -183,7 +183,7 @@ Performance:
 
 The patterns above are framework-agnostic. For framework-specific optimization APIs, load the appropriate reference:
 
-- **React**: See `./references/react-patterns.md` — `React.memo`, `useMemo`, `useCallback`, `React.lazy`, `Suspense`.
+- **React**: See [`../tsh-implementing-frontend/references/react-patterns.md`](../tsh-implementing-frontend/references/react-patterns.md) — `React.memo`, `useMemo`, `useCallback`, `React.lazy`, `Suspense`.
 
 ## Connected Skills
 

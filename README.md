@@ -44,7 +44,7 @@ This repository supports the **full product development lifecycle** with AI-powe
 
 - **Agent skills** – Cursor Engineer, Cursor Orchestrator
 - **Commands** – `/tsh-create-custom-agent`, `/tsh-create-custom-skill`, `/tsh-create-custom-rules`
-- **Workflow skills** – Creating Agent Skills, Creating Skills, Creating Commands, Creating Prompts, Creating Rules
+- **Workflow skills** – Creating Agent Skills, Creating Skills, Creating Commands, Creating Rules
 
 ### Infrastructure
 
@@ -374,7 +374,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
 | **Quality** | tsh-e2e-testing, tsh-codebase-analysing, tsh-reviewing-frontend (code/UI review processes live under `/tsh-review` and `/tsh-review-ui` references) |
-| **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-prompts, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
+| **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
 
 ---
 

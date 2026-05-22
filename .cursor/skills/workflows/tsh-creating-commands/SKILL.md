@@ -107,7 +107,7 @@ Specify the expected deliverables of the workflow:
 
 **Step 5: Assemble the command skill using the template**
 
-Create a new directory in `.cursor/skills/commands/` with the command name (gerund form, kebab-case), and create a `SKILL.md` file inside it.
+Create a new directory in `.cursor/skills/commands/` with the command name (gerund form, kebab-case), and create a `SKILL.md` file inside it. Use [`command.template.md`](./command.template.md) as the starting point (not the deprecated `prompt.template.md`).
 
 The command skill MUST include `disable-model-invocation: true` in the frontmatter:
 

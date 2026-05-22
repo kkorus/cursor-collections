@@ -152,4 +152,4 @@ When you need to ask questions to the user:
 After completing implementation:
 
 - **Run Code Review**: Invoke @tsh-code-reviewer with `/tsh-review Review the implementation against the plan and feature context`
-- **Write E2E Tests**: Invoke @tsh-e2e-engineer with `/tsh-implement-e2e Create E2E tests for the implemented feature`
+- **Write E2E Tests**: Invoke @tsh-e2e-engineer with instructions to follow `.cursor/skills/internal/tsh-implement-e2e/SKILL.md` and create E2E tests for the implemented feature

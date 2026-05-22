@@ -66,7 +66,7 @@ The report includes:
 
 ## Invocation
 
-Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-architect-reviewer` use). The reviewer loads `.cursor/skills/internal/tsh-review-plan/SKILL.md` when validating a plan.
+Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-architect-reviewer` use). Load `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md` when validating a plan.
 
 ## Handoffs
 
@@ -74,7 +74,7 @@ The Architect Reviewer is the middle step in the planning→implementation chain
 
 ```mermaid
 flowchart LR
-  Architect["Architect\n(internal/tsh-plan)"] --> ArchitectReviewer["Architect Reviewer\n(internal/tsh-review-plan)"]
+  Architect["Architect\n(internal/tsh-plan)"] --> ArchitectReviewer["Architect Reviewer\n(agents/tsh-architect-reviewer)"]
   ArchitectReviewer -->|"APPROVED"| EM["Engineering Manager\n→ implementation"]
   ArchitectReviewer -->|"REVISIONS NEEDED"| Architect
 ```

@@ -5,14 +5,14 @@ title: Commands Overview
 
 # Commands Overview
 
-Cursor Collections includes **12 slash commands** that trigger specific workflow actions across the full product lifecycle. Commands are stored in `.cursor/skills/commands/` as `SKILL.md` files with `disable-model-invocation: true`, and become available as `/command` shortcuts in Cursor Agent chat.
+Cursor Collections includes **16 slash commands** that trigger specific workflow actions across the full product lifecycle. Commands are stored in `.cursor/skills/commands/` as `SKILL.md` files with `disable-model-invocation: true`, and become available as `/tsh-<name>` shortcuts in Cursor Agent chat.
 
 ## How Commands Work
 
 Each command skill defines:
 
 - **Trigger** — The slash command name (e.g., `/tsh-implement`)
-- **Target agent** — Which agent skill to invoke
+- **Target agent** — Which agent skill to invoke (or self-contained workflow)
 - **Workflow** — Step-by-step instructions, required skills, and output format
 
 When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the corresponding skill is loaded and executed.
@@ -30,6 +30,7 @@ When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the co
 | Command | Agent Skill | Description |
 |---------|------------|-------------|
 | [/tsh-implement](./public/implement) | tsh-engineering-manager | Orchestrate the full cycle: research → plan → implementation |
+| [/tsh-refactor](./public/refactor) | tsh-software-engineer | Structural refactoring without behavior change |
 
 ### Quality Commands
 
@@ -39,13 +40,22 @@ When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the co
 | [/tsh-review-ui](./public/review-ui) | tsh-ui-reviewer | Single-pass Figma vs implementation comparison |
 | [/tsh-review-codebase](./public/review-codebase) | tsh-architect | Comprehensive code quality analysis |
 
+### Developer Utilities
+
+| Command | Agent Skill | Description |
+|---------|------------|-------------|
+| [/tsh-ask](./public/ask) | (self-contained) | Architectural Q&A → ADR in `specifications/decisions/` |
+| [/tsh-debug](./public/debug) | tsh-software-engineer | Systematic root-cause debugging |
+| [/tsh-commit](./public/commit) | (self-contained) | Conventional Commits with approval gate |
+
 ### Cursor Customization Commands
 
 | Command | Agent Skill | Description |
 |---------|------------|-------------|
 | [/tsh-create-custom-agent](./public/create-custom-agent) | tsh-cursor-orchestrator | Create a new Cursor agent skill |
 | [/tsh-create-custom-skill](./public/create-custom-skill) | tsh-cursor-orchestrator | Create a new workflow skill |
-| [/tsh-create-custom-rules](./public/create-custom-instructions) | tsh-cursor-orchestrator | Create Cursor rules (`.cursor/rules/*.mdc`) |
+| [/tsh-create-custom-command](./public/create-custom-command) | tsh-cursor-orchestrator | Create a new slash command skill |
+| [/tsh-create-custom-rules](./public/create-custom-rules) | tsh-cursor-orchestrator | Create Cursor rules (`.cursor/rules/*.mdc`) |
 
 ### Infrastructure & Cost Analysis Commands
 
@@ -63,10 +73,10 @@ When you run [`/tsh-implement`](./public/implement), the Engineering Manager aut
 |-------|-------------|
 | Research (context gathering) | Context Engineer (via internal `tsh-research` skill) |
 | Planning (architecture) | Architect (via internal `tsh-plan` skill) |
-| Plan validation | Architect Reviewer (via internal `tsh-review-plan` skill) |
+| Plan validation | Architect Reviewer (`agents/tsh-architect-reviewer`) |
 | Backend / general code | Software Engineer |
 | Frontend with Figma | Software Engineer (via internal `tsh-implement-ui` skill) |
-| E2E tests | E2E Engineer |
+| E2E tests | E2E Engineer (via internal `tsh-implement-e2e` skill) |
 | LLM application prompts | Prompt Engineer |
 | Kubernetes, Terraform, CI/CD, observability | DevOps Engineer |
 | UI verification | UI Reviewer |

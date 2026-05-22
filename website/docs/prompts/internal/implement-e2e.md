@@ -1,9 +1,9 @@
 ---
 sidebar_position: 8
-title: /tsh-implement-e2e
+title: tsh-implement-e2e (internal)
 ---
 
-# /tsh-implement-e2e
+# tsh-implement-e2e (internal)
 
 :::info
 Not invoked directly by users. To trigger E2E test implementation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) will automatically delegate to the [E2E Engineer](../../agents/e2e-engineer).

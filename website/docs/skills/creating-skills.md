@@ -18,7 +18,7 @@ Provides naming conventions (gerund form), description guidelines, body structur
 
 ## Naming Conventions
 
-- Skill directories use gerund form: `tsh-<gerund-subject>/` (e.g., `tsh-code-reviewing/`, `tsh-creating-prompts/`)
+- Skill directories use gerund form: `tsh-<gerund-subject>/` (e.g., `tsh-code-reviewing/`, `tsh-creating-commands/`)
 - The `name` field in SKILL.md frontmatter must match the directory name
 - The `tsh-` prefix identifies artifacts from The Software House's cursor-collections
 
@@ -43,4 +43,4 @@ tsh-<gerund-subject>/
 ## Connected Skills
 
 - `tsh-creating-agents` — For creating agents that load this skill.
-- `tsh-creating-prompts` — For creating prompts that trigger workflows using this skill.
+- `tsh-creating-commands` — For creating slash command entry points that trigger workflows.

@@ -54,7 +54,7 @@ When any artifact crosses these boundaries, the Cursor Engineer identifies and c
 
 - `tsh-creating-agents` — Agent file creation workflow, templates, and validation checklist.
 - `tsh-creating-skills` — Naming conventions, body structure, progressive disclosure patterns.
-- `tsh-creating-prompts` — Prompt file creation workflow, templates, and workflow focus guidelines.
+- `tsh-creating-commands` — Command skill creation workflow, templates, and validation checklist.
 - `tsh-creating-instructions` — Templates, decision framework for instruction vs. skill placement.
 - `tsh-technical-context-discovering` — Understand existing customization patterns in the project.
 - `tsh-codebase-analysing` — Analyze existing customization files and identify patterns.

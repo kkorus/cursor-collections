@@ -214,7 +214,7 @@ Frontend Review:
 
 The review criteria above are framework-agnostic. For framework-specific anti-patterns and API checks, load the appropriate reference:
 
-- **React**: See `./references/react-patterns.md` — React-specific hooks review, `dangerouslySetInnerHTML`, `exhaustive-deps`, memoization API checks.
+- **React**: See [`../tsh-implementing-frontend/references/react-patterns.md`](../tsh-implementing-frontend/references/react-patterns.md) — React-specific hooks review, `dangerouslySetInnerHTML`, `exhaustive-deps`, memoization API checks.
 
 ## Connected Skills
 

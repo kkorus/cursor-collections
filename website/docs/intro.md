@@ -20,9 +20,9 @@ Most teams use AI for code completion. **Cursor Collections turns AI into an end
 
 | Capability | Count | Description |
 |---|---|---|
-| **Agent skills** | 15 | Business Analyst, Context Engineer, Architect, Engineering Manager, Software Engineer, Prompt Engineer, Code Reviewer, UI Reviewer, E2E Engineer, DevOps Engineer, Cursor Engineer, Cursor Orchestrator, and internal workers |
-| **Slash commands** | 12 | `/tsh-implement`, `/tsh-review`, `/tsh-review-ui`, `/tsh-review-codebase`, `/tsh-analyze-materials`, `/tsh-create-custom-agent`, `/tsh-create-custom-skill`, `/tsh-create-custom-rules`, `/tsh-audit-infrastructure`, `/tsh-analyze-aws-costs`, `/tsh-analyze-gcp-costs` |
-| **Workflow skills** | 32 | Transcript Processing, Task Extraction, Architecture Design, Code Review, UI Verification, E2E Testing, Backend Implementation, Frontend Implementation, SQL Engineering, CI/CD, Kubernetes, Terraform, and more |
+| **Agent skills** | 16 | Business Analyst, Context Engineer, Architect, Architect Reviewer, Engineering Manager, Software Engineer, Prompt Engineer, Code Reviewer, UI Reviewer, E2E Engineer, DevOps Engineer, Cursor Engineer, Cursor Orchestrator, and delegate-only workers |
+| **Slash commands** | 16 | See [Commands Overview](./prompts/overview) — `/tsh-implement`, `/tsh-review`, `/tsh-ask`, `/tsh-debug`, `/tsh-refactor`, `/tsh-commit`, customization commands, and more |
+| **Workflow skills** | 35 | Transcript Processing, Task Extraction, Architecture Design, Code Review, UI Verification, E2E Testing, Backend Implementation, Frontend Implementation, SQL Engineering, CI/CD, Kubernetes, Terraform, and more |
 | **MCP Integrations** | 11 | Atlassian, Figma Dev Mode, Context7, Playwright, Sequential Thinking, PDF Reader, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage |
 | **Structured Workflows** | 5 | Standard Flow, UI Flow, E2E Testing Flow, Workshop Analysis Flow, Cursor Customization Flow |
 

@@ -8,7 +8,7 @@ title: /tsh-create-custom-skill
 **Agent:** Cursor Orchestrator  
 **File:** `.cursor/skills/commands/tsh-create-custom-skill/SKILL.md`
 
-Creates a new custom skill (`SKILL.md`) for VS Code Copilot. Analyzes existing skills for patterns, enforces gerund naming convention, creates the skill file with supporting resources, and validates against best practices.
+Creates a new workflow skill (`SKILL.md` in `.cursor/skills/workflows/`). Analyzes existing skills for patterns, enforces gerund naming convention, creates the skill file with supporting resources, and validates against best practices.
 
 ## Usage
 
