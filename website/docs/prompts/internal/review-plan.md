@@ -12,7 +12,7 @@ Not invoked directly by users. To trigger plan validation, use [`/tsh-implement`
 **Agent:** Architect Reviewer  
 **File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`
 
-Reviews the architect's implementation plan for correctness, feasibility, and simplicity before proceeding to implementation.
+Stress-tests architect implementation plans before implementation begins and persists the review report alongside the plan.
 
 ## How It's Triggered
 
@@ -20,41 +20,29 @@ Reviews the architect's implementation plan for correctness, feasibility, and si
 /tsh-implement <JIRA_ID or task description>
 ```
 
-After the Architect produces or updates a `.plan.md`, the Engineering Manager automatically invokes the Architect Reviewer to validate it.
+The Engineering Manager invokes the Architect Reviewer after the Architect creates or updates a `.plan.md` file. If the plan is already approved and unchanged since the last review, the validation step is skipped.
 
 ## What It Does
 
-1. **Reads the research file** — Establishes the full set of requirements, acceptance criteria, and constraints the plan must satisfy.
-2. **Reads the plan file** — Understands the proposed architecture, phases, tasks, and definitions of done.
-3. **Requirements coverage pass** — Verifies every research requirement has a corresponding plan task.
-4. **Over-engineering pass** — Evaluates the plan for unnecessary abstractions, speculative features, and premature generalization.
-5. **Codebase alignment pass** — Searches and reads every file, component, and pattern the plan references to verify it exists and behaves as assumed.
-6. **Feasibility pass** — Checks that the proposed sequence is technically realistic and dependencies are ordered sensibly.
-7. **Pattern consistency pass** — Verifies the plan follows project conventions from `*.mdc rules`.
-8. **Quality pass** — Verifies security, test plan coverage, and definition-of-done verifiability.
-9. **Produces review report** — Saves the structured report as `{task-name}.plan-review.md` with verdict `APPROVED` or `REVISIONS NEEDED`.
+1. Reads the research file first so the review is grounded in the original requirements.
+2. Reads the plan file and checks every task, phase, and definition of done.
+3. Runs challenge-domain, failure-mode, assumption, codebase-reality, and sequencing-and-feasibility passes.
+4. Tries to surface 5-10 substantive risks when the plan is broad or uncertain, while allowing unusually robust plans to produce fewer findings.
+5. Produces a failure-oriented review report with a binary verdict and the highest-risk issues, assumptions, rework triggers, and blocking gaps.
+6. Saves the report as `{task-name}.plan-review.md` in the same `specifications/<task-name>/` directory as the plan.
+7. If the verdict is `REVISIONS NEEDED`, the Engineering Manager sends the findings back to the Architect and reruns the review until the plan is approved or the escalation limit is reached.
 
 ## Skills Loaded
 
-- `tsh-architecture-designing` — Evaluate architectural shape, phase coherence, and trade-offs against the requirements.
-- `tsh-codebase-analysing` — Verify plan references against actual codebase state.
+- `tsh-architecture-designing` — Evaluate architectural shape, phase coherence, and trade-offs.
+- `tsh-codebase-analysing` — Verify the plan's references against actual codebase state.
 - `tsh-technical-context-discovering` — Check pattern consistency against established conventions.
 - `tsh-implementation-gap-analysing` — Validate what exists vs. what the plan proposes to build.
 - `tsh-sql-and-database-understanding` — When the plan includes database schema, migration, indexing, or query changes.
 
 ## Output
 
-A `.plan-review.md` file placed alongside the plan in `specifications/<task-name>/`:
-
-```text
-specifications/
-  user-authentication/
-    user-authentication.research.md
-    user-authentication.plan.md
-    user-authentication.plan-review.md    ← new
-```
-
-The report includes verdict, BLOCKER/WARNING/SUGGESTION findings, requirement coverage, codebase verification notes, simplicity assessment, and pattern consistency notes.
+A `.plan-review.md` file placed in `specifications/<task-name>/` alongside the plan, containing the failure-oriented review report, `Decision and Revision History` table, and binary verdict.
 
 :::tip
 If the verdict is `REVISIONS NEEDED`, the Engineering Manager will send the report back to the Architect and request a revised plan. This loop repeats up to 3 times before escalating to the user.

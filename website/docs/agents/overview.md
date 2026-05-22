@@ -102,7 +102,7 @@ These skills have `disable-model-invocation: true`. They are delegated by the En
 
 | Agent | Skill path | Role |
 |-------|-----------|------|
-| [Architect Reviewer](./architect-reviewer) | `agents/tsh-architect-reviewer/` | Validates implementation plans before implementation begins |
+| [Architect Reviewer](./architect-reviewer) | `agents/tsh-architect-reviewer/` | Stress-tests implementation plans before implementation starts |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |
 | [Cursor Artifact Reviewer](./cursor-artifact-reviewer) | `agents/tsh-cursor-artifact-reviewer/` | Validates quality and consistency of artifacts |

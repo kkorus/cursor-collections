@@ -7,7 +7,7 @@ title: Architect
 
 **File:** `.cursor/skills/agents/tsh-architect/SKILL.md`
 
-The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications.
+The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Architect Reviewer before implementation begins.
 
 ## Responsibilities
 
@@ -22,7 +22,7 @@ The Architect agent designs technical solutions, system architecture, and detail
 Each technical specification includes:
 
 1. **Solution Architecture** — High-level overview of components, interactions, and data flow.
-2. **Implementation Plan** — Phases and tasks with clear definition of done for each task.
+2. **Implementation Plan** — Phases and tasks with clear definition of done for each task, ready for Architect Reviewer validation.
 3. **Test Plan** — Automated testing strategies (no manual QA steps).
 4. **Security Considerations** — Security aspects to address during implementation.
 5. **Quality Assurance** — Guidelines for ensuring implementation quality.

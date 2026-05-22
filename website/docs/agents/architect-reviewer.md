@@ -8,21 +8,20 @@ title: Architect Reviewer
 **File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`  
 **Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
-The Architect Reviewer validates implementation plans produced by the [Architect](./architect) agent before implementation begins. It is the quality gate between planning and implementation — catching over-engineering, incorrect assumptions, pattern violations, and missing requirements before any code is written.
+The Architect Reviewer is an internal sub-agent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing.
 
 ## Responsibilities
 
-- Reviewing `.plan.md` files for correctness, feasibility, and simplicity.
-- Verifying that all research requirements are covered by the plan.
-- Checking that referenced files, components, and APIs actually exist in the codebase.
-- Detecting over-engineering, unnecessary abstractions, and YAGNI violations.
-- Verifying pattern consistency with existing project conventions.
-- Evaluating the quality of definitions of done and test plans.
-- Producing a structured review report with a final verdict.
+- Stress-testing the plan against the research context to expose likely failure modes.
+- Checking that referenced files, functions, classes, integrations, and patterns actually exist in the codebase.
+- Surfacing hidden assumptions, sequencing traps, dependency order issues, and migration or data risks.
+- Challenging integration boundaries, rework risk, and false confidence in test coverage.
+- Producing a structured approval or revision report for the Engineering Manager.
 
 ## What It Produces
 
-A `{task-name}.plan-review.md` file saved alongside the plan in `specifications/<task-name>/`:
+- A failure-oriented review report with a binary verdict, top risks, assumptions, rework triggers, and any blocking gaps.
+- The report is saved as `{task-name}.plan-review.md` alongside the plan in `specifications/<task-name>/`.
 
 ```text
 specifications/
@@ -32,45 +31,35 @@ specifications/
     user-authentication.plan-review.md    ← new
 ```
 
-The report includes:
-- **Verdict** — `APPROVED` or `REVISIONS NEEDED`
-- **Findings** — Issues grouped by severity: BLOCKER, WARNING, SUGGESTION
-- **Requirement coverage** — Each research requirement mapped to a plan task
-- **Codebase verification** — Referenced files/components checked against actual source
-- **Simplicity assessment** — Over-engineering and abstraction analysis
-- **Pattern consistency** — Alignment with project conventions
-
 ## Severity Levels
 
 | Severity | Definition | Action Required |
 | --- | --- | --- |
-| **BLOCKER** | Incorrect codebase assumption, missing requirement, infeasible approach, security vulnerability, or severe over-engineering | Plan MUST be revised before implementation |
-| **WARNING** | Minor inconsistency, suboptimal but functional approach, non-critical missing detail | Should be addressed but does not block |
-| **SUGGESTION** | Style preference, alternative worth considering, optional improvement | Nice-to-have only |
+| **BLOCKER** | Credible execution risk likely to cause failure, major rework, unsafe rollout, or materially wrong outcome | Plan MUST be revised before implementation |
+| **WARNING** | Meaningful weakness or assumption that could cause delays or local rework | Should be addressed but does not automatically block |
+| **SUGGESTION** | Lower-signal concern with practical value | Nice-to-have only |
 
 ## Tool Access
 
 | Tool | Usage |
 | --- | --- |
-| **Context7** | Verify library features and API versions referenced in the plan |
-| **Sequential Thinking** | Evaluate complex architectural trade-offs |
-| **File Read/Search** | Verify referenced files, components, and patterns exist in the codebase |
+| Context7 | Verify framework or library assumptions when the plan references them |
+| Sequential Thinking | Evaluate trade-offs, phase ordering, and execution risks |
+| File Read/Search | Inspect the plan, research file, rules, and referenced code |
 
 ## Skills Loaded
 
-- `tsh-architecture-designing` — Evaluate architectural shape, phase coherence, and trade-offs against requirements.
-- `tsh-codebase-analysing` — Verify referenced components against actual codebase state.
-- `tsh-technical-context-discovering` — Check pattern consistency against established conventions.
-- `tsh-implementation-gap-analysing` — Validate what exists vs. what the plan proposes to build.
-- `tsh-sql-and-database-understanding` — Review database-related plan sections: schema design, migrations, indexing.
+- `tsh-architecture-designing` — Evaluate architectural shape, phase coherence, and trade-offs.
+- `tsh-codebase-analysing` — Verify plan references against the actual codebase.
+- `tsh-technical-context-discovering` — Check project conventions and existing patterns.
+- `tsh-implementation-gap-analysing` — Compare what exists with what the plan proposes.
+- `tsh-sql-and-database-understanding` — When the plan includes database schema, migration, or query changes.
 
 ## Invocation
 
 Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-architect-reviewer` use). Load `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md` when validating a plan.
 
 ## Handoffs
-
-The Architect Reviewer is the middle step in the planning→implementation chain:
 
 ```mermaid
 flowchart LR
@@ -79,6 +68,6 @@ flowchart LR
   ArchitectReviewer -->|"REVISIONS NEEDED"| Architect
 ```
 
-- **APPROVED** → Engineering Manager presents the plan and review summary to the user, then proceeds to implementation.
+- **APPROVED** → Engineering Manager presents the plan and a separate chat summary; `*.plan-review.md` stays unchanged.
 - **REVISIONS NEEDED with BLOCKERs** → Engineering Manager delegates back to Architect with the review report. Max 3 iterations before escalating to the user.
 - **Plan already approved and unchanged** → Re-validation is skipped.

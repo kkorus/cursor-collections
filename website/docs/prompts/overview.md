@@ -29,7 +29,7 @@ When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the co
 
 | Command | Agent Skill | Description |
 |---------|------------|-------------|
-| [/tsh-implement](./public/implement) | tsh-engineering-manager | Orchestrate the full cycle: research → plan → implementation |
+| [/tsh-implement](./public/implement) | tsh-engineering-manager | Orchestrate the full cycle: research/context gathering if needed → plan → implementation |
 | [/tsh-refactor](./public/refactor) | tsh-software-engineer | Structural refactoring without behavior change |
 
 ### Quality Commands
@@ -73,7 +73,7 @@ When you run [`/tsh-implement`](./public/implement), the Engineering Manager aut
 |-------|-------------|
 | Research (context gathering) | Context Engineer (via internal `tsh-research` skill) |
 | Planning (architecture) | Architect (via internal `tsh-plan` skill) |
-| Plan validation | Architect Reviewer (`agents/tsh-architect-reviewer`) |
+| Plan validation | Architect Reviewer stress-test (`agents/tsh-architect-reviewer`) |
 | Backend / general code | Software Engineer |
 | Frontend with Figma | Software Engineer (via internal `tsh-implement-ui` skill) |
 | E2E tests | E2E Engineer (via internal `tsh-implement-e2e` skill) |

@@ -110,10 +110,11 @@ You have access to the `tsh-architect-reviewer` agent.
   - A plan has been revised by the architect after receiving review feedback — re-validate it.
 - **IMPORTANT**:
   - Always invoke the agent skill `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`, passing the path to the `.plan.md` and its corresponding `.research.md`.
-  - If REVISIONS NEEDED with BLOCKERs → delegate back to `tsh-architect` with the report. Re-submit. Max 3 iterations, then escalate to user.
-  - If APPROVED → present plan + review summary to user for confirmation before implementation.
-  - If plan already approved and unchanged → skip re-validation.
-  - Do NOT proceed with unresolved BLOCKERs.
+  - Keep `*.plan-review.md` as the source of truth. Do not rewrite or summarize it.
+  - If the review report is incomplete, send it back to `tsh-architect-reviewer`.
+  - If the verdict is **REVISIONS NEEDED**, send it to `tsh-architect`, resolve all BLOCKER findings, and re-run review until **APPROVED**, user override, or 3 iterations.
+  - If the verdict is **APPROVED**, give the user a separate chat summary and keep `*.plan-review.md` unchanged.
+  - Skip re-review if the plan is already approved and unchanged. Do not proceed with unresolved BLOCKER findings.
 - **SHOULD NOT delegate to**:
   - Plans previously reviewed and approved without changes.
   - Quick Implementation Flow tasks where no `.plan.md` is produced.
