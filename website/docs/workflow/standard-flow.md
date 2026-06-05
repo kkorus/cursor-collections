@@ -33,7 +33,7 @@ The Engineering Manager automatically handles the full development cycle:
 
 #### Plan Validation Phase (internal)
 
-- **Delegated to:** Architect Reviewer
+- **Delegated to:** Plan Reviewer
 - **What it does:** Stress-tests the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins.
 - **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings.
 - **Your action:** Review the implementation plan and review report together. Confirm scope, phases, and acceptance criteria.
@@ -68,7 +68,7 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
    ↳ 📖 Review the generated research document
    ↳ ✅ Confirm to proceed to planning
    ↳ 🧱 Engineering Manager delegates to Architect for planning
-   ↳ 🧪 Engineering Manager delegates to Architect Reviewer for plan validation
+   ↳ 🧪 Engineering Manager delegates to Plan Reviewer for plan validation
    ↳ 📖 Review the implementation plan and review summary
    ↳ ✅ Confirm the approved plan before implementation begins
    ↳ 💻 Engineering Manager delegates implementation to specialized agents

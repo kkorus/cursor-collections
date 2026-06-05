@@ -1,14 +1,14 @@
 ---
 sidebar_position: 3
-title: Architect Reviewer
+title: Plan Reviewer
 ---
 
-# Architect Reviewer Agent
+# Plan Reviewer Agent
 
-**File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`  
+**File:** `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md`  
 **Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
-The Architect Reviewer is an internal sub-agent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing.
+The Plan Reviewer (`tsh-plan-reviewer`) is an internal sub-agent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing.
 
 ## Responsibilities
 
@@ -57,15 +57,15 @@ specifications/
 
 ## Invocation
 
-Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-architect-reviewer` use). Load `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md` when validating a plan.
+Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-plan-reviewer` use). Load `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md` when validating a plan.
 
 ## Handoffs
 
 ```mermaid
 flowchart LR
-  Architect["Architect\n(internal/tsh-plan)"] --> ArchitectReviewer["Architect Reviewer\n(agents/tsh-architect-reviewer)"]
-  ArchitectReviewer -->|"APPROVED"| EM["Engineering Manager\n→ implementation"]
-  ArchitectReviewer -->|"REVISIONS NEEDED"| Architect
+  Architect["Architect\n(internal/tsh-plan)"] --> PlanReviewer["Plan Reviewer\n(agents/tsh-plan-reviewer)"]
+  PlanReviewer -->|"APPROVED"| EM["Engineering Manager\n→ implementation"]
+  PlanReviewer -->|"REVISIONS NEEDED"| Architect
 ```
 
 - **APPROVED** → Engineering Manager presents the plan and a separate chat summary; `*.plan-review.md` stays unchanged.

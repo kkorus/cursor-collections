@@ -1,16 +1,16 @@
 ---
 sidebar_position: 11
-title: tsh-architect-reviewer (plan review)
+title: tsh-plan-reviewer (plan review)
 ---
 
-# Plan review (Architect Reviewer)
+# Plan review (Plan Reviewer)
 
 :::info
-Not invoked directly by users. To trigger plan validation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) delegates to the [Architect Reviewer](../../agents/architect-reviewer) after the Architect produces or updates a plan.
+Not invoked directly by users. To trigger plan validation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) delegates to the [Plan Reviewer](../../agents/plan-reviewer) after the Architect produces or updates a plan.
 :::
 
-**Agent:** Architect Reviewer  
-**File:** `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`
+**Agent:** Plan Reviewer (`tsh-plan-reviewer`)  
+**File:** `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md`
 
 Stress-tests architect implementation plans before implementation begins and persists the review report alongside the plan.
 
@@ -20,7 +20,7 @@ Stress-tests architect implementation plans before implementation begins and per
 /tsh-implement <JIRA_ID or task description>
 ```
 
-The Engineering Manager invokes the Architect Reviewer after the Architect creates or updates a `.plan.md` file. If the plan is already approved and unchanged since the last review, the validation step is skipped.
+The Engineering Manager invokes the Plan Reviewer after the Architect creates or updates a `.plan.md` file. If the plan is already approved and unchanged since the last review, the validation step is skipped.
 
 ## What It Does
 

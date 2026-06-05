@@ -27,7 +27,7 @@ Each agent skill has:
 - **Workflow skills** — Which domain skills it loads for specialized knowledge.
 - **Delegation logic** — When and how to hand off to other agent skills.
 
-User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Workflow entry points use `/tsh-<action>` command skills in `.cursor/skills/commands/`. Internal workers (BA workers, `tsh-architect-reviewer`, Cursor researcher/creator/reviewer) use `disable-model-invocation: true` and are meant for orchestrator delegation only.
+User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Workflow entry points use `/tsh-<action>` command skills in `.cursor/skills/commands/`. Internal workers (BA workers, `tsh-plan-reviewer`, Cursor researcher/creator/reviewer) use `disable-model-invocation: true` and are meant for orchestrator delegation only.
 
 ## Agent Delegation Diagram
 
@@ -55,8 +55,8 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
   Engineer       (plan)      Engineer      Engineer    Engineer     Engineer    /tsh-review-ui
   (research)        │        (app code)    (infra)     (tests)     (prompts)
                     ▼
-             Architect Reviewer
-             (plan validation)
+             Plan Reviewer
+             (tsh-plan-reviewer)
                     │ APPROVED
                     ▼
               Code Reviewer
@@ -113,7 +113,7 @@ These skills have `disable-model-invocation: true`. They are delegated by the Bu
 | BA Extraction Worker | `agents/tsh-ba-extraction-worker/` | Drafts intent briefs and extracts epics and stories |
 | BA Quality Worker | `agents/tsh-ba-quality-worker/` | Runs Lite or Full quality-review passes |
 | BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
-| [Architect Reviewer](./architect-reviewer) | `agents/tsh-architect-reviewer/` | Stress-tests implementation plans before implementation starts |
+| [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Stress-tests implementation plans before implementation starts |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |
 | [Cursor Artifact Reviewer](./cursor-artifact-reviewer) | `agents/tsh-cursor-artifact-reviewer/` | Validates quality and consistency of artifacts |

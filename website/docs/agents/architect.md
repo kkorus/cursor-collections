@@ -7,7 +7,7 @@ title: Architect
 
 **File:** `.cursor/skills/agents/tsh-architect/SKILL.md`
 
-The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Architect Reviewer before implementation begins.
+The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Plan Reviewer before implementation begins.
 
 ## Responsibilities
 
@@ -22,7 +22,7 @@ The Architect agent designs technical solutions, system architecture, and detail
 Each technical specification includes:
 
 1. **Solution Architecture** — High-level overview of components, interactions, and data flow.
-2. **Implementation Plan** — Phases and tasks with clear definition of done for each task, ready for Architect Reviewer validation.
+2. **Implementation Plan** — Phases and tasks with clear definition of done for each task, ready for Plan Reviewer validation.
 3. **Test Plan** — Automated testing strategies (no manual QA steps).
 4. **Security Considerations** — Security aspects to address during implementation.
 5. **Quality Assurance** — Guidelines for ensuring implementation quality.
@@ -62,6 +62,6 @@ Each technical specification includes:
 
 After creating the plan, the Architect hands off to:
 
-- **Architect Reviewer** — The Engineering Manager automatically invokes the [Architect Reviewer](./architect-reviewer) to validate the produced `.plan.md` before implementation begins. If `REVISIONS NEEDED` with BLOCKERs, the plan is returned to the Architect for revision.
+- **Plan Reviewer** — The Engineering Manager automatically invokes the [Plan Reviewer](./plan-reviewer) to validate the produced `.plan.md` before implementation begins. If `REVISIONS NEEDED` with BLOCKERs, the plan is returned to the Architect for revision.
 - **Software Engineer** → `/tsh-implement` (standard implementation, after plan is approved)
 - **Software Engineer** → `/tsh-implement` (frontend implementation with Figma verification via internal UI prompt, after plan is approved)

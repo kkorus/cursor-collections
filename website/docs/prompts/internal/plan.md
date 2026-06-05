@@ -33,7 +33,7 @@ The Engineering Manager identifies that no implementation plan exists and delega
 7. **Addresses security** — Includes security considerations.
 8. **Defines testing** — Guidelines for validation.
 9. **Controls scope** — Only plans changes for THIS task; documents improvements separately.
-10. **Supports validation** — The Engineering Manager sends the finished plan to the Architect Reviewer before implementation begins.
+10. **Supports validation** — The Engineering Manager sends the finished plan to the Plan Reviewer before implementation begins.
 
 ## Skills Loaded
 
@@ -52,12 +52,12 @@ specifications/
   user-authentication/
     user-authentication.research.md
     user-authentication.plan.md        ← new (Architect)
-    user-authentication.plan-review.md ← new (Architect Reviewer, after validation)
+    user-authentication.plan-review.md ← new (Plan Reviewer, after validation)
 ```
 
 The plan includes checklist-style phases, tasks with `[CREATE]`/`[MODIFY]`/`[REUSE]` action types, acceptance criteria, security considerations, and testing guidelines.
 
-After the plan is produced, the Engineering Manager automatically invokes the [Architect Reviewer](../../agents/architect-reviewer) to validate it. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
+After the plan is produced, the Engineering Manager automatically invokes the [Plan Reviewer](../../agents/plan-reviewer) to validate it. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
 
 :::tip
 Review both the plan and the review report. Confirm scope, phases, and acceptance criteria before starting implementation.

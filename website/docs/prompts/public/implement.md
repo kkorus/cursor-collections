@@ -19,7 +19,7 @@ Orchestrates the implementation of a feature by delegating tasks from the plan t
 ## What It Does
 
 1. Reviews the current state of the task — checks what's already done, gathers missing context via Context Engineer, creates a plan via Architect if missing.
-2. **Validates the plan** (Full Implementation Flow only) — Invokes the **Architect Reviewer** to stress-test failure modes, hidden assumptions, and rework risks. Returns plan to Architect if BLOCKERs found (max 3 iterations). Quick flow skips this because no `.plan.md` is produced. Presents approved plan to user for confirmation.
+2. **Validates the plan** (Full Implementation Flow only) — Invokes the **Plan Reviewer** to stress-test failure modes, hidden assumptions, and rework risks. Returns plan to Architect if BLOCKERs found (max 3 iterations). Quick flow skips this because no `.plan.md` is produced. Presents approved plan to user for confirmation.
 3. Reviews the implementation plan and feature context thoroughly.
 4. Creates a **todo for every task** in the plan — each task gets its own tracked item.
 5. Delegates codebase analysis to the **Architect** agent to establish project conventions and patterns (if technical context is missing from the plan).
@@ -37,7 +37,7 @@ The Engineering Manager automatically delegates each task to the right agent bas
 
 | Task Type | Agent |
 |---|---|
-| Plan validation | Architect Reviewer |
+| Plan validation | Plan Reviewer |
 | Backend / general code | Software Engineer |
 | Frontend with Figma | Software Engineer |
 | E2E tests | E2E Engineer |

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-04
+
+### Changed
+
+- Plan reviewer agent — Renamed `tsh-architect-reviewer` to `tsh-plan-reviewer`; added `edit` tool, REVISIONS NEEDED handoff to `tsh-architect`, and updated Engineering Manager and `/tsh-implement` delegation references (ported from copilot-collections PR #62)
+
 ## 2026-06-01
 
 ### Added

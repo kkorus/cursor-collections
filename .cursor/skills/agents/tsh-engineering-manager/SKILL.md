@@ -102,16 +102,16 @@ You have access to the `tsh-architect` agent.
 - **SHOULD NOT delegate to**:
   - The `*.plan.md` exists, is complete, and has already been reviewed without changes since the last approval — in such cases, delegate implementation tasks directly to `tsh-software-engineer` or `tsh-devops-engineer` agents based on the nature of the task.
 
-You have access to the `tsh-architect-reviewer` agent.
+You have access to the `tsh-plan-reviewer` agent.
 
 - **MUST delegate to when**:
   - The `tsh-architect` agent has just produced or updated a `.plan.md` file and it has not yet been reviewed — ALWAYS validate it before proceeding to implementation.
   - The Full Implementation Flow planning phase has completed.
   - A plan has been revised by the architect after receiving review feedback — re-validate it.
 - **IMPORTANT**:
-  - Always invoke the agent skill `.cursor/skills/agents/tsh-architect-reviewer/SKILL.md`, passing the path to the `.plan.md` and its corresponding `.research.md`.
+  - Always invoke the agent skill `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md`, passing the path to the `.plan.md` and its corresponding `.research.md`.
   - Keep `*.plan-review.md` as the source of truth. Do not rewrite or summarize it.
-  - If the review report is incomplete, send it back to `tsh-architect-reviewer`.
+  - If the review report is incomplete, send it back to `tsh-plan-reviewer`.
   - If the verdict is **REVISIONS NEEDED**, send it to `tsh-architect`, resolve all BLOCKER findings, and re-run review until **APPROVED**, user override, or 3 iterations.
   - If the verdict is **APPROVED**, give the user a separate chat summary and keep `*.plan-review.md` unchanged.
   - Skip re-review if the plan is already approved and unchanged. Do not proceed with unresolved BLOCKER findings.
@@ -172,7 +172,7 @@ This agent delegates to:
 - @tsh-software-engineer - implementing backend and frontend application code
 - @tsh-devops-engineer - implementing infrastructure automation, CI/CD pipelines, and observability
 - @tsh-architect - architectural guidance, plan creation, and codebase analysis
-- @tsh-architect-reviewer - plan validation before implementation begins
+- @tsh-plan-reviewer - plan validation before implementation begins
 - @tsh-code-reviewer - code review at the end of implementation
 - @tsh-ui-reviewer - UI verification against Figma designs
 - @tsh-context-engineer - gathering requirements and building task context when missing
