@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **32 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+Cursor Collections includes **35 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
 
 ## How Skills Work
 
@@ -25,11 +25,11 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 
 | Skill | Description | Used By |
 |-------|-------------|---------|
-| [tsh-task-analysing](./task-analysis) | Task context gathering and research | Context Engineer, E2E Engineer |
+| [tsh-task-analysing](./task-analysis) | Workshop context synthesis, ambiguity resolution, baseline overlap | Business Analyst, Context Engineer, E2E Engineer |
 | [tsh-transcript-processing](./transcript-processing) | Workshop transcript cleaning and structuring | Business Analyst |
-| [tsh-task-extracting](./task-extraction) | Epic and user story extraction from workshop materials | Business Analyst |
-| [tsh-task-quality-reviewing](./task-quality-review) | Quality analysis for extracted task lists | Business Analyst |
-| [tsh-jira-task-formatting](./jira-task-formatting) | Jira-ready task formatting and import/push management | Business Analyst |
+| [tsh-task-extracting](./task-extraction) | Intent brief, epic and story extraction with source traceability | Business Analyst |
+| [tsh-task-quality-reviewing](./task-quality-review) | Lite/Full quality analysis for extracted task lists | Business Analyst |
+| [tsh-jira-task-formatting](./jira-task-formatting) | Jira-ready formatting, verification, and baseline refresh | Business Analyst |
 
 ### Development Skills
 

@@ -5,7 +5,7 @@ title: Commands Overview
 
 # Commands Overview
 
-Cursor Collections includes **16 slash commands** that trigger specific workflow actions across the full product lifecycle. Commands are stored in `.cursor/skills/commands/` as `SKILL.md` files with `disable-model-invocation: true`, and become available as `/tsh-<name>` shortcuts in Cursor Agent chat.
+Cursor Collections includes **17 slash commands** that trigger specific workflow actions across the full product lifecycle. Commands are stored in `.cursor/skills/commands/` as `SKILL.md` files with `disable-model-invocation: true`, and become available as `/tsh-<name>` shortcuts in Cursor Agent chat.
 
 ## How Commands Work
 
@@ -23,6 +23,7 @@ When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the co
 
 | Command | Agent Skill | Description |
 |---------|------------|-------------|
+| [/tsh-explore-materials](./public/explore-materials) | tsh-business-analyst | Explore workshop materials before backlog extraction |
 | [/tsh-analyze-materials](./public/analyze-materials) | tsh-business-analyst | Process workshop materials into Jira-ready epics and stories |
 
 ### Development Commands

@@ -5,7 +5,7 @@ title: Agents Overview
 
 # Agents Overview
 
-Cursor Collections provides **12 specialized agent skills** (plus 4 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
+Cursor Collections provides **12 user-facing agent skills** (plus 9 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
 
 ## Agent Skills vs Cursor Subagents
 
@@ -27,16 +27,22 @@ Each agent skill has:
 - **Workflow skills** — Which domain skills it loads for specialized knowledge.
 - **Delegation logic** — When and how to hand off to other agent skills.
 
-User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Workflow entry points use `/tsh-<action>` command skills in `.cursor/skills/commands/`. Internal workers (`tsh-architect-reviewer`, Cursor researcher/creator/reviewer) use `disable-model-invocation: true` and are meant for orchestrator delegation only.
+User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Workflow entry points use `/tsh-<action>` command skills in `.cursor/skills/commands/`. Internal workers (BA workers, `tsh-architect-reviewer`, Cursor researcher/creator/reviewer) use `disable-model-invocation: true` and are meant for orchestrator delegation only.
 
 ## Agent Delegation Diagram
 
 ```
-┌──────────────────────┐
-│  Business Analyst     │
-│  /tsh-analyze-materials│
-└──────┬───────────────┘
-       │ Delegates to Engineering Manager
+┌──────────────────────────────┐
+│  Business Analyst             │
+│  /tsh-explore-materials (opt) │
+│  /tsh-analyze-materials       │
+└──────┬───────────────────────┘
+       │ Task-delegates to BA workers
+       ├──────────┬──────────┬──────────┬──────────┐
+       ▼          ▼          ▼          ▼          ▼
+  Transcript  Analysis  Extraction  Quality   Formatting
+   Worker      Worker     Worker     Worker     Worker
+       │ Start Implementation
        ▼
 ┌─────────────────────────┐
 │   Engineering Manager    │  ← Orchestrates the full cycle
@@ -63,7 +69,7 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 
 | Agent | Skill path | Role | Key Tools |
 |-------|-----------|------|-----------|
-| [Business Analyst](./business-analyst) | `agents/tsh-business-analyst/` | Converts workshop materials into Jira-ready epics and stories | Atlassian, Figma, PDF Reader, Sequential Thinking |
+| [Business Analyst](./business-analyst) | `agents/tsh-business-analyst/` | Orchestrates workshop analysis into Jira-ready epics and stories | Atlassian, Figma, PDF Reader, Sequential Thinking |
 
 ### Development Agents
 
@@ -98,10 +104,15 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 
 ### Internal delegate-only agent skills
 
-These skills have `disable-model-invocation: true`. They are delegated by the Engineering Manager or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation.
+These skills have `disable-model-invocation: true`. They are delegated by the Business Analyst, Engineering Manager, or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation.
 
 | Agent | Skill path | Role |
 |-------|-----------|------|
+| BA Transcript Worker | `agents/tsh-ba-transcript-worker/` | Cleans and structures raw workshop transcripts |
+| BA Analysis Worker | `agents/tsh-ba-analysis-worker/` | Synthesizes workshop context, baseline overlap, and open questions |
+| BA Extraction Worker | `agents/tsh-ba-extraction-worker/` | Drafts intent briefs and extracts epics and stories |
+| BA Quality Worker | `agents/tsh-ba-quality-worker/` | Runs Lite or Full quality-review passes |
+| BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
 | [Architect Reviewer](./architect-reviewer) | `agents/tsh-architect-reviewer/` | Stress-tests implementation plans before implementation starts |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |

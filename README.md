@@ -20,9 +20,9 @@ This repository supports the **full product development lifecycle** with AI-powe
 
 ### Product Ideation – Requirements & Planning
 
-- **Agent skills** – Business Analyst
-- **Commands** – `/tsh-analyze-materials`
-- **Workflow skills** – Task Analysis, Transcript Processing, Task Extraction, Jira Task Formatting
+- **Agent skills** – Business Analyst orchestrator (+ 5 internal BA worker agents)
+- **Commands** – `/tsh-explore-materials`, `/tsh-analyze-materials`
+- **Workflow skills** – Task Analysis, Transcript Processing, Task Extraction, Task Quality Review, Jira Task Formatting
 
 ### Development – Architecture & Implementation
 
@@ -219,11 +219,19 @@ The Architect analyzes the whole repository for: dead code, duplications, archit
 
 ### Workshop transcript to Jira backlog
 
+Optional exploration when materials are ambiguous:
+
+```
+/tsh-explore-materials [paste transcript or attach materials]
+```
+
+Full backlog extraction:
+
 ```
 /tsh-analyze-materials [paste transcript or attach file]
 ```
 
-The Business Analyst: cleans the transcript, extracts epics and user stories, runs quality review, formats for Jira, and pushes after your approval.
+The Business Analyst orchestrator: optionally explores context, drafts an intent brief (Gate 0), cleans the transcript, extracts epics and user stories (Gate 1), runs Lite or Full quality review (Gate 1.5), formats for Jira (Gate 2), verifies Jira after sync, and refreshes the project baseline.
 
 Works with: transcripts, Figma designs, PDF documents, codebase context.
 
@@ -331,7 +339,7 @@ The Cursor Orchestrator handles research → design → creation → review auto
 
 | Agent | Purpose |
 |-------|---------|
-| Business Analyst | Convert workshop materials into Jira-ready epics and user stories |
+| Business Analyst | Orchestrate workshop analysis into Jira-ready epics and user stories via internal BA workers |
 
 ### Development
 
@@ -385,7 +393,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 ├── rules/
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
-│   ├── agents/                    # 16 agent skill definitions
+│   ├── agents/                    # 21 agent skill definitions (12 user-facing + 9 internal workers)
 │   ├── workflows/                 # 32 domain workflow skills (agent-invoked; may appear in /)
 │   ├── commands/                  # 16 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 11 internal sub-workflow skills

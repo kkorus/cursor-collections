@@ -5,7 +5,9 @@ description: Transform extracted epics and user stories into Jira-ready format f
 
 # Jira Task Formatting
 
-This skill helps you transform an extracted task list (epics and user stories) into a Jira-ready format that can be directly pushed to Jira. It applies a consistent benchmark template to every task, validates completeness, and manages a two-gate review process before any issues are created.
+# Jira Task Formatting
+
+This skill helps you transform an extracted task list (epics and user stories) into a Jira-ready format that can be directly pushed to Jira. It applies a consistent benchmark template to every task, preserves source traceability, validates completeness, and manages a two-gate review process before any issues are created.
 
 ## Jira Task Formatting Process
 
@@ -21,7 +23,9 @@ Formatting progress:
 - [ ] Step 6: Formatting Review — User reviews formatted markdown
 - [ ] Step 7: Save the Jira-ready tasks document
 - [ ] Step 8: Push Approval — User approves Jira push
-- [ ] Step 9: Create issues in Jira
+- [ ] Step 9: Create or update issues in Jira
+- [ ] Step 10: Post-push verification against Jira
+- [ ] Step 11: Archive session artifacts and refresh the project baseline
 ```
 
 **Step 1: Load the benchmark template and extracted tasks**
@@ -60,10 +64,11 @@ For each user story, create a Jira-ready story entry with:
 - **Summary** (title): Follow the naming convention from the benchmark template
 - **Description**: Structured using the benchmark story description format, including:
   - Context paragraph linking to the parent epic
+  - Source Context section that preserves traceability from extracted tasks
   - User story in "As a… I want… So that…" format
   - Requirements as a numbered list
   - High-level technical notes (only if present in extracted tasks)
-- **Acceptance criteria**: Formatted as a checklist compatible with Jira markdown
+- **Acceptance criteria**: Formatted as a checklist compatible with Jira markdown; scenario-style `GIVEN / WHEN / THEN` criteria are valid and should remain readable after formatting
 - **Story points guidance**: Include a sizing suggestion (e.g., Small / Medium / Large) based on scope complexity — but note this is a suggestion, not an estimate. The team should estimate during refinement.
 - **Labels**: Consistent with the parent epic's labels plus any story-specific labels
 - **Parent epic**: Reference to the parent epic by title (will be linked by ID after creation)
@@ -92,11 +97,11 @@ For any task where:
 - The scope of a story is unclear
 - Labels or categorisation is uncertain
 
-Use `askQuestions` to get user input. Ask exactly **one question per `askQuestions` call**, each scoped to a single epic or story. The question must identify which task has the uncertain field and what field is missing (e.g., "[Epic 2: Payment Processing > Story 2.1: User can checkout] The priority for this story could not be determined from the workshop materials. Should it be High (core MVP) or Medium (post-MVP)?"). Do not proceed to the review gate until all flags are resolved.
+Ask questions to the user to get user input. Ask exactly **one question per question**, each scoped to a single epic or story. The question must identify which task has the uncertain field and what field is missing (e.g., "[Epic 2: Payment Processing > Story 2.1: User can checkout] The priority for this story could not be determined from the workshop materials. Should it be High (core MVP) or Medium (post-MVP)?"). Do not proceed to the review gate until all flags are resolved.
 
 **Step 6: Formatting Review — User reviews formatted markdown**
 
-Present the formatted output to the user for review. If changes were made during formatting (e.g., rewording, priority adjustments), present each changed task individually using one `askQuestions` call per task, identifying the specific epic/story and the change made. Ask: "Is this change acceptable?"
+Present the formatted output to the user for review. If changes were made during formatting (e.g., rewording, priority adjustments), present each changed task individually using one question per task, identifying the specific epic/story and the change made. Ask: "Is this change acceptable?"
 
 After all individual changes are reviewed, ask one workflow-level question: "All formatting is complete. Are you happy with these tasks? Any final changes before I proceed to save and push?"
 
@@ -146,6 +151,28 @@ Using the Atlassian tools, process issues based on their Jira Key:
 
 After all issues are processed, report the final state back to the user — showing all Jira keys in `jira-tasks.md` and confirming which were created, updated, and skipped (with their statuses).
 
+**Step 10: Post-push verification against Jira**
+
+After the Jira sync succeeds, read back the created or updated issues and verify at least the following for each task:
+- Summary/title
+- Parent epic linkage for stories
+- Acceptance criteria presence
+- Relevant description sections
+- Current status capture
+
+If verification finds mismatches, surface them clearly and do not claim the push is fully verified until the differences are resolved or explicitly acknowledged by the user.
+
+**Step 11: Archive session artifacts and refresh the project baseline**
+
+When verification succeeds, archive the current session artifacts under `specifications/projects/<project-name>/sessions/<YYYY-MM-DD>-<workshop-name>/`.
+
+- Use the workshop name as the fallback project key when no explicit project name exists
+- Refresh `specifications/projects/<project-name>/task-baseline.md`
+- Treat `Jira Key` as the primary identity when merging baseline entries
+- Replace same-key entries with the latest synced content and status
+- Add new entries for newly pushed tasks
+- Preserve Jira as the external source of truth
+
 If any issue creation or update fails, inform the user immediately and ask how to proceed.
 
 ## Per-Change Modification Flow
@@ -154,7 +181,7 @@ When the user requests a change to a specific task outside of the main formattin
 
 0. **Check the task's Status field**. If it is Done, Cancelled, or PO APPROVE, inform the user that this task is protected and cannot be modified: _"This task has a protected status ([status]). Per the Protected Status Policy, tasks with status Done, Cancelled, or PO APPROVE cannot be modified. If this status is incorrect, please update it in Jira first, then re-import."_ Do not apply the change locally or in Jira. Stop here.
 1. **Update the local `jira-tasks.md` first** — apply the requested change to the file
-2. **Ask the user**: "Do you want to push this change to Jira now?" (using one `askQuestions` call)
+2. **Ask the user**: "Do you want to push this change to Jira now?" (using one question)
 3. **If yes** — use the task's Jira key to update the specific issue via Atlassian MCP. If the task has no Jira key (`—`), inform the user that the task has not been pushed yet and offer to create it
 4. **If no** — the change remains local in `jira-tasks.md` until the next batch push
 
@@ -168,6 +195,7 @@ When formatting descriptions and acceptance criteria for Jira:
 - Use `# item` for numbered lists
 - Use `{noformat}` or `{code}` blocks for preformatted text
 - Acceptance criteria should use `(/) criterion` for checklist items (Jira checkbox format)
+- Scenario-style acceptance criteria remain valid when expressed as `(/) GIVEN ... WHEN ... THEN ...`
 
 Note: The markdown file saved locally uses standard markdown. The Jira-specific formatting is applied only when creating the actual issues.
 
@@ -194,7 +222,7 @@ Ask the user to specify what to import. Accept any of these:
 - **Specific epic keys** (e.g., `PROJ-10, PROJ-15`) — imports those epics and their child stories
 - A **JQL query** — imports issues matching the query
 
-Use one `askQuestions` call to determine the import scope if the user hasn't specified it.
+Ask one question to determine the import scope if the user hasn't specified it.
 
 **Step I-2: Fetch issues from Jira**
 
@@ -218,7 +246,7 @@ Convert each fetched issue into the benchmark template format:
 | Story Points | Story Points / Sizing Guidance | If estimated, include; otherwise mark as TBD |
 | Status | Status | Direct mapping of the Jira workflow status (e.g., To Do, In Progress, Done). Used to enforce the Protected Status Policy. |
 
-If an imported description cannot be cleanly restructured into the benchmark format, flag it for user review using one `askQuestions` call per flagged task.
+If an imported description cannot be cleanly restructured into the benchmark format, flag it for user review using one question per flagged task.
 
 > **Protected Status Handling on Import**: After mapping all fields, check each imported task's Status. If the status is Done, Cancelled, or PO APPROVE, mark the task as read-only by adding a `🔒` indicator next to its title. These tasks are imported for visibility but must never be modified locally or pushed back to Jira. Preserve their content exactly as fetched.
 
@@ -228,7 +256,7 @@ Create the `jira-tasks.md` file with all imported tasks in the benchmark templat
 
 **Step I-5: Present imported tasks for user review**
 
-Present each imported task to the user for review using one `askQuestions` call per task. Highlight any descriptions that were restructured or fields that could not be mapped cleanly. Ask: "Does this imported task look correct?"
+Present each imported task to the user for review using one question per task. Highlight any descriptions that were restructured or fields that could not be mapped cleanly. Ask: "Does this imported task look correct?"
 
 **Step I-6: Save to specifications directory**
 

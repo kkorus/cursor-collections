@@ -6,9 +6,9 @@ title: Task Quality Review
 # Task Quality Review
 
 **Folder:** `.cursor/skills/workflows/tsh-task-quality-reviewing/`  
-**Used by:** Business Analyst
+**Used by:** Business Analyst (via `tsh-ba-quality-worker` for delegated review passes)
 
-Performs a systematic quality analysis on an approved task list (epics and user stories) to identify gaps, missing edge cases, and improvement opportunities. Runs 10 domain-agnostic analysis passes and produces structured suggestions the user can individually accept or reject.
+Performs a systematic quality analysis on an approved task list (epics and user stories) to identify gaps, missing edge cases, and improvement opportunities. Supports **Lite** and **Full** review modes, optionally enriches findings with existing Jira board context, and produces structured suggestions the user can individually accept or reject at Gate 1.5.
 
 ## What It Produces
 
@@ -17,9 +17,16 @@ Performs a systematic quality analysis on an approved task list (epics and user 
 - **Quality review report** — Audit trail of all suggestions and decisions (`quality-review.md`).
 - **Updated task list** — Accepted suggestions applied to `extracted-tasks.md` in-place.
 
-## Analysis Passes
+## Review Modes
 
-The quality review runs 10 independent analysis passes:
+| Mode | When to Use | Passes |
+|------|-------------|--------|
+| **Lite** | Default for small, low-risk workshops (roughly ≤3 epics and ≤12 stories) unless the user requests Full | A, B, E, H, I |
+| **Full** | Larger workshops, regulated domains, high-risk scope, or when the user requests a deeper pass | A, B, C, D, E, F, G, H, I, J |
+
+Record the chosen mode in the review output before running passes.
+
+## Analysis Passes
 
 | Pass | Category | What It Checks | Confidence |
 |---|---|---|---|
@@ -52,27 +59,31 @@ Each finding is classified into one of these action types:
 
 Collect the Gate 1-approved `extracted-tasks.md`, cleaned transcript, and any other source materials.
 
-### Step 2: Gather Jira Context (Optional)
+### Step 2: Select Review Mode
+
+Choose Lite or Full based on task size, risk, and user direction.
+
+### Step 3: Gather Jira Context (Optional)
 
 If Atlassian tools are available, optionally fetch existing board context to cross-reference against.
 
-### Step 3: Build Domain Model
+### Step 4: Build Domain Model
 
 Construct a lightweight domain model from the task list: actors, entities (with lifecycle mapping), and relationships.
 
-### Step 4: Run Analysis Passes
+### Step 5: Run Analysis Passes
 
-Execute all 10 passes against the domain model and task list. Each pass produces zero or more findings.
+Execute the active passes for the chosen mode against the domain model and task list. Each pass produces zero or more findings. Skip tasks with protected Jira statuses (Done, Cancelled, PO APPROVE).
 
-### Step 5: Classify Suggestions
+### Step 6: Classify Suggestions
 
 Transform findings into structured suggestions with confidence levels, action types, and proposed changes.
 
-### Step 6: User Review (Gate 1.5)
+### Step 7: User Review (Gate 1.5)
 
 Present suggestions one at a time for individual accept/reject decisions. Each suggestion is self-contained with full context.
 
-### Step 7: Apply Accepted Changes
+### Step 8: Apply Accepted Changes
 
 Apply accepted suggestions to `extracted-tasks.md` and save the quality review report to `quality-review.md`.
 
