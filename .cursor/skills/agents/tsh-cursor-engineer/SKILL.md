@@ -60,6 +60,7 @@ Before starting any task, you check all available skills and decide which one is
 - `tsh-creating-skills` - when creating or reviewing SKILL.md files; provides naming conventions, body structure, progressive disclosure patterns, and validation checklists
 - `tsh-creating-commands` - when creating or reviewing command skills in `commands/`; provides the structured creation process, template, and workflow focus guidelines
 - `tsh-creating-rules` - when creating or reviewing .mdc rules or cursor-instructions.md; provides templates, decision framework for instruction vs. skill placement, and validation checklist
+- `tsh-migrating-copilot-to-cursor` - when porting GitHub Copilot customization artifacts to Cursor equivalents; provides artifact mapping, frontmatter conversion, and path replacement rules
 - `tsh-technical-context-discovering` - to understand existing customization patterns in the project before creating or modifying any artifact
 - `tsh-codebase-analysing` - to analyze existing customization files and identify patterns, inconsistencies, or opportunities for improvement
 

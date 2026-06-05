@@ -83,6 +83,6 @@ Skip for: adding test stages, fixing pipeline bugs, updating versions, adding ca
 ## Scope
 
 **Does NOT handle** (redirect to):
-- Infrastructure provisioning → `/tsh-implement-terraform`
-- Kubernetes deployment configuration → `/tsh-deploy-kubernetes`
-- Monitoring and alerting → `/tsh-implement-observability`
+- Infrastructure provisioning → `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
+- Kubernetes deployment configuration → `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
+- Monitoring and alerting → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`

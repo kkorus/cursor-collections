@@ -14,7 +14,7 @@ The fastest way to get started — no cloning required.
 1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`)
 2. Navigate to **Rules**
 3. In the **Project Rules** section, click **Add Rule → Remote Rule (GitHub)**
-4. Enter: `https://github.com/TheSoftwareHouse/cursor-collections`
+4. Enter: `https://github.com/kkorus/cursor-collections`
 
 Skills are imported globally and available in every workspace immediately.
 
@@ -31,7 +31,7 @@ This approach lets you pin a specific version, review changes before updating, a
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/TheSoftwareHouse/cursor-collections ~/cursor-collections
+git clone https://github.com/kkorus/cursor-collections ~/cursor-collections
 ```
 
 ### 2. Link skills globally
@@ -51,6 +51,11 @@ done
 
 # Slash command skills
 for d in ~/cursor-collections/.cursor/skills/commands/*/; do
+  ln -sf "$d" ~/.cursor/skills/
+done
+
+# Internal skills (delegate-only orchestration steps)
+for d in ~/cursor-collections/.cursor/skills/internal/*/; do
   ln -sf "$d" ~/.cursor/skills/
 done
 ```
@@ -73,7 +78,7 @@ MCP servers unlock Jira, Figma, code search, and browser automation.
 
 1. Open **Cursor Settings → MCP**
 2. Click **Add MCP Server**
-3. Copy the contents of [`.cursor/mcp.json`](https://github.com/TheSoftwareHouse/cursor-collections/blob/main/.cursor/mcp.json) into your user MCP configuration
+3. Copy the contents of [`.cursor/mcp.json`](https://github.com/kkorus/cursor-collections/blob/main/.cursor/mcp.json) into your user MCP configuration
 
 ### Workspace (project-specific)
 

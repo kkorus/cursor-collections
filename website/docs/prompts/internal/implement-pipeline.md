@@ -1,9 +1,9 @@
 ---
 sidebar_position: 14
-title: /tsh-implement-pipeline
+title: tsh-implement-pipeline (internal)
 ---
 
-# /tsh-implement-pipeline
+# tsh-implement-pipeline (internal)
 
 :::info
 Not invoked directly by users. To trigger CI/CD pipeline implementation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) will automatically delegate to the [DevOps Engineer](../../agents/devops-engineer).

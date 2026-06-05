@@ -4,7 +4,7 @@ This repository distributes Cursor Agent Skills, commands, workflows, and rules 
 
 ## Architecture
 
-- `.cursor/skills/agents/` — agent personas (`SKILL.md`, invoke via `@tsh-<role>`)
+- `.cursor/skills/agents/` — agent personas (`SKILL.md`). User-facing agents are invoked via `@tsh-<role>`. Delegate-only workers in this folder (BA workers, `tsh-plan-reviewer`, Cursor researcher/creator/reviewer) use `disable-model-invocation: true` and are meant for orchestrator delegation only.
 - `.cursor/skills/commands/` — slash commands (`disable-model-invocation: true`)
 - `.cursor/skills/workflows/` — reusable domain knowledge (auto-loaded by agents)
 - `.cursor/skills/internal/` — delegate-only steps (`disable-model-invocation: true`)

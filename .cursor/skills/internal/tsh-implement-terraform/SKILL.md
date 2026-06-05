@@ -93,6 +93,6 @@ Skip for: adding resources to existing modules, updating versions, fixing bugs, 
 ## Scope
 
 **Does NOT handle** (redirect to):
-- CI/CD pipelines for Terraform → `/tsh-implement-pipeline`
-- Kubernetes workload configuration → `/tsh-deploy-kubernetes`
-- Monitoring infrastructure → `/tsh-implement-observability`
+- CI/CD pipelines for Terraform → `.cursor/skills/internal/tsh-implement-pipeline/SKILL.md`
+- Kubernetes workload configuration → `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
+- Monitoring infrastructure → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`

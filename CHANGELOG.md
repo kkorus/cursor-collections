@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `/tsh-analyze-materials` command — Added Gate 0 intent-brief approval, Explore Mode support, Lite/Full quality review with Gate 1.5, post-push Jira verification, and project baseline refresh after verified sync
 - Task extraction, quality review, and Jira formatting workflow skills — Expanded for intent briefs, source traceability, GIVEN/WHEN/THEN acceptance criteria, Lite/Full review modes, and baseline refresh
 - Product ideation documentation — Updated README, changelog, and website docs to reflect the new BA orchestration flow, optional exploration, expanded artifact set, and verified Jira sync process
+- MCP setup documentation — Added post-installation steps and MCP verification checklist (ported from copilot-collections PR #64)
 
 ## 2026-05-17
 

@@ -96,7 +96,7 @@ Loaded by many commands/agents; auto-discovery is valuable; names differ enough 
 
 **Tier D — Meta / migration (acceptable in `/` for maintainers or defer)**
 
-- `tsh-migrating-copilot-to-cursor`, `tsh-creating-prompts`, `tsh-creating-instructions`
+- `tsh-migrating-copilot-to-cursor`, `tsh-creating-commands`, `tsh-creating-rules`
 
 ## Open Questions
 

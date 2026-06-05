@@ -84,9 +84,9 @@ Skip for: adding tags, updating configurations, simple fixes.
 - [list immediate actions with high impact and low effort]
 
 ### Remediation Roadmap
-1. [Critical] Description → `/tsh-implement-terraform`
-2. [High] Description → `/tsh-deploy-kubernetes`
-3. [Medium] Description → `/tsh-implement-observability`
+1. [Critical] Description → `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
+2. [High] Description → `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
+3. [Medium] Description → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`
 ```
 
 ---
@@ -94,5 +94,5 @@ Skip for: adding tags, updating configurations, simple fixes.
 ## Scope
 
 **Does NOT handle** (redirect to):
-- Implementing fixes → `/tsh-implement-terraform`, `/tsh-deploy-kubernetes`, `/tsh-implement-pipeline`, `/tsh-implement-observability`
+- Implementing fixes → delegate to `@tsh-devops-engineer` and load the matching internal skill: `tsh-implement-terraform`, `tsh-deploy-kubernetes`, `tsh-implement-pipeline`, or `tsh-implement-observability` (`.cursor/skills/internal/<name>/SKILL.md`)
 - Application code security → coordinate with software engineer

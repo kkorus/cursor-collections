@@ -1,5 +1,7 @@
 # Decision: Single artifact for plan review (`tsh-architect-reviewer`)
 
+> **Superseded in part (2026-06-04):** The agent was renamed to `tsh-plan-reviewer` (display name: Plan Reviewer). Paths in this ADR that reference `tsh-architect-reviewer` or `internal/tsh-review-plan` are historical; the current source of truth is `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md`.
+
 **Status:** ACCEPTED  
 **Date:** 2026-05-22
 

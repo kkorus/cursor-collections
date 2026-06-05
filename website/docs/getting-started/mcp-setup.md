@@ -16,7 +16,7 @@ This enables the MCP tools globally across all your projects.
 1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`)
 2. Navigate to **MCP**
 3. Click **Add MCP Server**
-4. Copy the contents of [`.cursor/mcp.json`](https://github.com/TheSoftwareHouse/cursor-collections/blob/main/.cursor/mcp.json) from this repository
+4. Copy the contents of [`.cursor/mcp.json`](https://github.com/kkorus/cursor-collections/blob/main/.cursor/mcp.json) from this repository
 
 ### Option 2: Workspace Configuration
 
@@ -29,7 +29,7 @@ Use this if you want to enable these tools only for a specific project.
 
 | MCP Server | Purpose | Used By |
 |------------|---------|---------|
-| **Atlassian** | Access Jira issues and Confluence pages | Business Analyst, Architect, Software Engineer, Code Reviewer |
+| **Atlassian** | Access Jira issues and Confluence pages | Business Analyst, Context Engineer, Architect, Engineering Manager, Code Reviewer |
 | **Figma** | Pull design details, components, and variables | Software Engineer (UI), UI Reviewer |
 | **Context7** | Semantic search in external documentation | All agents |
 | **Playwright** | Browser automation and E2E testing | Software Engineer, E2E Engineer, UI Reviewer |
@@ -40,6 +40,27 @@ Use this if you want to enable these tools only for a specific project.
 | **GCP Observability** | GCP monitoring and logging | DevOps Engineer |
 | **GCP Storage** | GCP Cloud Storage audit | DevOps Engineer |
 | **PDF Reader** | Extract content from PDF documents | Business Analyst, Context Engineer |
+
+## After Installation
+
+Once you've copied the configuration, here's what to do:
+
+1. **Start using Cursor Agent** — open Agent chat and send a message. Cursor will start the MCP servers automatically when a tool is needed.
+2. **Authenticate when prompted** — for **Atlassian** and **Figma**, your browser may open asking you to log in and authorize access. Follow the prompts.
+3. **(Optional) Add a Context7 API key** — Context7 works out of the box with rate limits. For higher limits, see [Configuring Context7 API Key](#configuring-context7-api-key) below.
+
+That's it — no extra commands or manual wiring needed.
+
+## Verify Your Setup
+
+To confirm all MCP servers are running correctly:
+
+1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`).
+2. Navigate to **MCP**.
+3. Confirm each configured server appears in the list with a **connected** or **running** status. You should see all 11 servers from [MCP Server Reference](#mcp-server-reference) above (Atlassian, Figma, Context7, Playwright, Sequential Thinking, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage, PDF Reader).
+4. Send a test message in Agent chat that uses an MCP tool (for example, ask the agent to look up a Jira issue or search Context7 documentation) and confirm the tool call succeeds.
+
+If any server shows an error or disconnected status, restart Cursor or check the [Authentication Requirements](#authentication-requirements) section below.
 
 ## Configuring Context7 API Key
 

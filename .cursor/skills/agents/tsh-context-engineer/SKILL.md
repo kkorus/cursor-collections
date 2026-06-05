@@ -32,6 +32,7 @@ Before starting any task, you check all available skills and decide which one is
 
 ## Skills Usage Guidelines
 
+- `tsh-research` - when delegated by the Engineering Manager, follow `.cursor/skills/internal/tsh-research/SKILL.md` as the orchestration wrapper for the research workflow before applying domain skills below.
 - `tsh-task-analysing` - to analyze the task description, perform gap analysis, expand the context for the task, analyze the current state of the system in the context of the task, help build PRD, create a context for the task, gather information about the task from different sources.
 - `tsh-codebase-analysing` - to analyze the existing codebase and identify components, features, and patterns related to the task for the Current Implementation Status section.
 

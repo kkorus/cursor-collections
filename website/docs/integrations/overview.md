@@ -5,7 +5,7 @@ title: Integrations Overview
 
 # Integrations Overview
 
-Cursor Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Copilot sessions — enabling the end-to-end product engineering workflow.
+Cursor Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Cursor Agent sessions — enabling the end-to-end product engineering workflow.
 
 ## What is MCP?
 
@@ -17,9 +17,9 @@ The Model Context Protocol allows Cursor agents to call external tools as part o
 |---|---|---|---|
 | [Atlassian](./atlassian) | HTTP | Jira & Confluence integration | BA, Architect, CR, CE, E2E, SE |
 | [Figma](./figma) | HTTP | Design extraction and verification | BA, Architect, SE, UI Reviewer, CR, E2E |
-| [Context7](./context7) | stdio | Library documentation search | Architect, SE, CR, UI Reviewer, E2E, Copilot Eng., DevOps |
+| [Context7](./context7) | stdio | Library documentation search | Architect, SE, CR, UI Reviewer, E2E, Cursor Engineer, DevOps |
 | [Playwright](./playwright) | stdio | Browser automation and UI testing | SE, UI Reviewer, E2E |
-| [Sequential Thinking](./sequential-thinking) | stdio | Structured reasoning for complex problems | BA, Architect, SE, CR, E2E, UI Reviewer, Copilot Eng., Orchestrator, DevOps |
+| [Sequential Thinking](./sequential-thinking) | stdio | Structured reasoning for complex problems | BA, Architect, SE, CR, E2E, UI Reviewer, Cursor Engineer, Cursor Orchestrator, DevOps |
 | [PDF Reader](./pdf-reader) | stdio | PDF document extraction | BA, CE, Architect |
 | [AWS API](./aws-api) | stdio | AWS infrastructure automation and resource management | DevOps |
 | [AWS Documentation](./aws-documentation) | stdio | AWS service documentation and reference | DevOps |

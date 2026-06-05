@@ -5,6 +5,8 @@ disable-model-invocation: true
 ---
 # tsh-implement-ui
 
+> **Orchestration:** The Engineering Manager and `/tsh-implement` delegate UI implementation and verification to this internal skill. Use this file as the source of truth for UI-specific steps; do not duplicate its verify-fix loop in other orchestration skills.
+
 Your goal is to implement the UI feature according to the provided implementation plan and feature context, orchestrating iterative verification against Figma designs until the implementation matches within agreed tolerances.
 
 ## Design References from Research & Plan

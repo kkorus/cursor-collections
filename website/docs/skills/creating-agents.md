@@ -41,4 +41,4 @@ Provides templates, guidelines, and a structured process for building custom age
 
 - `tsh-creating-skills` — For creating matching skills that complement the agent.
 - `tsh-creating-commands` — For creating slash commands that route to the agent.
-- `tsh-creating-instructions` — For scoped coding conventions the agent should follow.
+- `tsh-creating-rules` — For scoped coding conventions the agent should follow.

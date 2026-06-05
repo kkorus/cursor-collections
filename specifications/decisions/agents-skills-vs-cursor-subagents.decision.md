@@ -1,5 +1,7 @@
 # Decision: Lokalizacja i jakość agentów w `.cursor/skills/agents/`
 
+> **Note (2026-06-04):** `tsh-architect-reviewer` was renamed to `tsh-plan-reviewer` (Plan Reviewer). References below to the old name are historical.
+
 **Status:** ACCEPTED  
 **Date:** 2026-05-21  
 **Implemented:** Option 4 — `specifications/refactoring/agents-skills-quality.refactor-plan.md` (2026-05-21)

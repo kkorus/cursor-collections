@@ -91,6 +91,11 @@ done
 for d in ~/cursor-collections/.cursor/skills/commands/*/; do
   ln -sf "$d" ~/.cursor/skills/
 done
+
+# Internal skills (delegate-only orchestration steps)
+for d in ~/cursor-collections/.cursor/skills/internal/*/; do
+  ln -sf "$d" ~/.cursor/skills/
+done
 ```
 
 To update later: `git -C ~/cursor-collections pull`
@@ -153,7 +158,7 @@ What happens:
 1. Context Engineer gathers requirements from Jira, Confluence, Figma
 2. You review the research document — confirm to proceed
 3. Architect creates a step-by-step implementation plan
-4. Architect Reviewer validates the plan — returns it if BLOCKERs found (up to 3 iterations)
+4. Plan Reviewer (`tsh-plan-reviewer`, delegate-only) validates the plan — returns it if BLOCKERs found (up to 3 iterations)
 5. You review the plan + review report and approve
 6. Software Engineer implements phase by phase
 7. (UI tasks) Each UI component is verified against Figma automatically — up to 5 fix iterations
@@ -348,7 +353,6 @@ The Cursor Orchestrator handles research → design → creation → review auto
 | Engineering Manager | Orchestrates the full implement cycle: research → plan → implement → review |
 | Context Engineer | Gather requirements from Jira, Confluence, Figma, and codebase |
 | Architect | Design solution architecture and create step-by-step implementation plan |
-| Architect Reviewer | Validate the implementation plan before coding starts — APPROVED or REVISIONS NEEDED |
 | Software Engineer | Implement backend, frontend, APIs, and data layers |
 | Prompt Engineer | Design, optimize, and audit LLM application prompts |
 | DevOps Engineer | Cloud infrastructure, CI/CD pipelines, Kubernetes, Terraform |
@@ -367,6 +371,14 @@ The Cursor Orchestrator handles research → design → creation → review auto
 |-------|---------|
 | Cursor Engineer | Create, review, and improve Cursor skills, rules, and commands |
 | Cursor Orchestrator | Coordinate complex multi-phase customization tasks |
+
+### Internal Workers (delegate-only, not for direct `@` use)
+
+| Agent | Purpose |
+|-------|---------|
+| Plan Reviewer (`tsh-plan-reviewer`) | Validate implementation plans — APPROVED or REVISIONS NEEDED |
+| BA workers (5) | Transcript, analysis, extraction, quality, and Jira formatting phases |
+| Cursor workers (3) | Research, artifact creation, and artifact review for customization tasks |
 
 ---
 
@@ -394,8 +406,8 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
 │   ├── agents/                    # 21 agent skill definitions (12 user-facing + 9 internal workers)
-│   ├── workflows/                 # 32 domain workflow skills (agent-invoked; may appear in /)
-│   ├── commands/                  # 16 user-invokable slash commands (+ references/ for backing docs)
+│   ├── workflows/                 # 34 domain workflow skills (agent-invoked; may appear in /)
+│   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 11 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration
 ```

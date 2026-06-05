@@ -57,4 +57,4 @@ A `.research.md` document containing:
 
 After completing research, the Context Engineer hands back to the Engineering Manager, which delegates to:
 
-- **Architect** → implementation planning (via internal `/tsh-plan` prompt)
+- **Architect** → implementation planning (via internal `tsh-plan` skill at `.cursor/skills/internal/tsh-plan/SKILL.md`)

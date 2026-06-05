@@ -1,9 +1,9 @@
 ---
 sidebar_position: 15
-title: /tsh-implement-observability
+title: tsh-implement-observability (internal)
 ---
 
-# /tsh-implement-observability
+# tsh-implement-observability (internal)
 
 :::info
 Not invoked directly by users. To trigger observability implementation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) will automatically delegate to the [DevOps Engineer](../../agents/devops-engineer).

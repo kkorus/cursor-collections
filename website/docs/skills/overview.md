@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **35 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+Cursor Collections includes **34 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
 
 ## How Skills Work
 
@@ -77,6 +77,8 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | [tsh-creating-skills](./creating-skills) | Creating workflow skills (`SKILL.md` in `workflows/`) | Cursor Engineer |
 | [tsh-creating-commands](./creating-commands) | Creating Cursor slash command skills (`disable-model-invocation: true`) | Cursor Engineer |
 | [tsh-creating-rules](./creating-instructions) | Creating Cursor rules (`.cursor/rules/*.mdc`) | Cursor Engineer |
+| [tsh-committing](./committing) | Conventional Commits message drafting for `/tsh-commit` | `/tsh-commit` command |
+| [tsh-migrating-copilot-to-cursor](./migrating-copilot-to-cursor) | Port Copilot customization artifacts to Cursor equivalents | Cursor Engineer, Cursor Orchestrator |
 
 ## Agent–Skill Matrix
 
@@ -89,6 +91,8 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | tsh-creating-rules | | | | | | | | | | ✅ |
 | tsh-creating-commands | | | | | | | | | | ✅ |
 | tsh-creating-skills | | | | | | | | | | ✅ |
+| tsh-committing | | | | | | | | | | |
+| tsh-migrating-copilot-to-cursor | | | | | | | | | | ✅ |
 | tsh-designing-multi-cloud-architecture | | | ✅ | | | | | | ✅ | |
 | tsh-e2e-testing | | | | | | | | ✅ | | |
 | tsh-engineering-prompts | | | ✅ | ✅ | ✅ | ✅ | | | | |

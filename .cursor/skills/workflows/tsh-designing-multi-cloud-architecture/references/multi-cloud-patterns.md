@@ -312,5 +312,5 @@ Is analytics / BI the primary cross-cloud integration point?
 ## Related References
 
 - [Service Comparison](./service-comparison.md)
-- [Terraform Module Library Skill](../../terraform-module-library/SKILL.md)
-- [Cost Optimization Skill](../../cost-optimization/SKILL.md)
+- [Terraform Module Library Skill](../../tsh-implementing-terraform-modules/SKILL.md)
+- [Cost Optimization Skill](../../tsh-optimizing-cloud-cost/SKILL.md)

@@ -98,7 +98,7 @@ Cursor Collections is MIT-licensed and free.
 
 - Read the full documentation - understand the full framework before committing to anything
 - See it applied to real use cases - nine scenarios across the full delivery lifecycle
-- [Get the repo](https://github.com/TheSoftwareHouse/cursor-collections) - install it in an afternoon, run it against a real ticket, see what changes
+- [Get the repo](https://github.com/kkorus/cursor-collections) - install it in an afternoon, run it against a real ticket, see what changes
 
 :::brand
 If you want to talk through fit for your team's specific context, reach out to us at [hello@tsh.io](mailto:hello@tsh.io). I'd love to hear from you.

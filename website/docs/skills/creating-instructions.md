@@ -5,7 +5,7 @@ title: Creating Instructions
 
 # Creating Instructions
 
-**Folder:** `.cursor/skills/workflows/tsh-creating-instructions/`
+**Folder:** `.cursor/skills/workflows/tsh-creating-rules/`
 **Used by:** Cursor Engineer
 
 Covers repository-level instructions (`cursor-instructions.md`) and granular file-based rules with `globs` patterns. Provides templates and a decision framework for rules vs. skill placement.

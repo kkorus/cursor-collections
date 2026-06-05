@@ -166,5 +166,5 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 ## Related References
 
 - [Multi-Cloud Patterns](./multi-cloud-patterns.md)
-- [Terraform Module Library Skill](../../terraform-module-library/SKILL.md)
-- [Cost Optimization Skill](../../cost-optimization/SKILL.md)
+- [Terraform Module Library Skill](../../tsh-implementing-terraform-modules/SKILL.md)
+- [Cost Optimization Skill](../../tsh-optimizing-cloud-cost/SKILL.md)

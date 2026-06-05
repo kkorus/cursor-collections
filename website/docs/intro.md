@@ -22,7 +22,7 @@ Most teams use AI for code completion. **Cursor Collections turns AI into an end
 |---|---|---|
 | **Agent skills** | 21 | 12 user-facing agents plus 9 internal delegate-only workers (5 BA workers, 4 Cursor customization/plan workers) |
 | **Slash commands** | 17 | See [Commands Overview](./prompts/overview) — `/tsh-explore-materials`, `/tsh-analyze-materials`, `/tsh-implement`, `/tsh-review`, `/tsh-ask`, `/tsh-debug`, `/tsh-refactor`, `/tsh-commit`, customization commands, and more |
-| **Workflow skills** | 35 | Transcript Processing, Task Extraction, Architecture Design, Code Review, UI Verification, E2E Testing, Backend Implementation, Frontend Implementation, SQL Engineering, CI/CD, Kubernetes, Terraform, and more |
+| **Workflow skills** | 34 | Transcript Processing, Task Extraction, Architecture Design, Code Review, UI Verification, E2E Testing, Backend Implementation, Frontend Implementation, SQL Engineering, CI/CD, Kubernetes, Terraform, and more |
 | **MCP Integrations** | 11 | Atlassian, Figma Dev Mode, Context7, Playwright, Sequential Thinking, PDF Reader, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage |
 | **Structured Workflows** | 5 | Standard Flow, UI Flow, E2E Testing Flow, Workshop Analysis Flow, Cursor Customization Flow |
 

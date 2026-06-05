@@ -1,5 +1,7 @@
 # Decision: What `disable-model-invocation` means in Cursor skills
 
+> **Note (2026-06-04):** Example delegate-only agent `tsh-architect-reviewer` was renamed to `tsh-plan-reviewer`. The flag behavior described here is unchanged.
+
 **Status:** ACCEPTED  
 **Date:** 2026-05-21
 
@@ -42,7 +44,7 @@ In `cursor-collections`, this flag appears on all `commands/` and `internal/` sk
 | `internal/` (e.g. `tsh-plan`, `tsh-research`) | `true` | Loaded when a command delegates ("Read tsh-plan skill"). Not auto-loaded during unrelated chat. |
 | `workflows/` (e.g. `tsh-technical-context-discovering`) | omit / `false` | Agent may auto-load when task matches description (implementing a feature, reviewing SQL, etc.). |
 | `agents/` (user-facing) | omit | Persona skills; invoked via `@tsh-*` or auto-apply from `description`. |
-| `agents/` (delegate-only, e.g. `tsh-architect-reviewer`, `tsh-cursor-researcher`) | `true` | Orchestrator-only; same pattern as `internal/`. |
+| `agents/` (delegate-only, e.g. `tsh-plan-reviewer`, `tsh-cursor-researcher`) | `true` | Orchestrator-only; same pattern as `internal/`. |
 
 **Analogy:**  
 - Workflow **without** flag = reference book on the shelf — agent pulls it when the task fits.  

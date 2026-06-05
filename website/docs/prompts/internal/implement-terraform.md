@@ -1,9 +1,9 @@
 ---
 sidebar_position: 13
-title: /tsh-implement-terraform
+title: tsh-implement-terraform (internal)
 ---
 
-# /tsh-implement-terraform
+# tsh-implement-terraform (internal)
 
 :::info
 Not invoked directly by users. To trigger Terraform implementation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) will automatically delegate to the [DevOps Engineer](../../agents/devops-engineer).
