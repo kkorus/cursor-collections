@@ -5,7 +5,7 @@ title: Agents Overview
 
 # Agents Overview
 
-Cursor Collections provides **13 user-facing agent skills** (plus 11 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
+Cursor Collections provides **13 user-facing agent skills** (plus 12 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
 
 ## Agent Skills vs Cursor Subagents
 
@@ -116,6 +116,7 @@ These skills have `disable-model-invocation: true`. They are delegated by the Bu
 | BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
 | [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Stress-tests implementation plans before implementation starts |
 | [Plan Implementor](./plan-implementor) | `agents/tsh-plan-implementor/` | Internal strict single-task implementor for one plan step at a time |
+| [UI Capture Worker](./ui-capture-worker) | `agents/tsh-ui-capture-worker/` | CLI-based UI capture and tripwire evidence collection for the verification loop |
 | [Technical Writer](./technical-writer) | `agents/tsh-technical-writer/` | Authors and updates README, CHANGELOG, `/docs`, and website documentation pages |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |

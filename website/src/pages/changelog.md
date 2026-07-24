@@ -12,6 +12,23 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-07-10
+
+### Added
+
+- `playwright-cli` workflow skill (+ 10 reference guides) — CLI-first browser automation and capture skill (session management, storage state, tracing, request mocking, test/video generation, spec-driven testing) that replaces the Playwright MCP for UI verification (ported from copilot-collections PR #72)
+- `tsh-ui-capture-worker` agent — Internal worker that performs CLI-based UI capture and optional screenshot-tripwire evidence collection for the verification loop; exports the shared `figma-expected.png` reference, writes per-iteration artifacts, and escalates blockers without judging visual correctness
+- `ui-verification-flow` website doc — Documents the capture → review UI verification loop end to end
+
+### Changed
+
+- UI verification reworked from Playwright MCP to CLI capture — `tsh-ui-reviewer` now reviews CLI-captured ACTUAL evidence against a Figma EXPECTED export and delegates capture to `tsh-ui-capture-worker`; `tsh-ui-engineer` runs an explicit implement → capture → review loop (Figma-before-code gate, pinned dev-server URL, up to 5 iterations); `/tsh-review-ui`, `tsh-ui-verifying`, and `tsh-implement-ui` updated to the CLI capture contract with a strict PASS gate and `VERIFICATION NOT RUN` reporting
+- `tsh-orchestrating-implementation` skill — Broadened the UI-verification hard-exclusion (any rendered-UI change on a Figma-backed screen triggers the verification gate, even without a `[REUSE]` task or Figma URL in hand)
+- `tsh-creating-implementation-plans` skill and `plan.example.md` — Added a per-task UI Verification Status tracking convention
+- `tsh-implementing-frontend` skill — Added a Step 0 Figma-fetch gate before UI implementation
+- `.gitignore` — Ignore `.playwright-cli` capture output and the `specifications/` artifact tree
+- Website docs — Reworked UI Engineer, UI Reviewer, UI Verification, frontend/e2e flow, Playwright integration, MCP setup, prerequisites, and quick-wins pages for the CLI capture workflow
+
 ## 2026-06-22
 
 ### Added

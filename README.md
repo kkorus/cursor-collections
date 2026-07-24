@@ -199,10 +199,12 @@ The Code Reviewer checks: acceptance criteria, security, test coverage, code qua
 ```
 
 When the Engineering Manager detects a UI task, it automatically:
-1. Delegates implementation to the Software Engineer (with Figma context)
-2. Runs `/tsh-review-ui` — compares the running app via Playwright against Figma specs
+1. Delegates implementation to the UI Engineer (with Figma context)
+2. Runs `/tsh-review-ui` — the UI verification loop uses Figma MCP for EXPECTED and `tsh-ui-capture-worker` Playwright CLI artifacts for ACTUAL
 3. Fixes differences and re-verifies (up to 5 iterations)
 4. Escalates to you if iteration limit is reached
+
+For Figma-backed UI work, keep the target app running and be ready to confirm the exact full dev server URL. Because ACTUAL capture uses the Playwright CLI, `playwright-cli` must also be available on the machine running Cursor (`npx playwright-cli` or a global install).
 
 To run UI verification standalone:
 
@@ -379,13 +381,14 @@ The Cursor Orchestrator handles research → design → creation → review auto
 |-------|---------|
 | Plan Reviewer (`tsh-plan-reviewer`) | Validate implementation plans — APPROVED or REVISIONS NEEDED |
 | Plan Implementor (`tsh-plan-implementor`) | Execute one approved, low-risk plan task at a time, exactly as written |
+| UI Capture Worker (`tsh-ui-capture-worker`) | CLI-based UI capture and evidence collection for the verification loop |
 | Technical Writer (`tsh-technical-writer`) | Author and update README, CHANGELOG, `/docs`, and website docs — never product code |
 | BA workers (5) | Transcript, analysis, extraction, quality, and Jira formatting phases |
 | Cursor workers (3) | Research, artifact creation, and artifact review for customization tasks |
 
 ---
 
-## Workflow skills (37)
+## Workflow skills (38)
 
 Skills are automatically loaded by agents when relevant to the task. No manual invocation needed.
 
@@ -396,7 +399,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 | **Backend** | tsh-implementing-backend, tsh-sql-and-database-understanding, tsh-engineering-prompts |
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
-| **Quality** | tsh-e2e-testing, tsh-codebase-analysing, tsh-reviewing-frontend (code/UI review processes live under `/tsh-review` and `/tsh-review-ui` references) |
+| **Quality** | tsh-e2e-testing, tsh-codebase-analysing, tsh-reviewing-frontend, playwright-cli (code/UI review processes live under `/tsh-review` and `/tsh-review-ui` references) |
 | **Documentation** | tsh-writing-documentation |
 | **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
 
@@ -409,8 +412,8 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 ├── rules/
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
-│   ├── agents/                    # 24 agent skill definitions (13 user-facing + 11 internal workers)
-│   ├── workflows/                 # 37 domain workflow skills (agent-invoked; may appear in /)
+│   ├── agents/                    # 25 agent skill definitions (13 user-facing + 12 internal workers)
+│   ├── workflows/                 # 38 domain workflow skills (agent-invoked; may appear in /)
 │   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 12 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration

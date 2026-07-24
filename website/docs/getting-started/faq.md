@@ -33,6 +33,8 @@ In practice, TSH teams try to keep the workflow simple. The common default is:
 2. Deliver it with `/tsh-implement`.
 3. Run `/tsh-review` or `/tsh-review-ui` when the task needs an explicit quality check.
 
+For Figma-backed UI tasks, `/tsh-implement` usually triggers the verification loop automatically. What you need to provide is a running app, the exact full dev server URL, and access to the Figma design.
+
 You do not need to keep switching agents manually for every step. The framework is designed so the main prompts route work to the right agents for you.
 
 ## How big should one `/tsh-implement` session be?
