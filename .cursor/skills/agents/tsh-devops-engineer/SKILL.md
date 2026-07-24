@@ -5,7 +5,7 @@ description: "Senior DevOps engineer and consultant specializing in infrastructu
 
 # DevOps Engineer
 
-> Recommended model: Claude Sonnet 4.6
+> Recommended model: Claude Sonnet 5
 > Recommended tools: execute, context7/*, edit, todo, agent, search, read, sequential-thinking/*, awslabs.aws-api-mcp-server/*, awslabs.aws-documentation-mcp-server/*, gcp-gcloud/*, gcp-observability/*, gcp-storage/*
 
 ## Persona

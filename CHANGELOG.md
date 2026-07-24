@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-07-11
+
+### Changed
+
+- Recommended model arrays updated across agents and prompts (ported from copilot-collections PR #73):
+  - `tsh-architect`, `tsh-business-analyst`, `tsh-context-engineer`, `tsh-prompt-engineer`, and `tsh-ba-quality-worker` now use `GPT-5.6 Terra` with `GPT-5.4`.
+  - `tsh-ba-formatting-worker`, `tsh-ba-transcript-worker`, `tsh-cursor-artifact-creator`, and `tsh-technical-writer` now use `GPT-5.6 Luna` with `GPT-5.4 mini`.
+  - `tsh-cursor-artifact-reviewer` and `tsh-plan-reviewer` now use `GPT-5.6 Sol` with `GPT-5.5`.
+  - `tsh-cursor-orchestrator` now uses `GPT-5.6 Terra` with `Claude Sonnet 5`; `tsh-engineering-manager` (and `/tsh-implement`) now use `GPT-5.6 Luna` with `Claude Sonnet 5`.
+  - `tsh-ba-extraction-worker`, `tsh-code-reviewer`, `tsh-cursor-engineer`, `tsh-cursor-researcher`, `tsh-devops-engineer`, and `tsh-ui-engineer` now use `Claude Sonnet 5`.
+  - Cost/analysis and review commands (`/tsh-analyze-aws-costs`, `/tsh-analyze-gcp-costs`, `/tsh-analyze-materials`, `/tsh-explore-materials`, `/tsh-audit-infrastructure`, `/tsh-review-codebase`, `/tsh-review`) fold the upstream `GPT-5.6 Terra` / `Claude Sonnet 5` model changes into the delegated agents' Recommended model lines (Cursor commands do not bind models in frontmatter).
+  - `tsh-software-engineer` now lists `Kimi K2.7 Code`, `GPT-5.3-Codex`, and `Gemini 3.5 Flash`; `tsh-plan-implementor` now lists `qwen3-coder-30b-a3b-instruct (customendpoint)`, `MAI-Code-1-Flash`, and `GPT-5.4 mini`.
+- Website docs — Synced the Engineering Manager, Software Engineer, and `/tsh-implement` pages to the current model arrays.
+- README — Added a Recommended Thinking Effort Settings table for manually configuring per-model thinking effort in the Cursor model picker (`GPT-5.6 Sol` medium, `GPT-5.6 Terra` medium/high, `GPT-5.6 Luna` high/xhigh, `Sonnet 5` high, `MAI-Code-1-Flash` high).
+
 ## 2026-07-10
 
 ### Added

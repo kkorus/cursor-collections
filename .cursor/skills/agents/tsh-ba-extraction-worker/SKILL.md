@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # BA Extraction Worker
 
-> Recommended model: Claude Sonnet 4.6
+> Recommended model: Claude Sonnet 5
 > Recommended tools: read, search, sequential-thinking/*
 
 

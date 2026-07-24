@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # BA Formatting Worker
 
-> Recommended model: GPT-5.4 mini
+> Recommended model: GPT-5.6 Luna, GPT-5.4 mini
 > Recommended tools: read, search
 
 

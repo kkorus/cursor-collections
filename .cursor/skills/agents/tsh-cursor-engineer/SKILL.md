@@ -5,7 +5,7 @@ description: "Expert in Cursor customization — designs, creates, reviews, and 
 
 # Cursor Engineer
 
-> Recommended model: GPT-5.4
+> Recommended model: Claude Sonnet 5
 > Recommended tools: read, agent, edit, search, web/fetch, context7/*, sequential-thinking/*, todo
 
 ## Agent Role and Responsibilities

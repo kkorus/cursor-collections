@@ -5,7 +5,7 @@ description: "Implements NON-UI software solutions based on requirements and tec
 
 # Software Engineer
 
-> Recommended model: GPT-5.3-Codex, Gemini 3.5 Flash
+> Recommended model: Kimi K2.7 Code, GPT-5.3-Codex, Gemini 3.5 Flash
 > Recommended tools: execute, read, context7/*, sequential-thinking/*, edit, search, todo, agent
 
 <agent-role>

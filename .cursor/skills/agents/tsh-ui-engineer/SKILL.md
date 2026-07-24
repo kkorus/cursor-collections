@@ -5,7 +5,7 @@ description: "Implements user interfaces and frontend solutions based on require
 
 # UI Engineer
 
-> Recommended model: Claude Sonnet 4.6
+> Recommended model: Claude Sonnet 5
 > Recommended tools: execute, read, context7/*, figma/*, sequential-thinking/*, edit, search, todo, agent
 
 <agent-role>

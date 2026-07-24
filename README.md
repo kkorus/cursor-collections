@@ -130,6 +130,20 @@ Copy `.cursor/mcp.json` to your project's `.cursor/mcp.json`.
 
 ---
 
+## Recommended Thinking Effort Settings
+
+In the Cursor model picker, manually select each model below, choose its recommended thinking effort, and repeat for every model. Once configured, the setting is active for that model in your current Cursor profile.
+
+| Model | Recommended thinking effort |
+| --- | --- |
+| GPT-5.6 Sol | medium (default) |
+| GPT-5.6 Terra | medium/high |
+| GPT-5.6 Luna | high/xhigh |
+| Sonnet 5 | high (default) |
+| MAI-Code-1-Flash | high |
+
+---
+
 ## How to Use
 
 All commands work in **Cursor Agent chat** (not Ask mode). Type `/` to open the slash palette.

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Cursor Researcher
 
-> Recommended model: Claude Sonnet 4.6
+> Recommended model: Claude Sonnet 5
 > Recommended tools: read, search, web/fetch, context7/*
 
 ## Agent Role and Responsibilities

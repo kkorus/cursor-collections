@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Plan Implementor
 
-> Recommended model: qwen3-coder-30b-a3b-instruct (customendpoint), GPT-5.4 mini
+> Recommended model: qwen3-coder-30b-a3b-instruct (customendpoint), MAI-Code-1-Flash, GPT-5.4 mini
 > Recommended tools: execute, read, edit, search, todo
 
 <agent-role>

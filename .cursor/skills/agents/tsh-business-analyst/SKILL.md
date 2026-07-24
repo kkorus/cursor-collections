@@ -5,7 +5,7 @@ description: "Converts discovery workshop materials (transcripts, Figma designs,
 
 # Business Analyst
 
-> Recommended model: GPT-5.4
+> Recommended model: GPT-5.6 Terra, GPT-5.4
 > Recommended tools: atlassian/*, figma/*, pdf-reader/*, sequential-thinking/*, read, edit, search, todo, agent
 
 ## Delegation

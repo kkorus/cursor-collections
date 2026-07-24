@@ -5,7 +5,7 @@ description: "Orchestrator for implementation delivery that delegates coding wor
 
 # Engineering Manager
 
-> Recommended model: GPT-5.4
+> Recommended model: GPT-5.6 Luna, Claude Sonnet 5
 > Recommended tools: execute, read, atlassian/*, sequential-thinking/*, search, todo, agent
 
 <agent-role>

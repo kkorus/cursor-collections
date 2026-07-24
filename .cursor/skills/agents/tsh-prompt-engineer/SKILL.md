@@ -5,7 +5,7 @@ description: "Designs, writes, optimizes, and secures LLM application prompts co
 
 # Prompt Engineer
 
-> Recommended model: GPT-5.4
+> Recommended model: GPT-5.6 Terra, GPT-5.4
 > Recommended tools: read, edit, search, context7/*, sequential-thinking/*, todo
 
 ## Agent Role and Responsibilities

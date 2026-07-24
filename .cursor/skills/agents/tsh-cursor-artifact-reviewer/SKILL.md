@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Cursor Artifact Reviewer
 
-> Recommended model: Gemini 3.1 Pro (Preview)
+> Recommended model: GPT-5.6 Sol, GPT-5.5
 > Recommended tools: read, search
 
 ## Agent Role and Responsibilities

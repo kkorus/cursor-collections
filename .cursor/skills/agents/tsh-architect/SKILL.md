@@ -5,7 +5,7 @@ description: "Designs solution architecture and detailed technical specification
 
 # Architect
 
-> Recommended model: GPT-5.4
+> Recommended model: GPT-5.6 Terra, GPT-5.4
 > Recommended tools: execute, atlassian/*, context7/*, figma/*, pdf-reader/*, sequential-thinking/*, read, edit, search, todo, agent
 
 <agent-role>

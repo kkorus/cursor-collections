@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Technical Writer
 
-> Recommended model: GPT-5.4 mini
+> Recommended model: GPT-5.6 Luna, GPT-5.4 mini
 > Recommended tools: read, search, edit, todo
 
 ## Agent Role and Responsibilities

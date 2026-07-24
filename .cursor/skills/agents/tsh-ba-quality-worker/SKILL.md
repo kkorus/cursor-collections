@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # BA Quality Worker
 
-> Recommended model: GPT-5.4
+> Recommended model: GPT-5.6 Terra, GPT-5.4
 > Recommended tools: read, search
 
 

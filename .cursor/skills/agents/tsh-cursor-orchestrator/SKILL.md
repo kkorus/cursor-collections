@@ -5,7 +5,7 @@ description: "Orchestrator for complex, multi-step Cursor engineering tasks — 
 
 # Cursor Orchestrator
 
-> Recommended model: GPT-5.4
+> Recommended model: GPT-5.6 Terra, Claude Sonnet 5
 > Recommended tools: sequential-thinking/*, read, search, todo, agent
 
 ## Agent Role and Responsibilities
