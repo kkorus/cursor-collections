@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-09
+
+### Added
+
+- FAQ & Best Practices documentation — New `getting-started/faq.md` page capturing TSH team working habits: session sizing, when to start a new `/tsh-implement`, using `research.md`/`plan.md` vs. durable docs, spec folder organization, and model-switching guidance (ported from copilot-collections PR #65)
+
+### Changed
+
+- Engineering Manager agent (`tsh-engineering-manager`) — Repositioned as architect-advised orchestrator: added mandatory architect-consultation triggers, an explicit "never first writer of product code" boundary, and a `## Constraints` section; removed the `edit` tool so implementation work is always delegated (ported from copilot-collections PR #65)
+- `/tsh-implement` command — Added orchestration-only guardrails requiring delegation before any source-code modification in both Quick and Full flows
+- Code review workflow (`tsh-code-reviewing`) and Code Reviewer agent (`tsh-code-reviewer`) — Added a high-risk anti-pattern checklist (N+1 access patterns, in-memory pagination/filtering/aggregation) and treat missing integration coverage as a substantive finding when correctness depends on a real database or external service boundary
+- Plan Reviewer agent (`tsh-plan-reviewer`) — Recommended model bumped to GPT-5.5
+
 ## 2026-06-04
 
 ### Changed
