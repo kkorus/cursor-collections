@@ -12,6 +12,21 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-18
+
+### Added
+
+- Open-questions dispatch gate for implementation plans — plans with any `❓ Open` rows now block execution until `tsh-architect` resolves them (ported from copilot-collections PR #68)
+- Executable-slot dispatch gate — plans can't be dispatched if any verification field, DoD command, or file path still contains placeholder/default values
+- Planning-readiness gate in `tsh-orchestrating-implementation` — execution now checks that open questions are cleared before proceeding
+
+### Changed
+
+- `tsh-creating-implementation-plans` skill — hardened the plan contract: Wildly Important Goal now requires `Goal`, `Success Measure`, and `Do NOT touch / do NOT add`; phases require a `Verification` field with exact fast-running checks; tasks require `Files:` entries with `create`/`modify`/`reuse` labels and an optional `Stop Rule`; DoD distinguishes code tasks from docs/config tasks and requires stack-specific runnable checks or deterministic file assertions; UI verification clarified as distinct from full e2e
+- `plan.example.md` template — updated to match the stricter plan contract (goal hierarchy, per-phase Verification, per-task Files/Stop Rule, docs-only task pattern, comment-wrapped implementation note)
+- Plan Reviewer agent (`tsh-plan-reviewer`) — now blocks review when `## Open Questions` still contains `❓ Open`
+- Website docs for Creating Implementation Plans — synced to the new template and workflow rules
+
 ## 2026-06-15
 
 ### Added
