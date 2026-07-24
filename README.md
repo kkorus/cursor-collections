@@ -382,14 +382,14 @@ The Cursor Orchestrator handles research → design → creation → review auto
 
 ---
 
-## Workflow skills (34)
+## Workflow skills (35)
 
 Skills are automatically loaded by agents when relevant to the task. No manual invocation needed.
 
 | Category | Skills |
 |----------|--------|
 | **Product Ideation** | tsh-transcript-processing, tsh-task-extracting, tsh-task-analysing, tsh-jira-task-formatting, tsh-task-quality-reviewing |
-| **Architecture** | tsh-architecture-designing, tsh-technical-context-discovering, tsh-implementation-gap-analysing |
+| **Architecture** | tsh-architecture-designing, tsh-technical-context-discovering, tsh-implementation-gap-analysing, tsh-orchestrating-implementation |
 | **Backend** | tsh-implementing-backend, tsh-sql-and-database-understanding, tsh-engineering-prompts |
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
@@ -406,7 +406,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
 │   ├── agents/                    # 21 agent skill definitions (12 user-facing + 9 internal workers)
-│   ├── workflows/                 # 34 domain workflow skills (agent-invoked; may appear in /)
+│   ├── workflows/                 # 35 domain workflow skills (agent-invoked; may appear in /)
 │   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 11 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration

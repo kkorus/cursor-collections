@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-11
+
+### Added
+
+- `tsh-orchestrating-implementation` workflow skill — Added the canonical implementation orchestration workflow with flow selection, delegation routing (Task-to-Owner table), todo control, and review/UI-verification gates (ported from copilot-collections PR #66)
+
+### Changed
+
+- Engineering Manager agent (`tsh-engineering-manager`) — Reworked into a WHO-only orchestrator that delegates implementation work through `tsh-orchestrating-implementation`; restructured into role, delegation roster, skills usage, tool usage, and constraints sections
+- `/tsh-implement` command — Reduced to a thin trigger that hands off to the orchestration skill
+- Website documentation — Updated the Engineering Manager and `/tsh-implement` docs to reflect the new orchestration flow
+
 ## 2026-06-09
 
 ### Added
