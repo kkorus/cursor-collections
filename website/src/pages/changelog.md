@@ -12,6 +12,21 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-19
+
+### Added
+
+- `tsh-technical-writer` agent — Internal worker agent that owns repository documentation, authoring and updating README, CHANGELOG, in-repo `/docs`, and website docs pages. Delegated to by the Engineering Manager for documentation-only work; never writes or edits product code (ported from copilot-collections PR #69)
+- `tsh-writing-documentation` workflow skill — Canonical documentation-writing skill covering README, CHANGELOG, in-repo `/docs`, and the website docs site; includes documentation scope rules, accuracy-over-volume, structure-mirrors-neighbors, broken-link policy, and reader-centered craft guidelines from *Writing for Busy Readers*
+- `tsh-write-documentation` internal skill — Worker handoff that delegates a bounded documentation task to `tsh-technical-writer` and loads `tsh-writing-documentation` before authoring begins
+- Website docs pages for the Technical Writer agent and Writing Documentation skill
+
+### Changed
+
+- Engineering Manager agent (`tsh-engineering-manager`) — Added `tsh-technical-writer` to the delegation roster with documentation-only rules; tightened the "never writes product code" constraint to "never edits any file directly"; added read/search guardrails (routing decisions only, never for research or solving)
+- `tsh-orchestrating-implementation` skill — Renamed the `never-writes-product-code` principle to `never-edits-files-directly` (all file types), added `read-search-routing-only` and `last-resort-stop-or-ask` principles, added documentation as a first-class routed work type, and tightened the handoff and fix-routing rules
+- Website agents overview — Added the Technical Writer to the delegation diagram and the internal delegate-only agents table
+
 ## 2026-06-18
 
 ### Added

@@ -377,12 +377,13 @@ The Cursor Orchestrator handles research → design → creation → review auto
 | Agent | Purpose |
 |-------|---------|
 | Plan Reviewer (`tsh-plan-reviewer`) | Validate implementation plans — APPROVED or REVISIONS NEEDED |
+| Technical Writer (`tsh-technical-writer`) | Author and update README, CHANGELOG, `/docs`, and website docs — never product code |
 | BA workers (5) | Transcript, analysis, extraction, quality, and Jira formatting phases |
 | Cursor workers (3) | Research, artifact creation, and artifact review for customization tasks |
 
 ---
 
-## Workflow skills (36)
+## Workflow skills (37)
 
 Skills are automatically loaded by agents when relevant to the task. No manual invocation needed.
 
@@ -394,6 +395,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
 | **Quality** | tsh-e2e-testing, tsh-codebase-analysing, tsh-reviewing-frontend (code/UI review processes live under `/tsh-review` and `/tsh-review-ui` references) |
+| **Documentation** | tsh-writing-documentation |
 | **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
 
 ---
@@ -405,10 +407,10 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 ├── rules/
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
-│   ├── agents/                    # 21 agent skill definitions (12 user-facing + 9 internal workers)
-│   ├── workflows/                 # 36 domain workflow skills (agent-invoked; may appear in /)
+│   ├── agents/                    # 22 agent skill definitions (12 user-facing + 10 internal workers)
+│   ├── workflows/                 # 37 domain workflow skills (agent-invoked; may appear in /)
 │   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
-│   └── internal/                  # 11 internal sub-workflow skills
+│   └── internal/                  # 12 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration
 ```
 

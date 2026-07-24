@@ -49,11 +49,11 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 │   /tsh-implement         │
 └──────┬──────────────────┘
        │ Delegates to specialized agents
-       ├────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐
-       ▼            ▼            ▼            ▼            ▼            ▼            ▼
-  Context       Architect    Software      DevOps        E2E         Prompt      UI Reviewer
-  Engineer       (plan)      Engineer      Engineer    Engineer     Engineer    /tsh-review-ui
-  (research)        │        (app code)    (infra)     (tests)     (prompts)
+       ├────────────┬────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐
+       ▼            ▼            ▼            ▼            ▼            ▼            ▼            ▼
+  Context       Architect    Software      DevOps        E2E         Prompt      UI Reviewer   Technical
+  Engineer       (plan)      Engineer      Engineer    Engineer     Engineer    /tsh-review-ui  Writer
+  (research)        │        (app code)    (infra)     (tests)     (prompts)                   (docs)
                     ▼
              Plan Reviewer
              (tsh-plan-reviewer)
@@ -104,7 +104,7 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 
 ### Internal delegate-only agent skills
 
-These skills have `disable-model-invocation: true`. They are delegated by the Business Analyst, Engineering Manager, or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation.
+These skills have `disable-model-invocation: true`. They are delegated by the Business Analyst, Engineering Manager, or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation. The Engineering Manager delegates documentation-only work to the Technical Writer.
 
 | Agent | Skill path | Role |
 |-------|-----------|------|
@@ -114,6 +114,7 @@ These skills have `disable-model-invocation: true`. They are delegated by the Bu
 | BA Quality Worker | `agents/tsh-ba-quality-worker/` | Runs Lite or Full quality-review passes |
 | BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
 | [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Stress-tests implementation plans before implementation starts |
+| [Technical Writer](./technical-writer) | `agents/tsh-technical-writer/` | Authors and updates README, CHANGELOG, `/docs`, and website documentation pages |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |
 | [Cursor Artifact Reviewer](./cursor-artifact-reviewer) | `agents/tsh-cursor-artifact-reviewer/` | Validates quality and consistency of artifacts |

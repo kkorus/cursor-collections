@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **36 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+Cursor Collections includes **37 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
 
 ## How Skills Work
 
@@ -69,6 +69,12 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | [tsh-reviewing-frontend](./reviewing-frontend) | Frontend-specific review: components, hooks, rendering, a11y | Code Reviewer |
 | [tsh-ui-verifying](./ui-verification) | Figma vs implementation verification criteria | UI Reviewer, SE |
 | [tsh-e2e-testing](./e2e-testing) | Playwright E2E testing patterns and verification | E2E Engineer |
+
+### Documentation Skills
+
+| Skill | Description | Used By |
+|-------|-------------|---------|
+| [tsh-writing-documentation](./writing-documentation) | README, CHANGELOG, `/docs`, and docs-site authoring conventions | Technical Writer |
 
 ### Cursor Customization Skills
 
