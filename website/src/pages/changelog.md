@@ -12,6 +12,12 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-07-11 (docs)
+
+### Notes
+
+- Reviewed copilot-collections PR #74 (README path adjustments): not applicable to Cursor Collections. Upstream #74 fixed hardcoded `/Users/adampolak/...` absolute paths, a `<this-repo-url>` clone placeholder, and a settings trailing comma that existed only in the upstream slimmed README. This fork's README is the richer diverged version and already uses relative `.cursor/mcp.json` links and a real clone URL, so no changes were needed.
+
 ## 2026-07-11
 
 ### Changed
