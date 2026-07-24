@@ -5,7 +5,7 @@ title: Agents Overview
 
 # Agents Overview
 
-Cursor Collections provides **12 user-facing agent skills** (plus 9 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
+Cursor Collections provides **13 user-facing agent skills** (plus 11 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
 
 ## Agent Skills vs Cursor Subagents
 
@@ -49,11 +49,11 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 │   /tsh-implement         │
 └──────┬──────────────────┘
        │ Delegates to specialized agents
-       ├────────────┬────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐
-       ▼            ▼            ▼            ▼            ▼            ▼            ▼            ▼
-  Context       Architect    Software      DevOps        E2E         Prompt      UI Reviewer   Technical
-  Engineer       (plan)      Engineer      Engineer    Engineer     Engineer    /tsh-review-ui  Writer
-  (research)        │        (app code)    (infra)     (tests)     (prompts)                   (docs)
+       ├──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+       ▼          ▼          ▼          ▼          ▼          ▼          ▼          ▼          ▼          ▼
+  Context     Architect   UI          Software   Plan        DevOps      E2E        Prompt     UI Reviewer  Technical
+  Engineer     (plan)     Engineer    Engineer   Implementor  Engineer   Engineer   Engineer   /tsh-review  Writer
+  (research)      │       (UI)        (non-UI)   (strict)     (infra)    (tests)    (prompts)   -ui          (docs)
                     ▼
              Plan Reviewer
              (tsh-plan-reviewer)
@@ -78,7 +78,8 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 | [Context Engineer](./context-engineer) | `agents/tsh-context-engineer/` | Gathers requirements, builds context, identifies gaps | Atlassian, Figma, PDF Reader, Sequential Thinking |
 | [Architect](./architect) | `agents/tsh-architect/` | Designs solutions, creates implementation plans | Atlassian, Context7, Figma, PDF Reader, Sequential Thinking |
 | [Engineering Manager](./engineering-manager) | `agents/tsh-engineering-manager/` | Orchestrates implementation by delegating to specialized agents | Atlassian, Sequential Thinking |
-| [Software Engineer](./software-engineer) | `agents/tsh-software-engineer/` | Implements code against the plan | Context7, Figma, Playwright, Sequential Thinking |
+| [UI Engineer](./ui-engineer) | `agents/tsh-ui-engineer/` | Implements UI and frontend solutions | Context7, Figma, Playwright, Sequential Thinking |
+| [Software Engineer](./software-engineer) | `agents/tsh-software-engineer/` | Implements non-UI code against the plan | Context7, Sequential Thinking |
 | [Prompt Engineer](./prompt-engineer) | `agents/tsh-prompt-engineer/` | Designs, optimizes, and secures LLM application prompts | Context7, Sequential Thinking |
 
 ### Infrastructure & DevOps Agents
@@ -114,6 +115,7 @@ These skills have `disable-model-invocation: true`. They are delegated by the Bu
 | BA Quality Worker | `agents/tsh-ba-quality-worker/` | Runs Lite or Full quality-review passes |
 | BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
 | [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Stress-tests implementation plans before implementation starts |
+| [Plan Implementor](./plan-implementor) | `agents/tsh-plan-implementor/` | Internal strict single-task implementor for one plan step at a time |
 | [Technical Writer](./technical-writer) | `agents/tsh-technical-writer/` | Authors and updates README, CHANGELOG, `/docs`, and website documentation pages |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |

@@ -20,7 +20,7 @@ Before delegating tasks, open the research file (`*.research.md`) and plan file 
   - Figma URLs and design references in `Task details`.
   - A structured "Design References" subsection mapping views/components to Figma URLs or node IDs.
 
-Use these URLs when delegating to both `tsh-software-engineer` (implementation context) and `tsh-ui-reviewer` (verification target).
+Use these URLs when delegating to both `tsh-ui-engineer` (implementation context) and `tsh-ui-reviewer` (verification target).
 
 ### When Figma link is missing
 
@@ -41,13 +41,13 @@ Do NOT skip verification or delegate without a Figma reference.
 
 3. **Confirm dev server URL** — Ask the user for the dev server URL (e.g., "What URL is the frontend app running at? Is it http://localhost:3000?"). Do not defer this to later — you need the confirmed URL before any verification can start. Do not guess from running processes or port scans — multiple services may run on different ports. Use the confirmed URL for all subsequent verifications in this session.
 
-4. **Delegate UI implementation** — For each UI implementation task, invoke the agent skill at `.cursor/skills/internal/tsh-implement-ui-common-task/SKILL.md` for `tsh-software-engineer`. Pass the relevant Figma URLs, component context, and plan section. For non-Figma frontend and backend tasks, use `.cursor/skills/internal/tsh-implement-common-task/SKILL.md`.
+4. **Delegate UI implementation** — For each UI implementation task, invoke the agent skill at `.cursor/skills/internal/tsh-implement-ui-common-task/SKILL.md` for `tsh-ui-engineer`. Pass the relevant Figma URLs, component context, and plan section. For non-Figma frontend and backend tasks, use `.cursor/skills/internal/tsh-implement-common-task/SKILL.md`.
 
 5. **Delegate UI verification** — After each UI implementation task completes, invoke the agent skill at `.cursor/skills/commands/tsh-review-ui/SKILL.md` for `tsh-ui-reviewer`. Pass: the Figma URL, the user-confirmed dev server URL from step 3, and the component/section name. The ui-reviewer will compare the Figma design against the running implementation and return a structured report. **Note:** You do NOT need `figma` or `playwright` tools yourself — the `tsh-ui-reviewer` agent has them. Just invoke the agent skill to delegate. Never skip verification because these tools aren't in your own tool list.
 
 6. **Handle verification results**:
    - If **PASS** → mark the task and its verification step as complete in the plan. Move to the next task.
-   - If **FAIL** → delegate fix to `tsh-software-engineer` — pass the **complete** verification report and explicitly instruct the engineer to fix **ALL** listed differences, not just the first one. After the fix, re-delegate verification to `tsh-ui-reviewer`. Repeat up to **5 iterations per component**.
+   - If **FAIL** → delegate fix to `tsh-ui-engineer` — pass the **complete** verification report and explicitly instruct the engineer to fix **ALL** listed differences, not just the first one. After the fix, re-delegate verification to `tsh-ui-reviewer`. Repeat up to **5 iterations per component**.
    - After 5 failed iterations → **escalate**: list remaining mismatches with the Figma URL, describe what was tried in each iteration, state the suspected root cause, document in the plan's Changelog, and ask the user for guidance.
 
 7. **Handle confidence levels** from verification reports:

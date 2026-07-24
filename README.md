@@ -353,7 +353,8 @@ The Cursor Orchestrator handles research → design → creation → review auto
 | Engineering Manager | Orchestrates the full implement cycle: research → plan → implement → review |
 | Context Engineer | Gather requirements from Jira, Confluence, Figma, and codebase |
 | Architect | Design solution architecture and create step-by-step implementation plan |
-| Software Engineer | Implement backend, frontend, APIs, and data layers |
+| UI Engineer | Implement UI and frontend solutions — Figma-driven, accessibility, UI performance |
+| Software Engineer | Implement non-UI backend, APIs, data layers, and business logic |
 | Prompt Engineer | Design, optimize, and audit LLM application prompts |
 | DevOps Engineer | Cloud infrastructure, CI/CD pipelines, Kubernetes, Terraform |
 | E2E Engineer | End-to-end tests with Playwright — Page Object patterns, stable locators |
@@ -377,6 +378,7 @@ The Cursor Orchestrator handles research → design → creation → review auto
 | Agent | Purpose |
 |-------|---------|
 | Plan Reviewer (`tsh-plan-reviewer`) | Validate implementation plans — APPROVED or REVISIONS NEEDED |
+| Plan Implementor (`tsh-plan-implementor`) | Execute one approved, low-risk plan task at a time, exactly as written |
 | Technical Writer (`tsh-technical-writer`) | Author and update README, CHANGELOG, `/docs`, and website docs — never product code |
 | BA workers (5) | Transcript, analysis, extraction, quality, and Jira formatting phases |
 | Cursor workers (3) | Research, artifact creation, and artifact review for customization tasks |
@@ -407,7 +409,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 ├── rules/
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
-│   ├── agents/                    # 22 agent skill definitions (12 user-facing + 10 internal workers)
+│   ├── agents/                    # 24 agent skill definitions (13 user-facing + 11 internal workers)
 │   ├── workflows/                 # 37 domain workflow skills (agent-invoked; may appear in /)
 │   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 12 internal sub-workflow skills

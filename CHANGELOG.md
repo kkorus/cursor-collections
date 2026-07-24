@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-22
+
+### Added
+
+- `tsh-ui-engineer` agent — New UI-specialized implementor (Recommended model `Claude Sonnet 4.6`) that owns frontend and user-interface implementation. Carries the full UI toolset (Figma, Playwright, Context7, Sequential Thinking), the frontend skill bundle (`tsh-implementing-frontend`, `tsh-implementing-forms`, `tsh-writing-hooks`, `tsh-ensuring-accessibility`, `tsh-optimizing-frontend`, `tsh-ui-verifying`), delegates verification to `tsh-ui-reviewer`, and confirms scope before proceeding without a plan (ported from copilot-collections PR #70)
+- `tsh-plan-implementor` agent — New internal-only (`disable-model-invocation: true`) strict implementor that executes one plan task at a time exactly as written, with a minimal toolset and a stop-and-report path for missing seams or ambiguous plans. Reuses the shared `tsh-implement-common-task` internal skill; Recommended model array `qwen3-coder-30b-a3b-instruct (customendpoint)` / `GPT-5.4 mini`
+- Website docs pages for the UI Engineer and Plan Implementor agents
+
+### Changed
+
+- Software Engineer agent (`tsh-software-engineer`) — Refactored into the standard non-UI implementor: removed the Figma and Playwright tools and the UI skill bundle, switched to a `GPT-5.3-Codex` / `Gemini 3.5 Flash` Recommended model array, restructured into canonical XML sections, and added an explicit no-plan confirmation step. UI work now routes to `tsh-ui-engineer`
+- `tsh-orchestrating-implementation` skill — Split the single implementor route into three: UI with Figma to `tsh-ui-engineer`, approved low-risk plan seams to `tsh-plan-implementor` (DEFAULT), and complex/no-plan non-UI work to `tsh-software-engineer` (EXCEPTION); added the no-plan confirmation gate and the software-engineer delegation-time model-selection note
+- Engineering Manager agent (`tsh-engineering-manager`) — Registered `tsh-ui-engineer` and `tsh-plan-implementor` in the delegation roster, narrowed the `tsh-software-engineer` entry to the complex/no-plan non-UI exception path, and reconciled the constraints and delegation list
+- Reference reconciliation — Repointed UI ownership to `tsh-ui-engineer` across `tsh-ui-reviewer`, `plan.example.md`, and the `tsh-implement-ui` internal skill, while keeping `tsh-software-engineer` as the default non-UI fix target in `tsh-code-reviewer` and `tsh-e2e-engineer` with an explicit UI exception
+- Website docs — Reframed the Software Engineer page as non-UI, updated the agents overview table and handoff diagram to include the three implementors, and added the new agent pages
+
 ## 2026-06-19
 
 ### Added
