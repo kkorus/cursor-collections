@@ -21,7 +21,6 @@ Provides templates, guidelines, and a structured process for building custom age
 | Section | Purpose |
 |---|---|
 | **YAML Frontmatter** | `name`, `description`; optional `disable-model-invocation: true` for delegate-only workers |
-| **Body** | `> Recommended model:` and `> Recommended tools:` lines (Cursor convention) |
 | **Agent Role** | WHO the agent is, responsibilities, boundaries |
 | **Behavior Guidelines** | Decision-making rules, communication style |
 | **Skills Usage** | Which skills to load and when |

@@ -23,7 +23,7 @@ This repository uses **agent skills**, not project-level `.cursor/agents/` files
 Each agent skill has:
 
 - **A defined role** — What the agent specializes in and what it should/shouldn't do.
-- **Recommended tools** — Which MCP integrations and tools work best for this agent.
+- **Tool usage guidance** — Which MCP integrations and tools work best for this agent, described in the body.
 - **Workflow skills** — Which domain skills it loads for specialized knowledge.
 - **Delegation logic** — When and how to hand off to other agent skills.
 

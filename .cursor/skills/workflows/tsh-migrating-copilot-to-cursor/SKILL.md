@@ -21,8 +21,8 @@ Converts GitHub Copilot customization artifacts to Cursor equivalents by applyin
 
 | Copilot frontmatter | Cursor equivalent | Action |
 |---|---|---|
-| `model: "GPT-5.4"` | `> Recommended model: GPT-5.4` | Move to first line of body — Cursor doesn't bind models in frontmatter |
-| `tools: [tool1, tool2]` | `> Recommended tools: tool1, tool2` | Move to second line of body; see tool stripping rules below |
+| `model: "GPT-5.4"` | *(drop)* | Cursor doesn't bind models in frontmatter or read a model line — the model is chosen in the Cursor UI/session. Do not carry it into the body. |
+| `tools: [tool1, tool2]` | *(drop)* | Cursor doesn't bind tools per artifact — do not carry a tools line into the body. See tool stripping rules for how removed tools affect body prose. |
 | `user-invocable: false` | `disable-model-invocation: true` | Direct frontmatter replacement |
 | `handoffs:` list | `## Handoffs` section in body | Convert list items to Markdown bullet prose |
 | `agents:` list | `## Delegation` section in body | Convert list items to Markdown bullet prose |
@@ -63,22 +63,17 @@ Do NOT replace `Copilot` when it appears inside a code example, a historical ref
 - Always for commands (`.github/prompts/`) and internal prompts (`.github/internal-prompts/`)
 - Never for agents (`.github/agents/`) or workflow skills (`.github/skills/`)
 
-**When to add `> Recommended model:`:**
-- Always, for every converted agent and internal skill — carry over from `model:` frontmatter
-- If no `model:` existed, omit the line (don't guess)
-
-**When to add `> Recommended tools:`:**
-- Always, for agents — carry over from `tools:` frontmatter after stripping removed tools
-- For workflow skills and commands, omit (they don't have tool access)
+**Model and tools frontmatter:**
+- Drop the Copilot `model:` and `tools:` frontmatter entirely — Cursor does not read them, and they should not be carried into the body as `> Recommended model:` / `> Recommended tools:` lines. The model is selected in the Cursor UI/session; tool access is governed at the session level.
+- Removed tools (`vscode/runCommand`, `vscode/openFile`) and replaced tools (`vscode/askQuestions`) still affect the body prose — see the tool stripping rules above.
 
 ## Conversion Process
 
 ```
 Conversion progress:
 - [ ] Step 1: Identify artifact type and determine target directory + filename
-- [ ] Step 2: Convert frontmatter fields
-- [ ] Step 3: Add Recommended model / tools lines at top of body (if applicable)
-- [ ] Step 4: Apply path and terminology replacements throughout body
+- [ ] Step 2: Convert frontmatter fields (drop `model:`/`tools:`; map `user-invocable: false` → `disable-model-invocation: true`)
+- [ ] Step 3: Apply path and terminology replacements throughout body
 - [ ] Step 5: Strip or replace removed tools (vscode/*)
 - [ ] Step 6: Convert handoffs/agents frontmatter to body sections (if applicable)
 - [ ] Step 7: Verify the directory name matches the `name` field in frontmatter

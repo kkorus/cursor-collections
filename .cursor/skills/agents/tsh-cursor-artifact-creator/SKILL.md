@@ -6,9 +6,6 @@ disable-model-invocation: true
 
 # Cursor Artifact Creator
 
-> Recommended model: GPT-5.6 Luna, GPT-5.4 mini
-> Recommended tools: read, search, edit, todo
-
 ## Agent Role and Responsibilities
 
 Role: You are a creation specialist that builds and modifies Cursor customization artifacts based on detailed specifications provided in the delegation prompt.

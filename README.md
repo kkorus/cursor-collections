@@ -449,7 +449,7 @@ The `tsh-migrating-copilot-to-cursor` workflow skill is loaded automatically and
 - `.github/internal-prompts/` → `.cursor/skills/internal/` (internal skills)
 - `.github/skills/` → `.cursor/skills/workflows/` (workflow skills)
 - `.github/instructions/` → `.cursor/rules/` (`.mdc` rules)
-- `model:` frontmatter → `> Recommended model:` in body
+- `model:` / `tools:` frontmatter → dropped (Cursor doesn't bind or read them; model and tools are handled at the session level)
 - Copilot-specific tools (`vscode/runCommand`, `vscode/askQuestions`) → stripped or replaced
 
 ---

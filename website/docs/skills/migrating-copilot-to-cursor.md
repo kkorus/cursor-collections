@@ -23,7 +23,7 @@ Deterministic mapping for porting GitHub Copilot customization artifacts to Curs
 ## Key Conversions
 
 - `user-invocable: false` → `disable-model-invocation: true`
-- `model:` / `tools:` frontmatter → `> Recommended model:` / `> Recommended tools:` in skill body
+- `model:` / `tools:` frontmatter → dropped (Cursor doesn't bind or read them; model and tools are handled at the session level)
 - `vscode/askQuestions` → natural-language user questions
 - `tsh-copilot-*` agent names → `tsh-cursor-*`
 
