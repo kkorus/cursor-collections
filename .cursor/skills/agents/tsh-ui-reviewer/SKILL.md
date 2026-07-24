@@ -1,6 +1,6 @@
 ---
 name: tsh-ui-reviewer
-description: "Verifies that implemented UI matches Figma designs by comparing actual implementation (via Playwright) against design specifications (via Figma tool). Produces structured comparison reports with severity-rated findings. Use when validating UI implementations against design specifications, checking design token usage, or verifying visual correctness after frontend implementation. Invoke with @tsh-ui-reviewer."
+description: "Verifies that implemented UI matches Figma designs by comparing CLI-captured implementation evidence (collected by tsh-ui-capture-worker via playwright-cli) against design specifications (via Figma tool). Produces structured comparison reports with severity-rated findings. Use when validating UI implementations against design specifications, checking design token usage, or verifying visual correctness after frontend implementation. Invoke with @tsh-ui-reviewer."
 ---
 
 # UI Reviewer
