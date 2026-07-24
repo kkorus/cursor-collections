@@ -44,7 +44,8 @@ Each technical specification includes:
 
 ## Skills Loaded
 
-- `tsh-architecture-designing` — Solution design, components, data flows, implementation plan creation.
+- `tsh-architecture-designing` — Solution design, components, data flows.
+- `tsh-creating-implementation-plans` — Implementation plan template, structure, and DoD rules.
 - `tsh-codebase-analysing` — Analyze current architecture, components, and patterns.
 - `tsh-implementation-gap-analysing` — Focus the plan on necessary changes without duplicating existing work.
 - `tsh-technical-context-discovering` — Establish project conventions and patterns before designing.
@@ -60,8 +61,8 @@ Each technical specification includes:
 
 ## Handoffs
 
-After creating the plan, the Architect hands off to:
+After creating the plan, the Architect can hand off to:
 
-- **Plan Reviewer** — The Engineering Manager automatically invokes the [Plan Reviewer](./plan-reviewer) to validate the produced `.plan.md` before implementation begins. If `REVISIONS NEEDED` with BLOCKERs, the plan is returned to the Architect for revision.
-- **Software Engineer** → `/tsh-implement` (standard implementation, after plan is approved)
-- **Software Engineer** → `/tsh-implement` (frontend implementation with Figma verification via internal UI prompt, after plan is approved)
+- **Internal plan review loop** → the Architect invokes the [Plan Reviewer](./plan-reviewer) as a nested subagent after creating or revising a plan and addresses all BLOCKER findings. After 3 iterations, if BLOCKERs remain, the Architect asks the user a structured question (try one more iteration, stop here, or give custom guidance) bundled with the remaining findings and iteration history — repeating after every further iteration until the plan is approved or the user chooses to stop.
+- **Engineering Manager** → `/tsh-implement` (`Start Implementation`) once the plan is approved/finalized
+- **DevOps Engineer** → `Start Infrastructure Implementation` for infrastructure work per the architectural plan

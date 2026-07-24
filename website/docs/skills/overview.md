@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **34 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+Cursor Collections includes **36 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
 
 ## How Skills Work
 
@@ -35,7 +35,8 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 
 | Skill | Description | Used By |
 |-------|-------------|---------|
-| [tsh-architecture-designing](./architecture-design) | Solution architecture design and implementation plan creation | Architect |
+| [tsh-architecture-designing](./architecture-design) | Solution architecture design | Architect |
+| [tsh-creating-implementation-plans](./creating-implementation-plans) | Implementation plan template, structure, and DoD rules | Architect, CR |
 | [tsh-technical-context-discovering](./technical-context-discovery) | Project conventions and pattern discovery | Architect, CR, SE, E2E, CE |
 | [tsh-implementing-frontend](./frontend-implementation) | UI component patterns, composition, design tokens | Software Engineer |
 | [tsh-implementing-forms](./implementing-forms) | Form architecture, schema validation, multi-step flows | Software Engineer |
@@ -85,6 +86,7 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | Skill | BA | CE | Architect | SE | PE | CR | UI | E2E | DevOps | Cursor Eng. |
 |-------|----|----|-----------|----|----|----|----|-----|--------|-------------|
 | tsh-architecture-designing | | | ✅ | | | | | | | |
+| tsh-creating-implementation-plans | | | ✅ | | | ✅ | | | | |
 | tsh-code-reviewing | | | | | ✅ | ✅ | | | | |
 | tsh-codebase-analysing | ✅ | ✅ | ✅ | ✅ | | | | | ✅ | ✅ |
 | tsh-creating-agents | | | | | | | | | | ✅ |

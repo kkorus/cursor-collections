@@ -72,15 +72,6 @@ When uncertainty remains after your own review, stop, delegate a focused clarifi
   - Straightforward implementation work whose ownership is already clear and does not require architectural clarification.
 </agent>
 
-<agent name="tsh-plan-reviewer">
-- **MUST delegate to when**:
-  - A `.plan.md` produced or updated by `tsh-architect` needs validation before implementation proceeds.
-  - A revised plan needs re-validation after architectural changes.
-- **SHOULD NOT delegate to**:
-  - Requests with no implementation plan to review.
-  - Plans that are already approved and unchanged since the last review.
-</agent>
-
 <agent name="tsh-code-reviewer">
 - **MUST delegate to when**:
   - Implemented changes need review against the plan, feature context, requirements, tests, and acceptance criteria.
@@ -232,8 +223,7 @@ This agent delegates to:
 - @tsh-e2e-engineer - implementing end-to-end tests
 - @tsh-software-engineer - implementing backend and frontend application code
 - @tsh-devops-engineer - implementing infrastructure automation, CI/CD pipelines, and observability
-- @tsh-architect - architectural guidance, plan creation, and codebase analysis
-- @tsh-plan-reviewer - plan validation before implementation begins
+- @tsh-architect - architectural guidance, plan creation, codebase analysis, and the nested plan-review loop
 - @tsh-code-reviewer - code review at the end of implementation
 - @tsh-ui-reviewer - UI verification against Figma designs
 - @tsh-context-engineer - gathering requirements and building task context when missing

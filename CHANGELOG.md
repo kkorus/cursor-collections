@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-06-15
+
+### Added
+
+- `tsh-creating-implementation-plans` workflow skill — Centralized plan-structure ownership: the plan template (`plan.example.md`), phase/task ordering, Wildly Important Goal, per-task Clues, and definition-of-done rules (ported from copilot-collections PR #67)
+- Direct architect/plan-reviewer nesting — `tsh-architect` now invokes `tsh-plan-reviewer` directly via the Task tool with a strict `<plan-review-report>` verdict schema, owning the review loop end to end
+
+### Changed
+
+- Architect agent (`tsh-architect`) — Tightened into a WHO-only architecture role, restructured into XML sections, delegated plan-structure ownership to `tsh-creating-implementation-plans`, and added the nested review contract (append-only `.plan-review.md`, mandatory review with low-risk exemptions, 3-iteration cap with structured user escalation)
+- Plan Reviewer agent (`tsh-plan-reviewer`) — Returns a structured `<plan-review-report>` assessment to its invoker instead of self-routing to the architect; dropped the `todo` tool and added `tsh-creating-implementation-plans` to its skills
+- Engineering Manager agent — Removed `tsh-plan-reviewer` from its delegation roster; plan review is now owned by the architect
+- `tsh-orchestrating-implementation` skill — Step 2 now plans task order (not a binding call sequence); the planning sequence delegates the reviewed-plan handoff (including the nested review loop) to the architect
+- `tsh-plan` internal skill and `tsh-architecture-designing` skill — Removed duplicated plan-authoring rules and moved them into `tsh-creating-implementation-plans`
+- `tsh-creating-agents` skill — Documented the optional `<approach>` section and justified agent-specific domain tags
+- Website docs — Updated architect, plan reviewer, engineering manager, architecture-design, skills overview, and internal plan/research/review-plan pages for the refactored flow
+
 ## 2026-06-11
 
 ### Added

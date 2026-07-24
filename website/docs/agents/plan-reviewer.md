@@ -16,12 +16,12 @@ The Plan Reviewer (`tsh-plan-reviewer`) is an internal sub-agent that stress-tes
 - Checking that referenced files, functions, classes, integrations, and patterns actually exist in the codebase.
 - Surfacing hidden assumptions, sequencing traps, dependency order issues, and migration or data risks.
 - Challenging integration boundaries, rework risk, and false confidence in test coverage.
-- Producing a structured approval or revision report for the Engineering Manager.
+- Producing a structured approval or revision report for the Architect.
 
 ## What It Produces
 
 - A failure-oriented review report with a binary verdict, top risks, assumptions, rework triggers, and any blocking gaps.
-- The report is saved as `{task-name}.plan-review.md` alongside the plan in `specifications/<task-name>/`.
+- The report is saved as `{task-name}.plan-review.md` alongside the plan in `specifications/<task-name-or-id>/`.
 
 ```text
 specifications/
@@ -50,14 +50,15 @@ specifications/
 ## Skills Loaded
 
 - `tsh-architecture-designing` — Evaluate architectural shape, phase coherence, and trade-offs.
+- `tsh-creating-implementation-plans` — Verify plan template, structure, and definition-of-done compliance.
 - `tsh-codebase-analysing` — Verify plan references against the actual codebase.
-- `tsh-technical-context-discovering` — Check project conventions and existing patterns.
+- `tsh-technical-context-discovering` — Check pattern consistency against established conventions.
 - `tsh-implementation-gap-analysing` — Compare what exists with what the plan proposes.
 - `tsh-sql-and-database-understanding` — When the plan includes database schema, migration, or query changes.
 
 ## Invocation
 
-Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-plan-reviewer` use). Load `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md` when validating a plan.
+The [Architect](./architect) directly invokes the Plan Reviewer as a nested subagent via the Cursor **Task** tool after creating or revising a plan (not intended for direct `@tsh-plan-reviewer` use); the Engineering Manager is not part of the review loop. Load `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md` when validating a plan.
 
 ## Handoffs
 
@@ -68,6 +69,6 @@ flowchart LR
   PlanReviewer -->|"REVISIONS NEEDED"| Architect
 ```
 
-- **APPROVED** → Engineering Manager presents the plan and a separate chat summary; `*.plan-review.md` stays unchanged.
-- **REVISIONS NEEDED with BLOCKERs** → Engineering Manager delegates back to Architect with the review report. Max 3 iterations before escalating to the user.
-- **Plan already approved and unchanged** → Re-validation is skipped.
+- **APPROVED** → the Architect reports the finished plan to the Engineering Manager; `*.plan-review.md` stays unchanged.
+- **REVISIONS NEEDED with BLOCKERs** → the Architect addresses all BLOCKER findings and re-invokes the reviewer. After 3 iterations, if BLOCKERs remain, the Architect asks the user how to proceed.
+- If the reviewer returns revisions, the plan goes back to the Architect and is re-reviewed until approved or escalated.
