@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04 (PR #79 port)
+
+### Changed
+
+- Plan review is now a lightweight final reality check, invoked once per plan lifecycle (ported from copilot-collections PR #79) — `tsh-plan-reviewer` no longer stress-tests the plan adversarially or hunts a findings quota. It runs one high-level gate: if the plan is coherent, feasible, and correctly sequenced, it approves. The report carries only BLOCKERs, drawn from six canonical categories (missing critical context, infeasible approach, wrong sequencing, contradicted project reality, unresolved open question, and unverifiable definition of done). The architect invokes it once per plan lifecycle; a further review event happens only when the user explicitly directs one
+- Report schema — `reviewed-plan-revision` was added so a review is bound to the exact plan revision it examined, and `architect-action-required` is now `true|false` rather than a free-form field. `tsh-architect` gained a `<pre-submission-self-check>` and a `<plan-authoring-approval-gate>` that fails closed on an ambiguous response by stopping and asking rather than guessing
+- The 3-iteration escalation loop and the `Decision and Revision History` table are gone — the loop was the mechanism behind the adversarial framing, and the history table duplicated the `## Human Approval` record that PR #76 made canonical. Both are removed from the agent skill and from every page that documented them
+- **Quick Flow is removed, so after this port there is exactly one implementation route and unplanned implementation is no longer offered at all.** `tsh-orchestrating-implementation` states that Full Flow is the only implementation-orchestration route and that no alternative flow may be offered, recommended, accepted, recorded, or honored as an override; both flow-selection decision tables, the `## Quick Flow` section, and the flow recommendation are deleted, as is `website/docs/prompts/public/implement.md`'s "with the user able to override the recommendation". Step 0 now creates execution todos and Step 1 establishes Full Flow and assesses planning readiness
+- New canonical sections in `tsh-orchestrating-implementation` — `## Approval Gate Separation` distinguishes the architect's plan-authoring gate (`Approve plan` / `I have comments`) from the manager's recovery-only gate (`Approve current plan` / `Request changes` / `Stop`), and `## Implementation Discussion Boundary` requires delivery to begin in a new discussion, reporting the plan path, current `Plan Revision`, persisted `Decision Timestamp`, and review path, then stopping before any file-changing delegation
+- Material revision handling no longer triggers an automatic re-review — a material change after an earlier Human approval halts further file-changing delegation and requires renewed Human approval; it never invokes a reviewer on its own. Updated in `tsh-orchestrating-implementation`, `tsh-creating-implementation-plans`, its `plan.example.md`, and `website/docs/skills/creating-implementation-plans.md`
+- Website — 10 pages updated (`README.md`, `agents/architect.md`, `agents/plan-reviewer.md`, `agents/overview.md`, `agents/engineering-manager.md`, `prompts/overview.md`, `prompts/public/implement.md`, `prompts/internal/plan.md`, `skills/creating-implementation-plans.md`, `workflow/standard-flow.md`) for the reality-check framing, the single route, the one-invocation contract, and the new report schema. Per the batch decision record, `prompts/internal/plan.md` also stops misattributing the reviewer invocation to the Engineering Manager — the Architect owns that loop
+
+### Removed
+
+- `website/docs/prompts/internal/review-plan.md` — Deleted as an orphan page documenting a `tsh-review-plan` internal skill this fork does not have (there is no `.cursor/skills/internal/tsh-review-plan/`); it also republished the findings target, the `Decision and Revision History` table, and the 3-iteration loop that #79 removes. Its one live inbound link, in `website/docs/skills/creating-implementation-plans.md`, was fixed in the same commit; the two historical changelog mentions are untouched prose
+
+### Notes
+
+- Upstream #79's changes to its `.github/prompts/tsh-review-plan.prompt.md` were merged into `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md`, because this fork folded that internal prompt into the agent skill rather than keeping a separate prompt artifact
+- Three `.github/skills/tsh-orchestrating-implementation/SKILL.md` path citations that a mechanical port would have introduced — one in `tsh-architect`'s `<human-approval-boundary>` and two in `tsh-engineering-manager`'s `<human-approval-ownership>` — were converted to backticked skill names with the `resolved per tsh-resolving-skill-references` clause, so the delegation text keeps working in a consuming project
+- `097bbc0`'s `<delegation-economy>` bullet in `tsh-engineering-manager` was rewritten rather than dropped: upstream's Quick Flow removal deleted the bullet outright, but the delegation-economy principle is fork-local and survives, re-expressed without any flow reference
+- The replacement `**UI-verification scope:**` paragraph keeps this fork's richer breadth definition from the PR-#72 CLI port — layout, spacing, sizing, width/height caps, flex/grid, alignment, typography, colors, and component structure on a Figma-backed screen all count, even with no `[REUSE]` task or Figma URL in hand. The definition only stops acting as a flow gate; none of its breadth was lost
+- No `.cursor/skills` artifact was added or removed: `scripts/count-skills.sh` still reports 25 agents / 17 commands / 39 workflows / 12 internal / 93 total, and the frontmatter `disable-model-invocation` inventory is byte-identical to `097bbc0`
+
 ## 2026-09-04 (PR #76 port)
 
 ### Added

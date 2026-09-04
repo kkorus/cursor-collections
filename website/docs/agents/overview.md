@@ -118,7 +118,7 @@ These skills have `disable-model-invocation: true`. They are delegated by the Bu
 | BA Extraction Worker | `agents/tsh-ba-extraction-worker/` | Drafts intent briefs and extracts epics and stories |
 | BA Quality Worker | `agents/tsh-ba-quality-worker/` | Runs Lite or Full quality-review passes |
 | BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
-| [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Stress-tests implementation plans before implementation starts |
+| [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Runs a lightweight final reality check on implementation plans before implementation starts |
 | [Plan Implementor](./plan-implementor) | `agents/tsh-plan-implementor/` | Internal strict single-task implementor for one plan step at a time |
 | [UI Capture Worker](./ui-capture-worker) | `agents/tsh-ui-capture-worker/` | CLI-based UI capture and tripwire evidence collection for the verification loop |
 | [Technical Writer](./technical-writer) | `agents/tsh-technical-writer/` | Authors and updates README, CHANGELOG, `/docs`, and website documentation pages |

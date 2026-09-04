@@ -172,7 +172,7 @@ What happens:
 1. Context Engineer gathers requirements from Jira, Confluence, Figma
 2. You review the research document — confirm to proceed
 3. Architect creates a step-by-step implementation plan
-4. Plan Reviewer (`tsh-plan-reviewer`, delegate-only) validates the plan — returns it if BLOCKERs found (up to 3 iterations)
+4. Plan Reviewer (`tsh-plan-reviewer`, delegate-only) runs one final reality check on the plan — returns it if BLOCKERs are found
 5. You review the plan + review report and approve
 6. Software Engineer implements phase by phase
 7. (UI tasks) Each UI component is verified against Figma automatically — up to 5 fix iterations

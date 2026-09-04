@@ -12,6 +12,28 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## PR #79 port (2026-09-04)
+
+### Changed
+
+- Plan review is a lightweight final reality check, invoked once per plan lifecycle (ported from copilot-collections PR #79) — the Plan Reviewer no longer stress-tests the plan or works toward a findings target. It runs one high-level gate and approves a plan that is coherent, feasible, and correctly sequenced. Reports carry only BLOCKERs, from six canonical categories: missing critical context, infeasible approach, wrong sequencing, contradicted project reality, unresolved open question, and unverifiable definition of done. The Architect invokes the reviewer once per plan lifecycle, and a further review event happens only when the user explicitly directs one.
+- Report schema — added `reviewed-plan-revision` so a review binds to the exact plan revision it examined, and `architect-action-required` is now `true|false`. The Architect gained a pre-submission self-check and a plan-authoring approval gate that stops and asks on an ambiguous response instead of guessing.
+- The 3-iteration escalation loop and the `Decision and Revision History` table are gone — the loop drove the adversarial framing, and the table duplicated the `## Human Approval` record introduced by PR #76.
+- **Quick Flow is removed, so after this port there is exactly one implementation route and unplanned implementation is no longer offered at all.** Full Flow is the only implementation-orchestration route, and no alternative flow may be offered, recommended, accepted, recorded, or honored as an override — including the former "with the user able to override the recommendation" behavior. Step 0 now creates execution todos and Step 1 establishes Full Flow and assesses planning readiness.
+- New canonical sections — Approval Gate Separation distinguishes the Architect's plan-authoring gate (`Approve plan` / `I have comments`) from the Engineering Manager's recovery-only gate (`Approve current plan` / `Request changes` / `Stop`). Implementation Discussion Boundary requires delivery to begin in a new discussion, after reporting the plan path, current `Plan Revision`, persisted `Decision Timestamp`, and review path.
+- A material revision no longer triggers an automatic re-review — it halts further file-changing delegation and requires renewed Human approval, and never invokes a reviewer on its own.
+
+### Removed
+
+- The internal `tsh-review-plan` prompt page was deleted as an orphan documenting a skill this fork does not have; its one inbound link was fixed in the same commit.
+
+### Notes
+
+- Upstream #79's internal-prompt changes were merged into the `tsh-plan-reviewer` agent skill, because this fork folded that prompt into the agent.
+- Three `.github/skills/...` path citations a mechanical port would have introduced were converted to backticked skill names resolved per `tsh-resolving-skill-references`.
+- The fork-local delegation-economy bullet in `tsh-engineering-manager` was rewritten rather than dropped, and the replacement UI-verification scope paragraph keeps this fork's richer breadth definition from the PR-#72 port.
+- No skill artifact was added or removed — the collection still counts 25 agents, 17 commands, 39 workflow skills, and 12 internal skills (93 total).
+
 ## PR #76 port (2026-09-04)
 
 ### Added

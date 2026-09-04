@@ -11,7 +11,7 @@ Start implementation delivery for a feature based on a task description, Jira it
 
 <required-skills>
 <skill name="tsh-orchestrating-implementation">
-Required because it contains the canonical implementation-orchestration workflow, including Step 0 flow selection, the canonical Human approval gate that precedes the first file-changing delegation, and the delivery process that this command must trigger without duplicating.
+Required because it contains the canonical implementation-orchestration workflow — Step 0 creates execution todos and Step 1 establishes Full Flow as the only implementation route — including the canonical Human approval gate that precedes the first file-changing delegation, and the delivery process that this command must trigger without duplicating.
 </skill>
 </required-skills>
 
@@ -20,7 +20,7 @@ The four primary inputs are a task description, a Jira ID, a standalone `*.resea
 </input-requirements>
 
 <workflow>
-Load and follow the `tsh-engineering-manager` agent skill, then read and follow the `tsh-orchestrating-implementation` workflow skill, start at Step 0, and follow the canonical workflow defined there for the rest of the implementation delivery. Every route relies on that skill's canonical Human approval gate before the first file-changing delegation. `tsh-orchestrating-implementation` carries `disable-model-invocation: true`, so it must be located and **read** — a Skill-tool invocation by name is rejected and is not a reason to proceed without it.
+Load and follow the `tsh-engineering-manager` agent skill, then read and follow the `tsh-orchestrating-implementation` workflow skill, start at Step 0, and follow the canonical workflow defined there for the rest of the implementation delivery. Every route relies on that skill's canonical Human approval gate before the first file-changing delegation. `tsh-orchestrating-implementation` carries `disable-model-invocation: true`, so it must be located and **read** — a Skill-tool invocation by name is rejected and is not a reason to proceed without it. Delivery begins in a new discussion; an invocation in the authoring discussion follows the canonical `Implementation Discussion Boundary` stop in `tsh-orchestrating-implementation`.
 
 Resolve the skill reference with the `tsh-resolving-skill-references` resolution order, and stop and ask the user if the workflow skill cannot be located.
 </workflow>

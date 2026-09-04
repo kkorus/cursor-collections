@@ -38,7 +38,7 @@ The Engineering Manager automatically handles the full development cycle:
 #### Plan Validation Phase (internal)
 
 - **Delegated to:** Plan Reviewer
-- **What it does:** Stress-tests the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins.
+- **What it does:** Runs a lightweight final reality check of the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins, in one invocation per plan lifecycle.
 - **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings.
 - **Your action:** Review the implementation plan and review report together for scope, phases, and acceptance criteria. The manager then presents the exact current plan revision for Human approval before implementation begins.
 

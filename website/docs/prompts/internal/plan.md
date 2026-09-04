@@ -58,7 +58,7 @@ specifications/
 
 The plan includes checklist-style phases, tasks with `[CREATE]`/`[MODIFY]`/`[REUSE]` action types, acceptance criteria, security considerations, and testing guidelines.
 
-After the plan is produced, the Engineering Manager automatically invokes the [Plan Reviewer](../../agents/plan-reviewer) to validate it. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
+After the plan is produced, the Architect invokes the [Plan Reviewer](../../agents/plan-reviewer) to validate it, once per plan lifecycle. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
 
 :::tip
 Review both the plan and the review report. Confirm scope, phases, and acceptance criteria before starting implementation.
