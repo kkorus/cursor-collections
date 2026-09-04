@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04 (PR #77 port)
+
+### Fixed
+
+- Model-name drift removed (exposed by copilot-collections PR #77) — Seven fork-local sites asserted a model binding the source does not have. Two were deletions in `.cursor/`: the `**IMPORTANT**` roster bullet in `tsh-engineering-manager` ("The orchestrator selects `GPT-5.3-Codex` or `Gemini 3.5 Flash` at delegation time.") and the model clause in the `app code (complex)` routing-row Notes cell in `tsh-orchestrating-implementation`. Five were replaced in `website/docs` with one accurate statement per page — `agents/software-engineer.md`, `agents/engineering-manager.md`, and `prompts/public/implement.md`, whose three sites collapse into a single statement rather than being triplicated; the labelled `**Model array (from the agent):**` metadata line there was removed whole, because deleting only its value would have left a dangling label. The replacement wording reuses what `01d6351` ratified in `.cursor/`: model selection is handled at the Cursor session level per worker and is not bound by the artifact
+- The removed claims were false as written, not merely stale — Frontmatter-block extraction across all 93 artifacts finds zero `model:` and zero `tools:` keys, so `website/docs/agents/software-engineer.md`'s "matching the current source frontmatter" and `website/docs/agents/engineering-manager.md`'s "The agent declares a shared model array of …" both described frontmatter that does not exist. Two of them also published mutually contradictory arrays for the same seat: the Engineering Manager page named **GPT-5.6 Luna** and **Claude Sonnet 5**, while the agent skill it documents named `GPT-5.3-Codex` and `Gemini 3.5 Flash`
+
+### Notes
+
+- Upstream #77 itself was **not applicable** to this fork. It standardized `model:` and `tools:` frontmatter across the upstream agent set; this collection carries neither key on any of its 93 artifacts, and `tsh-migrating-copilot-to-cursor` mandates dropping both at conversion time and never carrying them into the body, so #77's frontmatter hunks had no target here. Its value was diagnostic — going to look for that frontmatter is what proved the seven prose claims above were wrong
+- Per the batch decision record (D4), one of the seven — the routing-row model clause in `tsh-orchestrating-implementation` — was deleted in the **PR #79** commit rather than this one. That single line is touched by #76, by #79, and by `097bbc0`, and a fourth pass over it would have been a needless conflict surface. This knowingly relaxes strict one-commit-per-PR purity for one line, and it is recorded here rather than obscured
+- Five model mentions are legitimate and were deliberately **not** swept: `tsh-designing-multi-cloud-architecture/references/service-comparison.md` (cloud provider service names), `tsh-optimizing-cloud-cost/references/tagging-standards.md` (`gpt-4-finetune` as an example resource tag), `tsh-migrating-copilot-to-cursor/SKILL.md` (`model: "GPT-5.4"` as the frontmatter example the conversion rule drops), `README.md`'s Recommended Thinking Effort table, and `code-quality-report.md`'s audit findings. Historical changelog prose naming past model arrays is untouched for the same reason
+- Pre-existing gaps carried rather than silently repaired (D5): `website/src/pages/changelog.md` still lacks the `2026-09-04` entry that this file carries for the `tsh-resolving-skill-references` work, and `tsh-write-documentation` still has an internal skill with no `website/docs/prompts/internal/` page — the mirror image of the `review-plan` orphan the #79 commit deleted. Backfilling either inside a port commit would misattribute it to this port
+- No `.cursor/skills` artifact was added or removed: `scripts/count-skills.sh` still reports 25 agents / 17 commands / 39 workflows / 12 internal / 93 total, and the frontmatter `disable-model-invocation` inventory is byte-identical to `097bbc0`
+
 ## 2026-09-04 (PR #79 port)
 
 ### Changed

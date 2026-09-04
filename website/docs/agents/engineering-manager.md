@@ -7,7 +7,7 @@ title: Engineering Manager
 
 The Engineering Manager is the orchestration seat for implementation delivery. It defines **WHO** does the work — persona, delegation boundaries, ambiguity handling, and tool discipline — and never writes product code itself. The actual workflow mechanics (planning readiness, execution routing, and quality gates) live in the `tsh-orchestrating-implementation` skill, not in the agent.
 
-The agent declares a shared model array of **GPT-5.6 Luna** and **Claude Sonnet 5**. High-leverage decisions are escalated to the **Architect**.
+Model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact. High-leverage decisions are escalated to the **Architect**.
 
 The Engineering Manager owns the user-facing execution-authorization recovery gate. A valid current-revision `APPROVED` record is the authorization basis regardless of which gate recorded it, including the Architect's plan-authoring gate; automated Reviewer approval is not permission to implement. The manager first validates the persisted `## Human Approval` record and silently reuses a valid one. Only when no valid record exists does it present exactly `Approve current plan`, `Request changes`, or `Stop` as fail-closed recovery, never as a second normal authorization. The Architect may record the literal response in the plan, but may not infer, paraphrase, or manufacture consent. A material revision after Human approval halts delegation and requires renewed Human approval, with no automatic reviewer invocation; a new review event happens only through an explicitly user-directed new review event.
 

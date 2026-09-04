@@ -12,6 +12,21 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04 (PR #77 port)
+
+### Fixed
+
+- Model-name drift removed (exposed by copilot-collections PR #77) — seven fork-local sites asserted a model binding the source does not have. Two were deletions in the skill collection (the Engineering Manager's roster bullet naming `GPT-5.3-Codex` / `Gemini 3.5 Flash`, and the app-code routing-row model clause in `tsh-orchestrating-implementation`); five were replaced on three published pages — Software Engineer, Engineering Manager, and `/tsh-implement` — with one accurate statement per page: model selection is handled at the Cursor session level per worker and is not bound by the artifact. On the `/tsh-implement` page the labelled `**Model array (from the agent):**` metadata line was removed whole, since deleting only its value would have left a dangling label.
+- The removed claims were false as written, not merely stale — frontmatter extraction across all 93 artifacts finds zero `model:` and zero `tools:` keys, so "matching the current source frontmatter" and "declares a shared model array" described frontmatter that does not exist. Two of them published mutually contradictory arrays for the same seat: the Engineering Manager page named **GPT-5.6 Luna** and **Claude Sonnet 5**, while the agent skill it documents named `GPT-5.3-Codex` and `Gemini 3.5 Flash`.
+
+### Notes
+
+- Upstream #77 itself was **not applicable** to this fork. It standardized `model:` and `tools:` frontmatter across the upstream agent set; this collection carries neither key on any artifact, and `tsh-migrating-copilot-to-cursor` mandates dropping both at conversion time, so #77's frontmatter hunks had no target here. Its value was diagnostic — going to look for that frontmatter is what proved the seven prose claims wrong.
+- Per the batch decision record (D4), one of the seven — the routing-row model clause in `tsh-orchestrating-implementation` — was deleted in the **PR #79** commit rather than this one, because that single line is touched by #76, by #79, and by the skill-reference-resolution change, and a fourth pass over it would have been a needless conflict surface. This knowingly relaxes strict one-commit-per-PR purity for one line.
+- Five model mentions are legitimate and were deliberately **not** swept: the multi-cloud service comparison reference, the cloud-cost tagging-standards example tag, the migration skill's own `model:` frontmatter example, the README's Recommended Thinking Effort table, and the code-quality report's audit findings. Historical changelog prose naming past model arrays is untouched for the same reason.
+- Pre-existing gaps carried rather than silently repaired: this snapshot still lacks the `2026-09-04` entry that the repository `CHANGELOG.md` carries for the `tsh-resolving-skill-references` change, and `tsh-write-documentation` still has an internal skill with no published page — the mirror image of the `review-plan` orphan the #79 commit deleted. Backfilling either inside a port commit would misattribute it to this port.
+- No skill artifact was added or removed — the collection still counts 25 agents, 17 commands, 39 workflow skills, and 12 internal skills (93 total).
+
 ## PR #79 port (2026-09-04)
 
 ### Changed

@@ -4,10 +4,9 @@ title: /tsh-implement
 ---
 
 **Agent:** Engineering Manager  
-**Model array (from the agent):** GPT-5.6 Luna, Claude Sonnet 5  
 **File:** `.cursor/skills/commands/tsh-implement/SKILL.md`
 
-A thin trigger that starts implementation delivery. It routes execution to the [Engineering Manager](../../agents/engineering-manager) agent, whose shared model array is **GPT-5.6 Luna** and **Claude Sonnet 5**, and hands off to the canonical orchestration workflow — it does not define that workflow inline.
+A thin trigger that starts implementation delivery. It routes execution to the [Engineering Manager](../../agents/engineering-manager) agent and hands off to the canonical orchestration workflow — it does not define that workflow inline.
 
 ## Usage
 
@@ -30,7 +29,7 @@ Full Flow requires Human approval of the exact current plan revision before the 
 ## Key Behaviors
 
 - **Thin trigger** — contains no workflow steps; the workflow lives in `tsh-orchestrating-implementation`.
-- **Routes to one seat** — always hands off to the Engineering Manager using its shared model array of GPT-5.6 Luna and Claude Sonnet 5.
+- **Routes to one seat** — always hands off to the Engineering Manager. Model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact.
 - **Starts at Step 0** — execution todos are created first, then Step 1 establishes Full Flow as the only implementation route inside the skill.
 
 ## Output

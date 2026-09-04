@@ -11,7 +11,7 @@ The Software Engineer agent is the **exception**-route implementor for complex *
 
 Before any file change, validate from disk a plan whose current Human Approval record satisfies exactly `Human Decision=APPROVED`, `Approved Revision=current Plan Revision`, and a valid ISO 8601 UTC `Decision Timestamp` ending in `Z`. Fail closed when a field is missing, stale, mismatched, inferred, based only on Reviewer approval, or when the plan cannot be located or read; retry an unreadable or ambiguous reference once and resolve relative paths against the workspace root. Name the exact failed field, condition, or file, then ask the user in chat which next step to take — on every entry path, including direct selection as the primary chat agent — spelling out the options: point at the correct plan path, obtain Human approval for the existing plan, start plan preparation, or, when delegated, hand back to `tsh-engineering-manager`. Continue only from the user's explicit choice, which is never Human approval.
 
-The agent's model array is **Kimi K2.7 Code**, **GPT-5.3-Codex**, and **Gemini 3.5 Flash**, matching the current source frontmatter. At delegation time, the orchestrator (via the orchestration skill) selects between `GPT-5.3-Codex` when the task needs medium-reasoning precision for more complex non-UI work, and `Gemini 3.5 Flash` when a fast, inexpensive option with a larger context window suits broad codebase analysis.
+Model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact. The agent skill declares no model, so no model name is published here.
 
 ## Responsibilities
 
