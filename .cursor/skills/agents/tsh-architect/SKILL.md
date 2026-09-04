@@ -37,9 +37,12 @@ When working on implementation-plan artifacts, use these exact paths, matching t
 - `specifications/{task-name-or-id}/{task-name}.research.md`
 - `specifications/{task-name-or-id}/{task-name}.plan-review.md`
 
-`tsh-plan-reviewer` returns its assessment to you using this exact schema:
+`tsh-plan-reviewer` returns its assessment to you using this exact schema. `verdict` is exactly one of the two concrete values below (never the combined string `APPROVED | REVISIONS NEEDED`):
 
-`<plan-review-report verdict="APPROVED | REVISIONS NEEDED" architect-action-required="yes|no" report-file="specifications/{task-name-or-id}/{task-name}.plan-review.md">short summary</plan-review-report>`
+- Approved: `<plan-review-report verdict="APPROVED" architect-action-required="no" report-file="specifications/{task-name-or-id}/{task-name}.plan-review.md">short summary</plan-review-report>`
+- Revisions needed: `<plan-review-report verdict="REVISIONS NEEDED" architect-action-required="yes" report-file="specifications/{task-name-or-id}/{task-name}.plan-review.md">short summary</plan-review-report>`
+
+`architect-action-required` is `no` when approved and `yes` when revisions are needed.
 
 Derive your next action strictly from the `verdict` and `architect-action-required` attributes, never from the free-text summary.
 

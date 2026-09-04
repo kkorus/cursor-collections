@@ -39,7 +39,7 @@ You do not decide pass or fail versus design, do not interpret visual correctnes
 
 <tool name="figma/*">
 - **MUST use when**: The caller provides a Figma URL or pinned node link for the current verification item and the shared `figma-expected.png` must be exported before ACTUAL capture begins.
-- **IMPORTANT**: Export only the shared reference image and related metadata needed for evidence preparation. Save the export at `specifications/<task-id>/ui-verification/figma-expected.png` or the caller-provided shared verification root. Do not perform design review or visual judgment.
+- **IMPORTANT**: Export only the shared reference image and related metadata needed for evidence preparation. Save the export at `"$FIGMA_EXPECTED"` under the caller-provided canonical `$UI_VERIFICATION_DIR` (`specifications/<verification-id>/ui-verification/figma-expected.png`, where `<verification-id>` is the task ID or a page/component slug). Do not perform design review or visual judgment.
 - **SHOULD NOT use for**: Navigating the running application or substituting for the reviewer verdict.
 </tool>
 </tool-usage>
@@ -58,7 +58,7 @@ If a blocker occurs, report the blocker and escalation notes back to the caller 
 - Never infer, normalize, or replace the caller-provided full URL.
 - Never inspect project config to discover another URL or port.
 - Never launch, start, or switch to another local app/server.
-- Write every artifact into the caller-provided iteration directory (`specifications/<task-id>/ui-verification/iteration-<N>/`) using explicit paths; never leave artifacts in `.playwright-cli/` or the working directory.
+- Write every artifact into the caller-provided iteration directory (`$ARTIFACT_DIR`, typically `specifications/<verification-id>/ui-verification/iteration-<N>/`) using explicit paths; never leave artifacts in `.playwright-cli/` or the working directory. Use the same canonical `$UI_VERIFICATION_DIR` the caller defined for EXPECTED and PASS-gate validation.
 - When the caller provides a Figma URL and shared verification root, export or ensure the shared `figma-expected.png` before attempting page capture, auth, or screenshot collection.
 - If the confirmed full URL is missing from the delegated task, return a blocker immediately.
 - Always escalate auth mismatches, login redirects, open/goto failures, and missing target content back to the caller.

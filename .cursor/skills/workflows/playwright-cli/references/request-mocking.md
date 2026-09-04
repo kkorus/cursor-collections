@@ -27,7 +27,7 @@ playwright-cli unroute
 
 ## URL Patterns
 
-```
+```text
 **/api/users           - Exact path match
 **/api/*/details       - Wildcard in path
 **/*.{png,jpg,jpeg}    - Match file extensions
@@ -81,7 +81,7 @@ playwright-cli run-code "async page => {
 playwright-cli run-code "async page => {
   await page.route('**/api/slow', async route => {
     await new Promise(r => setTimeout(r, 3000));
-    route.fulfill({ body: JSON.stringify({ data: 'loaded' }) });
+    await route.fulfill({ body: JSON.stringify({ data: 'loaded' }) });
   });
 }"
 ```

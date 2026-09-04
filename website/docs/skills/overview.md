@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **38 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+Cursor Collections includes **39 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
 
 ## How Skills Work
 
@@ -48,6 +48,7 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | [tsh-sql-and-database-understanding](./sql-and-database) | Database engineering standards and ORM integration | Architect, CR, SE |
 | [tsh-codebase-analysing](./codebase-analysis) | Deep codebase analysis and dependency mapping | Architect, BA, CE, SE |
 | [tsh-engineering-prompts](./prompt-engineering) | LLM prompt design, optimization, security, and evaluation | PE, SE, Architect, CR |
+| tsh-resolving-skill-references | Resolution order for locating a referenced skill file, with a hard stop when it cannot be found | All delegating agents |
 
 ### Cloud & Infrastructure Skills
 

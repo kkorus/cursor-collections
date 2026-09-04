@@ -38,9 +38,9 @@ Follow the 5-step verification process defined in the `tsh-ui-verifying` skill. 
 
 1. Validate inputs first: Figma URL, user-confirmed full dev server URL, component name, and artifact-directory context.
 2. Get EXPECTED from Figma via `figma`.
-   - MANDATORY: export the node image and save it as the shared `specifications/<task-id>/ui-verification/figma-expected.png` reference before comparison, or reuse that shared file when the Figma URL/node is unchanged.
+   - MANDATORY: export the node image and save it as the shared `"$FIGMA_EXPECTED"` reference (`$UI_VERIFICATION_DIR/figma-expected.png`) before comparison, or reuse that shared file when the Figma URL/node is unchanged. Use the same canonical root as capture — `specifications/<verification-id>/ui-verification/` where `<verification-id>` is the task ID or a page/component slug.
    - If Figma cannot be fetched or saved, report `VERIFICATION NOT RUN`.
-3. Get ACTUAL from implementation through caller-provided `tsh-ui-capture-worker` CLI artifacts written into `specifications/<task-id>/ui-verification/iteration-<N>/`.
+3. Get ACTUAL from implementation through caller-provided `tsh-ui-capture-worker` CLI artifacts written into `"$ARTIFACT_DIR"` (`$UI_VERIFICATION_DIR/iteration-<N>/`).
    - Required artifact set: `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`.
    - If the caller did not provide the artifact directory or the artifact set is incomplete, return `VERIFICATION NOT RUN` and instruct the caller to run `tsh-ui-capture-worker` first for the same pinned URL.
 4. Compare following the skill's verification categories and tolerances.
@@ -53,7 +53,7 @@ Do not use browser navigation to figma.com, code inspection, compile/typecheck r
 
 The Figma design is the **source of truth** for every comparison. When in doubt, the design wins.
 
-**Enumerate ALL differences in a single pass.** Do not stop at the first critical finding. Complete every verification category (Structure, Layout, Dimensions, Visual, Components) and report every difference found. Never report `PASS` while any structure, layout, or >2px dimension difference remains.
+**Enumerate ALL differences in a single pass.** Do not stop at the first critical finding. Complete every verification category (Structure, Layout, Dimensions, Visual, Components) and report every difference found. Never report `PASS` while any unresolved Critical or Major finding remains in any category — including Visual Exact-match mismatches (color, typography) or wrong Components. Only documented Minor 1–2px rendering variance may remain.
 </workflow>
 
 <output-specification>

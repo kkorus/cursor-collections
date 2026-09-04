@@ -19,3 +19,4 @@ All customization artifacts use the `tsh-` prefix. The `name` field in skill fro
 - Follow [tsh-naming-conventions.mdc](./tsh-naming-conventions.mdc)
 - Do not add Copilot paths (`.github/agents`, `.prompt.md`) to active skills
 - Commands route to agents; agents load workflows — do not embed domain knowledge in commands
+- Delegation-time skill references use the backticked skill name plus `tsh-resolving-skill-references`; `.cursor/skills/<layer>/` paths are for authoring guidance only

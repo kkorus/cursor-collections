@@ -20,7 +20,7 @@ Use the content/data/state clarification gate only when structure, layout, dimen
 
 If live-capture artifacts are missing, stale, or incomplete, you must stop and report `VERIFICATION NOT RUN` with clear blocker-resolution guidance telling the caller to run `tsh-ui-capture-worker` for the same pinned URL and then re-invoke this reviewer on the fresh artifact directory. You must not emit any PASS or FAIL visual verdict from code reading alone.
 
-**Invocation mode determines how you escalate a blocker.** When you are invoked as a subagent by an orchestrator or any caller (the normal case in the implementation flow), you do NOT own user interaction: return the `VERIFICATION NOT RUN` blocker report directly to the caller and let the caller run `tsh-ui-capture-worker` or ask the user. Do not ask the user directly for a missing-artifacts or capture-reachability blocker in subagent mode. Ask the user directly only when a user invoked you directly (for example via `.cursor/skills/commands/tsh-review-ui/SKILL.md`).
+**Invocation mode determines how you escalate a blocker.** When you are invoked as a subagent by an orchestrator or any caller (the normal case in the implementation flow), you do NOT own user interaction: return the `VERIFICATION NOT RUN` blocker report directly to the caller and let the caller run `tsh-ui-capture-worker` or ask the user. Do not ask the user directly for a missing-artifacts or capture-reachability blocker in subagent mode. Ask the user directly only when a user invoked you directly (for example via `/tsh-review-ui`).
 
 **Never loop on a failing tool call.** If any tool call fails, do not repeat the same call more than once. After a second failure of the same tool, stop and return a `VERIFICATION NOT RUN` blocker report describing the failure to the caller. Repeating a malformed or failing call is never a valid blocker-resolution attempt.
 
@@ -46,7 +46,7 @@ Before starting any task, load the `tsh-ui-verifying` skill and follow its verif
 <tool-usage>
 <tool name="figma/*">
 - **MUST use when**: Getting the EXPECTED design state from Figma at the start of EVERY verification pass, before judging anything. Extract spacing, typography, colors, dimensions, states, and export the node screenshot.
-- **MANDATORY (ensure-or-fetch via the `figma` MCP)**: Before every comparison, make sure a valid shared `figma-expected.png` (a real design export) exists at `specifications/<task-id>/ui-verification/figma-expected.png` for the current verification item. If it is missing, export it now using the `figma` MCP — never by opening figma.com in a browser, and never by saving the Figma web app, a login page, or an error page. If it already exists and the Figma URL or node is unchanged, reuse it instead of re-exporting it for each iteration. A missing reference is not a reason to stop. Report `VERIFICATION NOT RUN` (and ask the user) only when the export genuinely fails: the `figma` MCP is unavailable, Figma is unreachable, the node is unresolved, or the file cannot be written. Never judge against memory or code alone.
+- **MANDATORY (ensure-or-fetch via the `figma` MCP)**: Before every comparison, make sure a valid shared `figma-expected.png` (a real design export) exists at `"$FIGMA_EXPECTED"` (`$UI_VERIFICATION_DIR/figma-expected.png`) for the current verification item — using the same canonical artifact root as capture (`specifications/<verification-id>/ui-verification/`, where `<verification-id>` is the task ID or a page/component slug). If it is missing, export it now using the `figma` MCP — never by opening figma.com in a browser, and never by saving the Figma web app, a login page, or an error page. If it already exists and the Figma URL or node is unchanged, reuse it instead of re-exporting it for each iteration. A missing reference is not a reason to stop. Report `VERIFICATION NOT RUN` (and ask the user) only when the export genuinely fails: the `figma` MCP is unavailable, Figma is unreachable, the node is unresolved, or the file cannot be written. Never judge against memory or code alone.
 - **IMPORTANT**: Extract the relevant file key and node ID from the supplied Figma link. If the node cannot be resolved, ask the user for the correct Figma link.
 - **SHOULD NOT use for**: Navigating the running application.
 </tool>
@@ -85,7 +85,7 @@ Before starting any task, load the `tsh-ui-verifying` skill and follow its verif
 - Never produce a visual verdict without fresh live-capture artifacts from `tsh-ui-capture-worker`.
 - Never attempt nested subagent capture from inside this reviewer; the caller owns `tsh-ui-capture-worker` delegation.
 - Do not let pixel-diff tripwire output overrule the multimodal comparison and computed-style review.
-- Never report PASS while any structure, layout, or >2px dimension difference remains; layout/structure mismatches are CRITICAL and cannot be waived as "close enough" (see the PASS Gate in `tsh-ui-verifying`).
+- Never report PASS while any unresolved Critical or Major finding remains in Structure, Layout, Dimensions, Visual, or Components; only documented Minor 1–2px rendering variance may remain. Layout/structure and Exact-match visual/component mismatches cannot be waived as "close enough" (see the PASS Gate in `tsh-ui-verifying`).
 </constraints>
 
 <output-format>

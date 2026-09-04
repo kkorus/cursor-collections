@@ -317,6 +317,7 @@ Validation:
 - [ ] Files: Template files (if any) use XML tags for structured sections
 - [ ] Files: Reference files over 100 lines have a table of contents
 - [ ] Testing: Skill tested with real usage scenarios
+- [ ] Body: Delegation-time skill references use backticked skill names, not `.cursor/skills/<layer>/` paths
 ```
 
 ## Common Patterns

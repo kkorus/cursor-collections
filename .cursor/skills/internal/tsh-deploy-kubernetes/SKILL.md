@@ -87,6 +87,8 @@ Skip for: HPA/PDB configuration, probes, resource limits, manifest fixes.
 ## Scope
 
 **Does NOT handle** (redirect to):
-- Cluster provisioning → `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
-- CI/CD pipeline for deployment → `.cursor/skills/internal/tsh-implement-pipeline/SKILL.md`
-- Monitoring and alerting → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`
+- Cluster provisioning → `tsh-implement-terraform` skill
+- CI/CD pipeline for deployment → `tsh-implement-pipeline` skill
+- Monitoring and alerting → `tsh-implement-observability` skill
+
+Each redirect above names a skill reference, not a location — resolve it with the `tsh-resolving-skill-references` resolution order: the project skill collection, then the installed skills root (flat, no layer segment), then a search by name; internal skills are **read**, not invoked, and a skill that cannot be located is a **stop and ask the user**, never a redirect you drop.

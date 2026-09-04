@@ -74,6 +74,6 @@ Missing URL, auth, page-state, or capture blockers produce `VERIFICATION NOT RUN
 
 After completing implementation, the UI Engineer can hand off to:
 
-- **UI Reviewer** → verify the UI against Figma via `.cursor/skills/commands/tsh-review-ui/SKILL.md`
+- **UI Reviewer** → verify the UI against Figma via the `tsh-review-ui` command skill
 - **Code Reviewer** → `/tsh-review` (review implementation against the plan)
 - **E2E Engineer** → delegated by the Engineering Manager for E2E test creation

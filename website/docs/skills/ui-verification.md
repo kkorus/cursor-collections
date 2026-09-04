@@ -25,9 +25,9 @@ The current verification flow is CLI-first for ACTUAL evidence collection. Figma
 - **Ownership boundary:** the capture worker handles viewport/page-loading mechanics and produces the ACTUAL artifacts; the reviewer consumes those artifacts and judges differences against Figma.
 - **Pinned URL contract:** once the user confirms the full dev server URL, that exact URL is pinned for the session and must be forwarded unchanged to every capture and review pass.
 - **Capture contract:** collect fresh `figma-expected.png`, `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` for each verification pass, writing every file into the iteration directory with explicit paths. Never leave artifacts in `.playwright-cli/` or the working directory. Code reading is not a substitute for live capture.
-- **Artifact directory:** store each pass under `specifications/<task-id>/ui-verification/iteration-<N>/`, alongside `figma-expected.png`, `report.md`, and optional `pixel-gate/` outputs.
+- **Artifact directory:** store each pass under the canonical root `$UI_VERIFICATION_DIR` = `specifications/<verification-id>/ui-verification/` (task ID when available, otherwise a stable page/component slug), with `figma-expected.png` at `$FIGMA_EXPECTED`, iteration artifacts at `$ARTIFACT_DIR` = `.../iteration-<N>/`, plus `report.md` and optional `pixel-gate/` outputs. Capture, validation, and the PASS gate must all use this same root.
 - **Render stabilization:** use the pinned app URL only, resize to the Figma frame width, wait for `networkidle`, and emulate reduced motion before capture.
-- **Optional tripwire:** `toHaveScreenshot` can add loose, non-blocking evidence under `pixel-gate/`, but it never replaces reviewer judgment.
+- **Optional tripwire:** `toHaveScreenshot` can add loose, non-blocking evidence under `pixel-gate/`, but it never replaces reviewer judgment. Run it with the project's locked Playwright binary (`pnpm exec playwright test`, `npm exec playwright -- test`, or `npx --no playwright test`) — never bare `npx playwright test`, which can fetch a different version.
 
 UI verification is a separate gate from code review. Code review does not start until the UI gate is closed by PASS or an explicit, user-acknowledged escalation.
 
@@ -43,7 +43,7 @@ UI verification is a separate gate from code review. Code review does not start 
 
 - **Multi-pass loop:** a single FAIL is never terminal. The engineer fixes all reported differences, recaptures fresh artifacts, and re-verifies, looping until PASS or 5 completed iterations. After 5 iterations with remaining mismatches, a structured user-confirmation gate offers continue-with-N, stop-as-ESCALATED, or a custom instruction.
 - **Enumerate everything per pass:** each verification pass reports every difference across all categories, not just the first one, so fixes batch into fewer iterations.
-- **Strict PASS gate:** PASS requires `figma-expected.png`, `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` for the pass to exist, and zero structure/layout differences with dimensions within 1–2px, each backed by cited measured evidence. Layout and structure mismatches are CRITICAL and can never be accepted as "close enough".
+- **Strict PASS gate:** PASS requires `"$FIGMA_EXPECTED"`, plus `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` in `"$ARTIFACT_DIR"` for the pass to exist, and every verification category — Structure, Layout, Dimensions, Visual, and Components — to satisfy its documented tolerance and severity rules. The PASS gate MUST accept the same canonical `$UI_VERIFICATION_DIR` used for capture (task ID or page/component slug). Unresolved Critical or Major findings in any category block PASS. Only genuine 1–2px rendering variance is Minor. Structure, layout, Exact-match visual, and wrong-component mismatches can never be accepted as "close enough".
 
 ## Verification Categories
 

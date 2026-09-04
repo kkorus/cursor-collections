@@ -122,6 +122,7 @@ Verify the agent file against this checklist:
 - [ ] Agent role is focused and distinct from existing agents
 - [ ] Handoffs (if present) target valid agent names
 - [ ] Connected Skills section present at end of file (outside XML tags)
+- [ ] Delegation and handoff text references skills by backticked name, not by `.cursor/skills/<layer>/` path
 
 ## Agent File Structure Reference
 

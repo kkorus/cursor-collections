@@ -58,7 +58,7 @@ specifications/
 
 ## Invocation
 
-The [Architect](./architect) directly invokes the Plan Reviewer as a nested subagent via the Cursor **Task** tool after creating or revising a plan (not intended for direct `@tsh-plan-reviewer` use); the Engineering Manager is not part of the review loop. Load `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md` when validating a plan.
+The [Architect](./architect) directly invokes the Plan Reviewer as a nested subagent via the Cursor **Task** tool after creating or revising a plan (not intended for direct `@tsh-plan-reviewer` use); the Engineering Manager is not part of the review loop. Load the `tsh-plan-reviewer` agent skill when validating a plan.
 
 ## Handoffs
 

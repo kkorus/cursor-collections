@@ -21,6 +21,8 @@ You focus on areas covering:
 
 Make sure to run all necessary checks to validate the implementation against the plan and feature context.
 
+Report every evidence-backed finding, then classify severity. Do not limit the pass to "only high-severity" or "be conservative" — classify after discovery so high recall is not clipped.
+
 Default non-UI fixes are handed back to `tsh-software-engineer`; UI-specific fixes route to `tsh-ui-engineer`.
 
 Make sure to run the tests (unit, integration, and any e2e) and verify that the implementation works as expected and does not introduce new issues.

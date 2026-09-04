@@ -402,14 +402,14 @@ The Cursor Orchestrator handles research → design → creation → review auto
 
 ---
 
-## Workflow skills (38)
+## Workflow skills (39)
 
 Skills are automatically loaded by agents when relevant to the task. No manual invocation needed.
 
 | Category | Skills |
 |----------|--------|
 | **Product Ideation** | tsh-transcript-processing, tsh-task-extracting, tsh-task-analysing, tsh-jira-task-formatting, tsh-task-quality-reviewing |
-| **Architecture** | tsh-architecture-designing, tsh-creating-implementation-plans, tsh-technical-context-discovering, tsh-implementation-gap-analysing, tsh-orchestrating-implementation |
+| **Architecture** | tsh-architecture-designing, tsh-creating-implementation-plans, tsh-technical-context-discovering, tsh-implementation-gap-analysing, tsh-orchestrating-implementation, tsh-resolving-skill-references |
 | **Backend** | tsh-implementing-backend, tsh-sql-and-database-understanding, tsh-engineering-prompts |
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
@@ -427,7 +427,7 @@ Skills are automatically loaded by agents when relevant to the task. No manual i
 │   └── naming-conventions.mdc    # tsh- prefix enforcement
 ├── skills/
 │   ├── agents/                    # 25 agent skill definitions (13 user-facing + 12 internal workers)
-│   ├── workflows/                 # 38 domain workflow skills (agent-invoked; may appear in /)
+│   ├── workflows/                 # 39 domain workflow skills (agent-invoked; may appear in /)
 │   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
 │   └── internal/                  # 12 internal sub-workflow skills
 └── mcp.json                       # MCP server configuration

@@ -55,12 +55,30 @@ Before starting verification, confirm:
 - Preferred pattern: perform the real login once, `state-save` to a secret path outside `specifications/**`, then `state-load` that path for each later capture iteration so the authenticated session is reused instead of recreated.
 - Never write credentials into task specs, reports, artifacts, or committed files. Never seed cookies, tokens, `localStorage`, or `sessionStorage` by hand.
 
+### Canonical artifact root
+
+Use **one** shared root for capture, validation, and the PASS gate. Do not invent a second path scheme for no-task-ID runs. Resolve these variables once before Step 2 and reuse them for every pass.
+
+```bash
+# Prefer task ID; otherwise a stable kebab-case page/component slug.
+VERIFICATION_ID="<task-id-or-page-slug>"
+UI_VERIFICATION_DIR="specifications/$VERIFICATION_ID/ui-verification"
+FIGMA_EXPECTED="$UI_VERIFICATION_DIR/figma-expected.png"
+ARTIFACT_DIR="$UI_VERIFICATION_DIR/iteration-<N>"
+```
+
+Rules:
+
+- `VERIFICATION_ID` is the task ID when one exists; otherwise a stable kebab-case page or component slug (for example `checkout-summary`).
+- Callers may pass an absolute or repo-relative `UI_VERIFICATION_DIR` explicitly; when they do, treat that path as canonical and derive `FIGMA_EXPECTED` / `ARTIFACT_DIR` from it.
+- Capture, ENSURE-OR-FETCH, artifact validation, reports, and the PASS gate MUST all use the same `$UI_VERIFICATION_DIR`, `$FIGMA_EXPECTED`, and `$ARTIFACT_DIR`. Never require `specifications/<task-id>/...` when the canonical root was defined with a page slug.
+
 **Step 2: Get EXPECTED from Figma — MANDATORY, runs BEFORE capture**
 
 This step is mandatory and always runs before capturing the implementation. A verification without fresh Figma EXPECTED data is INVALID. **EXPECTED comes ONLY from the `figma` MCP tools** — never open a `figma.com` URL (or any Figma link) in the Playwright/CLI browser to "fetch" the design, and never screenshot the Figma web app, its login page, or an error page as the reference. The browser is for the running app (ACTUAL) only. Do these in order:
 
 1. **Resolve the Figma node** from the supplied Figma URL (extract `fileKey` + `nodeId`). If the URL or node cannot be resolved, ask the user, report `VERIFICATION NOT RUN`, and stop. Never continue without a resolved node.
-2. **Export the Figma node image via the `figma` MCP and SAVE it** to the shared verification directory as `specifications/<task-id>/ui-verification/figma-expected.png` (the parent directory of the iteration directories defined in Step 3). Use the `figma` MCP's node-image / screenshot export — not a browser screenshot. This file is REQUIRED for the verification item and must be the real design export; it is the visual reference the comparison is judged against. Do not keep it only in memory or a tool response; it must exist on disk in the shared verification directory. If the `figma` MCP is not available in this workspace, that is a blocker: do NOT fall back to the browser and do NOT save any non-design image as `figma-expected.png` — report `VERIFICATION NOT RUN` and ask the user to enable the Figma MCP or provide an exported reference image.
+2. **Export the Figma node image via the `figma` MCP and SAVE it** to `"$FIGMA_EXPECTED"` (see [Canonical artifact root](#canonical-artifact-root) — `$UI_VERIFICATION_DIR/figma-expected.png`). Use the `figma` MCP's node-image / screenshot export — not a browser screenshot. This file is REQUIRED for the verification item and must be the real design export; it is the visual reference the comparison is judged against. Do not keep it only in memory or a tool response; it must exist on disk in the shared verification directory. If the `figma` MCP is not available in this workspace, that is a blocker: do NOT fall back to the browser and do NOT save any non-design image as `figma-expected.png` — report `VERIFICATION NOT RUN` and ask the user to enable the Figma MCP or provide an exported reference image.
 3. **Extract the design specifications** to compare against:
    - Layer hierarchy and component structure
    - Layout direction, alignment, spacing
@@ -68,7 +86,7 @@ This step is mandatory and always runs before capturing the implementation. A ve
    - Typography, colors, radii, shadows
    - Component variants and states
 
-> **ENSURE-OR-FETCH**: At the start of every pass, check whether a valid shared `figma-expected.png` (a real design export) already exists at `specifications/<task-id>/ui-verification/figma-expected.png` for the current verification item. If it is missing, export it now via the `figma` MCP (steps 1–2 above). If it already exists and the Figma URL/node is unchanged, reuse it — do not re-export it for each iteration. Only after a genuine export failure (the `figma` MCP is unavailable, Figma cannot be reached, the node cannot be resolved, or the file cannot be written) do you report `VERIFICATION NOT RUN`, ask the user, and stop. Never browser-scrape Figma, never save a browser/login/error screenshot as `figma-expected.png`, and never proceed to compare against memory, source code, or the running app while a valid shared `figma-expected.png` is absent.
+> **ENSURE-OR-FETCH**: At the start of every pass, check whether a valid shared `figma-expected.png` (a real design export) already exists at `"$FIGMA_EXPECTED"` for the current verification item. If it is missing, export it now via the `figma` MCP (steps 1–2 above). If it already exists and the Figma URL/node is unchanged, reuse it — do not re-export it for each iteration. Only after a genuine export failure (the `figma` MCP is unavailable, Figma cannot be reached, the node cannot be resolved, or the file cannot be written) do you report `VERIFICATION NOT RUN`, ask the user, and stop. Never browser-scrape Figma, never save a browser/login/error screenshot as `figma-expected.png`, and never proceed to compare against memory, source code, or the running app while a valid shared `figma-expected.png` is absent.
 
 **Step 3: Get ACTUAL from implementation**
 
@@ -84,17 +102,15 @@ You MUST collect **all three** ACTUAL evidence types — a verification that ski
 2. **Actual rendered dimensions** — computed widths, heights, paddings, margins, gaps, and other measured layout properties of every major container via JavaScript evaluation of computed styles. This is the most commonly missed step — without it you cannot detect sizing/layout differences.
 3. **Visual appearance** — full-page screenshot for side-by-side comparison with the design.
 
-If the three live-capture artifacts are not all present (`actual.png`, `computed-styles.json`, `a11y-snapshot.yml`), the verification is incomplete and invalid. Code reading is never a substitute for live capture.
+If the three live-capture artifacts are not all present (`actual.png`, `computed-styles.json`, `a11y-snapshot.yml`), stop immediately and emit `VERIFICATION NOT RUN` with blocker-resolution guidance to recapture the missing files. Do not continue comparison, do not emit PASS/FAIL, and do not downgrade to a partial or LOW-confidence verdict. Code reading is never a substitute for live capture.
 
 ### CLI-first capture flow
 
-Write every ACTUAL capture artifact into the task's iteration directory, never into `.playwright-cli/` or the current working directory. `playwright-cli` writes to `.playwright-cli/` by default — that default location is WRONG for these artifacts, so always pass an explicit path. The shared Figma reference remains at `specifications/<task-id>/ui-verification/figma-expected.png`. Use a named session and keep the flow explicit:
+Write every ACTUAL capture artifact into `"$ARTIFACT_DIR"`, never into `.playwright-cli/` or the current working directory. `playwright-cli` writes to `.playwright-cli/` by default — that default location is WRONG for these artifacts, so always pass an explicit path. The shared Figma reference remains at `"$FIGMA_EXPECTED"`. Use a named session and keep the flow explicit:
 
-0. **Define and create the artifact directory FIRST**:
+0. **Define and create the artifact directory FIRST** (using [Canonical artifact root](#canonical-artifact-root)):
 
-- `UI_VERIFICATION_DIR="specifications/<task-id>/ui-verification"` (or `specifications/<page-slug>/ui-verification` when no task-id exists).
-- `ARTIFACT_DIR="$UI_VERIFICATION_DIR/iteration-<N>"`.
-- `FIGMA_EXPECTED="$UI_VERIFICATION_DIR/figma-expected.png"`.
+- Resolve `VERIFICATION_ID`, `UI_VERIFICATION_DIR`, `FIGMA_EXPECTED`, and `ARTIFACT_DIR` once for the verification item.
 - Keep any `state-save` file outside `specifications/**`, for example in a git-ignored temp path supplied by the caller.
 - `mkdir -p "$ARTIFACT_DIR"`.
 - Every command below writes into `"$ARTIFACT_DIR/<file>"`. Never rely on default output locations.
@@ -117,7 +133,7 @@ Write every ACTUAL capture artifact into the task's iteration directory, never i
 
 The `JSON.stringify(...)` payload should cover the major containers and controls being verified: bounding boxes, computed width/height, max-width, min-height, padding, margin, gap, alignment-relevant properties, and any targeted style values needed to explain differences.
 
-> **CRITICAL**: The accessibility tree does NOT contain CSS dimensions. A full-width container and a narrow centered container produce identical accessibility trees. If you only collected structure without measuring actual rendered dimensions, your verification is INVALID — mark confidence as LOW and report what's missing.
+> **CRITICAL**: The accessibility tree does NOT contain CSS dimensions. A full-width container and a narrow centered container produce identical accessibility trees. If `computed-styles.json` is missing or you only collected structure without measuring actual rendered dimensions, stop and emit `VERIFICATION NOT RUN` — do not continue with LOW confidence or a partial comparison. Report which ACTUAL artifacts are missing and instruct the caller to rerun capture.
 
 ### Render stabilization rules
 
@@ -129,12 +145,12 @@ The `JSON.stringify(...)` payload should cover the major containers and controls
 
 ### Artifact directory contract
 
-Store each verification pass under:
+Store each verification pass under the canonical root (`$UI_VERIFICATION_DIR`):
 
 ```text
-specifications/<task-id>/ui-verification/
-  figma-expected.png
-  iteration-<N>/
+specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
+  figma-expected.png                                  # $FIGMA_EXPECTED
+  iteration-<N>/                                      # $ARTIFACT_DIR
     actual.png
     computed-styles.json
     a11y-snapshot.yml
@@ -145,7 +161,7 @@ specifications/<task-id>/ui-verification/
     report.md
 ```
 
-Required files for the core flow are the shared `figma-expected.png`, plus `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`, and `report.md` for the current iteration. `pixel-gate/` is optional and only exists when the phase-2 tripwire runs. Never leave any ACTUAL capture artifacts in `.playwright-cli/` or the working directory — pass the explicit `$ARTIFACT_DIR/...` path to every capture command and confirm the files exist there.
+`<verification-id>` is the task ID when available, otherwise a stable page/component slug — see [Canonical artifact root](#canonical-artifact-root). Required files for the core flow are the shared `figma-expected.png`, plus `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`, and `report.md` for the current iteration. `pixel-gate/` is optional and only exists when the phase-2 tripwire runs. Never leave any ACTUAL capture artifacts in `.playwright-cli/` or the working directory — pass the explicit `$ARTIFACT_DIR/...` path to every capture command and confirm the files exist there.
 
 ### Exit codes and escalation rules
 
@@ -173,7 +189,10 @@ Produce a structured report following the Report Format below. Include exact val
 Use this only as a non-blocking signal layer after the core CLI-first capture exists.
 
 - Baseline source: the Figma PNG export is the baseline, not a self-generated app screenshot.
-- Run through the Playwright test runner, for example: `PLAYWRIGHT_HTML_OPEN=never npx playwright test --reporter=json`.
+- Run through the project's **locked** Playwright test runner — never bare `npx playwright test`, which can fetch a different package version when Playwright is not already installed locally.
+  - Prefer the repo package manager / local binary, for example: `PLAYWRIGHT_HTML_OPEN=never pnpm exec playwright test --reporter=json`, `yarn playwright test --reporter=json`, `npm exec playwright -- test --reporter=json`, or `./node_modules/.bin/playwright test --reporter=json`.
+  - If you must use `npx`, pin against the installed package and block installs: `PLAYWRIGHT_HTML_OPEN=never npx --no playwright test --reporter=json`.
+  - If Playwright is not a project dependency, add the same major/minor the repo already uses for E2E (or install it as a project dependency) before running the tripwire — do not rely on an ad-hoc `npx` download.
 - Use `toHaveScreenshot` with a loose threshold such as `maxDiffPixelRatio`, `fullPage: true`, and masks for known dynamic regions.
 - Save the runner JSON output and diff artifacts under `pixel-gate/`.
 - Tripwire exit `0` or `1` is evidence for the reviewer brain. It never replaces the multimodal comparison and computed-style review.
@@ -187,7 +206,7 @@ Always verify in this order — **complete ALL categories regardless of findings
 2. **Layout** (CRITICAL)
 3. **Dimensions** (CRITICAL)
 4. **Visual** (CRITICAL)
-5. **Components**
+5. **Components** (CRITICAL)
 
 ## Verification Categories
 
@@ -225,7 +244,7 @@ Always verify in this order — **complete ALL categories regardless of findings
 
 > **WARNING**: Accessibility tree does NOT contain CSS dimensions. A full-width container and a narrow centered one look identical in it. You must measure actual computed styles to detect width/sizing differences.
 
-### Visual
+### Visual (CRITICAL)
 
 | Check           | Description                                            |
 | --------------- | ------------------------------------------------------ |
@@ -235,7 +254,7 @@ Always verify in this order — **complete ALL categories regardless of findings
 | **Shadows**     | box-shadow, drop-shadow                                |
 | **Backgrounds** | Solid, gradient, image                                 |
 
-### Components
+### Components (CRITICAL)
 
 | Check                | Description                                     |
 | -------------------- | ----------------------------------------------- |
@@ -282,18 +301,24 @@ A pass is only allowed when the evidence proves it. Do NOT report `PASS` on "loo
 
 Report `PASS` only when ALL of these hold:
 
-- The shared `figma-expected.png` exists at `specifications/<task-id>/ui-verification/figma-expected.png`, and `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` for THIS pass all exist in the current iteration directory.
-- Every CRITICAL category — Structure, Layout, Dimensions — has ZERO differences beyond the allowed 1–2px rendering tolerance, each backed by a cited measured value from `computed-styles.json` or a cited structural fact from `a11y-snapshot.yml`, not by impression.
+- The shared `figma-expected.png` exists at `"$FIGMA_EXPECTED"` (`$UI_VERIFICATION_DIR/figma-expected.png`), and `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` for THIS pass all exist in `"$ARTIFACT_DIR"`. The PASS gate MUST accept the same canonical root used for capture — whether `$VERIFICATION_ID` is a task ID or a page/component slug.
+- Every verification category — Structure, Layout, Dimensions, Visual, and Components — satisfies its documented tolerance and severity rules from the tables above. Unresolved Critical or Major findings in any category block PASS. Only documented Minor items (genuine 1–2px rendering variance) may remain.
+- Structure and Layout have ZERO differences, each backed by a cited structural fact from `a11y-snapshot.yml` or measured layout evidence, not by impression.
+- Dimensions and Spacing differences are within the allowed 1–2px rendering tolerance, each backed by a cited measured value from `computed-styles.json`.
+- Visual properties with Exact match tolerance (colors, typography, and matching radii/shadows/backgrounds) have ZERO unresolved differences.
+- Components show correct variants, design tokens, and interactive states — no wrong-component or token mismatches remain.
 - The full-page `actual.png` has been compared side by side against the shared `figma-expected.png`.
 
 If ANY of the following is true, the result is `FAIL` (or `VERIFICATION NOT RUN` when evidence is missing), never `PASS`:
 
 - Any structural difference (missing, extra, or reordered elements; wrong nesting or grouping).
 - Any layout difference (wrong flex/grid direction, wrong alignment, wrong centering, wrong distribution).
-- Any dimension difference greater than the 1–2px rendering tolerance.
-- The layout "looks roughly right" but you have not measured it against `computed-styles.json`.
+- Any dimension or spacing difference greater than the 1–2px rendering tolerance.
+- Any Visual Exact-match mismatch (wrong color, typography, radius, shadow, or background).
+- Any Components mismatch (wrong variant, hardcoded values instead of design tokens, or incorrect interactive states).
+- The layout or visuals "look roughly right" but you have not measured them against `computed-styles.json` and compared screenshots against `figma-expected.png`.
 
-Layout and structure mismatches are CRITICAL and can never be waived as "acceptable" or "close enough". Only genuine 1–2px rendering variance is Minor.
+Structure, layout, visual Exact-match, and wrong-component mismatches are CRITICAL/Major and can never be waived as "acceptable" or "close enough". Only genuine 1–2px rendering variance is Minor.
 
 ## Verification Checklist
 
@@ -307,6 +332,9 @@ Before reporting PASS:
 - [ ] Element order matches design
 - [ ] No extra/missing wrapper elements that change layout
 - [ ] Actual computed container widths measured (not inferred from accessibility tree)
+- [ ] Colors, typography, radii, shadows, and backgrounds match Figma (Exact match)
+- [ ] Correct component variants, design tokens, and interactive states
+- [ ] No unresolved Critical or Major findings remain in any category
 - [ ] Full-page screenshot taken and visually compared against Figma
 
 ## Report Format
@@ -350,7 +378,7 @@ After any fix prompted by a verification finding, discard stale artifacts, colle
 
 - **HIGH** — Both Figma and implementation data complete, comparison is reliable
 - **MEDIUM** — Some values couldn't be extracted, manual review recommended
-- **LOW** — Tool errors occurred, manual verification required before making changes
+- **LOW** — Some values within otherwise complete artifacts could not be extracted reliably; manual review recommended. Missing required ACTUAL artifacts (`actual.png`, `computed-styles.json`, `a11y-snapshot.yml`) are never LOW — they are `VERIFICATION NOT RUN`.
 
 When content/data differences are the only remaining gaps and may be intentional, ask for user confirmation before escalating them as defects. Keep the report in the normal PASS/FAIL format and treat the result as `FAIL` pending clarification.
 

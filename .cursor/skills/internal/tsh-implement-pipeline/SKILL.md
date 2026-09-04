@@ -83,6 +83,8 @@ Skip for: adding test stages, fixing pipeline bugs, updating versions, adding ca
 ## Scope
 
 **Does NOT handle** (redirect to):
-- Infrastructure provisioning → `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
-- Kubernetes deployment configuration → `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
-- Monitoring and alerting → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`
+- Infrastructure provisioning → `tsh-implement-terraform` skill
+- Kubernetes deployment configuration → `tsh-deploy-kubernetes` skill
+- Monitoring and alerting → `tsh-implement-observability` skill
+
+Each redirect above names a skill reference, not a location — resolve it with the `tsh-resolving-skill-references` resolution order: the project skill collection, then the installed skills root (flat, no layer segment), then a search by name; internal skills are **read**, not invoked, and a skill that cannot be located is a **stop and ask the user**, never a redirect you drop.

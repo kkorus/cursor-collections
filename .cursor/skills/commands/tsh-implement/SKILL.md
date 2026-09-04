@@ -20,5 +20,7 @@ Provide at least one of the following: a task description, a Jira ID, or a `*.pl
 </input-requirements>
 
 <workflow>
-Load and follow the `tsh-engineering-manager` agent skill, then load `.cursor/skills/workflows/tsh-orchestrating-implementation/SKILL.md`, start at Step 0, and follow the canonical workflow defined there for the rest of the implementation delivery.
+Load and follow the `tsh-engineering-manager` agent skill, then read and follow the `tsh-orchestrating-implementation` workflow skill, start at Step 0, and follow the canonical workflow defined there for the rest of the implementation delivery. `tsh-orchestrating-implementation` carries `disable-model-invocation: true`, so it must be located and **read** — a Skill-tool invocation by name is rejected and is not a reason to proceed without it.
+
+Resolve the skill reference with the `tsh-resolving-skill-references` resolution order, and stop and ask the user if the workflow skill cannot be located.
 </workflow>

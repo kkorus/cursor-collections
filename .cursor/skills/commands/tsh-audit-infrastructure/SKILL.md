@@ -15,6 +15,8 @@ Before starting, load and follow these skills:
 - `tsh-managing-secrets` - for secrets management audit criteria and exposure risk assessment
 - `tsh-codebase-analysing` - to review IaC files, CI/CD configurations, and documentation coverage
 
+Every skill named here and every skill named in the Remediation Roadmap is referenced by name, not by path — resolve each name to its skill file with the `tsh-resolving-skill-references` resolution order, and stop and ask the user if a name cannot be resolved.
+
 ---
 
 ## 1. Context
@@ -84,9 +86,9 @@ Skip for: adding tags, updating configurations, simple fixes.
 - [list immediate actions with high impact and low effort]
 
 ### Remediation Roadmap
-1. [Critical] Description → `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
-2. [High] Description → `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
-3. [Medium] Description → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`
+1. [Critical] Description → `tsh-implement-terraform` skill
+2. [High] Description → `tsh-deploy-kubernetes` skill
+3. [Medium] Description → `tsh-implement-observability` skill
 ```
 
 ---
@@ -94,5 +96,5 @@ Skip for: adding tags, updating configurations, simple fixes.
 ## Scope
 
 **Does NOT handle** (redirect to):
-- Implementing fixes → delegate to `@tsh-devops-engineer` and load the matching internal skill: `tsh-implement-terraform`, `tsh-deploy-kubernetes`, `tsh-implement-pipeline`, or `tsh-implement-observability` (`.cursor/skills/internal/<name>/SKILL.md`)
+- Implementing fixes → delegate to `@tsh-devops-engineer` and have it read and follow the matching internal skill by name: `tsh-implement-terraform`, `tsh-deploy-kubernetes`, `tsh-implement-pipeline`, or `tsh-implement-observability`
 - Application code security → coordinate with software engineer

@@ -5,7 +5,9 @@ disable-model-invocation: true
 ---
 # tsh-implement-ui-common-task
 
-> **PREREQUISITE**: This skill extends `.cursor/skills/internal/tsh-implement-common-task/SKILL.md`. You MUST read and follow **all steps** from that base workflow first. This skill adds UI-specific behaviors on top — it does not remove or replace any base workflow steps.
+> **PREREQUISITE**: This skill extends the `tsh-implement-common-task` skill. You MUST read and follow **all steps** from that base workflow first. This skill adds UI-specific behaviors on top — it does not remove or replace any base workflow steps.
+>
+> That name is a skill reference, not a location — resolve it with the `tsh-resolving-skill-references` resolution order: the project skill collection, then the installed skills root (flat, no layer segment), then a search by name; the base workflow is **read**, not invoked, and if it cannot be located you **stop and ask the user** rather than proceeding with the UI-specific behaviors alone.
 
 Implement the UI feature according to the **research context** and **implementation plan**, using Figma designs as the source of truth for visual implementation.
 

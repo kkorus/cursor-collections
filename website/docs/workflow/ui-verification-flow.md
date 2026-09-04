@@ -82,8 +82,12 @@ It must collect all three ACTUAL artifacts into the current iteration directory:
 The canonical artifact directory is:
 
 ```text
-specifications/<task-id>/ui-verification/iteration-<N>/
+specifications/<verification-id>/ui-verification/          # $UI_VERIFICATION_DIR
+  figma-expected.png                                       # $FIGMA_EXPECTED
+  iteration-<N>/                                           # $ARTIFACT_DIR
 ```
+
+`<verification-id>` is the task ID when available, otherwise a stable page/component slug. Capture, review, and the PASS gate must all use the same `$UI_VERIFICATION_DIR`.
 
 The capture flow is:
 
@@ -188,12 +192,13 @@ Build success, lint success, tests, and code review do not substitute for UI ver
 ### Required Files Per Iteration
 
 ```text
-specifications/<task-id>/ui-verification/iteration-<N>/
-  actual.png
-  computed-styles.json
-  a11y-snapshot.yml
-  figma-expected.png
-  report.md
+specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
+  figma-expected.png                                  # $FIGMA_EXPECTED (shared across iterations)
+  iteration-<N>/                                      # $ARTIFACT_DIR
+    actual.png
+    computed-styles.json
+    a11y-snapshot.yml
+    report.md
 ```
 
 ### Who Produces What
@@ -221,9 +226,9 @@ These rules are never optional:
 
 This page summarizes the flow defined in these canonical files:
 
-- [.cursor/skills/commands/tsh-implement/SKILL.md](../../../.cursor/skills/commands/tsh-implement/SKILL.md)
-- [.cursor/skills/workflows/tsh-orchestrating-implementation/SKILL.md](../../../.cursor/skills/workflows/tsh-orchestrating-implementation/SKILL.md)
-- [.cursor/skills/workflows/tsh-ui-verifying/SKILL.md](../../../.cursor/skills/workflows/tsh-ui-verifying/SKILL.md)
-- [.cursor/skills/agents/tsh-ui-engineer/SKILL.md](../../../.cursor/skills/agents/tsh-ui-engineer/SKILL.md)
-- [.cursor/skills/agents/tsh-ui-capture-worker/SKILL.md](../../../.cursor/skills/agents/tsh-ui-capture-worker/SKILL.md)
-- [.cursor/skills/agents/tsh-ui-reviewer/SKILL.md](../../../.cursor/skills/agents/tsh-ui-reviewer/SKILL.md)
+- `.cursor/skills/commands/tsh-implement/SKILL.md`
+- `.cursor/skills/workflows/tsh-orchestrating-implementation/SKILL.md`
+- `.cursor/skills/workflows/tsh-ui-verifying/SKILL.md`
+- `.cursor/skills/agents/tsh-ui-engineer/SKILL.md`
+- `.cursor/skills/agents/tsh-ui-capture-worker/SKILL.md`
+- `.cursor/skills/agents/tsh-ui-reviewer/SKILL.md`

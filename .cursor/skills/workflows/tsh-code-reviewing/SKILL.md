@@ -7,6 +7,10 @@ description: "Structured code review process covering correctness, quality, secu
 
 Structured process to verify that implemented code follows best practices and quality standards.
 
+## Findings reporting
+
+Report every evidence-backed finding you discover, then classify severity (blocker / major / minor / nit). Do not pre-filter to "only high-severity" or "be conservative" — that clips recall. Filter or prioritize for the user after classification, not by suppressing findings during the pass.
+
 ## Code Review Process
 
 Use the checklist below and track your progress:

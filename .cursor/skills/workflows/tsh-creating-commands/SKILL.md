@@ -126,12 +126,13 @@ Verify the command skill against this checklist:
 - [ ] `name` matches the directory name
 - [ ] `description` is present and concise — shown in the slash command menu
 - [ ] `disable-model-invocation: true` is present
-- [ ] All workflow skills referenced exist in `.cursor/skills/workflows/`
+- [ ] Every workflow skill referenced resolves to a real skill directory in this repository — check `.cursor/skills/workflows/<name>/` here, but do not write that path into the command; a consuming project resolves the name for itself
 - [ ] No domain knowledge embedded (reference workflow skills instead)
 - [ ] No coding standards embedded (reference `.cursor/rules/*.mdc` instead)
 - [ ] Workflow steps are clear, sequential, and actionable
 - [ ] The command is distinct from existing commands and does not duplicate their workflows
 - [ ] Connected Skills section present and references existing skills
+- [ ] Runtime skill-loading instructions reference skills by backticked name, not by `.cursor/skills/<layer>/` path
 
 ## Command Skill Structure Reference
 

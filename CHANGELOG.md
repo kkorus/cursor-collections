@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04
+
+### Added
+
+- `tsh-resolving-skill-references` workflow skill — Shared rule for locating a referenced skill file at delegation time. Defines a five-step resolution order (project skill collection → installed skills root, derived from the directory containing the executing skill rather than named → search by name → Skill tool by name → hard stop), the Read-not-invoke rule (a Skill-tool rejection means locate and read the file, and is never a reason to change or remove the layer flag that caused the rejection), a hard stop when nothing resolves, and a bounded degraded-mode carve-out. Frontmatter is `name` + `description` only — deliberately no `disable-model-invocation`, so the rule stays reachable by name through the Skill tool in any project
+
+### Changed
+
+- Delegation-time skill references now name the skill instead of pathing to it — 68 references across 18 files: `tsh-orchestrating-implementation` (25, including the whole Task-to-Owner routing table), four command entry points (`/tsh-implement`, `/tsh-analyze-aws-costs`, `/tsh-analyze-gcp-costs`, `/tsh-audit-infrastructure`, 16), five agents (`tsh-engineering-manager`, `tsh-software-engineer`, `tsh-ui-engineer`, `tsh-context-engineer`, `tsh-ui-reviewer`, 6), six internal skills (`tsh-implement-ui-common-task`, `tsh-implement-ui`, `tsh-implement-terraform`, `tsh-implement-pipeline`, `tsh-deploy-kubernetes`, `tsh-implement-observability`), and both plan-authoring surfaces (`tsh-creating-implementation-plans` and its `plan.example.md`). A project-relative `.cursor/skills/<layer>/<name>/SKILL.md` path does not resolve in a consuming project — that was the root cause, not the layer flag, and no frontmatter was changed anywhere
+- `.cursor/rules/cursor-instructions.md` — One new `## When Editing This Repo` bullet stating that delegation-time references use skill names while project-relative paths stay correct for authoring guidance, plus one matching authoring-checklist item each in `tsh-creating-agents`, `tsh-creating-commands`, and `tsh-creating-skills`
+- `/tsh-analyze-aws-costs` and `/tsh-analyze-gcp-costs` — Pre-existing degradation clauses bounded. The "use hardcoded defaults if the skill file cannot be found" and "proceed with available skills" clauses now require the resolution order to be exhausted first and the substitution to be announced in the report's Executive Summary; the Core 5 tag/label defaults supply names only and may not produce any cost finding, security finding, or remediation recommendation; and `tsh-managing-secrets` is carved out entirely as a security gate — a security-scoped audit stops and asks the user rather than emitting a security section produced without its governing skill
+- Published skill counts — `README.md` (workflow-skills heading and repository-structure tree), `website/docs/skills/overview.md`, and `website/docs/intro.md` now state 39 workflow skills, matching `scripts/count-skills.sh` (93 total); `tsh-resolving-skill-references` was added to the README workflow catalogue and to the website skills table as an unlinked row
+- Website agent docs — The `ui-engineer`, `context-engineer`, and `plan-reviewer` pages named a `.cursor/` delegation path verbatim and now name the skill instead, matching the source they mirror; each page's `**File:**` location header keeps its path
+
+- Code review hardened three points before landing — `tsh-resolving-skill-references` now treats a requested skill name as untrusted input and refuses a name containing `/` or a `..` segment rather than substituting it into `<root>/<name>/SKILL.md` (a delegation instruction can reach a worker from a generated plan file); its degraded-mode section now describes both shapes a documented fallback can take, substitution and omission, because the broad "proceed with the skills that did load" clause in the two cost commands is the omission shape and the section previously claimed the Core 5 defaults were the only qualifying case; and `tsh-creating-commands`'s validation checklist no longer asks the author to confirm a referenced skill "exists in `.cursor/skills/workflows/`" four lines above the item telling them not to write that path into a command
+
+### Fixed
+
+- `website/docs/workflow/ui-verification-flow.md` — The six "Source of Truth" entries were Markdown links escaping the docs root (`../../../.cursor/…`), which Docusaurus resolved to `/.cursor/…` and rejected as broken, failing `npm --prefix website run build`. They are now backticked paths, matching how every other page states a file location. The break predates this change and was already present at `01d6351`
+
+### Notes
+
+- `website/docs/intro.md` — The agent-skill count was corrected from a pre-existing, already-stale `21` (with a "12 user-facing plus 9 internal" breakdown) to `25` (13 user-facing + 12 internal), so a future audit does not read that drift as a regression introduced by this change
+
+## 2026-07-30
+
+### Changed
+
+- Opus 5 prompting overlay (selective, per `specifications/decisions/claude-opus-5-prompting-vs-cursor-collections.decision.md`): user-facing cadence + Task/delegation economy on `tsh-orchestrating-implementation`, `tsh-engineering-manager`, and `tsh-cursor-orchestrator`; report-all-then-classify on code/plan review; scope reinforce on `tsh-plan-implementor`. Process gates (UI verify-fix, plan/code review) unchanged.
+
 ## 2026-07-11 (docs)
 
 ### Notes

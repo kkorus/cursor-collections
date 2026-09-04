@@ -144,4 +144,6 @@ Pre-existing uncommitted changes in the working tree are intentional and OUTSIDE
 After completing implementation:
 
 - **Run Code Review**: Invoke @tsh-code-reviewer with `/tsh-review Review the implementation against the plan and feature context`
-- **Write E2E Tests**: Invoke @tsh-e2e-engineer with instructions to follow `.cursor/skills/internal/tsh-implement-e2e/SKILL.md` and create E2E tests for the implemented feature
+- **Write E2E Tests**: Invoke @tsh-e2e-engineer with instructions to follow the `tsh-implement-e2e` skill and create E2E tests for the implemented feature
+
+Each handoff above names a skill reference, not a location — the receiving agent resolves it with the `tsh-resolving-skill-references` resolution order, and stops and asks the user rather than proceeding without the named skill file.
