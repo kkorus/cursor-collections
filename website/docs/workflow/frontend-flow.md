@@ -9,7 +9,7 @@ For a full end-to-end breakdown of the post-implementation verify-fix loop, see 
 
 Before you start, make sure the target app is already running, be ready to confirm the exact full dev server URL, and ensure `playwright-cli` is available to the UI capture worker (`npx playwright-cli` or a global install).
 
-The frontend route accepts a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Before the first file-changing delegation, the Engineering Manager requires Human approval of the exact current plan revision. Automated Reviewer approval is readiness evidence only; it is not permission to implement. A material revision after Human approval halts delegation and requires renewed Human approval, and no Reviewer re-review is invoked automatically.
+The frontend route accepts a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Before the first file-changing delegation, the Engineering Manager requires a recorded Human approval of the exact current plan revision — normally the one the Architect wrote at its own plan-authoring gate (`Approve plan`, `I have comments`), which the manager validates and reuses rather than asking again. The manager's `Approve current plan` / `Request changes` / `Stop` gate is fail-closed recovery only, for when no valid current-revision record exists. Automated Reviewer approval is readiness evidence only; it is not permission to implement. A material revision after Human approval halts delegation and requires renewed Human approval, and no Reviewer re-review is invoked automatically; a new review event happens only when the user explicitly directs one.
 
 On every delegated or direct UI execution-owner entry path, the owner validates the referenced plan from disk before changing implementation or capture/verification-related artifacts. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. The user's response is not Human approval; only Human Approval of the exact current plan revision authorizes implementation.
 
@@ -20,11 +20,12 @@ On every delegated or direct UI execution-owner entry path, the owner validates 
    ↳ 🔍 Engineering Manager delegates to Context Engineer for research
    ↳ 📖 Review research doc – verify Figma links, requirements (quality checkpoint, not an authorization gate)
    ↳ 🧱 Engineering Manager delegates to Architect for planning
-   ↳ 🧪 Engineering Manager delegates to Plan Reviewer for plan validation
+   ↳ 🧪 Architect invokes the Plan Reviewer once per plan lifecycle
    ↳ 📖 Review plan and review summary – check component breakdown, design references
    ↳ 🌐 Confirm the exact full dev server URL once and pin it for the session
-   ↳ ✅ Engineering Manager presents exactly `Approve current plan`, `Request changes`, `Stop`
-   ↳ 💻 Engineering Manager delegates UI tasks to UI Engineer only after `Approve current plan`
+   ↳ ✅ Architect asks `Approve plan` / `I have comments` and records your decision in the plan
+   ↳ ✅ Engineering Manager validates that record and reuses it; its `Approve current plan` / `Request changes` / `Stop` gate runs only as recovery
+   ↳ 💻 Engineering Manager delegates UI tasks to UI Engineer only once a valid current-revision approval exists
    ↳ 📖 Review UI Verification Summary separately from code review
    ↳ ✅ Manually verify critical UI elements in browser
    ↳ 🔄 Engineering Manager calls /tsh-review-ui in a loop until the UI gate is PASS or reaches the structured post-5-iteration user gate

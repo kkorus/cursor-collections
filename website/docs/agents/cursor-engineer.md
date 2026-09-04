@@ -26,7 +26,7 @@ The Cursor Engineer enforces a strict boundary model:
 |---|---|---|
 | **Agent** (`SKILL.md`) | WHO | Persona, behavior, responsibilities, tool access |
 | **Skill** (`SKILL.md`) | HOW | Reusable workflows, domain knowledge, step-by-step processes |
-| **Prompt** (`/SKILL.md`) | WHAT | Workflow trigger, task starter, routes to agent + model |
+| **Prompt** (`/SKILL.md`) | WHAT | Workflow trigger, task starter, routes to the owning agent and the skill it follows |
 | **Instructions** (`.rules.mdc`) | RULES | Coding standards, project conventions, always-applied |
 
 When any artifact crosses these boundaries, the Cursor Engineer identifies and corrects the violation.

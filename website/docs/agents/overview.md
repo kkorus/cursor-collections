@@ -63,7 +63,7 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
               /tsh-review
 ```
 
-Both Architect handoffs — **Start Implementation** and **Start Infrastructure Implementation** — pass through the Engineering Manager. The manager owns the Human approval gate for the exact current plan revision before the first file-changing delegation; an automated Reviewer approval does not authorize implementation.
+Both Architect handoffs — **Start Implementation** and **Start Infrastructure Implementation** — pass through the Engineering Manager. The manager validates the persisted Human Approval record for the exact current plan revision before the first file-changing delegation, reusing the Architect's recorded decision and presenting its own `Approve current plan` / `Request changes` / `Stop` gate only as fail-closed recovery when no valid record exists; an automated Reviewer approval does not authorize implementation.
 
 All seven execution owners apply the same inline, fail-closed precondition before editing: they read the persisted Human Approval record from disk, name the exact failed field, condition, or file when validation fails, and ask the user in chat for guided recovery on both delegated and direct entry paths, spelling out the options. A delegated owner may offer hand-back to `tsh-engineering-manager` as one choice, but does not dead-end there. The Engineering Manager and Architect present and record Human Approval, `tsh-plan-reviewer` provides non-authorizing Reviewer approval, and execution owners validate before edits.
 

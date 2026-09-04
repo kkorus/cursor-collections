@@ -31,10 +31,15 @@ flowchart TD
     B --> C[Research and planning happen if needed]
     C --> C2[UI inventory captured and Figma reference readiness confirmed]
     C2 --> D[User confirms the exact full dev server URL]
-    D --> GATE{Engineering Manager: Human approval gate}
-    GATE -- Request changes --> C
-    GATE -- Stop --> STOP[Flow stops, no implementation]
-    GATE -- Approve current plan --> E[UI Engineer implements or updates the UI]
+    D --> GATE{Architect: plan-authoring approval gate}
+    GATE -- I have comments --> C
+    GATE -- Approve plan --> REC[Approval recorded in the plan]
+    REC --> VAL{Engineering Manager validates the recorded approval}
+    VAL -- Valid for the current revision --> E[UI Engineer implements or updates the UI]
+    VAL -- Missing, stale, or reset --> RGATE{Recovery gate: Approve current plan, Request changes, Stop}
+    RGATE -- Approve current plan --> E
+    RGATE -- Request changes --> C
+    RGATE -- Stop --> STOP[Flow stops, no implementation]
     E --> F[Code-level validation runs: lint, build, tests]
     F --> G[Capture Worker opens the running app and collects fresh evidence]
     G --> H{Was capture successful?}
@@ -63,9 +68,10 @@ The orchestrator:
 - checks whether research and plan artifacts already exist
 - fills missing context through Context Engineer and Architect when needed
 - captures the UI inventory — every `[REUSE]` UI task and every Figma URL — and confirms Figma reference readiness
-- asks for the **exact full dev server URL** once the UI inventory is non-empty, after UI/Figma readiness is confirmed and before the Human approval gate
-- presents the Human approval gate for the exact current plan revision, offering exactly `Approve current plan`, `Request changes`, `Stop`
-- delegates UI implementation to the UI Engineer only after `Approve current plan`
+- asks for the **exact full dev server URL** once the UI inventory is non-empty, after UI/Figma readiness is confirmed and before the approval gate
+- validates the plan's persisted `## Human Approval` record and silently reuses a valid current-revision approval — normally the one the Architect recorded at its plan-authoring gate (`Approve plan`, `I have comments`)
+- presents its own gate — exactly `Approve current plan`, `Request changes`, `Stop` — only as fail-closed recovery, when no valid current-revision record exists or after a material revision; never as a second routine approval
+- delegates UI implementation to the UI Engineer only once a valid current-revision approval exists
 
 The URL is a **pinned session input**. Once confirmed, it must be forwarded unchanged through every capture and review pass.
 

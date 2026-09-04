@@ -12,6 +12,24 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04 (docs fix — approval gate separation)
+
+### Fixed
+
+- Published flow pages described one authorization gate where the source ratifies two — the Workflow Overview, Standard Flow, Frontend Flow, and UI Verification Flow pages presented the Engineering Manager's `Approve current plan` / `Request changes` / `Stop` as the single gate that authorizes implementation. The orchestration skill's approval-gate-separation section ratifies two distinct gates that must not duplicate each other: the Architect's plan-authoring gate (`Approve plan`, `I have comments`), which fires immediately after a settled review event and writes the `## Human Approval` record, and the manager's execution authorization, which is fail-closed recovery only and never a second normal authorization when a valid current-revision record already exists, including one the Architect recorded. All four pages now name the Architect's gate as the normal one and the manager's as recovery that does not fire when a valid current-revision record exists; the wording reuses what the Engineering Manager and Architect pages already publish rather than inventing new phrasing. **This is a regression introduced by the workflow-pages commit in this port:** the Workflow Overview page contained no Human approval prose before it, so every one of those sentences was written there.
+- Three sites gave the Plan Reviewer loop to the wrong owner — the Standard Flow page listed the Plan Validation Phase as delegated to the Plan Reviewer, and both it and the Frontend Flow page showed the Engineering Manager delegating to the Plan Reviewer for plan validation. The source gives that loop to the architect, which owns producing a finished reviewed plan with one reviewer invocation per plan lifecycle, and the Architect and Plan Reviewer pages already publish it correctly. All three now attribute the invocation to the Architect, once per plan lifecycle, with no loop language reintroduced. **This one is pre-existing, not a port regression** — it was present before the port began. It is the same misattribution class already fixed on the internal `/tsh-plan` page, so correcting it here extends a ratified decision rather than making a new one.
+- The Cursor Engineer page — the artifact-boundary table said a prompt "routes to agent + model"; it now says it routes to the owning agent and the skill it follows, because model selection is a session-level concern in Cursor and is not bound by the artifact. Also **pre-existing**: no model-mention sweep caught it, because the cell names no model.
+
+### Changed
+
+- The four workflow flow pages now state one identical re-review contract — the Standard Flow, Frontend Flow, and E2E Testing Flow pages gained the "a new review event happens only when the user explicitly directs one" clause that the UI Verification Flow page already carried, matching the Architect's contract that a new review occurs only through an explicitly user-directed new review event.
+
+### Notes
+
+- One further site in the same class was corrected inside a page already in scope: the Standard Flow page said the Engineering Manager must obtain Human approval of the exact current plan revision before the first file-changing delegation. The manager validates a persisted record and reuses a valid one, gating only on recovery, so the sentence now states the requirement as a recorded approval rather than a manager-run gate.
+- Two further single-gate statements on the agent pages are corrected in the same commit: the Agents Overview page and the opening paragraph of the Architect page both said the approval gate is the Engineering Manager's. The second contradicted the Handoffs section of its own page, which already described the two-gate model correctly, so the page disagreed with itself. Both are regressions of the PR #76 port rather than pre-existing text — neither file mentioned Human approval before it. Both now state that the manager validates and reuses the persisted record and gates only as fail-closed recovery.
+- No skill artifact was touched — the collection still counts 25 agents, 17 commands, 39 workflow skills, and 12 internal skills (93 total).
+
 ## 2026-09-04 (docs fix)
 
 ### Fixed
