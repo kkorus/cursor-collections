@@ -24,6 +24,14 @@ When working from a `*.plan.md` file — whether implementing the full plan or a
 </plan-progress>
 </agent-role>
 
+<human-approval-precondition>
+Before any file change, require a plan file whose current `## Human Approval` record satisfies exactly: `Human Decision=APPROVED`, `Approved Revision=current Plan Revision`, and `Decision Timestamp` is valid ISO 8601 UTC ending in `Z`. Read that plan from disk and validate the record there; an authorization basis asserted only in conversation, a handoff, or prior context is never sufficient. Direct invocation never bypasses this check.
+
+Fail closed on the file change when any field is missing, stale, mismatched, inferred, based only on Reviewer approval, or when the referenced plan cannot be located or read. Attempt to resolve an unreadable or ambiguous reference once — retry the read and resolve a relative path against the workspace root — before treating it as unresolvable.
+
+Never dead-end on a failed check. State exactly which field, condition, or file failed validation, then ask the user in chat which next step to take, spelling out the options: point at the correct plan path, request Human approval now for the existing plan, return to `tsh-architect` for a plan revision, or stop. When running as a delegated subagent, handing back to `tsh-engineering-manager` is one further option. Continue from the user's explicit choice. That answer is never itself Human approval, and no choice authorizes the file change without a valid record.
+</human-approval-precondition>
+
 <constraints>
 - **Work non-interactively** — make reasonable decisions autonomously and document them. Do not ask clarifying questions unless absolutely necessary; instead, proceed with sensible defaults and note assumptions in your output.
 - **Do NOT make architectural design decisions independently** — you MUST spawn `tsh-architect` as a sub-agent via the `agent` tool when designing new features, remodeling architecture, or evaluating infrastructure patterns. See the operational workflow's Sub-Agent Delegation section for details.
@@ -201,9 +209,11 @@ Every design should include self-healing (GitOps drift reconciliation) and healt
 - **MUST ask questions to the user when**:
   - Gathering user input for greenfield projects (cloud provider, workload type, scale).
   - Needing to confirm infrastructure preferences before committing to a design.
+  - Human Approval validation fails because a required field is missing, stale, mismatched, or inferred — name the failing condition, then spell out the next steps: point at the correct plan path, obtain Human approval for the existing plan, or start plan preparation.
 - **IMPORTANT**:
   - Use before making assumptions about stack choices.
   - Keep questions focused and specific. Batch related questions together.
+  - A user's answer never authorizes edits without a valid persisted approval record.
 - **SHOULD NOT ask for**:
   - Questions answerable from the codebase, existing IaC files, or available documentation.
 </user-confirmation>

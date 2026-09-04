@@ -12,6 +12,27 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## PR #76 port (2026-09-04)
+
+### Added
+
+- Human plan-approval gate (ported from copilot-collections PR #76) — Implementation plans now carry a persisted `## Human Approval` record (`Plan Revision`, `Human Decision`, `Approved Revision`, `Decision Timestamp`, `Note`). Approval binds to the exact current plan revision and is valid only when the decision is `APPROVED`, the approved revision matches the current one, and the timestamp is ISO 8601 UTC ending in `Z`.
+- `<human-approval-precondition>` — All seven execution owners (`tsh-plan-implementor`, `tsh-software-engineer`, `tsh-ui-engineer`, `tsh-e2e-engineer`, `tsh-devops-engineer`, `tsh-prompt-engineer`, `tsh-technical-writer`) validate that record from disk before any file change and fail closed on a missing, stale, mismatched, inferred, Reviewer-only, or unreadable basis, then ask the user which next step to take instead of dead-ending.
+- `## Material Revision Handling` — A material revision of an already approved plan halts further file-changing delegation, increments the revision, and requires Reviewer re-review followed by renewed Human approval.
+- Role ownership — `tsh-engineering-manager` presents the gate (`Approve current plan`, `Request changes`, `Stop`); `tsh-architect` owns revisions and records only the user's literal response; `tsh-plan-reviewer` `APPROVED` remains Reviewer approval only and never authorizes implementation.
+
+### Changed
+
+- Unplanned implementation is no longer offered — a missing research or plan artifact routes to the preparation sequence instead of an implementation owner.
+- Delegation roster and routing — `tsh-plan-implementor` is the default owner for actionable, low-risk plan seams and `tsh-software-engineer` is the complex NON-UI exception; documentation targets are addressed only when they exist in the project.
+- Documentation — 19 pages under `website/docs/` now describe research and plan reviews as quality checkpoints rather than authorization gates, with the Human approval gate as the only step that authorizes or halts execution.
+
+### Notes
+
+- Upstream #76's Quick Flow step 1 is ported as written so the commit stays faithful to its PR; the next commit in this port batch removes Quick Flow entirely.
+- No skill artifact was added or removed — the collection still counts 25 agents, 17 commands, 39 workflow skills, and 12 internal skills (93 total).
+- Pre-existing gap, recorded rather than backfilled: this snapshot never received the `2026-09-04` entry that the repository `CHANGELOG.md` carries for the `tsh-resolving-skill-references` change.
+
 ## 2026-07-11 (docs)
 
 ### Notes

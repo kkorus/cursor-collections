@@ -68,25 +68,29 @@ When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the co
 
 ## Delegation via /tsh-implement
 
-When you run [`/tsh-implement`](./public/implement), the Engineering Manager automatically handles the full development cycle. It first gathers context and creates an implementation plan (if needed), then delegates tasks to specialized agents.
+When you run [`/tsh-implement`](./public/implement), the Engineering Manager automatically handles the full development cycle. Its four primary inputs are a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Before the first file-changing delegation in either flow, the manager requires Human approval of the exact current plan revision; automated Reviewer approval is readiness evidence only, not permission to implement.
 
 | Phase | Delegated To |
 |-------|-------------|
 | Research (context gathering) | Context Engineer (via internal `tsh-research` skill) |
 | Planning (architecture) | Architect (via internal `tsh-plan` skill) |
 | Plan validation | Plan Reviewer stress-test (`agents/tsh-plan-reviewer`) |
-| Backend / general code | Software Engineer |
-| Frontend with Figma | Software Engineer (via internal `tsh-implement-ui` skill) |
+| Backend / general code (actionable, low-risk seam) | Plan Implementor — DEFAULT |
+| Backend / general code (complex, non-UI) | Software Engineer — EXCEPTION |
+| Frontend with Figma | UI Engineer (via internal `tsh-implement-ui` skill) |
 | E2E tests | E2E Engineer (via internal `tsh-implement-e2e` skill) |
 | LLM application prompts | Prompt Engineer |
 | Kubernetes, Terraform, CI/CD, observability | DevOps Engineer |
+| Repository documentation | Technical Writer |
 | UI verification | UI Reviewer |
 
 ## Input Format
 
-All commands accept either:
+Most commands accept either:
 
 - A **Jira ticket ID**: `/tsh-implement PROJ-123`
 - A **task description**: `/tsh-implement Add pagination to the user list API`
+
+`/tsh-implement` additionally accepts a standalone `*.research.md` file or a `*.plan.md` implementation plan as a primary input. A missing research or plan companion routes to preparation; it never authorizes implementation without a current actionable plan.
 
 The agent adapts its behavior based on the input type — pulling context from Jira/Confluence for ticket IDs, or working from the description and codebase for free-form text.

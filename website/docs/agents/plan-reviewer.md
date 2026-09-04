@@ -10,6 +10,10 @@ title: Plan Reviewer
 
 The Plan Reviewer (`tsh-plan-reviewer`) is an internal sub-agent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing.
 
+Its `APPROVED` result is **Reviewer approval** only. It reports automated readiness and never grants Human approval or permission to implement; the Engineering Manager must still obtain Human approval of the exact current plan revision before the first file-changing delegation.
+
+The reviewer is non-implementing and does not validate or record the execution precondition. Execution owners validate the persisted Human Approval record before editing; Reviewer approval remains distinct and never authorizes implementation.
+
 ## Responsibilities
 
 - Stress-testing the plan against the research context to expose likely failure modes.
@@ -71,4 +75,4 @@ flowchart LR
 
 - **APPROVED** → the Architect reports the finished plan to the Engineering Manager; `*.plan-review.md` stays unchanged.
 - **REVISIONS NEEDED with BLOCKERs** → the Architect addresses all BLOCKER findings and re-invokes the reviewer. After 3 iterations, if BLOCKERs remain, the Architect asks the user how to proceed.
-- If the reviewer returns revisions, the plan goes back to the Architect and is re-reviewed until approved or escalated.
+- If the reviewer returns revisions, the plan goes back to the Architect and is re-reviewed until the reviewer returns `APPROVED` (Reviewer approval only, never Human approval) or the loop is escalated.

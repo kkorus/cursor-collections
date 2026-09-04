@@ -5,6 +5,10 @@ title: UI Verification Flow
 
 This page explains the exact post-implementation UI verification loop for Figma-backed UI work. It covers who does what, which artifacts are produced, when the flow blocks, and how the fix -> capture -> review loop closes.
 
+This loop is reached through the canonical `/tsh-implement` workflow. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Both Quick and Full routes require Human approval of the exact current plan revision before the first file-changing delegation; automated Reviewer approval is not permission to implement. A material revision after Human approval requires Reviewer re-review and renewed Human approval before work resumes.
+
+On every delegated or direct UI execution-owner entry path, the owner validates the referenced plan from disk before changing implementation or capture/verification-related artifacts. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. The answer is never Human approval; only Human Approval of the exact current plan revision authorizes implementation.
+
 :::info Mermaid Rendering
 The diagrams below are authored in Mermaid. They render correctly in GitHub-flavored Markdown and many Markdown viewers. In the current documentation-site configuration, Mermaid support is not enabled yet, so these blocks may appear as code blocks on the published site until Mermaid is enabled there.
 :::
@@ -25,8 +29,12 @@ The item is done only when the UI gate returns `PASS`, or when the user explicit
 flowchart TD
     A[User runs /tsh-implement] --> B[Engineering Manager starts the implementation workflow]
     B --> C[Research and planning happen if needed]
-    C --> D[User confirms the exact full dev server URL]
-    D --> E[UI Engineer implements or updates the UI]
+    C --> C2[UI inventory captured and Figma reference readiness confirmed]
+    C2 --> D[User confirms the exact full dev server URL]
+    D --> GATE{Engineering Manager: Human approval gate}
+    GATE -- Request changes --> C
+    GATE -- Stop --> STOP[Flow stops, no implementation]
+    GATE -- Approve current plan --> E[UI Engineer implements or updates the UI]
     E --> F[Code-level validation runs: lint, build, tests]
     F --> G[Capture Worker opens the running app and collects fresh evidence]
     G --> H{Was capture successful?}
@@ -54,8 +62,10 @@ The orchestrator:
 
 - checks whether research and plan artifacts already exist
 - fills missing context through Context Engineer and Architect when needed
-- asks for the **exact full dev server URL** when UI verification will be needed
-- delegates UI implementation to the UI Engineer
+- captures the UI inventory — every `[REUSE]` UI task and every Figma URL — and confirms Figma reference readiness
+- asks for the **exact full dev server URL** once the UI inventory is non-empty, after UI/Figma readiness is confirmed and before the Human approval gate
+- presents the Human approval gate for the exact current plan revision, offering exactly `Approve current plan`, `Request changes`, `Stop`
+- delegates UI implementation to the UI Engineer only after `Approve current plan`
 
 The URL is a **pinned session input**. Once confirmed, it must be forwarded unchanged through every capture and review pass.
 
@@ -205,7 +215,7 @@ specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
 
 | Owner               | Input                           | Output                                                                     |
 | ------------------- | ------------------------------- | -------------------------------------------------------------------------- |
-| Engineering Manager | task, Jira ID, or plan          | routing, gates, user questions                                             |
+| Engineering Manager | task description, Jira ID, standalone `*.research.md`, or `*.plan.md` | routing, gates, user questions |
 | UI Engineer         | plan + UI task slice            | code changes                                                               |
 | UI Capture Worker   | pinned full URL + iteration dir | `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`, capture summary |
 | UI Reviewer         | Figma URL + iteration dir       | `PASS`, `FAIL`, or `VERIFICATION NOT RUN` report                           |
