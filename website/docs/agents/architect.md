@@ -80,5 +80,5 @@ If an unresolved `BLOCKER` remains after disposition, the Architect asks the use
 After creating the plan, the Architect can hand off to:
 
 - **Internal plan review loop** → the Architect invokes the [Plan Reviewer](./plan-reviewer) as a nested subagent after creating or revising a plan, following the self-check and review loop described above. This loop only ever settles Reviewer approval; it never grants or implies Human approval.
-- **Engineering Manager** → `/tsh-implement` (`Start Implementation`) once the plan is Reviewer-ready and the Architect's own plan-authoring gate (`Approve plan` / `I have comments`) has recorded Human Approval, which the manager may reuse in the new discussion; on the low-risk-exemption path no plan-authoring gate runs and the manager's gate is the only user-facing gate
+- **Engineering Manager** → `/tsh-implement` (`Start Implementation`) once the plan is Reviewer-ready and the Architect's own plan-authoring gate (`Approve plan` / `I have comments`) has recorded Human Approval, which the manager may reuse in the new discussion; on the low-risk-exemption path the plan-authoring gate does not run and the manager's gate is the only user-facing gate
 - **Engineering Manager** → `Start Infrastructure Implementation` for infrastructure work, through the same Human approval gate

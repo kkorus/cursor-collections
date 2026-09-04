@@ -12,6 +12,18 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04 (docs fix)
+
+### Fixed
+
+- Published pages no longer advertise the abolished second implementation route — the Workflow Overview page said "Quick and Full routes both require Human approval…" and the UI Verification Flow page said "Both Quick and Full routes require…", while the ratified source states Full Flow is the only implementation-orchestration route and that no alternative flow may be offered, recommended, accepted, recorded, or honored as an override. Both now state the single route. **This is a regression introduced by the PR #76 commit and missed by the PR #79 commit:** #76 wrote these two sentences, and #79's documentation sweep grepped the literal string `Quick Flow`, which neither sentence contains. It is the same failure mode already recorded for `Quick vs Full Flow`, recurring in text this port itself authored; the sweep was rerun as a case-insensitive `quick (and|vs) full` search across the docs and the README, which now reports zero.
+- Published pages no longer publish the pre-#79 re-review contract — the Standard Flow, E2E Flow, Frontend Flow, and UI Verification Flow pages each said a material revision "requires Reviewer re-review and renewed Human approval". The ratified source says the opposite about re-review: the orchestration skill states no re-review is invoked automatically, the Architect does not automatically invoke `tsh-plan-reviewer`, and the plan-creation skill never triggers a reviewer invocation on its own. Renewed Human approval is still required and is unchanged on all four pages; only the automatic Reviewer re-review is removed. **This is a regression introduced by the PR #76 commit and left standing by the PR #79 commit:** #76 wrote the sentences faithfully, because its own `## Material Revision Handling` did mandate re-review; #79 removed that mandate from the source but swept only the orchestration skill for automatic re-review wording. No verification step swept `re-review` across the published documentation, and the #79 analysis had concluded the workflow pages needed no Quick Flow change — true for Quick Flow, false for this contract.
+- The Architect page — "on the low-risk-exemption path **no plan**-authoring gate runs" reworded to "the plan-authoring gate does not run". The meaning is unchanged; the phrase was a coincidental `no plan` substring that tripped the abolished-route guard, and it was the one reason the published documentation did not report zero occurrences.
+
+### Changed
+
+- The two port entries below use this page's native date-first heading shape again, `## 2026-09-04 (PR #NN port)`, matching its eight pre-existing headings and the repository `CHANGELOG.md`. They had been inverted to `## PR #NN port (2026-09-04)` purely to satisfy a verification assertion that forbade any heading beginning `## 2026-09-04` — a substring check whose intent was only that the missing `tsh-resolving-skill-references` entry must not be backfilled here. That intent still holds: this snapshot still carries no entry describing that work.
+
 ## 2026-09-04 (PR #77 port)
 
 ### Fixed
@@ -27,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pre-existing gaps carried rather than silently repaired: this snapshot still lacks the `2026-09-04` entry that the repository `CHANGELOG.md` carries for the `tsh-resolving-skill-references` change, and `tsh-write-documentation` still has an internal skill with no published page — the mirror image of the `review-plan` orphan the #79 commit deleted. Backfilling either inside a port commit would misattribute it to this port.
 - No skill artifact was added or removed — the collection still counts 25 agents, 17 commands, 39 workflow skills, and 12 internal skills (93 total).
 
-## PR #79 port (2026-09-04)
+## 2026-09-04 (PR #79 port)
 
 ### Changed
 
@@ -49,7 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The fork-local delegation-economy bullet in `tsh-engineering-manager` was rewritten rather than dropped, and the replacement UI-verification scope paragraph keeps this fork's richer breadth definition from the PR-#72 port.
 - No skill artifact was added or removed — the collection still counts 25 agents, 17 commands, 39 workflow skills, and 12 internal skills (93 total).
 
-## PR #76 port (2026-09-04)
+## 2026-09-04 (PR #76 port)
 
 ### Added
 

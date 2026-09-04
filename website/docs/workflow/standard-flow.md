@@ -50,7 +50,7 @@ The Engineering Manager automatically handles the full development cycle:
 - **Your action:** Review code changes after each phase. Test functionality. Verify against the plan.
 
 :::tip
-If a `.research.md` or `.plan.md` file already exists for the task, the Engineering Manager can reuse it after checking readiness. Reuse never skips the Human approval gate. A material revision after Human approval requires Reviewer re-review and renewed Human approval before further file-changing work.
+If a `.research.md` or `.plan.md` file already exists for the task, the Engineering Manager can reuse it after checking readiness. Reuse never skips the Human approval gate. A material revision after Human approval requires renewed Human approval before further file-changing work, and no Reviewer re-review is invoked automatically.
 :::
 
 ### 2. Review

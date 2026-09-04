@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-04 (docs fix)
+
+### Fixed
+
+- Published pages no longer advertise the abolished second implementation route — `website/docs/workflow/overview.md` said "Quick and Full routes both require Human approval…" and `website/docs/workflow/ui-verification-flow.md` said "Both Quick and Full routes require…", while the ratified source states that Full Flow is the only implementation-orchestration route and that "No alternative flow may be offered, recommended, accepted, recorded, or honored as an override". Both now state the single route. **This is a regression introduced by the PR #76 commit and missed by the PR #79 commit:** #76 wrote these two sentences, and #79's docs sweep grepped the literal string `Quick Flow`, which neither sentence contains. It is the same failure mode already recorded for `Quick vs Full Flow`, recurring in text this port itself authored — the sweep was rerun as `grep -rniE 'quick (and|vs) full' README.md website/docs`, which now reports zero
+- Published pages no longer publish the pre-#79 re-review contract — `website/docs/workflow/standard-flow.md`, `e2e-flow.md`, `frontend-flow.md`, and `ui-verification-flow.md` each said a material revision "requires Reviewer re-review and renewed Human approval". The ratified source says the opposite about re-review: `tsh-orchestrating-implementation` states "No re-review is invoked automatically", `tsh-architect` states "It does not automatically invoke `tsh-plan-reviewer`; a new review occurs only through an explicitly user-directed new review event", and `tsh-creating-implementation-plans` states "it never triggers a reviewer invocation on its own". Renewed Human approval is still required and is unchanged on all four pages; only the automatic Reviewer re-review is removed. **This is a regression introduced by the PR #76 commit and left standing by the PR #79 commit:** #76 wrote the sentences faithfully (its own `## Material Revision Handling` did mandate re-review), #79 removed that mandate from the source, and #79's docs task swept `automatic re-review` in the orchestration skill only — no assertion swept `re-review` across `website/docs`, and its own analysis had concluded `website/docs/workflow/**` needed no Quick Flow change, which was true for Quick Flow and false for this contract
+- `website/docs/agents/architect.md` — "on the low-risk-exemption path **no plan**-authoring gate runs" reworded to "the plan-authoring gate does not run". The meaning is unchanged; the phrase was a coincidental `no plan` substring that tripped the abolished-route guard, and it was the one reason `website/docs` did not report zero `no-plan` / "no plan" occurrences
+
+### Changed
+
+- `website/src/pages/changelog.md` — the two port entries use this file's native date-first heading shape again, `## 2026-09-04 (PR #NN port)`, matching its eight pre-existing headings and `CHANGELOG.md`. They had been inverted to `## PR #NN port (2026-09-04)` purely to satisfy a verification assertion that forbade any heading beginning `## 2026-09-04` — a substring check whose intent was only that the missing `tsh-resolving-skill-references` entry must not be backfilled here. That intent still holds: this snapshot still carries no entry describing that work
+
 ## 2026-09-04 (PR #77 port)
 
 ### Fixed
