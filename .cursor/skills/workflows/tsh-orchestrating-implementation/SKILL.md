@@ -100,6 +100,8 @@ This table is the single source of truth for selecting a delegate agent and skil
 | observability | `tsh-devops-engineer` | `tsh-implement-observability` | The internal skill should be used for logging, metrics, or tracing work |
 | LLM prompts | `tsh-prompt-engineer` | `tsh-engineer-prompt` | The internal skill should be used for prompt-engineering tasks |
 | documentation | `tsh-technical-writer` | `tsh-write-documentation` | The internal skill should be used for repository documentation work across all targets — README, CHANGELOG, `/docs`, and the published documentation site when those targets exist in the project |
+| Cursor customization (single artifact) | `tsh-cursor-engineer` | `tsh-creating-agents`, `tsh-creating-skills`, `tsh-creating-commands`, or `tsh-creating-rules` — matched to the artifact type | DEFAULT route for a bounded change to one customization artifact — an agent, workflow, command, or internal skill file, or a project rule file |
+| Cursor customization (multi-artifact) | `tsh-cursor-orchestrator` | `tsh-creating-agents`, `tsh-creating-skills`, `tsh-creating-commands`, or `tsh-creating-rules` — one per artifact type touched | EXCEPTION route for work spanning several customization artifacts, or needing research, creation, and review phases; it decomposes the work and delegates to its own workers |
 | `[REUSE]` UI verification | `tsh-ui-reviewer` | `tsh-review-ui` | Review each UI item individually; do not batch |
 | `[REUSE]` other | per the task definition | — | Execute as defined in the task definition; delegate to the matching implementer only when new product code is required |
 

@@ -5,7 +5,7 @@ disable-model-invocation: true
 ---
 # /tsh-create-custom-command
 
-Load and follow the tsh-cursor-orchestrator agent skill. Create a new custom command skill for Cursor. Every command skill must specify an agent routing and model preference in its frontmatter — the orchestrator handles research of existing commands and agents, design decisions, skill file creation, and end-to-end validation. The user's message following this skill may contain specific requirements or a description of the desired command.
+Load and follow the tsh-cursor-orchestrator agent skill. Create a new custom command skill for Cursor. Every command skill declares its agent routing in its body, not in its frontmatter; model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact. The orchestrator handles research of existing commands and agents, design decisions, skill file creation, and end-to-end validation. The user's message following this skill may contain specific requirements or a description of the desired command.
 
 ## Required Skills
 

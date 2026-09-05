@@ -20,7 +20,7 @@ When the Architect records plan-authoring Human approval, that authoring discuss
 The Engineering Manager works from two entry points:
 
 - **Directly** — invoke the agent in chat with a task description, Jira ID, standalone `*.research.md` file, or `*.plan.md` implementation plan.
-- **Via [`/tsh-implement`](../prompts/public/implement)** — the command routes to the agent using the same shared model array.
+- **Via [`/tsh-implement`](../prompts/public/implement)** — the command routes to the agent; model selection is handled per worker at delegation time and is not bound by the artifact.
 
 For any request whose intent is to deliver implementation changes, the agent loads the `tsh-orchestrating-implementation` skill and starts at **Step 0** (creating the execution todos). Information-only, advisory-only, and standalone review- or research-only requests do not trigger the workflow.
 
