@@ -9,6 +9,8 @@ The standard workflow is used for backend and fullstack tasks. The Engineering M
 
 The flow accepts a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion routes to preparation; it never authorizes implementation without a current actionable plan. Human approval of the exact current plan revision must be recorded before the first file-changing delegation. Normally the Architect records it at its own plan-authoring gate (`Approve plan`, `I have comments`); the Engineering Manager then validates that persisted record and reuses a valid one instead of asking again, and presents its own `Approve current plan` / `Request changes` / `Stop` gate only as fail-closed recovery when no valid current-revision record exists. An automated `tsh-plan-reviewer` `APPROVED` verdict is Reviewer approval only and is not permission to implement.
 
+Recording that plan-authoring approval ends the **authoring discussion** — the discussion in which the plan was authored, reviewed, and approved. In it, the Engineering Manager reports the exact plan path, the current `Plan Revision`, the persisted `Decision Timestamp`, and the review path when present, names implementation as the next step, and makes no file-changing delegation. Implementation runs in a new discussion you start, where the manager reuses the unchanged persisted record without presenting a duplicate approval gate. The boundary is a lifecycle stop, not an approval-validity criterion: invalid or missing states still fail closed, and a material revision still requires renewed Human approval.
+
 On every delegated or direct execution-owner entry path, the owner reads and validates the referenced plan from disk before changing files. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. A response to that question is never Human approval, and implementation remains authorized only by Human Approval of the exact current plan revision.
 
 ## Step-by-Step Command Sequence
@@ -40,7 +42,7 @@ The Engineering Manager automatically handles the full development cycle:
 - **Delegated to:** Architect, which invokes the Plan Reviewer once per plan lifecycle
 - **What it does:** Runs a lightweight final reality check of the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins, in one invocation per plan lifecycle.
 - **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings.
-- **Your action:** Review the implementation plan and review report together for scope, phases, and acceptance criteria. Once the review event is settled, the Architect asks you to choose `Approve plan` or `I have comments` and records your literal decision in the plan before implementation begins.
+- **Your action:** Review the implementation plan and review report together for scope, phases, and acceptance criteria. Once the review event is settled, the Architect asks you to choose `Approve plan` or `I have comments` and records your literal decision in the plan. Recording it ends the authoring discussion, so start a new discussion for the implementation phase.
 
 #### Implementation Phase
 
@@ -74,7 +76,8 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
    ↳ 🧪 Architect invokes the Plan Reviewer once per plan lifecycle
    ↳ 📖 Review the implementation plan and review summary
    ↳ ✅ Architect asks `Approve plan` / `I have comments` and records your decision — the normal authorization gate
-   ↳ ✅ Engineering Manager validates that record and reuses it; its `Approve current plan` / `Request changes` / `Stop` gate runs only as recovery
+   ↳ 🛑 Authoring discussion ends here — start a new discussion to implement
+   ↳ ✅ Engineering Manager validates that record in the new discussion and reuses it; its `Approve current plan` / `Request changes` / `Stop` gate runs only as recovery
    ↳ 💻 Engineering Manager delegates implementation to the owning specialist (Plan Implementor by default, Software Engineer for complex non-UI work, or the matching domain owner)
    ↳ 📖 Review code changes after each phase
    ↳ ✅ Test functionality, verify against plan

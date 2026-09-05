@@ -5,7 +5,9 @@ title: UI Verification Flow
 
 This page explains the exact post-implementation UI verification loop for Figma-backed UI work. It covers who does what, which artifacts are produced, when the flow blocks, and how the fix -> capture -> review loop closes.
 
-This loop is reached through the canonical `/tsh-implement` workflow. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Full Flow is the only implementation route, and it requires Human approval of the exact current plan revision before the first file-changing delegation; automated Reviewer approval is not permission to implement. A material revision after Human approval halts work and requires renewed Human approval before it resumes; no Reviewer re-review is invoked automatically, and a new review event happens only when the user explicitly directs one.
+This loop is reached through the canonical `/tsh-implement` workflow. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Full Flow is the only implementation route, and it requires a recorded Human approval of the exact current plan revision before the first file-changing delegation — normally the one the Architect writes at its own plan-authoring gate (`Approve plan`, `I have comments`), which the Engineering Manager validates and reuses rather than asking again. Automated Reviewer approval is not permission to implement. A material revision after Human approval halts work and requires renewed Human approval before it resumes; no Reviewer re-review is invoked automatically, and a new review event happens only when the user explicitly directs one.
+
+Recording that plan-authoring approval ends the **authoring discussion** — the discussion in which the plan was authored, reviewed, and approved. This loop therefore runs in a new discussion you start, where the unchanged persisted record is reused without a duplicate approval gate. The boundary is a lifecycle stop, not an approval-validity criterion: invalid or missing states still fail closed, and a material revision still requires renewed Human approval.
 
 On every delegated or direct UI execution-owner entry path, the owner validates the referenced plan from disk before changing implementation or capture/verification-related artifacts. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. The answer is never Human approval; only Human Approval of the exact current plan revision authorizes implementation.
 
@@ -34,7 +36,8 @@ flowchart TD
     D --> GATE{Architect: plan-authoring approval gate}
     GATE -- I have comments --> C
     GATE -- Approve plan --> REC[Approval recorded in the plan]
-    REC --> VAL{Engineering Manager validates the recorded approval}
+    REC --> BOUND[Authoring discussion ends - user starts a new discussion to implement]
+    BOUND --> VAL{Engineering Manager validates the recorded approval}
     VAL -- Valid for the current revision --> E[UI Engineer implements or updates the UI]
     VAL -- Missing, stale, or reset --> RGATE{Recovery gate: Approve current plan, Request changes, Stop}
     RGATE -- Approve current plan --> E
@@ -69,7 +72,8 @@ The orchestrator:
 - fills missing context through Context Engineer and Architect when needed
 - captures the UI inventory — every `[REUSE]` UI task and every Figma URL — and confirms Figma reference readiness
 - asks for the **exact full dev server URL** once the UI inventory is non-empty, after UI/Figma readiness is confirmed and before the approval gate
-- validates the plan's persisted `## Human Approval` record and silently reuses a valid current-revision approval — normally the one the Architect recorded at its plan-authoring gate (`Approve plan`, `I have comments`)
+- stops once the Architect records plan-authoring approval, reporting the exact plan path, current `Plan Revision`, persisted `Decision Timestamp`, and review path when present, and names implementation as the next step in a new discussion — it delegates no file change in the authoring discussion
+- validates the plan's persisted `## Human Approval` record in that new discussion and silently reuses a valid current-revision approval — normally the one the Architect recorded at its plan-authoring gate (`Approve plan`, `I have comments`)
 - presents its own gate — exactly `Approve current plan`, `Request changes`, `Stop` — only as fail-closed recovery, when no valid current-revision record exists or after a material revision; never as a second routine approval
 - delegates UI implementation to the UI Engineer only once a valid current-revision approval exists
 
@@ -230,6 +234,7 @@ specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
 
 These rules are never optional:
 
+- When the Architect's plan-authoring gate recorded the approval, implementation runs in a new discussion, never in that authoring discussion.
 - The pinned full dev server URL never changes during the loop.
 - Capture always happens before review.
 - Review always uses fresh artifacts from the current iteration.

@@ -68,7 +68,7 @@ When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the co
 
 ## Delegation via /tsh-implement
 
-When you run [`/tsh-implement`](./public/implement), the Engineering Manager automatically handles the full development cycle. Its four primary inputs are a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Before the first file-changing delegation in either flow, the manager requires Human approval of the exact current plan revision; automated Reviewer approval is readiness evidence only, not permission to implement.
+When you run [`/tsh-implement`](./public/implement), the Engineering Manager automatically handles the full development cycle. Its four primary inputs are a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Before the first file-changing delegation, a Human approval of the exact current plan revision must already be recorded. The Architect normally records it at its own plan-authoring gate (`Approve plan`, `I have comments`); the Engineering Manager validates that record and reuses a valid one rather than asking you again, and presents its own `Approve current plan` / `Request changes` / `Stop` gate only as fail-closed recovery when no valid current-revision record exists. Automated Reviewer approval is readiness evidence only, not permission to implement.
 
 | Phase | Delegated To |
 |-------|-------------|

@@ -230,6 +230,8 @@ Keep the workflow traceable to the plan's preserved branches:
 | Execution routing and quality gates | 15-26 |
 | UI verification enforcement loop | 40-44 |
 
+Items 5-8 covered the delegation and review branch of the abolished second implementation route; the gap is deliberate, so the surviving numbers stay traceable to the plan's original preserved-branch identifiers instead of being renumbered.
+
 ## Connected Skills
 
 - `tsh-technical-context-discovering` - defines when existing Technical Context is sufficient and when discovery should be skipped or delegated.
