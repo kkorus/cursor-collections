@@ -133,11 +133,13 @@ This page shows how teams integrate Cursor Collections into their daily routines
 |---|---|
 | **1. Figma extraction** | The agent reads exact design specs from Figma MCP — spacing values, color tokens, typography, component variants. |
 | **2. Implementation** | Code is written following the `tsh-implementing-frontend` skill — semantic HTML, design system tokens, a11y patterns. |
-| **3. Automated verification loop** | `/tsh-review-ui` is called automatically. Playwright captures the running app; Figma MCP provides expected values. A structured PASS/FAIL diff table is generated. |
+| **3. Automated verification loop** | `/tsh-review-ui` is called automatically. `tsh-ui-capture-worker` collects Playwright CLI artifacts from the running app using the confirmed full URL, while Figma MCP provides expected values. A structured PASS/FAIL diff table is generated. |
 | **4. Auto-fix cycle** | If FAIL, the agent fixes mismatches and re-verifies — up to 5 iterations — until the component passes or escalates. |
 
 **Key prompts & agents:** `/tsh-implement` → Engineering Manager → Software Engineer, `/tsh-review-ui` → UI Reviewer  
 **Key skills:** `tsh-implementing-frontend`, `tsh-ui-verifying`, `tsh-technical-context-discovering`
+
+**Setup note:** For this workflow, the app must already be running locally, you must confirm the exact full dev server URL, and `playwright-cli` must be available to the capture worker.
 
 **Value:** Design-to-code accuracy reaches 95–99%. Design QA feedback rounds are reduced by 60–80%. Accessibility compliance is built in from the start, not bolted on after review.
 

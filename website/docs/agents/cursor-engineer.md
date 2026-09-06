@@ -11,7 +11,7 @@ The Cursor Engineer agent specializes in designing, creating, reviewing, and imp
 
 ## Responsibilities
 
-- Creating, reviewing, and improving custom agents (`SKILL.md`), skills (`SKILL.md`), prompt files (`/SKILL.md`), and instruction files (`.rules.mdc`).
+- Creating, reviewing, and improving custom agents (`SKILL.md`), skills (`SKILL.md`), command skills (`commands/<name>/SKILL.md`), and instruction files (`.mdc` rules).
 - Applying prompt engineering best practices: clarity, structure, token efficiency, progressive disclosure.
 - Designing context architecture: what information flows where, at which layer, and with what priority.
 - Enforcing strict separation of concerns between customization types.
@@ -26,8 +26,8 @@ The Cursor Engineer enforces a strict boundary model:
 |---|---|---|
 | **Agent** (`SKILL.md`) | WHO | Persona, behavior, responsibilities, tool access |
 | **Skill** (`SKILL.md`) | HOW | Reusable workflows, domain knowledge, step-by-step processes |
-| **Prompt** (`/SKILL.md`) | WHAT | Workflow trigger, task starter, routes to agent + model |
-| **Instructions** (`.rules.mdc`) | RULES | Coding standards, project conventions, always-applied |
+| **Command skill** (`commands/<name>/SKILL.md`) | WHAT | Workflow trigger, task starter, routes to the owning agent and the skill it follows |
+| **Instructions** (`.mdc` rules) | RULES | Coding standards, project conventions, always-applied |
 
 When any artifact crosses these boundaries, the Cursor Engineer identifies and corrects the violation.
 

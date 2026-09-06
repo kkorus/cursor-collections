@@ -7,6 +7,12 @@ title: Standard Flow
 
 The standard workflow is used for backend and fullstack tasks. The Engineering Manager orchestrates the full cycle: research → plan → plan validation → implement → review.
 
+The flow accepts a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion routes to preparation; it never authorizes implementation without a current actionable plan. Human approval of the exact current plan revision must be recorded before the first file-changing delegation. Normally the Architect records it at its own plan-authoring gate (`Approve plan`, `I have comments`); the Engineering Manager then validates that persisted record and reuses a valid one instead of asking again, and presents its own `Approve current plan` / `Request changes` / `Stop` gate only as fail-closed recovery when no valid current-revision record exists. An automated `tsh-plan-reviewer` `APPROVED` verdict is Reviewer approval only and is not permission to implement.
+
+Recording that plan-authoring approval ends the **authoring discussion** — the discussion in which the plan was authored, reviewed, and approved. In it, the Engineering Manager reports the exact plan path, the current `Plan Revision`, the persisted `Decision Timestamp`, and the review path when present, names implementation as the next step, and makes no file-changing delegation. Implementation runs in a new discussion you start, where the manager reuses the unchanged persisted record without presenting a duplicate approval gate. The boundary is a lifecycle stop, not an approval-validity criterion: invalid or missing states still fail closed, and a material revision still requires renewed Human approval.
+
+On every delegated or direct execution-owner entry path, the owner reads and validates the referenced plan from disk before changing files. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. A response to that question is never Human approval, and implementation remains authorized only by Human Approval of the exact current plan revision.
+
 ## Step-by-Step Command Sequence
 
 ### 1. Implement
@@ -22,7 +28,7 @@ The Engineering Manager automatically handles the full development cycle:
 - **Delegated to:** Context Engineer
 - **What it does:** Gathers all available information about the task from the codebase, Jira, Confluence, Figma, and other sources.
 - **What it produces:** A `.research.md` file with task summary, assumptions, open questions, and suggested next steps.
-- **Your action:** Review the generated research document. Verify accuracy. The Engineering Manager asks for confirmation before proceeding.
+- **Your action:** Review the generated research document for accuracy. This review is a quality checkpoint, not a separate authorization gate — the binding gate happens later, before implementation begins.
 
 #### Planning Phase (internal)
 
@@ -33,20 +39,20 @@ The Engineering Manager automatically handles the full development cycle:
 
 #### Plan Validation Phase (internal)
 
-- **Delegated to:** Plan Reviewer
-- **What it does:** Stress-tests the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins.
+- **Delegated to:** Architect, which invokes the Plan Reviewer once per plan lifecycle
+- **What it does:** Runs a lightweight final reality check of the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins, in one invocation per plan lifecycle.
 - **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings.
-- **Your action:** Review the implementation plan and review report together. Confirm scope, phases, and acceptance criteria.
+- **Your action:** Review the implementation plan and review report together for scope, phases, and acceptance criteria. Once the review event is settled, the Architect asks you to choose `Approve plan` or `I have comments` and records your literal decision in the plan. Recording it ends the authoring discussion, so start a new discussion for the implementation phase.
 
 #### Implementation Phase
 
-- **Delegated to:** Software Engineer, Prompt Engineer, DevOps Engineer, E2E Engineer (based on task type)
+- **Delegated to:** Plan Implementor (DEFAULT, for actionable low-risk plan seams), Software Engineer (EXCEPTION, for complex non-UI work), Prompt Engineer, DevOps Engineer, or E2E Engineer — routed by task type
 - **What it does:** Executes the plan by delegating to specialized agents. Tracks progress and runs quality checks after each task.
 - **What it produces:** Concrete code modifications applied by delegated agents.
 - **Your action:** Review code changes after each phase. Test functionality. Verify against the plan.
 
 :::tip
-If a `.research.md` or `.plan.md` file already exists for the task, the Engineering Manager skips that phase and proceeds directly to the next step. If a `.plan.md` is already approved and unchanged since the last review, the plan validation step is skipped.
+If a `.research.md` or `.plan.md` file already exists for the task, the Engineering Manager can reuse it after checking readiness. Reuse never proceeds without a valid current-revision Human approval record. A material revision after Human approval requires renewed Human approval before further file-changing work, and no Reviewer re-review is invoked automatically; a new review event happens only when the user explicitly directs one.
 :::
 
 ### 2. Review
@@ -65,13 +71,14 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
 ```text
 1⃣️ /tsh-implement <JIRA_ID or task description>
    ↳ 🔍 Engineering Manager delegates to Context Engineer for research
-   ↳ 📖 Review the generated research document
-   ↳ ✅ Confirm to proceed to planning
+   ↳ 📖 Review the generated research document (quality checkpoint, not an authorization gate)
    ↳ 🧱 Engineering Manager delegates to Architect for planning
-   ↳ 🧪 Engineering Manager delegates to Plan Reviewer for plan validation
+   ↳ 🧪 Architect invokes the Plan Reviewer once per plan lifecycle
    ↳ 📖 Review the implementation plan and review summary
-   ↳ ✅ Confirm the approved plan before implementation begins
-   ↳ 💻 Engineering Manager delegates implementation to specialized agents
+   ↳ ✅ Architect asks `Approve plan` / `I have comments` and records your decision — the normal authorization gate
+   ↳ 🛑 Authoring discussion ends here — start a new discussion to implement
+   ↳ ✅ Engineering Manager validates that record in the new discussion and reuses it; its `Approve current plan` / `Request changes` / `Stop` gate runs only as recovery
+   ↳ 💻 Engineering Manager delegates implementation to the owning specialist (Plan Implementor by default, Software Engineer for complex non-UI work, or the matching domain owner)
    ↳ 📖 Review code changes after each phase
    ↳ ✅ Test functionality, verify against plan
 
@@ -82,10 +89,12 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
 
 ## Input Flexibility
 
-You can run the same flow with either:
+You can run the same flow with any of the four primary inputs:
 
 - A **Jira ticket ID** (e.g., `PROJ-123`) — the agent will pull context from Jira automatically via the Atlassian MCP.
 - A **free-form task description** (e.g., `"Add pagination to the user list API"`) — the agent will work from the description and codebase analysis.
+- A standalone **`*.research.md`** file — reused as the research artifact when it is already complete.
+- A **`*.plan.md`** implementation plan — reused after a readiness check; a missing companion still routes to preparation rather than authorizing implementation without a current actionable plan.
 
 ## Task Labeling: CREATE / MODIFY / REUSE
 
@@ -97,4 +106,4 @@ Every task in an implementation plan is labeled with one of three action types. 
 | **MODIFY** | Change existing code | "Update the `getUsers` endpoint to support pagination" |
 | **REUSE** | Use existing code as-is, no changes needed | "Reuse the existing `AuthMiddleware` for the new route" |
 
-These labels are assigned during the **Plan** phase by the Architect agent. During the **Implement** phase, the Software Engineer agent uses them to understand what needs to be built from scratch, what needs careful modification of existing logic, and what can be leveraged without changes.
+These labels are assigned during the **Plan** phase by the Architect agent. During the **Implement** phase, the delegated implementer — Plan Implementor by default, Software Engineer for complex non-UI work, or the matching domain specialist — uses them to understand what needs to be built from scratch, what needs careful modification of existing logic, and what can be leveraged without changes.

@@ -32,7 +32,7 @@ Use this if you want to enable these tools only for a specific project.
 | **Atlassian** | Access Jira issues and Confluence pages | Business Analyst, Context Engineer, Architect, Engineering Manager, Code Reviewer |
 | **Figma** | Pull design details, components, and variables | Software Engineer (UI), UI Reviewer |
 | **Context7** | Semantic search in external documentation | All agents |
-| **Playwright** | Browser automation and E2E testing | Software Engineer, E2E Engineer, UI Reviewer |
+| **Playwright** | Interactive browser automation and UI debugging | Software Engineer, E2E Engineer |
 | **Sequential Thinking** | Advanced reasoning for complex analysis | All agents (for complex tasks) |
 | **AWS API** | Live AWS infrastructure inspection | DevOps Engineer |
 | **AWS Documentation** | AWS service documentation lookup | DevOps Engineer |
@@ -61,6 +61,10 @@ To confirm all MCP servers are running correctly:
 4. Send a test message in Agent chat that uses an MCP tool (for example, ask the agent to look up a Jira issue or search Context7 documentation) and confirm the tool call succeeds.
 
 If any server shows an error or disconnected status, restart Cursor or check the [Authentication Requirements](#authentication-requirements) section below.
+
+:::note UI Verification Setup
+MCP setup is only part of the Figma-backed UI verification workflow. EXPECTED still comes from Figma MCP, but ACTUAL capture is produced by `tsh-ui-capture-worker` through Playwright CLI artifacts. To use that flow, keep the target app running, confirm the exact full dev server URL when asked, and make sure `playwright-cli` is available (`npx playwright-cli` or a global install).
+:::
 
 ## Configuring Context7 API Key
 

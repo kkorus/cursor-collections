@@ -5,7 +5,7 @@ title: Agents Overview
 
 # Agents Overview
 
-Cursor Collections provides **12 user-facing agent skills** (plus 9 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
+Cursor Collections provides **13 user-facing agent skills** (plus 12 internal delegate-only workers) that together form an AI product engineering team covering the full delivery lifecycle — from product ideation through development, infrastructure, and quality assurance. Agent skills are stored in `.cursor/skills/agents/` as `SKILL.md` files. Cursor discovers them with other skills under `.cursor/skills/`.
 
 ## Agent Skills vs Cursor Subagents
 
@@ -23,7 +23,7 @@ This repository uses **agent skills**, not project-level `.cursor/agents/` files
 Each agent skill has:
 
 - **A defined role** — What the agent specializes in and what it should/shouldn't do.
-- **Recommended tools** — Which MCP integrations and tools work best for this agent.
+- **Tool usage guidance** — Which MCP integrations and tools work best for this agent, described in the body.
 - **Workflow skills** — Which domain skills it loads for specialized knowledge.
 - **Delegation logic** — When and how to hand off to other agent skills.
 
@@ -49,11 +49,11 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 │   /tsh-implement         │
 └──────┬──────────────────┘
        │ Delegates to specialized agents
-       ├────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐
-       ▼            ▼            ▼            ▼            ▼            ▼            ▼
-  Context       Architect    Software      DevOps        E2E         Prompt      UI Reviewer
-  Engineer       (plan)      Engineer      Engineer    Engineer     Engineer    /tsh-review-ui
-  (research)        │        (app code)    (infra)     (tests)     (prompts)
+       ├──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+       ▼          ▼          ▼          ▼          ▼          ▼          ▼          ▼          ▼          ▼
+  Context     Architect   UI          Software   Plan        DevOps      E2E        Prompt     UI Reviewer  Technical
+  Engineer     (plan)     Engineer    Engineer   Implementor  Engineer   Engineer   Engineer   /tsh-review  Writer
+  (research)      │       (UI)        (non-UI)   (strict)     (infra)    (tests)    (prompts)   -ui          (docs)
                     ▼
              Plan Reviewer
              (tsh-plan-reviewer)
@@ -62,6 +62,10 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
               Code Reviewer
               /tsh-review
 ```
+
+Both Architect handoffs — **Start Implementation** and **Start Infrastructure Implementation** — pass through the Engineering Manager. The manager validates the persisted Human Approval record for the exact current plan revision before the first file-changing delegation, reusing the Architect's recorded decision and presenting its own `Approve current plan` / `Request changes` / `Stop` gate only as fail-closed recovery when no valid record exists; an automated Reviewer approval does not authorize implementation.
+
+All seven execution owners apply the same inline, fail-closed precondition before editing: they read the persisted Human Approval record from disk, name the exact failed field, condition, or file when validation fails, and ask the user in chat for guided recovery on both delegated and direct entry paths, spelling out the options. A delegated owner may offer hand-back to `tsh-engineering-manager` as one choice, but does not dead-end there. The Engineering Manager and Architect present and record Human Approval, `tsh-plan-reviewer` provides non-authorizing Reviewer approval, and execution owners validate before edits.
 
 ## Agent Summary
 
@@ -78,7 +82,8 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 | [Context Engineer](./context-engineer) | `agents/tsh-context-engineer/` | Gathers requirements, builds context, identifies gaps | Atlassian, Figma, PDF Reader, Sequential Thinking |
 | [Architect](./architect) | `agents/tsh-architect/` | Designs solutions, creates implementation plans | Atlassian, Context7, Figma, PDF Reader, Sequential Thinking |
 | [Engineering Manager](./engineering-manager) | `agents/tsh-engineering-manager/` | Orchestrates implementation by delegating to specialized agents | Atlassian, Sequential Thinking |
-| [Software Engineer](./software-engineer) | `agents/tsh-software-engineer/` | Implements code against the plan | Context7, Figma, Playwright, Sequential Thinking |
+| [UI Engineer](./ui-engineer) | `agents/tsh-ui-engineer/` | Implements UI and frontend solutions | Context7, Figma, Playwright, Sequential Thinking |
+| [Software Engineer](./software-engineer) | `agents/tsh-software-engineer/` | Implements non-UI code against the plan | Context7, Sequential Thinking |
 | [Prompt Engineer](./prompt-engineer) | `agents/tsh-prompt-engineer/` | Designs, optimizes, and secures LLM application prompts | Context7, Sequential Thinking |
 
 ### Infrastructure & DevOps Agents
@@ -104,7 +109,7 @@ User-facing agents may be invoked with `@tsh-<role>` or loaded when relevant. Wo
 
 ### Internal delegate-only agent skills
 
-These skills have `disable-model-invocation: true`. They are delegated by the Business Analyst, Engineering Manager, or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation.
+These skills have `disable-model-invocation: true`. They are delegated by the Business Analyst, Engineering Manager, or Cursor Orchestrator via the Task tool — not intended for direct `@` invocation. The Engineering Manager delegates documentation-only work to the Technical Writer.
 
 | Agent | Skill path | Role |
 |-------|-----------|------|
@@ -113,7 +118,10 @@ These skills have `disable-model-invocation: true`. They are delegated by the Bu
 | BA Extraction Worker | `agents/tsh-ba-extraction-worker/` | Drafts intent briefs and extracts epics and stories |
 | BA Quality Worker | `agents/tsh-ba-quality-worker/` | Runs Lite or Full quality-review passes |
 | BA Formatting Worker | `agents/tsh-ba-formatting-worker/` | Prepares Jira-ready formatting and verification support |
-| [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Stress-tests implementation plans before implementation starts |
+| [Plan Reviewer](./plan-reviewer) | `agents/tsh-plan-reviewer/` | Runs a lightweight final reality check on implementation plans before implementation starts |
+| [Plan Implementor](./plan-implementor) | `agents/tsh-plan-implementor/` | Internal strict single-task implementor for one plan step at a time |
+| [UI Capture Worker](./ui-capture-worker) | `agents/tsh-ui-capture-worker/` | CLI-based UI capture and tripwire evidence collection for the verification loop |
+| [Technical Writer](./technical-writer) | `agents/tsh-technical-writer/` | Authors and updates README, CHANGELOG, `/docs`, and website documentation pages |
 | [Cursor Researcher](./cursor-researcher) | `agents/tsh-cursor-researcher/` | Analyzes codebases and documentation, extracts patterns |
 | [Cursor Artifact Creator](./cursor-artifact-creator) | `agents/tsh-cursor-artifact-creator/` | Creates and modifies Cursor customization artifacts |
 | [Cursor Artifact Reviewer](./cursor-artifact-reviewer) | `agents/tsh-cursor-artifact-reviewer/` | Validates quality and consistency of artifacts |

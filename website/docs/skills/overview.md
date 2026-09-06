@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **34 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+Cursor Collections includes **39 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
 
 ## How Skills Work
 
@@ -35,7 +35,8 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 
 | Skill | Description | Used By |
 |-------|-------------|---------|
-| [tsh-architecture-designing](./architecture-design) | Solution architecture design and implementation plan creation | Architect |
+| [tsh-architecture-designing](./architecture-design) | Solution architecture design | Architect |
+| [tsh-creating-implementation-plans](./creating-implementation-plans) | Implementation plan template, structure, and DoD rules | Architect, CR |
 | [tsh-technical-context-discovering](./technical-context-discovery) | Project conventions and pattern discovery | Architect, CR, SE, E2E, CE |
 | [tsh-implementing-frontend](./frontend-implementation) | UI component patterns, composition, design tokens | Software Engineer |
 | [tsh-implementing-forms](./implementing-forms) | Form architecture, schema validation, multi-step flows | Software Engineer |
@@ -47,6 +48,7 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | [tsh-sql-and-database-understanding](./sql-and-database) | Database engineering standards and ORM integration | Architect, CR, SE |
 | [tsh-codebase-analysing](./codebase-analysis) | Deep codebase analysis and dependency mapping | Architect, BA, CE, SE |
 | [tsh-engineering-prompts](./prompt-engineering) | LLM prompt design, optimization, security, and evaluation | PE, SE, Architect, CR |
+| tsh-resolving-skill-references | Resolution order for locating a referenced skill file, with a hard stop when it cannot be found | All delegating agents |
 
 ### Cloud & Infrastructure Skills
 
@@ -68,6 +70,13 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | [tsh-reviewing-frontend](./reviewing-frontend) | Frontend-specific review: components, hooks, rendering, a11y | Code Reviewer |
 | [tsh-ui-verifying](./ui-verification) | Figma vs implementation verification criteria | UI Reviewer, SE |
 | [tsh-e2e-testing](./e2e-testing) | Playwright E2E testing patterns and verification | E2E Engineer |
+| playwright-cli | CLI browser automation and capture for UI verification | UI Capture Worker, UI Engineer |
+
+### Documentation Skills
+
+| Skill | Description | Used By |
+|-------|-------------|---------|
+| [tsh-writing-documentation](./writing-documentation) | README, CHANGELOG, `/docs`, and docs-site authoring conventions | Technical Writer |
 
 ### Cursor Customization Skills
 
@@ -85,6 +94,7 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | Skill | BA | CE | Architect | SE | PE | CR | UI | E2E | DevOps | Cursor Eng. |
 |-------|----|----|-----------|----|----|----|----|-----|--------|-------------|
 | tsh-architecture-designing | | | ✅ | | | | | | | |
+| tsh-creating-implementation-plans | | | ✅ | | | ✅ | | | | |
 | tsh-code-reviewing | | | | | ✅ | ✅ | | | | |
 | tsh-codebase-analysing | ✅ | ✅ | ✅ | ✅ | | | | | ✅ | ✅ |
 | tsh-creating-agents | | | | | | | | | | ✅ |

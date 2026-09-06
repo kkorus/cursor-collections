@@ -1,0 +1,80 @@
+---
+name: tsh-creating-implementation-plans
+description: "Creates implementation plan documents (*.plan.md) that break a designed solution into phases and verifiable tasks. Owns the plan template (plan.example.md), plan structure rules, and task definition-of-done rules. Use when authoring, revising, or structuring an implementation plan for any feature or task."
+disable-model-invocation: true
+---
+
+# Creating Implementation Plans
+
+This skill turns a designed solution into a phased, verifiable implementation plan document.
+
+<principles>
+<plan-structure-ownership>
+This skill is the single owner of the plan template (`./plan.example.md`), the plan-structure procedure, and the definition-of-done rules for implementation plans. Other skills and agents MUST reference this skill instead of duplicating plan-structure rules.
+</plan-structure-ownership>
+<goal-hierarchy>
+Every plan defines one Wildly Important Goal, stated explicitly as the single most important outcome the whole plan must achieve. The Wildly Important Goal section must keep that main goal as one sentence on a labeled `**Goal**:` line, and also include an explicit Success Measure plus a Do NOT touch / do NOT add list to reduce scope creep. Every phase defines a Goal that clearly advances the Wildly Important Goal, followed by a Description that explains the broader why for reviewers and implementors. The plan itself, after the Wildly Important Goal, also includes a description of the overall approach.
+</goal-hierarchy>
+<open-questions-dispatch-gate>
+Plans must not be dispatched to an implementor while any Open Questions row has Status = ❓ Open; unresolved questions must be routed back to `tsh-architect` before execution.
+</open-questions-dispatch-gate>
+<human-approval-protocol>
+Every plan carries a `## Human Approval` record, and that record is the canonical, auditable record of approval for the exact current plan revision. Its schema has exactly these fields: `Plan Revision` (integer), `Human Decision`, `Approved Revision`, `Decision Timestamp` (ISO 8601 UTC with a trailing `Z`), and `Note` (optional). `Human Decision` has exactly these values: `PENDING`, `APPROVED`, `CHANGES_REQUESTED`, and `STOPPED`. `Plan Revision` bumps on any material change to scope, phases, tasks, or definition of done, at any point before implementation completion; routine task checkbox, progress, status, and execution- or review-recording updates are not material and do not bump it. `tsh-architect` owns material plan revision changes and records only literal explicit human responses; Human approval is never stored in `.plan-review.md`.
+
+A `Plan Revision` bump invalidates any prior `Approved Revision`: it sets `Human Decision=PENDING`, clears `Approved Revision`, and the reason is explained in the plan's Changelog. Persisted approval is valid if and only if `Human Decision=APPROVED`, `Approved Revision=current Plan Revision`, and `Decision Timestamp` is valid ISO 8601 UTC ending in `Z`, and no execution may start against a record that fails that predicate — a fresh session accepts persisted approval only under it. A material change after an earlier Human approval immediately halts further file-changing delegation and requires renewed Human approval; it never triggers a reviewer invocation on its own, and a new review event occurs only through an explicitly user-directed new review event. The low-risk exemption applies only to initial preparation before any Human approval has ever been recorded. This is an instruction-level, auditable mechanism, not cryptographic and not platform enforcement.
+</human-approval-protocol>
+<executable-slots-dispatch-gate>
+Plans must not be dispatched to an implementor while any executable slot still contains an angle-bracket placeholder or any assumed-default command. Verification fields, DoD command items, and file/spec path arguments must be resolved from Technical Context or the task's app stack before dispatch. This gate is intentionally narrow: it applies only to executable slots, and instructional angle-bracket placeholders elsewhere in the template are allowed.
+</executable-slots-dispatch-gate>
+<no-real-code>
+The plan must not contain real implementation code or full implementation bodies/function logic. Pseudo-code is allowed only to explain genuinely complicated algorithms or ideas, and task-boundary seam artifacts such as type definitions, function signatures, DTOs, interfaces, and API shapes are allowed when they clarify the contract without supplying implementation bodies. Diagrams, explanations, and the Technical Context chapter content are allowed and encouraged.
+</no-real-code>
+</principles>
+
+## Plan Creation Process
+
+Before drafting, read [`./plan.example.md`](./plan.example.md) in full first — it is the canonical structure every plan must follow. Knowing the required sections up front tells you which fields you must research, discover, or design (for example Technical Context, Current Implementation Analysis, and Security Considerations) before you begin, so you gather the right information deliberately rather than backfilling it later.
+
+1. Confirm inputs: a designed solution, typically from `tsh-architecture-designing`, plus task research and context. Do not design the solution here; this skill structures an already-designed solution into a plan.
+2. Define the Wildly Important Goal and the plan description.
+3. Divide the work into small phases. Each phase must have a Goal, a Description, a `**Verification:**` field listing the exact fast-running checks to run after the phase completes, and a list of tasks with checkboxes to mark finished tasks later. Keep phase verification reviewer-verifiable and limited to fast checks such as unit tests, integration tests, static code analysis, linters, formatting checks, and project build. Source these checks from the plan's Technical Context → Tech Stack / Testing Patterns rather than assuming Node/npm.
+4. Define each task. Each task must have a Description, a `**Files:**` field, and a Definition of Done as a checkbox list. Phase Description states the broader why for reviewers and implementors. Task Description should use a near-imperative form that names the files and the behavior to change. The `**Files:**` field must name every file the task will touch and label each one with `create`, `modify`, or `reuse`. If a file was produced or last touched by an earlier task in the same plan, include an inline back-reference such as `(modify — created in Task 1.1)`; if a file is created and consumed within the same task, no back-reference is needed. Tasks may also include an optional `**Stop Rule:**` sentence near `Clues` that tells the implementor to stop, report, and avoid improvising if the task cannot proceed safely or an expected seam is missing; do not turn this into a formal dependency graph or a `Depends on:` field. Optional Clues should still help the implementor with file paths, line ranges, reference patterns, and gotchas.
+5. Add the mandatory cross-cutting tasks required by the plan rules.
+6. Save the plan as a document following the `./plan.example.md` template. Do not add or remove any sections from the template. Follow the structure and naming conventions strictly.
+
+<definition-of-done-rules>
+Each task must include a definition of done as a checkbox list.
+Each task's Definition of Done must include at least one objectively reviewer-verifiable check.
+When a task changes code, that check must include at least one runnable command taken verbatim from the task's app stack as recorded in Technical Context → Tech Stack / Testing Patterns, matched to the app the task's Files belong to, never assumed from Node/npm (for example `tsc --noEmit` for a Node app, or `uv run pytest <path>` for a Python app).
+For a docs, config, content, or asset task that has no runnable command, the Definition of Done may instead use a deterministic check a reviewer can confirm by inspecting the changed file, such as a grep-style content assertion (for example `docs/<file>.md contains an "## Usage" section`).
+Definition of done must not include deployment steps.
+Definition of done must not include manual QA steps.
+Definition of done must not include steps that cannot be verified by a code reviewer during code review.
+Example: do not require checking whether tests were failing before the change, because that cannot be verified during code review.
+</definition-of-done-rules>
+
+<mandatory-plan-content>
+- The plan must include a code review phase at the end, fully done by `tsh-code-reviewer` using `tsh-review`. Pass e2e execution to that agent as part of the delegation; do not run those tests from the plan author level.
+- For features with UI components based on Figma designs, each UI implementation task should be followed by a `[REUSE]` UI verification task delegated to `tsh-ui-reviewer` using `tsh-review-ui`. Include the Figma URL in every verification task. Figma-based plans must track per-component UI verification status, keep the exact casing `UI Verification Status` in the plan, and record it separately from code review status, using the terminal states `PASSED`, `ESCALATED`, or `VERIFICATION NOT RUN`, along with the component name, iteration count, and Figma URL. Do not run UI verification from the software engineer level — let the engineering manager orchestrate the verify-fix loop. This scoped UI-verification is distinct from full e2e: the UI-verification outcome is owned by `tsh-ui-reviewer`, while full e2e remains owned by `tsh-code-reviewer`.
+- For features involving LLM application prompts (system prompts, RAG templates, tool-calling instructions, classification/extraction prompts), add a `[REUSE]` prompt engineering task delegated to `tsh-prompt-engineer` using `tsh-engineer-prompt`. Separate prompt design from application code — the software engineer implements the integration code, the prompt engineer designs the prompt content. Include the use case, target model, and any existing prompt drafts in the task description.
+- Every review, UI-verification, and prompt-engineering task the plan emits must name its governing skill (`tsh-review`, `tsh-review-ui`, `tsh-engineer-prompt`) and must carry the clause "resolved per `tsh-resolving-skill-references`" in the task description. A delegate executing a generated plan reads only that plan, so a bare skill name there would carry no resolution pointer with it.
+- Do not provide deployment plans, code pushing instructions, or repository code review instructions.
+
+Note: every skill named above is a skill reference rather than a file path — resolve it with the resolution order in `tsh-resolving-skill-references`, read and follow the resolved file (command and internal skills are not invocable by name and must be read), and stop and ask the user when a skill cannot be located instead of proceeding without it.
+</mandatory-plan-content>
+
+<plan-content-rules>
+- The plan must capture security considerations relevant to the implementation.
+- Save the plan as `specifications/{task-name-or-id}/{task-name}.plan.md`.
+- `{task-name-or-id}` names the specification folder — either the issue/Jira ID or a shortened kebab-case task name. `{task-name}` is the shortened kebab-case task name, reused for every artifact inside that folder (`.research.md`, `.plan.md`, `.plan-review.md`), so agents and skills read and write plans at the same location.
+- For bug-fix work, the plan must include issue reproduction, root-cause analysis, and a fix verified by tests.
+- Plan only the current task. Record prerequisite work, follow-up work, and out-of-scope items in `Improvements` instead of expanding the implementation scope.
+- Reuse or modify existing code whenever possible. Consult `Current Implementation Analysis` before planning new components, functions, or utilities.
+</plan-content-rules>
+
+## Connected Skills
+
+- `tsh-architecture-designing` - designs the solution this skill turns into a plan
+- `tsh-implementation-gap-analysing` - verifies what was already implemented before planning new work
+- `tsh-technical-context-discovering` - populates the plan's Technical Context section
+- `tsh-resolving-skill-references` - supplies the resolution order behind every skill reference this skill mandates in plan content, so a generated plan resolves its review, UI-verification, and prompt-engineering skills in any project
