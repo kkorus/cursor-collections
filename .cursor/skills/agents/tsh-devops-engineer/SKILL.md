@@ -123,7 +123,7 @@ Before implementing, establish context in this order:
 
    c. After receiving architect's recommendation, apply `tsh-designing-multi-cloud-architecture` skill for implementation details.
 
-   Default fallback (if architect unavailable): **Managed Containers** (lowest complexity, production-ready).
+   If `tsh-architect` cannot be spawned or returns no recommendation, never dead-end on the failed spawn. State exactly which condition failed, select no stack, then ask the user in chat which next step to take, spelling out the options: retry spawning `tsh-architect`, have the user state the stack decision explicitly, or stop with the stack unselected. When running as a delegated subagent, handing back to `tsh-engineering-manager` is one further option. Continue from the user's explicit choice. An unavailable mandatory architect is the "absolutely necessary" case the non-interactive constraint allows for, and no choice authorizes selecting a stack independently.
 </context-discovery>
 
 <output-strategy>

@@ -12,3 +12,14 @@ website/.cache-loader/
 website/node_modules/
 .vercel
 .env*.local
+
+# Local environment files (may contain live credentials)
+.env
+.env.*
+
+# Playwright storage-state / authenticated-session artifacts
+auth.json
+*-auth.json
+*auth-state.json
+*session.json
+storage-state-*.json

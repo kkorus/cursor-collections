@@ -45,7 +45,7 @@ Follow the 5-step verification process defined in the `tsh-ui-verifying` skill. 
    - If the caller did not provide the artifact directory or the artifact set is incomplete, return `VERIFICATION NOT RUN` and instruct the caller to run `tsh-ui-capture-worker` first for the same pinned URL.
 4. Compare following the skill's verification categories and tolerances.
 5. Generate a structured report following the output contract below.
-6. If capture is blocked by auth redirect, missing confirmed URL, wrong page state, unreachable page, incomplete artifacts, or any other blocker, the immediate next action MUST be to ask the user before any further reply.
+6. If capture is blocked by auth redirect, missing confirmed URL, wrong page state, unreachable page, incomplete artifacts, or any other blocker, still emit the full report from the output contract below — the report is ALWAYS returned first, never withheld pending an answer. Carry the blocker question inside the mandatory `### Blocker Resolution` section: name the blocker in `Blocker Type`, the step number in `Blocking Step`, and state the exact question or resolution step in `Next Required Action`. Invocation mode determines who that question is put to: in direct-user mode (a user invoked this skill, for example by typing `/tsh-review-ui`) put the `Next Required Action` question to the user in the same reply that carries the report, and record `User asked: yes`; in subagent mode (this step was delegated by a caller) return the identical report to the caller, do NOT ask the user, and record `User asked: no` — the caller owns blocker resolution and user interaction.
 7. If `figma` MCP is unavailable, if the caller did not provide usable `tsh-ui-capture-worker` artifacts, or if this reviewer step itself was not actually delegated, the result MUST be `VERIFICATION NOT RUN` with blocker-resolution guidance.
 8. Never return an empty response. Even when the flow is blocked before evidence collection, return the full blocker report skeleton with explicit unknowns marked as `UNKNOWN`.
 
@@ -109,6 +109,6 @@ Never omit `Verification Result`, `Component`, `Artifact Directory`, `Artifact S
 
 <constraints>
 - Missing or blocked capture must report `VERIFICATION NOT RUN` with blocker-resolution guidance.
-- Do not ask for credentials, session details, or blocker-resolution input in plain assistant text without actually asking the user through a focused question.
+- In direct-user mode, do not ask for credentials, session details, or blocker-resolution input in plain assistant text without actually asking the user through a focused question. In subagent mode the report's `Next Required Action` field is the correct and only channel — raise it to the caller and never ask the user.
 - Do not improvise a fallback verification in the caller.
 </constraints>

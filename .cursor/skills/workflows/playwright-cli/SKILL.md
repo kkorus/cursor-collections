@@ -142,6 +142,8 @@ playwright-cli sessionstorage-clear
 
 Use this flow when the user has explicitly authorized a genuine login through the application's real sign-in UI. This is legitimate authentication, not cookie or token injection.
 
+**Origin binding — precondition for everything below.** Record the origin (scheme, host, port) of the user-confirmed URL once at the start of the session; that recorded value is the session's **authorized origin**. Before deriving any field key, before reading any `TSH_UI_LOGIN_*` variable, and before any `fill`, read the current page origin *after all redirects* (`playwright-cli --raw eval "window.location.origin" -s <session>`) and compare it to the authorized origin. On a mismatch, stop before all three of those actions, report the observed origin to the user, and ask the user to authorize that origin for the session. A cross-origin login page is allowed **only** on that explicit authorization — which is the supported path when the redirect lands an SSO chooser, an MFA challenge, or a captcha on a different origin. Treat the mismatch as a blocker to raise, not as a silent refusal. On an authorized origin, use only the variables you yourself requested for the form currently on screen; never read any other `TSH_UI_LOGIN_*` variable. The `TSH_UI_LOGIN_` prefix is a **naming convention, not an allowlist**: the origin binding plus this request-scoping is what actually constrains which secret can be handed to a page.
+
 Preferred automated path for test credentials: store them in the target repo repo-root `.env` file using env var names derived from the actual required login fields. Derive each env var as `TSH_UI_LOGIN_<NORMALIZED_FIELD_KEY>`, where `NORMALIZED_FIELD_KEY` comes from `name` -> `autocomplete` -> `id` -> visible label text and is normalized to uppercase snake case. Examples: `email` -> `TSH_UI_LOGIN_EMAIL`, `userName` -> `TSH_UI_LOGIN_USER_NAME`, `company-code` -> `TSH_UI_LOGIN_COMPANY_CODE`. Reload `.env` before the auth attempt so values saved by the user during the same flow are picked up immediately without being echoed back through chat.
 
 If the pinned page redirects to login and those derived env vars are not already prepared, inspect the form, derive the exact env var names, ask the user to add them to repo-root `.env`, and confirm when the file is saved, then rerun the auth attempt with `.env` reloaded. Keep fallback guidance for non-standard auth only; do not start with a broader questionnaire.
@@ -156,18 +158,33 @@ After you save the file, I will rerun capture and reload `.env` automatically.
 ```
 
 ```bash
-# load the local .env contract for this repo without printing values
-set -a
-source .env
-set +a
+# read the local .env as data and export only the TSH_UI_LOGIN_ contract
+# the file is never run as a script, and no value is printed
+while IFS='=' read -r ui_login_name ui_login_value; do
+  export "$ui_login_name=$ui_login_value"
+done < <(grep -E '^TSH_UI_LOGIN_[A-Z0-9_]+=' .env)
+unset ui_login_name ui_login_value
+```
 
+Accepted limitations of this reader — it handles the `TSH_UI_LOGIN_` contract only and is not a general `.env` parser:
+
+- Surrounding quotes are taken literally and are not stripped, so the quote characters become part of the value.
+- Multi-line values are not supported: a value is read only to the end of its own line, and continuation lines are dropped by the name filter.
+- An `export ` prefix on the line is not recognized, so such a line is skipped by the name filter.
+- No escape processing is performed; backslash sequences stay literal.
+- The process-substitution form requires `bash`.
+
+A credential that needs any of those uses the storage-state path instead of this reader.
+
+```bash
 # 1. open a named session
 playwright-cli open -s ui-verify
 
 # 2. navigate to the real login page
 playwright-cli goto "https://example.com/sign-in" -s ui-verify
 
-# 3. inspect the page to get field refs
+# 3. confirm the post-redirect origin equals the authorized origin, then get field refs
+playwright-cli --raw eval "window.location.origin" -s ui-verify
 playwright-cli snapshot -s ui-verify
 
 # 4. fill the real login form with env-backed test credentials
@@ -188,8 +205,8 @@ playwright-cli goto "https://example.com/protected-screen" -s ui-verify
 
 Rules:
 
-- Use only credentials the user explicitly provided for this task through local repo env configuration or another allowed local secret mechanism.
-- Keep the storage-state file out of version control and outside committed artifact directories such as `specifications/**`.
+- Use only credentials the user explicitly provided for this task through local repo env configuration or another allowed local secret mechanism. "For this task" is defined by the origin binding above: only the variables you requested for the form on screen, and only while the post-redirect page origin equals the session's authorized origin.
+- Keep the storage-state file out of version control and outside committed artifact directories such as `specifications/**`. Ignore the state filenames explicitly — `auth.json`, `*-auth.json`, `*auth-state.json`, `*session.json`, and `storage-state-*.json` — as set out under Security Notes in [references/storage-state.md](references/storage-state.md).
 - Never print the values of derived `TSH_UI_LOGIN_*` env vars in terminal output.
 - Never inject cookies, tokens, `localStorage`, or `sessionStorage` by hand to fake a signed-in state. Use the real login form or a storage-state file created from a real login.
 

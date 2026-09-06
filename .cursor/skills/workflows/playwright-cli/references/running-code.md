@@ -90,11 +90,6 @@ playwright-cli run-code "async page => {
 ## Wait Strategies
 
 ```bash
-# Wait for network idle
-playwright-cli run-code "async page => {
-  await page.waitForLoadState('networkidle');
-}"
-
 # Wait for specific element
 playwright-cli run-code "async page => {
   await page.locator('.loading').waitFor({ state: 'hidden' });
@@ -108,6 +103,13 @@ playwright-cli run-code "async page => {
 # Wait with timeout
 playwright-cli run-code "async page => {
   await page.locator('.result').waitFor({ timeout: 10000 });
+}"
+
+# Last resort: wait for network idle - it can time out and throw on apps with
+# long-polling, SSE, or repeating timer-driven fetches, so prefer the strategies
+# above, and always bound it with an explicit timeout and handle that timeout
+playwright-cli run-code "async page => {
+  await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
 }"
 ```
 
@@ -220,11 +222,11 @@ playwright-cli run-code "async page => {
 # Login and save state
 playwright-cli run-code "async page => {
   await page.goto('https://example.com/login');
-  await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('secret');
+  await page.getByRole('textbox', { name: 'Email' }).fill(process.env.TSH_UI_LOGIN_EMAIL);
+  await page.getByRole('textbox', { name: 'Password' }).fill(process.env.TSH_UI_LOGIN_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.waitForURL('**/dashboard');
-  await page.context().storageState({ path: 'auth.json' });
+  await page.context().storageState({ path: '/tmp/playwright-login-auth.json' });
   return 'Login successful';
 }"
 
@@ -239,3 +241,5 @@ playwright-cli run-code "async page => {
   return results;
 }"
 ```
+
+The login example writes session state outside the repository working tree; a consuming project must add its own matching ignore patterns, listed under **Security Notes** in [references/storage-state.md](storage-state.md).

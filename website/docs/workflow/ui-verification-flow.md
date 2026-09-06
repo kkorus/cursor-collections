@@ -139,7 +139,7 @@ If the worker notices that the gate is trivially bypassable, it must report that
 
 The Reviewer is the design judge. It must obtain EXPECTED from Figma MCP, not from a browser screenshot.
 
-On every pass it ensures the current iteration directory contains:
+On every pass it ensures the shared verification root contains:
 
 - `figma-expected.png`
 

@@ -6,9 +6,9 @@ alwaysApply: false
 
 # Naming Conventions
 
-## `tsh-` prefix required on all artifact filenames
+## `tsh-` prefix required on artifact names
 
-Every Cursor customization artifact in this repository must use the `tsh-` prefix:
+The prefix applies to skill **directory** names in all four layers (`agents/`, `commands/`, `workflows/`, `internal/`) and to rule **filenames**. It does not apply to the literal `SKILL.md` filename, which is fixed by Cursor and unprefixed by design; to non-skill support files inside a skill directory (`references/`, `assets/`, `examples/`, `*.template.md`, `*.example.md`), which are named for their topic; or to config files such as `mcp.json`.
 
 - **Commands (entry-point skills):** `tsh-<action>/SKILL.md` — e.g., `tsh-implement/`, `tsh-review/`
 - **Command references (not skills):** `tsh-<action>/references/<topic>.md` — optional backing docs that must not appear as separate `/` entries. Prefer a workflow skill when the process is shared or should be auto-loaded (e.g. `tsh-committing`, `tsh-code-reviewing`, `tsh-ui-verifying`).
@@ -22,7 +22,14 @@ These artifacts are designed to be installed into other projects (via GitHub imp
 
 ## Frontmatter `name` fields must match the prefixed folder name
 
-Skills use a `name` field in SKILL.md frontmatter — it must include the `tsh-` prefix and match the directory name. For example, `tsh-creating-skills/SKILL.md` must have `name: tsh-creating-skills`. Files under `commands/*/references/` are not skills and have no frontmatter `name`.
+Skills use a `name` field in SKILL.md frontmatter — it must include the `tsh-` prefix and match the directory name. For example, `tsh-creating-skills/SKILL.md` must have `name: tsh-creating-skills`. Support files inside a skill directory — anything under `references/`, `assets/`, or `examples/`, plus `*.template.md` and `*.example.md` — are not skills, have no frontmatter `name`, and are named for their topic. That holds in every layer, not only under `commands/`.
+
+## Named exceptions
+
+Exactly two exceptions exist. Adding a third requires editing this rule.
+
+- **Vendored third-party skills — currently only `playwright-cli`:** retained at its upstream name so upstream syncs stay diffable. The exception covers its directory name (`.cursor/skills/workflows/playwright-cli/`), its `name: playwright-cli` frontmatter, and its unprefixed `references/*.md`; cross-references to it use that same unprefixed name. Do not rename the directory and do not prefix its `name` field.
+- **`.cursor/rules/cursor-instructions.md`:** the repository-level constitution, whose name is fixed by convention at exactly one file per repository at that path. It already self-declares this exception in its own `.cursor/rules/` architecture bullet.
 
 ## Cross-references must use prefixed names
 

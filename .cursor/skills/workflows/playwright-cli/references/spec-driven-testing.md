@@ -189,7 +189,7 @@ Collect the generated code and write the test file at the path given in the spec
 ```ts
 // spec: specs/basic-operations.plan.md
 // seed: tests/seed.spec.ts
-import { test, expect } from './fixtures';   // or '@playwright/test' if no fixtures file
+import { test, expect } from '../fixtures';   // or '@playwright/test' if no fixtures file
 
 test.describe('Signing in and out', () => {
   test('should sign in', async ({ page }) => {
@@ -215,12 +215,12 @@ Rules:
 - **One test per file.** File path, describe name, and test name come verbatim from the spec (minus the ordinal).
 - Prefix each numbered step with a `// N. <step text>` comment before its actions.
 - Use the describe group name verbatim from the spec (no `1.` ordinal).
-- Import from `./fixtures` if the project has one; otherwise `@playwright/test`.
+- Import the fixture file `tests/fixtures.ts` if the project has one — from a test at `tests/<group>/<name>.spec.ts` that specifier is `../fixtures`; otherwise `@playwright/test`.
 - **Important**: close the CLI session and stop the background test before moving to the next scenario.
 
 ### 2.3 Generate multiple scenarios
 
-Loop 2.2 over the targeted scenarios one at a time, restarting the seed between each so every test starts from a clean page. This is safe to parallelise due to unique generated session names - just make sure each test run is stopped.
+Loop 2.2 over the targeted scenarios one at a time, restarting the seed between each so every test starts from a clean page. Never run two scenarios concurrently — they share the seed session and the application's state — and make sure each test run is stopped before starting the next.
 
 ### 2.4 Run generated tests
 
@@ -273,7 +273,7 @@ Rehearse the corrected interaction with `playwright-cli` — the generated code 
 
 Edit the test file: update the locator, assertion, step order, or inputs to match the corrected behaviour. Stop the background debug run. Rerun the single test to confirm green.
 
-Never skip hooks or add sleeps as a fix. Never use `networkidle`.
+Never skip hooks or add sleeps as a fix. Never use `networkidle` in authored test code — assertions auto-wait and retry, so there is nothing for it to settle. (One-shot evidence capture outside the test suite is a different mechanism; `tsh-ui-verifying` governs that path and allows a bounded, non-fatal `networkidle` there.)
 
 ### 3.4 Reconcile with the spec
 

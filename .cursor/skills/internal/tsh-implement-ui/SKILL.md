@@ -53,10 +53,16 @@ Do NOT skip verification or delegate without a Figma reference.
 - This step is **delegate-only**. The main/orchestrating agent must not perform UI verification itself and must not substitute code review, type checks, or browser inspection for the delegated `tsh-ui-capture-worker` + `tsh-ui-reviewer` flow.
 - If `tsh-ui-reviewer` cannot be invoked, if `figma` is unavailable to the reviewer, or if `tsh-ui-capture-worker` cannot be invoked by the caller, treat that as a blocker in the UI gate and report `VERIFICATION NOT RUN`. Do not self-execute a fallback verification path in the caller.
 
-6. **Handle verification results**:
+6. **Read the confidence level before dispatching anything** — every verification report carries a confidence level, and it is read **before** any fix is delegated, because it decides whether the FAIL branch in step 7 may run at all:
+   - **HIGH** confidence → enter the verify-fix loop and fix exactly as reported
+   - **MEDIUM** confidence → enter the verify-fix loop, fix the obvious issues, and ask the user about the unclear ones
+   - **LOW** confidence → do NOT enter the loop and do NOT delegate a fix; take the LOW-confidence pause in step 7 first, because the tool data behind the report may be incomplete
+
+7. **Handle verification results**:
    - If **PASS** → mark the task and its verification step as complete in the plan. Move to the next task.
 
-- If **FAIL** → this is NOT a stopping point. Delegate the fix to `tsh-ui-engineer` — pass the **complete** verification report and explicitly instruct the engineer to fix **ALL** listed differences, not just the first one. After the fix, delegate a **fresh capture** to `tsh-ui-capture-worker` using the same pinned full URL and the same Figma URL to ensure the shared `figma-expected.png` still exists (or refresh it if the node changed) and to regenerate `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml`, and only then re-delegate verification to `tsh-ui-reviewer` on those new artifacts. Re-verification must never run on stale artifacts. Then loop again: a single FAIL pass never ends the loop — keep running fix → fresh capture → re-verify until the result is PASS or you have completed **5 full iterations** for this component. Only after 5 completed iterations with remaining mismatches do you open the structured gate below.
+- If **FAIL** with **HIGH** or **MEDIUM** confidence → this is NOT a stopping point. Delegate the fix to `tsh-ui-engineer` — pass the **complete** verification report and explicitly instruct the engineer to fix **ALL** listed differences, not just the first one. After the fix, delegate a **fresh capture** to `tsh-ui-capture-worker` using the same pinned full URL and the same Figma URL to ensure the shared `figma-expected.png` still exists (or refresh it if the node changed) and to regenerate `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml`, and only then re-delegate verification to `tsh-ui-reviewer` on those new artifacts. Re-verification must never run on stale artifacts. Then loop again: a single FAIL pass never ends the loop — keep running fix → fresh capture → re-verify until the result is PASS or you have completed **5 full iterations** for this component. Only after 5 completed iterations with remaining mismatches do you open the structured gate below.
+- If **FAIL** with **LOW** confidence → **LOW-confidence pause.** Change nothing. Do not delegate a fix to `tsh-ui-engineer`, do not re-capture, and do not edit any file — LOW confidence means the reviewer's own tool data may be incomplete, so a fix would be made on weak evidence. Report the mismatches the reviewer listed, say plainly which evidence is weak and why, and ask the user how to proceed before anything is changed. This pause is not a verdict and not a status: it does **not** consume the 5-iteration budget (nothing was changed and nothing was re-captured), it is **not** `VERIFICATION NOT RUN` (verification did run and returned a verdict), and it is **not** `ESCALATED` (that state needs the user's explicit acknowledgement of a blocker, per the gate below). It is a transient loop state that resolves the moment the user answers; then re-enter the FAIL branch above with the user's direction. It is a consent gate about changing code on weak evidence only — do not treat it as plan approval, do not record it as an approval, and do not offer plan-approval options in it.
 - If **VERIFICATION NOT RUN** → treat it as a **pre-verification blocker**, not as a failed verification iteration. Resolve the blocker with the user (missing confirmed URL, auth, wrong page state, unreachable page, incomplete artifacts). Regenerate capture via `tsh-ui-capture-worker` using the same pinned full URL, and re-run verification. This state does **not** consume the 5-iteration budget and does **not** enter the post-5-iteration continue/stop/custom gate. Only treat it as `ESCALATED` if the user explicitly acknowledges an unresolved blocker.
 - If **VERIFICATION NOT RUN** because `tsh-ui-reviewer` reported `figma` MCP unavailability, only then may the caller ask the user to enable Figma MCP or provide an exported reference image. The caller must not raise that blocker based on its own tool availability.
 - If **VERIFICATION NOT RUN** because the reviewer step itself was not delegated or could not access its required tools/subagents, that is an orchestration blocker. Resolve it by asking the user; do not let the main agent attempt the verification step directly.
@@ -65,11 +71,6 @@ Do NOT skip verification or delegate without a Figma reference.
 - Record the user's decision and the resulting outcome in the plan's Changelog.
 - If the extra iteration budget is exhausted and gaps remain, run the same structured user-confirmation gate again.
 - Code review cannot start for that item until it resolves as `PASSED` or explicitly acknowledged `ESCALATED`.
-
-7. **Handle confidence levels** from verification reports:
-   - **HIGH** confidence: fix exactly as reported
-   - **MEDIUM** confidence: fix obvious issues, ask user about unclear ones
-   - **LOW** confidence: ask user before making any changes — tool data may be incomplete
 
 8. **Update the plan** — After completing each task step, update the plan to reflect progress (check the box). Note the verification result (PASS, number of iterations, or escalation).
 
@@ -91,6 +92,10 @@ For each UI component, run this loop explicitly:
 ```text
 iteration = 0
 while iteration < 5:
+    if latest report is FAIL with LOW confidence:
+        pause and ask the user BEFORE any fix; change nothing
+        this is NOT an iteration, NOT VERIFICATION NOT RUN, NOT ESCALATED
+        resume this branch with the user's direction once they answer
     iteration += 1
     fix ALL differences from the latest report (skip on the very first pass)
     fresh capture via tsh-ui-capture-worker -> ensure shared figma-expected.png + actual.png + computed-styles.json + a11y-snapshot.yml
@@ -108,14 +113,15 @@ Hard rules for weaker models:
 - Never report the component complete while the latest result is FAIL.
 - Every iteration regenerates fresh ACTUAL artifacts and ensures the shared `figma-expected.png` exists (refresh only if the Figma node changed); never reuse pre-fix ACTUAL evidence.
 - `VERIFICATION NOT RUN` (capture / auth / URL blocker) does not consume the 5-iteration budget.
+- A FAIL at LOW confidence pauses for the user **before** any fix is delegated; that pause does not consume the 5-iteration budget and never becomes `ESCALATED` on its own.
 
 ## Verification Rules
 
 1. Every UI component must be verified by `tsh-ui-reviewer` — minimum once per component, no exceptions
 2. Fix all reported differences — do not skip or rationalize
 3. Re-delegate verification after every fix — never assume a fix worked
-4. Maximum 5 iterations per component — escalate if still failing
-5. Check confidence level — LOW confidence means tool data may be incomplete
+4. Maximum 5 iterations per component — after 5 completed FAIL iterations open the structured user-confirmation gate; only the user's explicit acknowledgement there produces `ESCALATED`
+5. Check the confidence level **before** dispatching a fix — LOW confidence means tool data may be incomplete, so pause and ask the user before changing anything; that pause is not an iteration and never becomes `ESCALATED` by itself
 
 ## Verification Gate — Do Not Proceed Without Real Verification
 
@@ -146,7 +152,7 @@ After every UI fix, repeat the capture and reviewer pass on fresh artifacts befo
 
 If `tsh-ui-reviewer` consistently returns LOW confidence or tool errors:
 
-1. Do not continue the loop blindly
+1. Do not continue the loop blindly, and do not delegate a fix on LOW-confidence evidence
 2. Ask the user if they can verify manually (open Figma + app side-by-side)
 3. Document the issue in the plan's Changelog
-4. Continue with next component or escalate
+4. Continue only from the user's answer — moving on to another component is a choice the user makes, not a default. Repeated LOW confidence is still the LOW-confidence pause of step 6: it never becomes `ESCALATED` by itself. A tool error that prevents verification altogether stays `VERIFICATION NOT RUN`, and `ESCALATED` still requires the user's explicit acknowledgement

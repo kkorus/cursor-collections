@@ -8,7 +8,7 @@ title: Cursor Artifact Creator (internal)
 **File:** `.cursor/skills/agents/tsh-cursor-artifact-creator/SKILL.md`
 **Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
-Creation specialist that builds and modifies Cursor customization artifacts (`SKILL.md`, `/SKILL.md`, `.mdc rules`) based on detailed specifications from the orchestrator. Executes creation tasks only — does not research or review.
+Creation specialist that builds and modifies Cursor customization artifacts (`SKILL.md`, `.mdc` rules) based on detailed specifications from the orchestrator. Executes creation tasks only — does not research or review.
 
 ## Responsibilities
 
