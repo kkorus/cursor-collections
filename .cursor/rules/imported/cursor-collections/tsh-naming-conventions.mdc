@@ -1,5 +1,5 @@
 ---
-description: Naming conventions for Cursor customization artifacts in the cursor-collections repository. Ensures all skills, rules, and commands use the tsh- prefix.
+description: Naming conventions for Cursor customization artifacts in the cursor-collections repository. The tsh- prefix applies to skill directory names and rule filenames, with named exceptions recorded in this rule.
 globs: .cursor/**
 alwaysApply: false
 ---
@@ -31,7 +31,7 @@ Exactly two exceptions exist. Adding a third requires editing this rule.
 - **Vendored third-party skills — currently only `playwright-cli`:** retained at its upstream name so upstream syncs stay diffable. The exception covers its directory name (`.cursor/skills/workflows/playwright-cli/`), its `name: playwright-cli` frontmatter, and its unprefixed `references/*.md`; cross-references to it use that same unprefixed name. Do not rename the directory and do not prefix its `name` field.
 - **`.cursor/rules/cursor-instructions.md`:** the repository-level constitution, whose name is fixed by convention at exactly one file per repository at that path. It already self-declares this exception in its own `.cursor/rules/` architecture bullet.
 
-## Cross-references must use prefixed names
+## Cross-references use prefixed names, except for the named exceptions
 
 When one skill references another (e.g., "load the @tsh-architect skill"), use the prefixed name:
 

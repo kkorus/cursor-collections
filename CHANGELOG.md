@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-06 (follow-up to the CodeRabbit PR #1 review response — the naming rule still asserted the prefix absolutely in two places)
+
+### Fixed
+
+- **Two statements in the naming rule still asserted the `tsh-` prefix absolutely, after an earlier fix in the same batch had already carved out exactly two exemptions** (A15, `.cursor/rules/tsh-naming-conventions.mdc` and its byte-identical mirror `.cursor/rules/imported/cursor-collections/tsh-naming-conventions.mdc`). The `description` frontmatter said the rule "Ensures all skills, rules, and commands use the tsh- prefix"; it now reads `The tsh- prefix applies to skill directory names and rule filenames, with named exceptions recorded in this rule.` The section heading `## Cross-references must use prefixed names` now reads `## Cross-references use prefixed names, except for the named exceptions`, so the carve-out is visible at the heading rather than only inside a bullet of a different section. **Both edits refer to the exceptions generically**, so the exception list stays single-sourced in `## Named exceptions`, which is unchanged. Both copies changed together and remain byte-identical (`md5sum` `cc8cbd17fae64f06b30d1acbe1d79074` on each), and nothing was renamed — the `30c1d60e7dc7cff6d5f7f8740a5264d9` published for A12 was the hash of both copies at that commit and is superseded by this change rather than contradicted by it
+- **Why a `description` line is load-bearing here rather than cosmetic, and this is the point of the entry.** The rule carries `globs: .cursor/**` with `alwaysApply: false`, so it is auto-attached whenever a `.cursor/` file is in context, and Cursor surfaces a rule's `description` as the summary an agent uses to decide relevance — this repository's own `tsh-creating-rules` documents both mechanisms. An agent could therefore act on the description alone, never read down to `## Named exceptions`, conclude that the vendored `playwright-cli` skill violated the rule, and "fix" it by renaming the directory or prefixing its `name:` frontmatter — the exact rename this whole review response exists to prevent, and the remedy the user explicitly declined. The failure mode of leaving it was a rule that instructs a future agent to undo an earlier fix in the same batch. **This finding came from this repository's own code review of the batch rather than from CodeRabbit**, so it closes none of CodeRabbit's findings and leaves the disposition arithmetic in the entry below untouched
+
 ## 2026-09-05 (CodeRabbit PR #1 review response — the 17 accepted findings, closed by 14 plan items)
 
 ### Fixed

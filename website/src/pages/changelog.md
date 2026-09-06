@@ -12,6 +12,13 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-06 (follow-up to the CodeRabbit PR #1 review response — the naming rule still asserted the prefix absolutely in two places)
+
+### Fixed
+
+- **Two statements in the naming rule still asserted the `tsh-` prefix absolutely, after an earlier fix in the same batch had already carved out exactly two named exceptions.** The rule's own description line said it "Ensures all skills, rules, and commands use the tsh- prefix", and one section heading said cross-references *must* use prefixed names. The description now states that the prefix applies to skill directory names and rule filenames, with named exceptions recorded in the rule, and that heading now says cross-references use prefixed names except for the named exceptions — so the carve-out is visible to anyone skimming, instead of only inside a bullet of a different section. Both wordings point at the exceptions generically, so the exception list itself stays in one place: the named-exceptions section, which is unchanged. The rule ships in two copies; both changed together and remain byte-identical, and nothing was renamed.
+- **Why a rule's description line is load-bearing rather than cosmetic.** This rule attaches automatically whenever any Cursor customization file is in context, and Cursor shows a rule's description as the summary an agent uses to judge whether the rule applies. An agent could act on that summary alone, never read as far as the exceptions, conclude that the vendored `playwright-cli` skill broke the rule, and "fix" it by renaming the directory or prefixing its frontmatter name — the exact rename the entry below exists to prevent, and the remedy the user explicitly declined. Left as it was, the rule told a future agent to undo an earlier fix from the same batch. This finding came from the repository's own code review of the batch rather than from CodeRabbit, so it closes none of CodeRabbit's findings.
+
 ## 2026-09-05 (CodeRabbit PR #1 review response — the 17 accepted findings, closed by 14 plan items)
 
 ### Fixed
