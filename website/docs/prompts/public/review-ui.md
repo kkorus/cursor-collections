@@ -30,6 +30,8 @@ Called automatically by `/tsh-implement` (via the internal UI prompt) in a verif
 
 ## Output Format
 
+The canonical section order and content are owned by the `tsh-ui-verifying` skill's `## Report Format` section.
+
 ```markdown
 ## Verification Result: [PASS | FAIL | VERIFICATION NOT RUN]
 
@@ -45,13 +47,13 @@ Called automatically by `/tsh-implement` (via the internal UI prompt) in a verif
 
 - [content/data/state differences that may be intentional]
 
-### Recommended Fixes
-
-- [specific fix with exact values]
-
 ### Blocker Resolution
 
 - [next step when verification did not run]
+
+### Recommended Fixes
+
+- [specific fix with exact values]
 ```
 
 ## Key Rules

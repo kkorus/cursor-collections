@@ -273,3 +273,5 @@ playwright-cli open https://example.com
 - Delete state files after automation completes
 - Use environment variables for sensitive data
 - By default, sessions run in-memory mode which is safer for sensitive operations
+- Use a per-run unique path (e.g. `mktemp /tmp/playwright-login-auth-XXXXXX.json`) rather than a fixed `/tmp` path — a predictable filename is vulnerable to symlink and TOCTOU attacks; `mktemp` creates the file atomically and returns a guaranteed-unique name (never use `mktemp -u`, which only reserves a name without creating the file)
+- Set owner-only permissions with `chmod 600 "$STATE_FILE"` immediately after the `storageState` write completes — before any subsequent command can read the file

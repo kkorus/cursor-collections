@@ -12,6 +12,25 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-06 (response to CodeRabbit's second review on PR #1 — UI-verification contract conflicts and Playwright security fixes)
+
+### Fixed
+
+- Fixed: single report-format contract, owned by the UI verification workflow — command and published docs now point at the same definition.
+- Fixed: absent or unrecognized confidence level in a verification report now fails closed to LOW, preventing a silent bypass of the safety pause.
+- Fixed: the FAIL branch in the UI verification loop now respects the MEDIUM confidence level — it no longer instructs "fix all" unconditionally.
+- Fixed: the LOW-confidence safety pause in the verification loop carries a consumed marker so it cannot re-trigger after the user has already answered.
+- Fixed: ACTUAL capture artifacts are cleared before each capture attempt, making the existence gate equivalent to a freshness gate.
+- Fixed: the origin-mismatch and clarification gates in the UI verification workflow now branch by invocation mode, keeping the stop-before-fill requirement intact.
+- Fixed: the published UI verification flow doc now assigns `figma-expected.png` preparation to the Capture Worker, before browser capture, matching the skills.
+- Fixed: the Playwright login example now asserts the post-navigation origin before filling credentials, and the session-state file uses a per-run unique path with owner-only permissions.
+- Fixed: the frontend flow doc now states explicitly that the dev server URL must be re-confirmed in the implementation discussion.
+
+### Deferred / Out of scope
+
+- Deferred: cross-origin frame / form-action credential destination validation (real finding, heavy lift).
+- Deferred: pinned version for the global `playwright-cli` install (real finding; remedy when addressed is to document the risk and recommend a project-managed dependency).
+
 ## 2026-09-06 (follow-up to the CodeRabbit PR #1 review response — the naming rule still asserted the prefix absolutely in two places)
 
 ### Fixed

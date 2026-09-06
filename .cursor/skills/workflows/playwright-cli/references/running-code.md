@@ -220,15 +220,32 @@ playwright-cli run-code "async page => {
 
 ```bash
 # Login and save state
+# Before filling credentials, assert that the post-navigation origin matches the
+# expected login origin. If the origin does not match (e.g. due to a redirect to
+# a third-party page), throw immediately rather than fill credentials into an
+# unexpected site. See the origin-assertion rule in tsh-ui-capture-worker and
+# tsh-ui-verifying for the governing security requirement.
+#
+# Use a per-run unique path (mktemp creates the file atomically, avoiding the
+# predictable-path race that mktemp -u would leave open), and restrict
+# permissions immediately after writing. See Security Notes in
+# references/storage-state.md for the full rationale.
+STATE_FILE=$(mktemp /tmp/playwright-login-auth-XXXXXX.json)
 playwright-cli run-code "async page => {
-  await page.goto('https://example.com/login');
+  const targetOrigin = 'https://example.com';
+  await page.goto(targetOrigin + '/login');
+  const currentOrigin = new URL(page.url()).origin;
+  if (currentOrigin !== targetOrigin) {
+    throw new Error('Origin mismatch after navigation: expected ' + targetOrigin + ' but got ' + currentOrigin + '. Aborting credential fill.');
+  }
   await page.getByRole('textbox', { name: 'Email' }).fill(process.env.TSH_UI_LOGIN_EMAIL);
   await page.getByRole('textbox', { name: 'Password' }).fill(process.env.TSH_UI_LOGIN_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.waitForURL('**/dashboard');
-  await page.context().storageState({ path: '/tmp/playwright-login-auth.json' });
+  await page.context().storageState({ path: '$STATE_FILE' });
   return 'Login successful';
 }"
+chmod 600 "$STATE_FILE"
 
 # Scrape data from multiple pages
 playwright-cli run-code "async page => {
@@ -242,4 +259,4 @@ playwright-cli run-code "async page => {
 }"
 ```
 
-The login example writes session state outside the repository working tree; a consuming project must add its own matching ignore patterns, listed under **Security Notes** in [references/storage-state.md](storage-state.md).
+The login example writes session state outside the repository working tree using a per-run unique path and owner-only permissions; a consuming project must add its own matching ignore patterns. Full rationale — unique paths, `chmod 600`, committing, and in-memory alternatives — is listed under **Security Notes** in [references/storage-state.md](storage-state.md).

@@ -35,7 +35,10 @@ Before starting verification, confirm:
 - Dev server is running and the **target page** is reachable through the CLI capture flow using that confirmed URL:
   - **Never circumvent an authentication, login, or access/permission gate by any means or technique — proactively or reactively.** Legitimate authentication through the app's real login UI is allowed only when the user has explicitly authorized it and supplied the exact inputs required to perform it through a local env-based contract derived from the real login form, direct in-browser entry, or a real storage-state path created from a prior login. Navigate to the pinned URL only as an ordinary user would. Do not assume, fabricate, simulate, seed, inject, or manufacture any signed-in or authorized state. If you notice the gate is trivially bypassable (for example it can be satisfied entirely client-side), report it as a potential security vulnerability when you raise the blocker, so the user is made aware and can plan a fix — flag the concern, never exploit it.
   - Use the CLI capture flow to open the page at the full target URL before verification begins
-  - **The origin check is a precondition of credential handling, not a follow-up.** Before deriving any field key, before reading any `TSH_UI_LOGIN_*` variable, and before any `fill`, compare the current page origin *after all redirects* against the session's authorized origin. A mismatch is a blocker: stop before all three of those actions, report the observed origin to the user, and ask the user to authorize that origin for the session. Cross-origin login is permitted **only** on that explicit authorization — that is the supported route when the redirect lands an SSO chooser, an MFA challenge, or a captcha on a different origin, so the mismatch is raised for a decision and never silently refused. On an authorized origin, read only the variables requested for the form on screen; never read any other `TSH_UI_LOGIN_*` variable. The `TSH_UI_LOGIN_` prefix is a **naming convention, not an allowlist** — the origin binding plus that request-scoping is what actually constrains which secret can be handed to a page.
+  - **The origin check is a precondition of credential handling, not a follow-up.** Before deriving any field key, before reading any `TSH_UI_LOGIN_*` variable, and before any `fill`, compare the current page origin *after all redirects* against the session's authorized origin. A mismatch is a blocker: stop before all three of those actions, then:
+    - **Standalone verification**: ask the user to authorize the observed origin for the session directly.
+    - **Delegated verification**: escalate to the caller with the observed origin; let the caller ask the user for authorization. Do not proceed until authorization is received.
+    Cross-origin login is permitted **only** on that explicit authorization — that is the supported route when the redirect lands an SSO chooser, an MFA challenge, or a captcha on a different origin, so the mismatch is raised for a decision and never silently refused. On an authorized origin, read only the variables requested for the form on screen; never read any other `TSH_UI_LOGIN_*` variable. The `TSH_UI_LOGIN_` prefix is a **naming convention, not an allowlist** — the origin binding plus that request-scoping is what actually constrains which secret can be handed to a page.
   - If the capture flow reports a **redirect to a login/authentication screen** and the required login inputs were not already provided: first determine whether the redirected screen is a standard credential form. If it is, derive one repo-root `.env` var per required field from the live form using this order of precedence for the field key: `name` -> `autocomplete` -> `id` -> visible label text. Normalize the chosen key to uppercase snake case and prefix it with `TSH_UI_LOGIN_`. Examples: `email` -> `TSH_UI_LOGIN_EMAIL`, `userName` -> `TSH_UI_LOGIN_USER_NAME`, `company-code` -> `TSH_UI_LOGIN_COMPANY_CODE`. The immediate next action MUST be to ask the user to add those exact derived env vars to repo-root `.env` and confirm when the file is saved. On the next capture pass, reload `.env` and reuse those env vars without printing their values. Use a prepared storage-state path or direct manual login only when the redirected screen is not a standard credential form (for example SSO chooser, MFA challenge, or captcha), the runtime cannot derive the field keys reliably, or the user explicitly prefers one of those fallbacks. Do NOT bypass, seed, inject, or fake authentication yourself by any means or technique, and never fake an identity or assume a role, even if you can see how the auth check works.
     Use this wording pattern for the user message:
     "The page redirected to login. Add these exact vars to repo-root `.env` and tell me when the file is saved:
@@ -52,7 +55,10 @@ Before starting verification, confirm:
 - Use this only when the user has explicitly authorized a genuine login and either populated the local `.env` contract derived from the real login form, completed the redirected real login form in the open browser session, or supplied an already-authenticated storage-state path.
 - A genuine login means using the application's real sign-in UI exactly as an ordinary user would. It is allowed. Bypass is not.
 - Standard local env contract: in the target repo `.env` file, set one env var per required login field using the derived naming rule `TSH_UI_LOGIN_<NORMALIZED_FIELD_KEY>`, where `NORMALIZED_FIELD_KEY` comes from `name` -> `autocomplete` -> `id` -> visible label text, normalized to uppercase snake case.
-- The contract is origin-scoped: those derived vars may be read only while the post-redirect page origin equals the session's authorized origin, and only for the fields of the form actually on screen. A different origin means stop, report the observed origin, and ask the user to authorize it for the session before any derivation, read, or `fill`; a different form on an authorized origin still means read nothing beyond the vars that form requires, since `TSH_UI_LOGIN_` is a naming convention rather than an allowlist.
+- The contract is origin-scoped: those derived vars may be read only while the post-redirect page origin equals the session's authorized origin, and only for the fields of the form actually on screen. A different origin means stop before any derivation, read, or `fill`, then:
+  - **Standalone verification**: report the observed origin and ask the user to authorize it for the session directly.
+  - **Delegated verification**: escalate to the caller with the observed origin; let the caller ask the user for authorization. Do not proceed until authorization is received.
+  A different form on an authorized origin still means read nothing beyond the vars that form requires, since `TSH_UI_LOGIN_` is a naming convention rather than an allowlist.
 - Default path: if the redirect lands on a standard credential form, ask the user to populate the exact derived `.env` vars and confirm when the file is saved, then rerun capture with `.env` reloaded before filling the login form. Use direct in-browser login or a prepared storage-state path only for non-standard auth flows such as SSO, MFA, or captcha or when `.env` automation is not workable.
 - Never ask the user to paste the password into chat. Read the env vars only at runtime and do not echo their values back into artifacts, reports, or tool output.
 - Preferred pattern: perform the real login once, `state-save` to a secret path outside `specifications/**`, then `state-load` that path for each later capture iteration so the authenticated session is reused instead of recreated.
@@ -179,7 +185,10 @@ specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
 - Phase-2 tripwire exit `0`: evidence that the render is within the loose screenshot threshold; not the final verdict.
 - Phase-2 tripwire exit `1`: evidence of visual difference; not the final verdict.
 
-If open/goto/auth fails, if the page state is wrong, or if required artifacts are missing/incomplete, stop the capture flow and raise clarification with the user. Do not use a plain-text blocker request as a substitute for stopping and asking. These are **pre-verification blockers**. Report the verification result as `VERIFICATION NOT RUN`, include blocker-resolution guidance, and rerun on fresh artifacts after the blocker is resolved. They do not consume any post-fix iteration budget and do not enter the post-5-iteration escalation gate. Do not substitute code reading for verification.
+If open/goto/auth fails, if the page state is wrong, or if required artifacts are missing/incomplete, stop the capture flow and raise the clarification:
+- **Standalone verification**: ask the user directly for the information needed to resolve the blocker.
+- **Delegated verification**: escalate to the caller with the blocker details; let the caller ask the user. Do not proceed until the blocker is resolved.
+Do not use a plain-text blocker request as a substitute for stopping and asking. These are **pre-verification blockers**. Report the verification result as `VERIFICATION NOT RUN`, include blocker-resolution guidance, and rerun on fresh artifacts after the blocker is resolved. They do not consume any post-fix iteration budget and do not enter the post-5-iteration escalation gate. Do not substitute code reading for verification.
 
 **Step 4: Compare using verification categories**
 
@@ -346,12 +355,32 @@ Before reporting PASS:
 
 ## Report Format
 
+The canonical section order and content for all UI verification reports. Every section below is required even for `VERIFICATION NOT RUN`; write `UNKNOWN` for any value that cannot be determined.
+
 ```markdown
 ## Verification Result: [PASS | FAIL | VERIFICATION NOT RUN]
 
 ### Component: [name]
 
 **Confidence:** [HIGH | MEDIUM | LOW]
+
+### Sources
+
+- Figma URL: [exact URL or UNKNOWN]
+- Verified page URL: [exact full URL or UNKNOWN]
+
+### Artifact Directory
+
+- Path: [exact `specifications/.../iteration-<N>/` path or UNKNOWN]
+
+### Artifact Status
+
+| Artifact             | Status                    | Path or blocker          |
+| -------------------- | ------------------------- | ------------------------ |
+| figma-expected.png   | [present/missing/blocked] | [shared path or blocker] |
+| actual.png           | [present/missing/blocked] | [path or blocker]        |
+| computed-styles.json | [present/missing/blocked] | [path or blocker]        |
+| a11y-snapshot.yml    | [present/missing/blocked] | [path or blocker]        |
 
 ### Differences
 
@@ -367,6 +396,13 @@ Before reporting PASS:
 - [question asking whether the observed values should remain or match Figma exactly]
 
 > When this section is used, keep `## Verification Result` as `FAIL` until the user confirms the content/data/state differences are acceptable, and do not promote them to `Recommended Fixes` before that confirmation.
+
+### Blocker Resolution
+
+- Blocker Type: [none or specific blocker]
+- Blocking Step: [workflow step number or `NONE`]
+- User asked: [yes/no]
+- Next Required Action: [specific next step]
 
 ### Recommended Fixes
 

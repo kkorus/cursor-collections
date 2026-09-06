@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-09-06 (response to CodeRabbit's second review on PR #1 — UI-verification contract conflicts and Playwright security fixes)
+
+### Fixed
+
+- B1: `tsh-ui-verifying` is now the sole owner of the report format; `tsh-review-ui` replaces its inline section list with a pointer; `website/docs/prompts/public/review-ui.md` section order aligned (Blocker Resolution before Recommended Fixes)
+- B2: `tsh-implement-ui` required-response-fields list now includes `Confidence [HIGH | MEDIUM | LOW]`; absent or unrecognized confidence fails closed to LOW
+- B3: `tsh-implement-ui` FAIL branch now qualifies "fix ALL" by confidence — HIGH fixes all, MEDIUM fixes the unambiguous ones and asks about the rest
+- B4: `tsh-implement-ui` LOW-confidence-pause loop now carries a consumed marker so the same FAIL+LOW report cannot re-trigger the pause after it has been answered
+- B5: `tsh-orchestrating-implementation` now deletes `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` from `$ARTIFACT_DIR` before each capture delegation (`figma-expected.png` explicitly excluded), making the existence gate also a freshness gate
+- B6: `tsh-ui-verifying` origin-mismatch and clarification gates now branch by invocation mode — standalone asks the user directly, delegated escalates to the caller; the stop-before-fill/derivation/read requirement is unchanged
+- B7: `website/docs/workflow/ui-verification-flow.md` section 3 ("Capture Worker") now includes `figma-expected.png` preparation before browser capture; section 5 retitled ("Reviewer Compares EXPECTED Against ACTUAL"); Who Produces What table updated
+- B8: `playwright-cli/references/running-code.md` login example now asserts the post-navigation origin matches the intended login origin before any credential fill, with a pointer to the governing skills
+- B9: `playwright-cli/references/running-code.md` session state path is now per-run and unique (`mktemp`); `chmod 600` applied immediately after write; `playwright-cli/references/storage-state.md` `## Security Notes` gains two bullets on unique paths and owner-only permissions
+- B10: `website/docs/workflow/frontend-flow.md` clarifies that the dev server URL does not carry across the discussion boundary automatically — the implementation discussion re-confirms it
+
+### Deferred / Out of scope
+
+- R2-11: Cross-origin frame / `form.action` credential destination validation — real finding, deferred as heavy lift
+- R2-12: `playwright-cli/SKILL.md` `@latest` pin — real finding, deferred; when addressed, the remedy is to document the moving-release risk and recommend a project-managed dependency rather than writing a version number into the vendored skill
+- SkillSpector `AR2` (3 sites) and `EA2` (5 sites): refused as false positives — the flagged lines define delegation boundaries and user gates, not safety-commentary suppression
+
 ## 2026-09-06 (follow-up to the CodeRabbit PR #1 review response — the naming rule still asserted the prefix absolutely in two places)
 
 ### Fixed

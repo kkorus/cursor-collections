@@ -24,9 +24,10 @@ On every delegated or direct UI execution-owner entry path, the owner validates 
    ↳ 🧱 Engineering Manager delegates to Architect for planning
    ↳ 🧪 Architect invokes the Plan Reviewer once per plan lifecycle
    ↳ 📖 Review plan and review summary – check component breakdown, design references
-   ↳ 🌐 Confirm the exact full dev server URL once and pin it for the session
+   ↳ 🌐 Confirm the exact full dev server URL once and pin it for the authoring discussion
    ↳ ✅ Architect asks `Approve plan` / `I have comments` and records your decision in the plan
    ↳ 🛑 Authoring discussion ends here — start a new discussion to implement
+   ↳ 🌐 Implementation discussion re-confirms the exact full dev server URL (the URL does not carry across the discussion boundary automatically)
    ↳ ✅ Engineering Manager validates that record in the new discussion and reuses it; its `Approve current plan` / `Request changes` / `Stop` gate runs only as recovery
    ↳ 💻 Engineering Manager delegates UI tasks to UI Engineer only once a valid current-revision approval exists
    ↳ 📖 Review UI Verification Summary separately from code review

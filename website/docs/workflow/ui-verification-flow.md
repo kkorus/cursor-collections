@@ -89,11 +89,15 @@ The UI Engineer owns implementation work only. It can:
 
 It does **not** close the item just because the code compiles.
 
-### 3. Capture Worker Collects ACTUAL Evidence
+### 3. Capture Worker Prepares EXPECTED and Collects ACTUAL Evidence
 
 The Capture Worker is a mechanical evidence collector. It never judges visual correctness.
 
-It must collect all three ACTUAL artifacts into the current iteration directory:
+Before browser capture begins, it must ensure the shared verification root contains the Figma EXPECTED artifact:
+
+- `figma-expected.png` — exported from Figma MCP and saved at `$FIGMA_EXPECTED` before any browser capture starts. If Figma MCP is unavailable or the node cannot be resolved, the result is `VERIFICATION NOT RUN`.
+
+It must then collect all three ACTUAL artifacts into the current iteration directory:
 
 - `actual.png`
 - `computed-styles.json`
@@ -111,14 +115,15 @@ specifications/<verification-id>/ui-verification/          # $UI_VERIFICATION_DI
 
 The capture flow is:
 
-1. create the iteration directory
-2. open a named Playwright CLI session
-3. resize to the Figma frame width
-4. go to the pinned full URL
-5. stabilize the render
-6. save screenshot, accessibility snapshot, and computed styles
-7. confirm the files exist in the iteration directory
-8. clean up the session
+1. export `figma-expected.png` from Figma MCP and save it at `$FIGMA_EXPECTED` (before browser capture)
+2. create the iteration directory
+3. open a named Playwright CLI session
+4. resize to the Figma frame width
+5. go to the pinned full URL
+6. stabilize the render
+7. save screenshot, accessibility snapshot, and computed styles
+8. confirm the files exist in the iteration directory
+9. clean up the session
 
 If even one required artifact is missing, the verification is invalid.
 
@@ -135,15 +140,11 @@ If the page requires authentication or a specific access level:
 
 If the worker notices that the gate is trivially bypassable, it must report that as a **potential security vulnerability** in the blocker notes. It may never exploit that weakness.
 
-### 5. Reviewer Collects EXPECTED from Figma
+### 5. Reviewer Compares EXPECTED Against ACTUAL
 
-The Reviewer is the design judge. It must obtain EXPECTED from Figma MCP, not from a browser screenshot.
+The Reviewer is the design judge. It consumes the artifacts the Capture Worker produced — `figma-expected.png` from the shared verification root and `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` from the current iteration directory.
 
-On every pass it ensures the shared verification root contains:
-
-- `figma-expected.png`
-
-If the export is missing, it exports it from Figma MCP before comparing. If Figma MCP is unavailable or the node cannot be resolved, the result is `VERIFICATION NOT RUN`.
+If `figma-expected.png` is absent from the shared root, the result is `VERIFICATION NOT RUN`.
 
 ### 6. Reviewer Compares in a Fixed Order
 
@@ -227,8 +228,8 @@ specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
 | ------------------- | ------------------------------- | -------------------------------------------------------------------------- |
 | Engineering Manager | task description, Jira ID, standalone `*.research.md`, or `*.plan.md` | routing, gates, user questions |
 | UI Engineer         | plan + UI task slice            | code changes                                                               |
-| UI Capture Worker   | pinned full URL + iteration dir | `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`, capture summary |
-| UI Reviewer         | Figma URL + iteration dir       | `PASS`, `FAIL`, or `VERIFICATION NOT RUN` report                           |
+| UI Capture Worker   | pinned full URL + Figma URL + iteration dir | `figma-expected.png` (at verification root), `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`, capture summary |
+| UI Reviewer         | verification root + iteration dir           | `PASS`, `FAIL`, or `VERIFICATION NOT RUN` report                           |
 
 ## Invariants
 

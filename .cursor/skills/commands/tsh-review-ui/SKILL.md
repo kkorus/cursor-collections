@@ -57,54 +57,14 @@ The Figma design is the **source of truth** for every comparison. When in doubt,
 </workflow>
 
 <output-specification>
-Return a Markdown report that always contains every section below in this order, even for `VERIFICATION NOT RUN`:
+Return a Markdown report following the canonical section order and content defined in the `tsh-ui-verifying` skill's `## Report Format` section. The canonical order and all required sections (including `### Sources`, `### Artifact Directory`, `### Artifact Status`, `### Blocker Resolution`, and others) are owned by `tsh-ui-verifying`; do not maintain a separate copy here.
 
-```markdown
-## Verification Result: [PASS | FAIL | VERIFICATION NOT RUN]
+Command-specific rules that apply on top of that canonical format:
 
-### Component
-
-[component or section name]
-
-**Confidence:** [HIGH | MEDIUM | LOW]
-
-### Sources
-
-- Figma URL: [exact URL or UNKNOWN]
-- Verified page URL: [exact full URL or UNKNOWN]
-
-### Artifact Directory
-
-- Path: [exact `specifications/.../iteration-<N>/` path or UNKNOWN]
-
-### Artifact Status
-
-| Artifact             | Status                    | Path or blocker          |
-| -------------------- | ------------------------- | ------------------------ |
-| figma-expected.png   | [present/missing/blocked] | [shared path or blocker] |
-| actual.png           | [present/missing/blocked] | [path or blocker]        |
-| computed-styles.json | [present/missing/blocked] | [path or blocker]        |
-| a11y-snapshot.yml    | [present/missing/blocked] | [path or blocker]        |
-
-### Differences
-
-| Property         | Expected (Figma)    | Actual (Implementation) | Severity            |
-| ---------------- | ------------------- | ----------------------- | ------------------- |
-| [prop or `NONE`] | [expected or `N/A`] | [actual or `N/A`]       | [severity or `N/A`] |
-
-### Blocker Resolution
-
-- Blocker Type: [none or specific blocker]
-- Blocking Step: [workflow step number or `NONE`]
-- User asked: [yes/no]
-- Next Required Action: [specific next step]
-
-### Recommended Fixes
-
-- [specific fix]
-```
-
-Never omit `Verification Result`, `Component`, `Artifact Directory`, `Artifact Status`, or `Blocker Resolution`. If a value cannot be known, write `UNKNOWN` and explain why.
+- Never omit `Verification Result`, `Component`, `Artifact Directory`, `Artifact Status`, or `Blocker Resolution`. If a value cannot be known, write `UNKNOWN` and explain why.
+- In direct-user mode (user invoked this skill directly, e.g. by typing `/tsh-review-ui`): put the `Next Required Action` question to the user in the same reply that carries the report, and record `User asked: yes`.
+- In subagent mode (this step was delegated by a caller): return the report to the caller, do NOT ask the user, and record `User asked: no` — the caller owns blocker resolution and user interaction.
+- Even when the flow is blocked before evidence collection, return the full blocker report skeleton with explicit unknowns marked as `UNKNOWN`.
 </output-specification>
 
 <constraints>
