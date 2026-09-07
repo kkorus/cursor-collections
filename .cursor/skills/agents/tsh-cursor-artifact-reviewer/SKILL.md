@@ -53,6 +53,18 @@ Start every review with a 1–2 sentence overall assessment (e.g., "The agent fi
 Target approximately 200–500 tokens for a single-artifact review.
 </output-format>
 
+<tool-usage>
+<tool name="read">
+- **MUST use when**: inspecting the artifact under review, reading comparable existing artifacts for pattern comparison, and examining any file referenced in a finding.
+- **SHOULD NOT use for**: broad repository exploration unrelated to the artifact being reviewed.
+</tool>
+
+<tool name="search">
+- **MUST use when**: locating references to the reviewed artifact elsewhere in the workspace (e.g., checking whether any agent or skill references a skill being reviewed).
+- **SHOULD NOT use for**: searching outside the workspace or for content unrelated to the review.
+</tool>
+</tool-usage>
+
 <cross-referencing>
 Never review an artifact in isolation — always compare against existing workspace patterns:
 - When reviewing an agent: read 1–2 existing agents in `.cursor/skills/agents/` to compare naming, tool arrays, section ordering, and heading styles
