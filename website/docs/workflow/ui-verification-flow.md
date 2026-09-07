@@ -113,6 +113,8 @@ specifications/<verification-id>/ui-verification/          # $UI_VERIFICATION_DI
 
 `<verification-id>` is the task ID when available, otherwise a stable page/component slug. Capture, review, and the PASS gate must all use the same `$UI_VERIFICATION_DIR`.
 
+> **One Figma component per verification root.** A single `verification-id` maps to exactly one Figma node and one shared `figma-expected.png`. If a plan task covers multiple distinct Figma components, assign each component its own stable slug as its `verification-id` — do not share one root across multiple Figma nodes, because each capture pass would overwrite the previous component's reference image.
+
 The capture flow is:
 
 1. export `figma-expected.png` from Figma MCP and save it at `$FIGMA_EXPECTED` (before browser capture)
