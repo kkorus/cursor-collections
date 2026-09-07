@@ -48,6 +48,7 @@ Skills can also be referenced manually with `@tsh-skill-name` in chat.
 | [tsh-sql-and-database-understanding](./sql-and-database) | Database engineering standards and ORM integration | Architect, CR, SE |
 | [tsh-codebase-analysing](./codebase-analysis) | Deep codebase analysis and dependency mapping | Architect, BA, CE, SE |
 | [tsh-engineering-prompts](./prompt-engineering) | LLM prompt design, optimization, security, and evaluation | PE, SE, Architect, CR |
+| tsh-orchestrating-implementation | Canonical implementation-orchestration workflow: planning readiness, Human approval gate, delegated execution routing, and review gates | Engineering Manager |
 | tsh-resolving-skill-references | Resolution order for locating a referenced skill file, with a hard stop when it cannot be found | All delegating agents |
 
 ### Cloud & Infrastructure Skills

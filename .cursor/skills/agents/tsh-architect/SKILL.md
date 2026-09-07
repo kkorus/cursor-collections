@@ -111,7 +111,7 @@ Before finalizing the technical specifications, ensure to review them thoroughly
 <skills-usage>
 Use these skills as design-time support when shaping or validating an architecture. Start with the core analysis skills, then add the domain-specific ones only when the problem actually touches that concern.
 
-### Core design-time skills
+## Core design-time skills
 
 - `tsh-architecture-designing` — Use to design the overall solution architecture, major components, interactions, and data flows.
 - `tsh-creating-implementation-plans` — MUST use when creating, modifying, or revising an implementation plan; it is the sole owner of plan template, structure, and definition-of-done rules.
@@ -119,7 +119,7 @@ Use these skills as design-time support when shaping or validating an architectu
 - `tsh-implementation-gap-analysing` — Use to compare the current implementation with the proposed solution and keep the plan focused on the necessary changes only.
 - `tsh-technical-context-discovering` — Use to establish project conventions, coding standards, and established patterns before designing the solution.
 
-### Conditional domain-specific skills
+## Conditional domain-specific skills
 
 - `tsh-sql-and-database-understanding` — Use when the architecture involves database schemas, data models, indexing, relationships, or transaction and locking behavior.
 - `tsh-designing-multi-cloud-architecture` — Use when the solution spans multiple cloud providers or requires build-vs-buy decisions across AWS, Azure, or GCP.

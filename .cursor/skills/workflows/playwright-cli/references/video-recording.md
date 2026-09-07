@@ -93,25 +93,27 @@ async page => {
 
   // You can also highlight relevant locators and provide contextual annotations.
   const bounds = await page.getByText('Walk the dog').boundingBox();
-  await page.screencast.showOverlay(`
-    <div style="position: absolute;
-      top: ${bounds.y}px;
-      left: ${bounds.x}px;
-      width: ${bounds.width}px;
-      height: ${bounds.height}px;
-      border: 1px solid red;">
-    </div>
-    <div style="position: absolute;
-      top: ${bounds.y + bounds.height + 5}px;
-      left: ${bounds.x + bounds.width / 2}px;
-      transform: translateX(-50%);
-      padding: 6px;
-      background: #808080;
-      border-radius: 10px;
-      font-size: 14px;
-      color: white;">Check it out, it is right above this text
-    </div>
-  `, { duration: 2000 });
+  if (bounds) {
+    await page.screencast.showOverlay(`
+      <div style="position: absolute;
+        top: ${bounds.y}px;
+        left: ${bounds.x}px;
+        width: ${bounds.width}px;
+        height: ${bounds.height}px;
+        border: 1px solid red;">
+      </div>
+      <div style="position: absolute;
+        top: ${bounds.y + bounds.height + 5}px;
+        left: ${bounds.x + bounds.width / 2}px;
+        transform: translateX(-50%);
+        padding: 6px;
+        background: #808080;
+        border-radius: 10px;
+        font-size: 14px;
+        color: white;">Check it out, it is right above this text
+      </div>
+    `, { duration: 2000 });
+  }
 
   await page.screencast.stop();
 }
@@ -123,7 +125,7 @@ Embrace creativity, overlays are powerful.
 
 | Method | Use Case |
 |--------|----------|
-| `page.screencast.showChapter(title, { description?, duration?, styleSheet? })` | Full-screen chapter card with blurred backdrop — ideal for section transitions |
+| `page.screencast.showChapter(title, { description?, duration? })` | Full-screen chapter card with blurred backdrop — ideal for section transitions |
 | `page.screencast.showOverlay(html, { duration? })` | Custom HTML overlay — use for callouts, labels, highlights |
 | `disposable.dispose()` | Remove a sticky overlay added without duration |
 | `page.screencast.hideOverlays()` / `page.screencast.showOverlays()` | Temporarily hide/show all overlays |

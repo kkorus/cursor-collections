@@ -31,8 +31,8 @@ The findings below are limited and low-blast-radius. The most material one is **
 
 | # | Severity | Category | Location | Description | Recommendation |
 |---|---|---|---|---|---|
-| 1 | 🟡 | Stale metadata / duplication | `tsh-business-analyst/SKILL.md:22-26` | The orchestrator's worker roster hardcodes each worker's model in prose: transcript `GPT-5.4 mini`, analysis `Gemini 3.1 Pro (Preview)`, extraction `Claude Sonnet 4.6`, quality `GPT-5.4`, formatting `GPT-5.4 mini`. PR #73 changed several of these (e.g. extraction → `Claude Sonnet 5`), so the orchestrator now advertises models that no longer match the workers. The workers themselves no longer carry a model line (removed with the `> Recommended model:` cleanup), so this prose is now the only — and wrong — model claim. | Drop the per-worker model annotations from the roster (models are session-level in Cursor, consistent with the `> Recommended model:` removal). This removes the duplicated source of truth entirely. |
-| 2 | 🟢 | Documentation accuracy | `tsh-ui-reviewer/SKILL.md` frontmatter `description` | The `description` still says the reviewer compares "actual implementation (via Playwright)". After PR #72 the reviewer judges CLI-captured evidence via `tsh-ui-capture-worker`, not direct Playwright. The body is correct; only the frontmatter description is stale. | Reword the description to reflect CLI capture (e.g. "…against CLI-captured implementation evidence…"). |
+| 1 | ✅ | ~~Stale metadata / duplication~~ | `tsh-business-analyst/SKILL.md:22-26` | **Remediated in `01d6351`.** The per-worker model annotations were removed from the BA orchestrator roster; workers no longer carry model lines, and there is no longer a duplicated source of truth. | ~~Drop the per-worker model annotations~~ — done. |
+| 2 | ✅ | ~~Documentation accuracy~~ | `tsh-ui-reviewer/SKILL.md` frontmatter `description` | **Remediated in `01d6351`.** The frontmatter description now reads "…against CLI-captured implementation evidence (collected by tsh-ui-capture-worker via playwright-cli)…". | ~~Reword the description~~ — done. |
 
 ### Workflow skills (`.cursor/skills/workflows/`)
 
@@ -64,9 +64,9 @@ The findings below are limited and low-blast-radius. The most material one is **
 | Category | 🔴 Critical | 🟡 Important | 🟢 Nice to Have | Total |
 |---|---|---|---|---|
 | Dead Code | 0 | 0 | 0 | 0 |
-| Duplications | 0 | 1 | 0 | 1 |
+| Duplications | 0 | 0 | 0 | 0 |
 | Improvements | 0 | 0 | 3 | 3 |
-| **Total** | **0** | **1** | **3** | **4** |
+| **Total** | **0** | **0** | **3** | **3** |
 
 ## Recommended Action Plan
 
@@ -74,12 +74,11 @@ The findings below are limited and low-blast-radius. The most material one is **
 - None.
 
 ### Short-term (Important)
-1. Fix Finding 1: remove the stale per-worker model annotations from `tsh-business-analyst/SKILL.md` so the orchestrator stops advertising models that no longer match the workers and no longer duplicates model info Cursor manages at the session level.
+- None. Finding 1 (BA model drift) was remediated in `01d6351`.
 
 ### Long-term (Nice to Have)
-1. Finding 2: refresh the `tsh-ui-reviewer` frontmatter description to reflect CLI capture instead of direct Playwright.
-2. Finding 4: optionally add `website/docs/skills/` pages for `tsh-orchestrating-implementation` and `playwright-cli`.
-3. Finding 3: opportunistically wrap principle-style blocks in remaining Markdown-only workflow skills in `<principles>` tags when next edited (no bulk conversion).
+1. Finding 4: optionally add `website/docs/skills/` pages for `tsh-orchestrating-implementation` and `playwright-cli`.
+2. Finding 3: opportunistically wrap principle-style blocks in remaining Markdown-only workflow skills in `<principles>` tags when next edited (no bulk conversion).
 
 ---
 
@@ -91,7 +90,7 @@ The findings below are limited and low-blast-radius. The most material one is **
 | `.cursor/skills/**` cross-references + `@agent` delegations | **Consistent** — all resolve |
 | `website/docs/**` relative links | **Consistent** — all resolve |
 | Skill counts (README ↔ docs ↔ script) | **Consistent** (25/17/38/12) |
-| Model metadata | **Drift** — BA orchestrator prose stale after PR #73 (Finding 1) |
-| Post-migration terminology (playwright MCP→CLI) | **Consistent** in bodies; one stale reviewer `description` (Finding 2) |
+| Model metadata | **Consistent** — BA orchestrator model prose removed in `01d6351` (Finding 1 remediated) |
+| Post-migration terminology (playwright MCP→CLI) | **Consistent** — reviewer `description` updated in `01d6351` (Finding 2 remediated) |
 
-**Bottom line:** The repository is coherent end-to-end after the #65–#74 port and the XML normalization. Only one Important finding (BA model drift) is worth fixing promptly; the rest are optional polish.
+**Bottom line:** The repository is coherent end-to-end after the #65–#74 port and the XML normalization. Findings 1 and 2 were remediated in `01d6351`; the remaining items are optional polish.

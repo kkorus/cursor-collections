@@ -91,7 +91,7 @@ Some upstream files have no faithful Cursor equivalent. Adapt, don't copy:
 
 ## Conversion Process
 
-```
+```text
 Conversion progress:
 - [ ] Step 1: Identify artifact type and determine target directory + filename
 - [ ] Step 2: Convert frontmatter fields (add `name:`; drop `model:`/`tools:`/prompt `agent:`; map `user-invocable: false` → `disable-model-invocation: true`)

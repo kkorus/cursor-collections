@@ -82,7 +82,7 @@ All seven execution owners apply the same inline, fail-closed precondition befor
 | [Context Engineer](./context-engineer) | `agents/tsh-context-engineer/` | Gathers requirements, builds context, identifies gaps | Atlassian, Figma, PDF Reader, Sequential Thinking |
 | [Architect](./architect) | `agents/tsh-architect/` | Designs solutions, creates implementation plans | Atlassian, Context7, Figma, PDF Reader, Sequential Thinking |
 | [Engineering Manager](./engineering-manager) | `agents/tsh-engineering-manager/` | Orchestrates implementation by delegating to specialized agents | Atlassian, Sequential Thinking |
-| [UI Engineer](./ui-engineer) | `agents/tsh-ui-engineer/` | Implements UI and frontend solutions | Context7, Figma, Playwright, Sequential Thinking |
+| [UI Engineer](./ui-engineer) | `agents/tsh-ui-engineer/` | Implements UI and frontend solutions | Context7, Figma, Playwright CLI, Sequential Thinking |
 | [Software Engineer](./software-engineer) | `agents/tsh-software-engineer/` | Implements non-UI code against the plan | Context7, Sequential Thinking |
 | [Prompt Engineer](./prompt-engineer) | `agents/tsh-prompt-engineer/` | Designs, optimizes, and secures LLM application prompts | Context7, Sequential Thinking |
 

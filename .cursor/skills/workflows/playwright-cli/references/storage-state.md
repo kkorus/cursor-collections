@@ -251,19 +251,18 @@ playwright-cli open https://app.example.com/dashboard
 ### Save and Restore Roundtrip
 
 ```bash
-# Set up authentication state
-playwright-cli open https://example.com
-playwright-cli eval "() => { document.cookie = 'session=abc123'; localStorage.setItem('user', 'john'); }"
-
-# Save state to file
+# Step 1: perform a real login and save the authenticated session
+playwright-cli open https://example.com/login
+playwright-cli snapshot
+playwright-cli fill e1 "user@example.com"
+playwright-cli fill e2 "password"
+playwright-cli click e3
 playwright-cli state-save my-session.json
 
-# ... later, in a new session ...
-
-# Restore state
+# Step 2: later, in a new session, restore state and skip login
 playwright-cli state-load my-session.json
-playwright-cli open https://example.com
-# Cookies and localStorage are restored!
+playwright-cli open https://example.com/dashboard
+# Already logged in — session cookies and storage are restored!
 ```
 
 ## Security Notes
