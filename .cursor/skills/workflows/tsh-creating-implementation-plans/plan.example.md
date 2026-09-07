@@ -193,7 +193,7 @@ Project conventions, coding standards, and patterns discovered during planning. 
 
 #### Task 2.2 - [REUSE] UI Verification of <ui-component-name> by `tsh-ui-reviewer` agent
 
-**Description**: Run `tsh-ui-reviewer` agent following the `tsh-review-ui` command skill, resolved per `tsh-resolving-skill-references`, to verify <ui-component-name> against Figma design. Pass the Figma URL and dev server URL. If verification fails, delegate fix to `tsh-ui-engineer` and re-verify (max 5 iterations per component).
+**Description**: For each verification pass: (1) delegate CLI evidence capture to `tsh-ui-capture-worker` — it must produce `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` in the current iteration artifact directory; (2) only then delegate review to `tsh-ui-reviewer` following the `tsh-review-ui` command skill, resolved per `tsh-resolving-skill-references`, passing the Figma URL, the confirmed dev server URL, and the artifact directory. If the reviewer returns `FAIL`, delegate fixes to `tsh-ui-engineer`, then run a fresh capture-and-review pass (max 5 complete iterations). If the reviewer returns `VERIFICATION NOT RUN`, resolve the stated blocker (missing artifacts, auth, unreachable page, unavailable Figma MCP) and re-run capture before retrying review — a `VERIFICATION NOT RUN` result does not consume the iteration budget.
 
 **Files:** `src/components/<ui-component-name>.tsx` (reuse), `src/components/<ui-component-name>.test.tsx` (reuse)
 
@@ -209,7 +209,9 @@ Project conventions, coding standards, and patterns discovered during planning. 
 **Definition of Done**:
 
 - [ ] Run `<verification command from Technical Context → Testing Patterns>`
-- [ ] UI verification passes via `tsh-ui-reviewer` or escalated to user after 5 iterations
+- [ ] Each review pass is preceded by a fresh `tsh-ui-capture-worker` run producing `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml`
+- [ ] After each `tsh-ui-engineer` fix, a new capture-and-review pass runs on fresh artifacts — stale artifacts from a prior pass are never reused
+- [ ] UI verification reaches `PASSED`, or is explicitly `ESCALATED` after 5 complete iterations; `VERIFICATION NOT RUN` triggers blocker resolution and a re-run, never a pass
 - [ ] UI Verification Status is recorded separately from code review in the `UI Verification Status` element
 - [ ] Verification report documented in Changelog
 
