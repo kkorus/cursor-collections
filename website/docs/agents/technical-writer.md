@@ -43,6 +43,7 @@ Documentation content scoped to the delegated task, such as:
 | **File Edit** | Create and update documentation files only |
 | **Todo** | Track multi-file or multi-step documentation work |
 | **Ask Questions** | Guide approval-precondition recovery and resolve genuine blockers |
+| **Terminal** | Run documentation-site build (`npm --prefix website run build`) and link-validation commands only — never to modify files or alter the environment |
 
 ## Skills Loaded
 
