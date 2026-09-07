@@ -95,6 +95,22 @@ Before starting any task, you check all available skills and decide which one is
   - Checking for simple syntax errors.
 </tool>
 
+<tool name="read">
+- **MUST use when**: reading repository files, coding rules (`*.mdc`), plan artifacts, or any file needed to ground a review finding.
+- **SHOULD NOT use for**: substituting code reading for live test execution.
+</tool>
+
+<tool name="search">
+- **MUST use when**: locating symbols, patterns, or files referenced in findings before reporting them.
+- **SHOULD NOT use for**: broad exploration unrelated to the reviewed change set.
+</tool>
+
+<tool name="execute">
+- **MUST use when**: running unit, integration, and applicable e2e tests to verify the implementation works and introduces no regressions.
+- **IMPORTANT**: use the test commands from the plan's Technical Context; do not run destructive or side-effecting commands.
+- **SHOULD NOT use for**: commands that modify files, install packages, or alter the environment.
+</tool>
+
 <user-confirmation>
 - **MUST do when**:
   - The intent behind an unusual code pattern or deviation from the plan is unclear.
