@@ -1,0 +1,19 @@
+{
+  "name": "tsh-ai-collections",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check && node scripts/lint.mjs && node scripts/check-refs.mjs",
+    "lint": "node scripts/lint.mjs",
+    "refs": "node scripts/check-refs.mjs",
+    "test": "node --test scripts/test/"
+  },
+  "dependencies": {
+    "smol-toml": "^1.9.0",
+    "yaml": "^2.9.1"
+  }
+}
