@@ -27,6 +27,8 @@ Check which cloud provider the project uses:
 
 Use `context7` or cloud documentation MCP to look up provider-specific syntax.
 
+Also check for other IaC and secret tooling (`*.bicep`, `template.yaml`, `cdk.json`, `.sops.yaml`, `vault-config/`) before you choose a solution.
+
 ## Kubernetes Secrets Detection
 
 Check for existing patterns:
@@ -35,6 +37,8 @@ Check for existing patterns:
 - `*.enc.yaml` files → SOPS encryption
 - `vault-agent` sidecars → HashiCorp Vault
 
+**Kubernetes Secrets are not encrypted by default.** A `Secret` is only base64-encoded in etcd. It is encrypted at rest only when etcd encryption is enabled (an `EncryptionConfiguration`, ideally with a KMS provider) or the managed cluster offers it (for example envelope encryption with a cloud KMS key). Enable it, restrict RBAC access to Secrets, and prefer an external secret store (External Secrets Operator, Vault) for sensitive values.
+
 ## CI/CD Credentials Decision
 
 | CI Platform | Cloud | Approach |
@@ -42,11 +46,13 @@ Check for existing patterns:
 | GitHub Actions | AWS | OIDC with `aws-actions/configure-aws-credentials` |
 | GitHub Actions | Azure | OIDC with `azure/login` |
 | GitHub Actions | GCP | OIDC with `google-github-actions/auth` |
-| GitLab CI | AWS/GCP | OIDC with CI_JOB_JWT |
-| Bitbucket | AWS | Repository variables + assume role |
+| GitLab CI | AWS/Azure/GCP | OIDC with an `id_tokens:` block that sets the audience for the cloud (the legacy job JWT variables were removed in GitLab 17.0) |
+| Bitbucket Pipelines | AWS/Azure/GCP | OIDC with `oidc: true` on the step, which provides `BITBUCKET_STEP_OIDC_TOKEN` to exchange for a short-lived role |
 | Any | Any | HashiCorp Vault with JWT/OIDC auth |
 
-**Rule:** Always prefer OIDC federation over long-lived access keys.
+**Rule:** Always prefer OIDC federation over long-lived access keys. This is the single CI credentials table. Other skills link here and do not copy it.
+
+Scope the cloud-side trust to the repository, branch or environment that needs access. Fall back to platform secrets with a narrowly scoped, rotated key only when the platform or cloud does not support OIDC.
 
 ## Process
 
@@ -59,12 +65,12 @@ Check for existing patterns:
 
 ## Security Checklist
 
-- [ ] No secrets in code, environment variables visible in UI, or logs
+- [ ] No secrets in code, logs, build output or plain-text pipeline variables (use masked, protected secret variables)
 - [ ] Rotation policy defined (30-90 days for credentials)
 - [ ] Least privilege access to secret stores
 - [ ] Audit logging enabled on all secret access
 - [ ] OIDC used for CI/CD (no long-lived access keys)
-- [ ] Secrets encrypted at rest and in transit
+- [ ] Secrets encrypted at rest and in transit (for Kubernetes: etcd encryption or KMS enabled, not just base64)
 - [ ] Break-glass procedure documented
 - [ ] Secret scanning enabled in CI (gitleaks, trufflehog)
 
@@ -77,7 +83,7 @@ Check for existing patterns:
 | Share secrets via Slack/email | Use secret manager with access control |
 | Same secret across environments | Separate secrets per environment |
 | Long-lived CI/CD credentials | OIDC federation with short-lived tokens |
-| Secrets in ConfigMaps | Use Kubernetes Secrets (encrypted at rest) |
+| Secrets in ConfigMaps | Use Kubernetes Secrets, with etcd encryption at rest or an external secret store |
 
 ## Connected Skills
 
