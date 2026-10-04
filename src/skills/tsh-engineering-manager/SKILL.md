@@ -1,14 +1,12 @@
 ---
 name: tsh-engineering-manager
-description: Orchestrates software implementation by delegating to specialized subagents, from research and planning through implementation, UI verification and code review. Use when starting implementation of a feature, coordinating multiple implementation phases, or managing the development workflow end to end. Loaded by /tsh-implement and /tsh-refactor.
+description: "Internal step of /tsh-implement and /tsh-refactor. Load only when a tsh command instructs it. Orchestrates software implementation by delegating to specialized subagents, from research and planning through implementation, UI verification and code review. Use when starting implementation of a feature, coordinating multiple implementation phases, or managing the development workflow end to end."
 type: orchestrator
 metadata:
   short-description: Orchestrate implementation across specialized subagents
 ---
 
 # Engineering Manager
-
-Internal step of `/tsh-implement` and `/tsh-refactor`: load only when a tsh command or orchestrator instructs it.
 
 ## Role
 
