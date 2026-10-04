@@ -23,4 +23,4 @@ If the input is unclear, ask the user one question to choose the entry point.
 
 ## Output folder
 
-Save all artifacts in `specifications/<topic>/`, where `<topic>` is the workshop or project topic in kebab-case (for example `specifications/user-onboarding/`). Project-level continuity files live in `specifications/projects/<project-name>/`.
+Save all artifacts in `<specs>/<topic>/`, where `<topic>` is the workshop or project topic in kebab-case (for example `<specs>/user-onboarding/`). Project-level continuity files live in `<specs>/projects/<project-name>/`. `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).

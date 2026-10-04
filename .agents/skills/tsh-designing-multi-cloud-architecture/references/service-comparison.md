@@ -1,6 +1,6 @@
 # Cloud Service Comparison
 
-Complete mapping of equivalent services across AWS, Azure, and GCP.
+Complete mapping of equivalent services across AWS, Azure, and GCP. Service names and availability change often, so verify the current status of a service in the provider documentation (for example through context7) before recommending it.
 
 ---
 
@@ -43,7 +43,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 | Shared File Storage | EFS | Azure Files | Filestore |
 | Cold / Archive | S3 Glacier | Archive Storage | Archive Storage |
 | Transfer Acceleration | S3 Transfer Acceleration | Azure CDN (Blob) | Storage Transfer Service |
-| Hybrid Storage Gateway | Storage Gateway | StorSimple | Transfer Appliance |
+| Hybrid Storage Gateway | Storage Gateway | Azure File Sync / Azure Storage Mover (StorSimple is retired) | Transfer Appliance |
 
 ---
 
@@ -59,7 +59,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 | In-memory Cache | ElastiCache (Redis / Memcached) | Azure Cache for Redis | Memorystore |
 | Time-series | Timestream | Azure Data Explorer | Cloud Bigtable |
 | Graph | Neptune | Cosmos DB (Gremlin) | — |
-| Search | OpenSearch Service | Azure Cognitive Search | Vertex AI Search |
+| Search | OpenSearch Service | Azure AI Search | Vertex AI Search |
 | Data Warehouse | Redshift | Synapse Analytics | BigQuery |
 
 ---
@@ -78,7 +78,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 | VPN Gateway | AWS VPN | Azure VPN Gateway | Cloud VPN |
 | Private Endpoint | PrivateLink | Private Link / Private Endpoint | Private Service Connect |
 | API Gateway | API Gateway | API Management (APIM) | API Gateway |
-| Service Mesh | App Mesh | — | Traffic Director |
+| Service Mesh | App Mesh (end of support announced, verify current status) | — | Traffic Director |
 
 ---
 
@@ -117,10 +117,10 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 
 | Category | AWS | Azure | GCP |
 |---|---|---|---|
-| Source Control | CodeCommit | Azure Repos (DevOps) | Cloud Source Repositories |
+| Source Control | CodeCommit | Azure Repos (DevOps) | Cloud Source Repositories (closed to new customers; use an external source host) |
 | CI/CD Pipelines | CodePipeline + CodeBuild | Azure Pipelines | Cloud Build |
 | Artifact Repository | CodeArtifact | Azure Artifacts | Artifact Registry |
-| Infrastructure as Code | CloudFormation / CDK | Bicep / ARM Templates | Deployment Manager |
+| Infrastructure as Code | CloudFormation / CDK | Bicep / ARM Templates | Infrastructure Manager (Terraform-based; Deployment Manager is being retired) |
 | IDE / Cloud Shell | Cloud9 / CloudShell | Azure Cloud Shell | Cloud Shell |
 
 ---
@@ -130,7 +130,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 | Category | AWS | Azure | GCP |
 |---|---|---|---|
 | ML Platform | SageMaker | Azure Machine Learning | Vertex AI |
-| Pre-built AI APIs | Rekognition, Comprehend, Transcribe, … | Cognitive Services | Cloud AI APIs (Vision, Speech, NLP, …) |
+| Pre-built AI APIs | Rekognition, Comprehend, Transcribe, … | Azure AI services | Cloud AI APIs (Vision, Speech, NLP, …) |
 | Large Language Models | Amazon Bedrock | Azure OpenAI Service | Vertex AI (Google foundation models) |
 | Data Labelling | SageMaker Ground Truth | Azure ML Data Labelling | Vertex AI Data Labeling |
 | ML Notebooks | SageMaker Studio | Azure ML Notebooks | Vertex AI Workbench |

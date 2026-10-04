@@ -115,22 +115,24 @@ Validation:
 - [ ] An agent-routed command includes the caller-status-handling partial
 - [ ] Every skill it names exists and is referenced by name, not by path
 - [ ] No domain knowledge and no coding standards embedded
-- [ ] Body has Route, Inputs, Required Skills, Steps, Output and Guardrails
+- [ ] Body follows the recommended structure (Route, Inputs, Required Skills, Steps, Output, Guardrails) or omits a section deliberately
 - [ ] Command is distinct from existing commands
 - [ ] No tool-specific syntax in the body
 ```
 
 ## Body Structure
 
-| Section | Required | Purpose |
+This is a recommended structure, not a lint rule; existing commands may omit sections. Do not report a missing section as a must-fix finding.
+
+| Section | Status | Purpose |
 |---|---|---|
-| Goal line under the title | Yes | One sentence on what the command accomplishes |
-| Route | Yes | The agent or orchestrator that does the work |
-| Inputs | Yes | What to collect from the user's input and when to ask |
-| Required Skills | Yes | Knowledge skills to load, with the reason for each |
-| Steps | Yes | Numbered hand-over steps |
+| Goal line under the title | Recommended | One sentence on what the command accomplishes |
+| Route | Recommended | The agent or orchestrator that does the work |
+| Inputs | Recommended | What to collect from the user's input and when to ask |
+| Required Skills | Recommended | Knowledge skills to load, with the reason for each |
+| Steps | Recommended | Numbered hand-over steps |
 | Output | No | Deliverables, locations, completion criteria |
-| Guardrails | Yes | Workflow-specific limits and scope boundaries |
+| Guardrails | Recommended | Workflow-specific limits and scope boundaries |
 
 ## Connected Skills
 

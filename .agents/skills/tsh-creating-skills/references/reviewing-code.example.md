@@ -61,5 +61,5 @@ Progress:
 
 ## Connected Skills
 
-- `codebase-analysing` - to understand project structure and patterns before reviewing
-- `architecture-designing` - to evaluate architectural decisions in the reviewed code
+- `tsh-analyzing-codebase` - to understand project structure and patterns before reviewing
+- `tsh-designing-architecture` - to evaluate architectural decisions in the reviewed code

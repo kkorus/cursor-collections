@@ -59,7 +59,7 @@
 
 ## Best Practices
 
-1. Use AWS provider version ~> 6.0
+1. Pin the current AWS provider major from the registry
 2. Enable encryption by default
 3. Use least-privilege IAM
 4. Tag all resources consistently

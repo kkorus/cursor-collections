@@ -50,8 +50,8 @@ Choose the review mode early in Step 1 and record it in the review context.
 
 | Mode | Use When | Active Passes |
 |---|---|---|
-| Lite | Default for small, low-risk workshops (roughly 3 or fewer epics and 12 or fewer stories) unless the user requests Full | 5 passes: A, B, E, H, I |
-| Full | Larger workshops, regulated domains, high-risk scope, or when the user requests a deeper pass | 10 passes: A to J (J needs research tools) |
+| Lite | Default for small, low-risk workshops (3 or fewer epics and 14 or fewer stories) unless the user requests Full | 5 passes: A, B, E, H, I |
+| Full | 4 or more epics or 15 or more stories, regulated domains, high-risk scope, or when the user requests a deeper pass | 10 passes: A to J (J needs research tools) |
 
 ---
 
@@ -59,7 +59,7 @@ Choose the review mode early in Step 1 and record it in the review context.
 
 Collect and review all available materials:
 
-- **`extracted-tasks.md`** (mandatory): The Gate 1-approved epic and story list. This is the primary input.
+- **`extracted-tasks.md`** (mandatory): The Gate 1-approved epic and story list. This is the primary input. Imported Jira backlogs (`jira-tasks.md` only) are not reviewed by this skill.
 - **`cleaned-transcript.md`** (if available): Cross-reference for details that may have been lost or simplified during task extraction.
 - **Other source materials**: Figma designs, codebase analysis, documentation pages, or any other documents referenced during extraction.
 - **`intent-brief.md`** and **`workshop-context-summary.md`** (if available): Use these to keep the review aligned with the approved scope and any exploration notes.
@@ -172,7 +172,7 @@ After applying all changes, update the Workshop Summary table in `extracted-task
 
 Generate the final quality review report following the `assets/quality-review.template.md` template.
 
-Save the file to `specifications/<workshop-name>/quality-review.md`.
+Save the file to `<specs>/<workshop-name>/quality-review.md`. `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).
 
 The report serves as an audit trail documenting:
 - The domain model constructed during analysis
@@ -186,6 +186,7 @@ When you run as a delegated worker (the task starts with `MODE: delegated`), the
 
 - **Step 2 (Jira board context):** skipped. Do not call any Atlassian tool and do not ask for a project key. Use the Jira context in `INPUT_ARTIFACTS` or in the task, if the orchestrator supplied it.
 - **Step 6 (present to the user), Step 7 (apply) and Step 8 (save):** skipped. Do not write files and do not modify `extracted-tasks.md`. Return the structured suggestions (ID, confidence, action type, target story, finding, proposed change) in the reply body, grouped by pass or epic. Note excluded protected tasks explicitly. The orchestrator deduplicates, runs the user review, applies accepted suggestions and writes the report.
+- **Research (pass J):** the quality worker has no documentation or web research tool, so pass J takes its no-research-tool branch (skip and say so) in delegated runs.
 - **Passes:** run only the passes named in the task; if none are named, the passes of the selected review mode.
 - **Everything else:** Steps 1, 3, 4 and 5 run unchanged.
 

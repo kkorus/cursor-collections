@@ -154,7 +154,7 @@ Frontend Review:
 - [ ] Props are typed, minimal, with defaults
 - [ ] Named exports (no default exports)
 - [ ] Loading, error, and empty states handled
-- [ ] Custom hooks/composables: proper naming, SRP, complete deps, cleanup (+ framework-specific checklist from references)
+- [ ] Custom hooks/composables: proper naming, SRP, complete deps, cleanup (+ for React, the hooks checklist of the `tsh-implementing-react` skill)
 - [ ] Keys are stable and unique (not array indices)
 - [ ] No inline object/array props without memoization
 - [ ] No derived state in reactive state (compute instead)

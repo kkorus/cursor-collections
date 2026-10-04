@@ -29,7 +29,7 @@ If the caller passed a flow, use it. Otherwise recommend one with a one or two s
 
 ## Artifact Paths
 
-You are the single owner of the artifact naming convention. Resolve `<specs>` with the "Project output locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`, overridden by project instructions). Derive `<task>` from the Jira key or a short kebab-case name.
+You are the single owner of the artifact naming convention. Resolve `<specs>` with the "Resolve the Project Output Locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`, overridden by project instructions). Derive `<task>` from the Jira key or a short kebab-case name.
 
 | Artifact | Path |
 |---|---|
@@ -122,12 +122,17 @@ Before moving between research, planning and implementation, ask the user to con
 
 - Process tasks in plan order, one todo per task. After each code task, run static analysis, the build and the tests, and make sure the delegate checked the plan boxes.
 - After E2E tests are written, run the code review as the next step. Do not hand off to the user in between.
-- Delegate `tsh-code-reviewer`. For `critical` and `warning` findings, ask the user before changing the agreed solution, then delegate the fixes to the responsible engineer and review again.
+- Run the code review and fix loop (maximum 3 iterations): delegate `tsh-code-reviewer`. For `critical` and `warning` findings, ask the user before changing the agreed solution, then delegate the fixes to the responsible engineer and review again. After 3 iterations, or when a new round keeps finding new critical or warning findings, stop: show the remaining findings and let the user decide.
 - Record deviations from the plan in the plan's Changelog with a timestamp.
 
 ## Refactor Mode
 
-Entered from `/tsh-refactor`. The plan is a standard `<specs>/<topic>/<topic>.plan.md` with `Behavior-preserving: yes` in Task Details. Tell the software engineer to follow the `tsh-refactoring` skill: it establishes characterization tests that pin the current behavior before any change, and the code review additionally verifies that behavior is unchanged. Use the Full flow for cross-cutting refactors, otherwise the Quick flow. Details are in [implementation-flows.md](references/implementation-flows.md).
+Entered from `/tsh-refactor`. The plan is a standard `<specs>/<topic>/<topic>.plan.md` with `Behavior-preserving: yes` in Task Details. Use these task texts in the delegation blocks above:
+
+- `tsh-architect` (plan): load the `tsh-refactoring` skill, set `Behavior-preserving: yes` in Task Details and put the characterization tests that pin the current behavior in the first phase, before any structural change.
+- `tsh-plan-reviewer`: check that the plan has the `Behavior-preserving: yes` field and the characterization tests first.
+- `tsh-software-engineer`: follow the `tsh-refactoring` skill; never mix behavior and structure in one step.
+- `tsh-code-reviewer`: load the `tsh-refactoring` skill and additionally verify that no public behavior, contract or data shape changed. Use the Full flow for cross-cutting refactors, otherwise the Quick flow. Details are in [implementation-flows.md](references/implementation-flows.md).
 
 ## Tool Usage Guidelines
 
@@ -150,12 +155,13 @@ CALLER: <name of your skill or command>
 TASK: <what to do, stated specifically>
 INPUT_ARTIFACTS:
 - <explicit path of each file the agent needs>
-PRIOR_OUTPUT: <re-delegation only: the previous STATUS block, verbatim>
+PRIOR_OUTPUT: <re-delegation only: the previous STATUS block, verbatim; when ARTIFACTS was "none", the complete previous reply body including the block>
 USER_ANSWERS: <re-delegation only: the user's answers, numbered like the questions>
 ```
 
 - The first line must be exactly `MODE: delegated`. Without it the agent runs in interactive mode and will ask the user instead of returning a status.
 - Pass artifact paths explicitly. Never ask the agent to search for them.
+- Read-only agents cannot save files, so their partial result lives in the reply body. Keep the full reply of every read-only delegate and pass it as `PRIOR_OUTPUT` on re-delegation, otherwise the agent restarts from zero.
 - Omit `PRIOR_OUTPUT` and `USER_ANSWERS` on the first delegation.
 
 ### Reading the returned status
@@ -169,7 +175,7 @@ Every delegated agent ends its reply with a `STATUS:` block (`STATUS`, `ARTIFACT
 
 | Status | What you do |
 |---|---|
-| `DONE` | Continue with the workflow. Use the paths in `ARTIFACTS`. |
+| `DONE` | Continue with the workflow. Use the paths in `ARTIFACTS`. If `QUESTIONS` is present, these are open points the agent worked around: ask the user (or apply the answers at the matching gate of your workflow) and apply the answers yourself or pass them on to the next step. Do not re-delegate just for them. |
 | `NEEDS_INPUT` | Ask the user the listed `QUESTIONS` in the main thread, all at once and numbered. Then delegate to the same agent again with `PRIOR_OUTPUT` and `USER_ANSWERS`. |
 | `NEEDS_ARCHITECT_DECISION` | Delegate to the `tsh-architect` subagent with `DECISION_NEEDED` as the task. Then delegate to the original agent again, with the status block followed by the architect's decision in `PRIOR_OUTPUT`. |
 | `BLOCKED` | Show the `BLOCKER` to the user and stop that branch of the work. |
@@ -177,4 +183,4 @@ Every delegated agent ends its reply with a `STATUS:` block (`STATUS`, `ARTIFACT
 
 ### Iteration cap
 
-Re-delegate to the same agent at most 3 times per task. After that, stop and escalate to the user with the latest output. Loops that a workflow defines with their own caps (plan review, UI verification) keep those caps.
+Re-delegate to the same agent at most 3 times per task. After that, stop and escalate to the user with the latest output. Loops that a workflow defines with their own caps (plan review, code review and fix, UI verification) keep those caps.

@@ -78,11 +78,11 @@
 
 ## Best Practices
 
-1. Use `google` provider version `~> 5.0`
+1. Pin the current `google` provider major from the registry
 2. Enable `google_project_service` for required APIs
 3. Use Workload Identity — avoid service account keys
 4. Apply organisation policies via Terraform (`google_org_policy_policy`)
-5. Tag resources with labels (env, team, cost-centre, managed-by)
+5. Tag resources with labels using the required label set and key formats from `tsh-optimizing-cloud-cost` (its tagging standards)
 6. Use private IPs for all data services
 7. Enable VPC Service Controls for sensitive projects
 8. Enforce uniform bucket-level access on all Cloud Storage buckets

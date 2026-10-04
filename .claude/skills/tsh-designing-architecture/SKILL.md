@@ -65,7 +65,7 @@ For UI work follow the best UI/UX patterns (Atomic Design, accessibility pattern
 
 **Step 5: Create the implementation plan document**
 
-Save the plan following [assets/plan.template.md](assets/plan.template.md). Do not add or remove sections from the template, and follow its structure and naming conventions. Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>.plan.md`, where `<task>` is the Jira ID or a short kebab-case task name and `<specs>` is resolved by the "Project output locations" step of the `tsh-discovering-technical-context` skill.
+Save the plan following [assets/plan.template.md](assets/plan.template.md). Do not add or remove sections from the template, and follow its structure and naming conventions. Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>.plan.md`, where `<task>` is the Jira ID or a short kebab-case task name and `<specs>` is resolved by the "Resolve the Project Output Locations" step of the `tsh-discovering-technical-context` skill.
 
 ## Planning rules
 

@@ -108,7 +108,7 @@ Place these in a "Preserved Context" section with attribution to the speaker.
 
 Generate the final output following the `assets/cleaned-transcript.template.md` template.
 
-Save the file to `specifications/<workshop-name>/cleaned-transcript.md`.
+Save the file to `<specs>/<workshop-name>/cleaned-transcript.md`. `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).
 
 Review the output to ensure:
 - No business-relevant content was accidentally removed
@@ -122,7 +122,8 @@ When you run as a delegated worker (the task starts with `MODE: delegated`), the
 
 - **Step 1 (ask for missing metadata):** skipped. Leave the field as "not stated" and list the missing metadata in `QUESTIONS`.
 - **Step 8 (save):** skipped. Do not write files. Return the complete cleaned transcript in the reply body, in the structure of `assets/cleaned-transcript.template.md`. The orchestrator saves it as `cleaned-transcript.md`.
-- **Input:** read only the files listed in `INPUT_ARTIFACTS`. Extract PDF text first (Step 1).
+- **Input:** read only the files listed in `INPUT_ARTIFACTS`. Extract PDF text first (Step 1). If no tool can read a PDF, do not ask for a text export: return `BLOCKED` with that as the blocker, so the orchestrator asks the user.
+- **Questions:** you finish the cleanup and return `DONE` with the missing metadata in `QUESTIONS`; the orchestrator asks them and applies the answers.
 - **Everything else:** Steps 2-7 run unchanged.
 
 ## Connected Skills

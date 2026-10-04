@@ -54,13 +54,13 @@ From the gathered information and the task description, find ambiguities and mis
 
 Write the document following [assets/research.template.md](assets/research.template.md). Include all gathered information, findings and answered questions. Do not add or remove sections. Keep the file clear, concise and tailored to the development team.
 
-Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>.research.md`, where `<task>` is the Jira ID or a short kebab-case task name and `<specs>` is resolved by the "Project output locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`). Update the file whenever new information arrives.
+Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>.research.md`, where `<task>` is the Jira ID or a short kebab-case task name and `<specs>` is resolved by the "Resolve the Project Output Locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`). Update the file whenever new information arrives.
 
 ## Delegated mode
 
 When your task starts with `MODE: delegated` (for example when the context engineer or a BA analysis worker runs this skill), the caller owns every question, every file write and, for the BA orchestrator, every Atlassian call. There is nobody to answer you:
 
-- **Clarification questions:** do not ask the user. Put each question in `QUESTIONS` and mark the affected findings as open. If the missing answers block the document, return `NEEDS_INPUT`; otherwise continue with what you have and return `DONE` with the questions listed. When the caller re-delegates with `PRIOR_OUTPUT` and `USER_ANSWERS`, continue from the saved or returned document and treat the answers as authoritative.
+- **Clarification questions:** do not ask the user. Put each question in `QUESTIONS` and mark the affected findings as open. If the missing answers block the document, return `NEEDS_INPUT`; otherwise continue with what you have, record the open questions in the open-questions section of the research document and return `DONE` with the same questions in `QUESTIONS`. The caller asks them before planning. When the caller re-delegates with `PRIOR_OUTPUT` and `USER_ANSWERS`, continue from the saved or returned document and treat the answers as authoritative.
 - **External sources (Jira, Confluence and other task tools):** use only the sources you were given and the tools your role lists. A role without an Atlassian tool (such as the BA analysis worker) works from the files and text in the task, or from the payload in `INPUT_ARTIFACTS`, and does not look up Jira or Confluence. Record anything you could not look up as a question.
 - **Saving the document:** write it only at the path the task names and only when you have write access. Otherwise return the complete document in the reply body, in the structure of `assets/research.template.md`, with `ARTIFACTS: none`, and let the caller save it.
 - **Everything else:** keep the steps and the document structure unchanged.

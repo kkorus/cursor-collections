@@ -273,7 +273,7 @@ infrastructure/
 
 ## OpenTofu
 
-OpenTofu is a drop-in alternative for Terraform. Modules written to the patterns above work with both, including `tofu test` and S3 `use_lockfile`. Check which CLI the project uses (`.terraform-version`, `.opentofu-version`, CI configuration) and use its command name. Do not switch tools without an explicit decision.
+OpenTofu is a drop-in alternative for Terraform. Modules written to the patterns above work with both, including `tofu test` (`mock_provider` needs a recent OpenTofu, so check the minimum version) and S3 `use_lockfile`. Check which CLI the project uses (`.terraform-version`, `.opentofu-version`, CI configuration) and use its command name. Do not switch tools without an explicit decision.
 
 ## Guardrails
 

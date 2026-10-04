@@ -16,7 +16,7 @@ You do not parallelize on your own. Evaluate the volume and complexity of the ma
 - Several independent input sources need processing (transcript + Figma + codebase).
 - The input has 3 or more substantial documents (multi-page PDFs, policy documents, requirement specifications; not trivially short files).
 - A single transcript exceeds about 3000 words or has 5 or more distinct topics.
-- The extracted task list has 4 or more epics or 15 or more stories (quality review).
+- The extracted task list has 4 or more epics or 15 or more stories (quality review, Full mode).
 - Codebase analysis targets a monorepo with 3 or more apps or packages.
 
 When you suggest it, tell the user (1) what is parallelized, (2) how many workers are started and (3) the expected benefit. Then ask for confirmation.
@@ -46,7 +46,7 @@ Cases A and B can combine (for example 5 documents + a codebase + a Figma link =
 
 ## Scenario 2: epic-level task extraction
 
-After Gate 0 is approved, you run the first extraction phases (material review and epic identification) yourself. Then:
+After Gate 0 is approved, you run epic identification yourself (step 5a: Step 4 of `tsh-extracting-tasks`). Then:
 
 1. Identify all epics and their scope boundaries.
 2. Delegate to `tsh-ba-extraction-worker`, one worker per epic (or 2-3 small epics per worker), with the epic definition, the relevant source paths and the instruction to extract the stories of that epic only.
@@ -56,7 +56,7 @@ Then you collect the story lists, assign consistent numbering, resolve duplicate
 
 ## Scenario 3: pass-level quality review
 
-The active passes depend on the review mode. For 4 or more epics, 15 or more stories, or a regulated or high-risk domain, prefer Full mode.
+The active passes depend on the review mode. Use Full mode for 4 or more epics, 15 or more stories, or a regulated or high-risk domain; otherwise Lite.
 
 1. Split the active passes into roughly equal batches.
 2. Delegate each batch to `tsh-ba-quality-worker` with the path of `extracted-tasks.md`, the passes of the batch and the suggestion format.
@@ -66,7 +66,7 @@ Then you collect them, deduplicate overlapping suggestions (keep the higher-conf
 
 ## Delegation rules
 
-1. **One owner per phase:** route each phase to the worker that owns it (see the routing guide in the skill). Do not do a worker's job yourself when it was delegated.
+1. **One owner per phase:** route each phase to the worker that owns it (see the Workers table in the skill). Do not do a worker's job yourself when it was delegated.
 2. **In-memory returns:** workers are read-only and return their result in the reply. You assemble and write every output file after the merge, which also prevents concurrent overwrites.
 3. **1:1 assignment:** each worker gets exactly one chunk. Never give overlapping material to two workers.
 4. **Errors:** if a worker fails or returns an incomplete result, do not re-delegate on your own. Tell the user and ask whether to retry the chunk or continue without it. A `NEEDS_INPUT` result is not a failure: ask the questions and re-delegate as the status-handling rules describe.

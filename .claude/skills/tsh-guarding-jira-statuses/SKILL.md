@@ -18,7 +18,7 @@ The default list of protected statuses is:
 - **Cancelled**
 - **PO APPROVE**
 
-The list is configurable. If the user, the task or the project baseline names a different list (for example a team that protects "Released" and "In Production"), use that list instead and tell the user which list is active before you apply it. Compare statuses case-insensitively and by exact name. When the task status is missing or unknown, treat the task as not protected and say so.
+The list is configurable. If the user, the task or the project baseline names a different list (for example a team that protects "Released" and "In Production"), use that list instead and tell the user which list is active before you apply it. Compare statuses case-insensitively and by exact name. When a task without a Jira key (never pushed) has no status, treat it as not protected and say so. A task with a Jira key and a missing or unknown status is not safe to change: fetch its current status before any update, and skip the task if you cannot (workers cannot fetch; they skip it and report it).
 
 A task (epic or story) whose status is on the list is **immutable**.
 
@@ -39,7 +39,7 @@ A task (epic or story) whose status is on the list is **immutable**.
 | Quality review: before the passes | Filter protected tasks out of the analysis |
 | Quality review: before presenting and before applying | Drop or skip any suggestion that targets a protected task |
 | Formatting: each epic and story | Keep protected tasks as imported and skip the formatting steps |
-| Push: before each update | Re-check the current status and skip protected tasks |
+| Push: before each update | Re-check the current status (always fetch it for keyed tasks with a missing status) and skip protected tasks, or tasks whose status cannot be fetched |
 | Per-task change request | Refuse the change (rule 6) |
 
 ## Delegated mode

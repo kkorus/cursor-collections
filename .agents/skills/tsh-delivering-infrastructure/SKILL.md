@@ -36,7 +36,7 @@ Load the skills in the order shown. `tsh-discovering-technical-context` always c
 | Task type | Skills, in order |
 |---|---|
 | CI/CD pipelines | `tsh-discovering-technical-context`, `tsh-implementing-ci-cd`, `tsh-managing-secrets` |
-| Terraform pipelines | `tsh-discovering-technical-context`, `tsh-implementing-terraform-modules` (`references/ci-pipelines.md`), `tsh-managing-secrets` |
+| Terraform pipelines | `tsh-discovering-technical-context`, `tsh-implementing-terraform-modules` (its CI pipelines reference), `tsh-managing-secrets` |
 | Terraform modules | `tsh-discovering-technical-context`, `tsh-implementing-terraform-modules`, `tsh-managing-secrets` |
 | Terraform with cloud selection | `tsh-discovering-technical-context`, `tsh-implementing-terraform-modules`, `tsh-designing-multi-cloud-architecture`, `tsh-optimizing-cloud-cost` |
 | Kubernetes deployments | `tsh-discovering-technical-context`, `tsh-implementing-kubernetes`, `tsh-managing-secrets` |
@@ -46,7 +46,7 @@ Load the skills in the order shown. `tsh-discovering-technical-context` always c
 
 When the task touches an existing codebase, also load `tsh-analyzing-codebase` to understand the current Terraform, Helm charts and manifests.
 
-For an IaC pipeline, follow the IaC checklist in `tsh-implementing-terraform-modules` (`references/ci-pipelines.md`) before you deliver.
+For an IaC pipeline, follow the IaC checklist in the CI pipelines reference of `tsh-implementing-terraform-modules` before you deliver.
 
 ## Architect escalation
 
@@ -90,7 +90,7 @@ Every infrastructure proposal includes a cost estimate. When the estimated spend
 
 ## Summary and audit outputs
 
-End an implementation with the summary template of the domain skill you used (in `assets/` of `tsh-implementing-kubernetes`, `tsh-implementing-observability`, `tsh-implementing-ci-cd` and `tsh-implementing-terraform-modules`). For an audit, use `assets/infrastructure-audit-report.template.md`. Keep paths that belong to this toolkit out of user-facing reports.
+End an implementation with the summary template of the domain skill you used (each of `tsh-implementing-kubernetes`, `tsh-implementing-observability`, `tsh-implementing-ci-cd` and `tsh-implementing-terraform-modules` has one). For an audit, use `assets/infrastructure-audit-report.template.md`. Keep paths that belong to this toolkit out of user-facing reports.
 
 ## Connected Skills
 

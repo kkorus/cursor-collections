@@ -15,7 +15,7 @@ Plan and execute a structural change that improves the codebase without altering
 
 1. Load the `tsh-engineering-manager` skill and run it in **refactor mode**.
 2. Pass it the scope the user gave. If the scope is unclear, ask the user what is in scope, which structural problem is solved and what is out of scope.
-3. Refactor mode produces a standard plan, `specifications/<topic>/<topic>.plan.md`, with `Behavior-preserving: yes` in its Task Details. The plan starts with characterization tests where coverage is insufficient (see the `tsh-refactoring` skill), then atomic steps that each keep the tests green, then a code review.
+3. Refactor mode produces a standard plan, `<specs>/<topic>/<topic>.plan.md` (`<specs>` as resolved by the manager), with `Behavior-preserving: yes` in its Task Details. The plan starts with characterization tests where coverage is insufficient (see the `tsh-refactoring` skill), then atomic steps that each keep the tests green, then a code review.
 4. The manager delegates planning, implementation and review to the subagents, and follows the `tsh-refactoring` skill for the verification of the outcome.
 
 ## Constraints

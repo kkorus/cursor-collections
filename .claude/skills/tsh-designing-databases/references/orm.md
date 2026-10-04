@@ -39,8 +39,8 @@ const prisma = new PrismaClient({
 ```
 
 ```php
-// Doctrine: enable SQL logger
-$configuration->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+// Doctrine: log SQL through a PSR-3 logger with the DBAL logging middleware
+// (the older setSQLLogger() API is deprecated in DBAL 3 and removed in DBAL 4)
 
 // Laravel: enable query log
 DB::enableQueryLog();

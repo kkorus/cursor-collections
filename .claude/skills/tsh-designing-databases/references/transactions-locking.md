@@ -14,7 +14,7 @@ Reference for the `tsh-designing-databases` skill. Load this when defining trans
 | Property | Meaning | Practical Impact |
 |---|---|---|
 | **Atomicity** | All operations in a transaction succeed or all are rolled back | Partial updates never reach the database |
-| **Consistency** | Transaction moves the database from one valid state to another | Constraints are enforced at commit time |
+| **Consistency** | Transaction moves the database from one valid state to another | Constraints are enforced (per statement by default; deferred constraints are checked at commit) |
 | **Isolation** | Concurrent transactions don't interfere with each other | Determined by the isolation level |
 | **Durability** | Committed data survives system failures | Data is persisted to disk on commit |
 
@@ -71,7 +71,7 @@ COMMIT;
 | Lock Type | SQL | Scope | Behaviour |
 |---|---|---|---|
 | **Row-level shared (FOR SHARE)** | `SELECT ... FOR SHARE` | Row | Other transactions can read but not modify the row |
-| **Row-level exclusive (FOR UPDATE)** | `SELECT ... FOR UPDATE` | Row | Other transactions cannot read (with FOR UPDATE) or modify the row |
+| **Row-level exclusive (FOR UPDATE)** | `SELECT ... FOR UPDATE` | Row | Other transactions cannot modify or lock the row; plain reads are not blocked (MVCC) |
 | **Table-level** | `LOCK TABLE ... IN <mode> MODE` | Table | Applies to the entire table — use sparingly |
 | **Advisory locks** | `pg_advisory_lock(key)` | Application-defined | Application-level coordination, not tied to specific rows |
 
@@ -107,11 +107,11 @@ WHERE id = 42 AND version = 3;
 |---|---|
 | **TypeORM** | `@VersionColumn()` decorator |
 | **Prisma** | Manual implementation via `version` field and conditional update |
-| **Doctrine (PHP)** | `@ORM\Version` annotation on an integer or datetime column |
+| **Doctrine (PHP)** | `#[ORM\Version]` attribute on an integer or datetime column |
 | **Eloquent (Laravel)** | Manual implementation or `laravel-optimistic-locking` package |
 | **Entity Framework (.NET)** | `[Timestamp]` attribute or `IsRowVersion()` in Fluent API |
 | **Hibernate (Java)** | `@Version` annotation |
-| **GORM (Go)** | Built-in optimistic locking with `gorm:"column:version"` tag |
+| **GORM (Go)** | Plugin `gorm.io/plugin/optimisticlock` (`optimisticlock.Version` field), or a manual `UPDATE ... WHERE version = ?` that checks `RowsAffected` |
 
 ### Pessimistic Locking
 

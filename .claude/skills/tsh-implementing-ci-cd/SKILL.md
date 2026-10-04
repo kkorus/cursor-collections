@@ -80,7 +80,7 @@ Prefer OIDC federation over long-lived access keys. The credentials table (per C
 
 ## Infrastructure as Code Pipelines
 
-Terraform and Terragrunt pipelines (plan and apply stages, remote state and locking, security scanning, OIDC, plan artifacts, PR comments) are described in `tsh-implementing-terraform-modules` (`references/ci-pipelines.md`).
+Terraform and Terragrunt pipelines (plan and apply stages, remote state and locking, security scanning, OIDC, plan artifacts, PR comments) are described in the CI pipelines reference of `tsh-implementing-terraform-modules`; load that skill by name.
 
 ## Summary Output
 

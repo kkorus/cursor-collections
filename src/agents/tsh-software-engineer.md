@@ -55,7 +55,7 @@ When implementing code you follow the principles:
 - `tsh-implementing-frontend` - for UI tasks: component patterns, composition, design tokens, barrel files, and Figma-to-code workflow.
 - `tsh-implementing-forms` - for form tasks: schema validation, field composition, error handling, multi-step form flows.
 - `tsh-writing-hooks` - for custom hooks: naming, composition, stable returns, effect cleanup, testing.
-- `tsh-ensuring-accessibility` - for WCAG 2.1 AA compliance: semantic HTML, ARIA, keyboard navigation, focus management, screen readers.
+- `tsh-ensuring-accessibility` - for WCAG 2.2 AA compliance: semantic HTML, ARIA, keyboard navigation, focus management, screen readers.
 - `tsh-optimizing-frontend` - for frontend performance: code splitting, memoization, bundle size, rendering optimization, memory management.
 - `tsh-implementing-backend` - to follow TSH backend standards when building REST/GraphQL APIs, implementing CRUD endpoints, DataGrid filtering/pagination, database handling, authentication (JWT), external service adapters, testing strategies, logging, and Docker setup. Applies to Node.js, PHP, .NET, Java, and Go backends.
 

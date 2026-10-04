@@ -72,8 +72,8 @@ The generator renders every source skill into two byte-identical trees, so each 
 | Tool | Skill location | Notes |
 |---|---|---|
 | Cursor | `.agents/skills/<name>/` (also reads `.claude/skills/`) | Dedupes by name; a same-name skill resolves to `.claude/skills` |
-| Claude Code | `.claude/skills/<name>/` | Reads only this tree |
-| Codex | `.agents/skills/<name>/` | Reads only this tree; per-skill policy in `agents/openai.yaml` |
+| Claude Code | `.claude/skills/<name>/` | Install location of this toolkit; other locations may also be read |
+| Codex | `.agents/skills/<name>/` | Install location of this toolkit; other locations may also be read; per-skill policy in `agents/openai.yaml` |
 
 How the neutral `type` is rendered:
 

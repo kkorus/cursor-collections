@@ -62,7 +62,7 @@ kind: PodDisruptionBudget
 metadata:
   name: api-pdb
 spec:
-  minAvailable: 2        # OR maxUnavailable: 1
+  maxUnavailable: 1      # OR minAvailable: 1; minAvailable must stay below the minimum replica count
   selector:
     matchLabels:
       app: api
@@ -160,7 +160,7 @@ resources:
     memory: "256Mi"
     cpu: "100m"
   limits:
-    memory: "512Mi"
+    memory: "256Mi"   # equal to the memory request
 
 # Enable/disable optional components
 autoscaling:

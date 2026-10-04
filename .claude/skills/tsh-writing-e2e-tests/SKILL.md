@@ -90,7 +90,7 @@ Debugging tools: the accessibility snapshot of a browser tool when one is availa
 | Max per suite | 15 iterations -> stop |
 | Flaky detection | 3 pass/fail mix -> investigate |
 | Stability | 3+ consecutive passes required |
-| App bug | Mark `test.fixme('BUG: desc')` |
+| App bug | Mark `test.fixme(true, 'BUG: desc')` inside the test body |
 
 ### Error Recovery
 
@@ -100,7 +100,7 @@ Debugging tools: the accessibility snapshot of a browser tool when one is availa
 | Element not found | Alternative locator -> check DOM -> verify page loaded |
 | Network | Retry -> consider mock -> verify backend |
 | Flaky | Explicit waits -> check race conditions -> run 5x |
-| App bug | Mark `test.fixme('BUG: desc')` - test is skipped; CI usually still passes unless skipped tests fail the build |
+| App bug | Mark `test.fixme(true, 'BUG: desc')` inside the test body - test is skipped; CI usually still passes unless skipped tests fail the build |
 
 ## CI Readiness Checklist
 

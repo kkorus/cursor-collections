@@ -93,7 +93,7 @@ If neither instruction files nor sufficient existing codebase patterns are avail
 
 Decide where generated artifacts go before anyone writes them:
 
-- The default is `specifications/<task>/`, where `<task>` is the Jira ID or a short kebab-case task name. Artifacts are `<task>.research.md`, `<task>.plan.md` and `<task>.plan-review.md`. Decision records go to `specifications/decisions/`, cost audits to `specifications/cost-audits/` and codebase audits to `specifications/code-quality/`.
+- The default is `specifications/<task>/`, where `<task>` is the Jira ID or a short kebab-case task name. Artifacts are `<task>.research.md`, `<task>.plan.md` and `<task>.plan-review.md`. Decision records go to `specifications/decisions/`, cost audits to `specifications/cost-audits/` codebase audits to `specifications/code-quality/` and the incremental codebase analysis to `specifications/codebase-analysis/`.
 - If the project instructions (Step 1) define another location for specifications, plans or reports, use that location instead and say so in your result.
 - Callers that delegate work (for example the engineering manager) pass the resolved location on to the agents they delegate to. A delegate that received a path uses it as given.
 

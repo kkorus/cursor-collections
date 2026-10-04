@@ -29,9 +29,10 @@ ORDER BY n_dead_tup DESC;
 
 ```sql
 -- PostgreSQL: enable pg_stat_statements extension
+-- (also requires shared_preload_libraries = 'pg_stat_statements' and a restart)
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
--- Find slowest queries by total time
+-- Find slowest queries by mean execution time (order by total_exec_time to find the most expensive overall)
 SELECT
     calls,
     ROUND(total_exec_time::NUMERIC, 2) AS total_ms,
@@ -54,5 +55,5 @@ SET GLOBAL long_query_time = 1;  -- queries taking > 1 second
 - Always use connection pooling in production. Direct connections are expensive to create.
 - PostgreSQL: use PgBouncer or built-in pooling in the ORM/driver.
 - MySQL: use ProxySQL or driver-level pooling.
-- Set pool size based on: `pool_size = (core_count * 2) + effective_spindle_count` (formula from PostgreSQL wiki).
+- Set pool size based on: `pool_size = (core_count * 2) + effective_spindle_count` (a commonly cited starting point; tune it under load).
 - Monitor for connection exhaustion — set `max_connections` appropriately and alert when pool utilisation exceeds 80%.

@@ -15,7 +15,7 @@ Audit the project's infrastructure for security gaps, cost waste indicators and 
 ## Required Skills
 
 - `tsh-discovering-technical-context` - project conventions, IaC dialect and existing infrastructure
-- `tsh-delivering-infrastructure` - the audit report template (`assets/infrastructure-audit-report.template.md`) and the severity scale
+- `tsh-delivering-infrastructure` - its audit report template and the severity scale
 - `tsh-analyzing-codebase` - reviewing IaC files, CI/CD configuration and documentation coverage
 - `tsh-optimizing-cloud-cost` - unused resources, rightsizing and reservation findings
 - `tsh-managing-secrets` - secrets audit criteria and exposure risk
@@ -40,12 +40,13 @@ CALLER: <name of your skill or command>
 TASK: <what to do, stated specifically>
 INPUT_ARTIFACTS:
 - <explicit path of each file the agent needs>
-PRIOR_OUTPUT: <re-delegation only: the previous STATUS block, verbatim>
+PRIOR_OUTPUT: <re-delegation only: the previous STATUS block, verbatim; when ARTIFACTS was "none", the complete previous reply body including the block>
 USER_ANSWERS: <re-delegation only: the user's answers, numbered like the questions>
 ```
 
 - The first line must be exactly `MODE: delegated`. Without it the agent runs in interactive mode and will ask the user instead of returning a status.
 - Pass artifact paths explicitly. Never ask the agent to search for them.
+- Read-only agents cannot save files, so their partial result lives in the reply body. Keep the full reply of every read-only delegate and pass it as `PRIOR_OUTPUT` on re-delegation, otherwise the agent restarts from zero.
 - Omit `PRIOR_OUTPUT` and `USER_ANSWERS` on the first delegation.
 
 ### Reading the returned status
@@ -59,7 +60,7 @@ Every delegated agent ends its reply with a `STATUS:` block (`STATUS`, `ARTIFACT
 
 | Status | What you do |
 |---|---|
-| `DONE` | Continue with the workflow. Use the paths in `ARTIFACTS`. |
+| `DONE` | Continue with the workflow. Use the paths in `ARTIFACTS`. If `QUESTIONS` is present, these are open points the agent worked around: ask the user (or apply the answers at the matching gate of your workflow) and apply the answers yourself or pass them on to the next step. Do not re-delegate just for them. |
 | `NEEDS_INPUT` | Ask the user the listed `QUESTIONS` in the main thread, all at once and numbered. Then delegate to the same agent again with `PRIOR_OUTPUT` and `USER_ANSWERS`. |
 | `NEEDS_ARCHITECT_DECISION` | Delegate to the `tsh-architect` subagent with `DECISION_NEEDED` as the task. Then delegate to the original agent again, with the status block followed by the architect's decision in `PRIOR_OUTPUT`. |
 | `BLOCKED` | Show the `BLOCKER` to the user and stop that branch of the work. |
@@ -67,4 +68,4 @@ Every delegated agent ends its reply with a `STATUS:` block (`STATUS`, `ARTIFACT
 
 ### Iteration cap
 
-Re-delegate to the same agent at most 3 times per task. After that, stop and escalate to the user with the latest output. Loops that a workflow defines with their own caps (plan review, UI verification) keep those caps.
+Re-delegate to the same agent at most 3 times per task. After that, stop and escalate to the user with the latest output. Loops that a workflow defines with their own caps (plan review, code review and fix, UI verification) keep those caps.

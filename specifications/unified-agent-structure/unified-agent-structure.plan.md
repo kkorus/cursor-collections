@@ -2396,6 +2396,7 @@ Potential improvements identified during planning that are not part of the curre
 - **Atlassian deny:** `mcp__atlassian` only matches a server named `atlassian`; connectors with other names are not denied.
 - **Installer re-runs:** a second run is idempotent but re-copies every entry and logs each line; make it skip identical entries.
 - **Website polish:** `for-ctos.md` still has an unverified price comparison; the skill pages are generated from `SKILL.md` and lost the old hand-written detail.
+- **Review leftovers (suggestions, not fixed):** Figma/Playwright usage blocks are still inline in 6 agents; 12 commands do not follow the Route/Inputs/Steps template; `tsh-business-analyst` lacks the "Internal step of" description prefix; `agents/openai.yaml` is emitted only for commands (no implicit-invocation block for the hidden orchestrator/internal skills, relevant once Codex is tested).
 
 ## Changelog
 
@@ -2486,3 +2487,12 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
 - **Done:** 5.1 (`.github/workflows/validate.yml`), 5.2 (migration tooling removed), 5.3 (`smoke-tests.md`: Claude Code 2.1.285, `cursor-agent` 2026.10.01, upgrade path; Codex not tested).
 - **Found and fixed on the way:** `npm test` passed a directory, which fails on Node 22 (now a file glob); the installer's copy mode left symlinks in copied skills on Node 22 (`copyDereferenced`); empty legacy category folders are removed after the cleanup; upgrading docs describe the backup layout. All 160 tests pass on Node 22 and Node 26.
 - **Smoke results:** no FAIL in any tested tool; see `smoke-tests.md`. Untested items are listed under "Improvements (Out of Scope)".
+
+### 2026-10-04 - Phase 6: final code review
+
+- **Method:** seven read-only reviewers by dimension (per-skill table for agents/commands/internal and for workflows, scripts, generated outputs, three content groups, docs). Reports are in `review/*.md`.
+- **Result:** 0 critical in tables, scripts and generated outputs; 5 critical in content and docs, about 35 warnings, several suggestions. The per-skill table was fulfilled for all 83 rows.
+- **Critical findings, all fixed and spot-checked after the merge:** the read-only `tsh-ui-reviewer` was told to write a report (read-only roles now return partial results in the reply and callers pass the full reply back as `PRIOR_OUTPUT`); the Jira import entry led to a quality review with no input; GORM optimistic locking claim; `integrations/overview.md` used the `servers` key and named removed agents; the homepage still told users to use the Remote Rule import.
+- **Warnings fixed:** installer safety (`--force` with source == destination, manifest names as path components, `--update` pruning), schema TypeError, `.gitattributes` patterns, EM review/fix loop cap, refactor mode routing, `DONE` with `QUESTIONS`, output locations, stale infrastructure examples (Helm memory, PDB, provider pins, Azure, retired services), creating-skills/agents/commands accuracy, database and language reference errors, homepage and docs wording.
+- **Also done after the merge:** `tsh-prompt-engineer` now has the Workflow and Output format of the deleted `tsh-engineer-prompt` (restored from git history), WCAG 2.2 in the software engineer, `codebase-analysis/` in the output locations, React pointer in `tsh-reviewing-frontend`.
+- **Gates after the last change:** `npm run check`, `npm test` (165, Node 22 and Node 26) and the website build pass.

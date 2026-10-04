@@ -114,7 +114,7 @@ Generate the final output following the `assets/jira-task.template.md` template 
 
 Include the `Jira Key` field for every epic and story. For newly formatted tasks (not yet pushed to Jira), set the Jira Key to `—` as a placeholder. For tasks imported from Jira or previously pushed, preserve their existing Jira key.
 
-Save the file to `specifications/<workshop-name>/jira-tasks.md`.
+Save the file to `<specs>/<workshop-name>/jira-tasks.md`. `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).
 
 **Step 8: Push Approval — User approves Jira push**
 
@@ -165,10 +165,10 @@ If verification finds mismatches, surface them clearly and do not claim the push
 
 **Step 11: Archive session artifacts and refresh the project baseline**
 
-When verification succeeds, archive the current session artifacts under `specifications/projects/<project-name>/sessions/<YYYY-MM-DD>-<workshop-name>/`.
+When verification succeeds, archive the current session artifacts under `<specs>/projects/<project-name>/sessions/<YYYY-MM-DD>-<workshop-name>/`.
 
 - Use the workshop name as the fallback project key when no explicit project name exists
-- Refresh `specifications/projects/<project-name>/task-baseline.md` in the structure of `assets/task-baseline.template.md`
+- Refresh `<specs>/projects/<project-name>/task-baseline.md` in the structure of `assets/task-baseline.template.md`
 - Treat `Jira Key` as the primary identity when merging baseline entries
 - Replace same-key entries with the latest synced content and status
 - Add new entries for newly pushed tasks

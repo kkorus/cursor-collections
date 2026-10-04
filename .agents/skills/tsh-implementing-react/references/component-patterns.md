@@ -49,7 +49,7 @@ React uses **error boundaries** — class components with `componentDidCatch` / 
 | Component memoization | `React.memo(Component)`                              | Prevent re-render when props unchanged      |
 | Expensive computation | `useMemo(() => compute(data), [data])`               | Heavy calculations derived from state/props |
 | Stable callbacks      | `useCallback(fn, [deps])`                            | Callbacks passed to memoized children       |
-| Code splitting        | `React.lazy(() => import('./Heavy'))` + `<Suspense>` | Route-level and heavy component splitting   |
+| Code splitting        | `lazy(() => import('./Heavy').then(m => ({ default: m.Heavy })))` + `<Suspense>` | Route-level and heavy component splitting   |
 
 **Rule of thumb**: Don't memoize by default. Measure first. `React.memo` only helps when re-renders are measurably expensive and props don't change often. If the project uses the React Compiler, see the memoization section of `SKILL.md` before adding manual memoization.
 
