@@ -148,7 +148,7 @@ The patterns above are framework-agnostic. For framework-specific implementation
 
 - `tsh-verifying-ui` — verifying implementation against Figma designs
 - `tsh-discovering-technical-context` - for understanding project conventions before implementing
-- `tsh-ensuring-accessibility` — to ensure components meet WCAG 2.1 AA standards
+- `tsh-ensuring-accessibility` — to ensure components meet WCAG 2.2 AA standards
 - `tsh-optimizing-frontend` — for performance considerations during component implementation
 - `tsh-implementing-forms` — for form-specific component patterns and validation
 - `tsh-implementing-react` — for React-specific implementation patterns
