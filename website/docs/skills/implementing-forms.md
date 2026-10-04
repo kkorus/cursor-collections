@@ -1,34 +1,30 @@
 ---
-sidebar_position: 28
+sidebar_position: 16
 title: Implementing Forms
 ---
 
 # Implementing Forms
 
-**Folder:** `.cursor/skills/workflows/tsh-implementing-forms/`  
+**Skill name:** `tsh-implementing-forms`  
+**Source:** `src/skills/tsh-implementing-forms/`  
 **Used by:** Software Engineer
 
-Provides form architecture patterns including schema-based validation, field composition, error handling, multi-step form flows, and accessible form patterns.
+Form architecture, schema-based validation, field composition, error handling, multi-step form flows, and accessible form patterns.
 
-## Key Areas
+**Use when** building forms, implementing validation, creating multi-step wizards, or integrating form fields with a component library.
 
-| Area                  | Coverage                                                               |
-| --------------------- | ---------------------------------------------------------------------- |
-| **Schema Validation** | Zod/Yup schema-driven validation integrated with form libraries        |
-| **Field Composition** | Reusable field components wrapping form library primitives             |
-| **Error Handling**    | Field-level and form-level error display, server error mapping         |
-| **Multi-Step Forms**  | Wizard flows with step validation, progress tracking, data persistence |
-| **Accessibility**     | Label association, error announcements, required field indicators      |
+## What it covers
 
-## When to Use
+- Form Implementation Process
+- Validation Timing
+- Error Display Patterns
+- Form Checklist
+- Anti-Patterns
 
-- Building forms with complex validation logic.
-- Implementing multi-step wizards.
-- Creating reusable form field components.
-- Integrating form fields with a component library.
+## Connected skills
 
-## Connected Skills
-
-- `tsh-implementing-frontend` — Component composition patterns.
-- `tsh-ensuring-accessibility` — WCAG-compliant form patterns.
-- `tsh-writing-hooks` — Custom hooks for form state management.
+- [`tsh-ensuring-accessibility`](./ensuring-accessibility)
+- [`tsh-implementing-frontend`](./implementing-frontend)
+- [`tsh-implementing-react`](./implementing-react)
+- [`tsh-reviewing-frontend`](./reviewing-frontend)
+- [`tsh-writing-hooks`](./writing-hooks)

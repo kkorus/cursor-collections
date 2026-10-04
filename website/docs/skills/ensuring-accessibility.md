@@ -1,35 +1,28 @@
 ---
-sidebar_position: 27
+sidebar_position: 18
 title: Ensuring Accessibility
 ---
 
 # Ensuring Accessibility
 
-**Folder:** `.cursor/skills/workflows/tsh-ensuring-accessibility/`  
-**Used by:** Software Engineer
+**Skill name:** `tsh-ensuring-accessibility`  
+**Source:** `src/skills/tsh-ensuring-accessibility/`  
+**Used by:** Software Engineer, `tsh-implement-task` (step)
 
-Provides WCAG 2.1 AA compliance guidelines covering semantic HTML, ARIA patterns, keyboard navigation, focus management, screen reader support, and color contrast requirements.
+WCAG 2.2 AA compliance, semantic HTML, ARIA patterns, keyboard navigation, focus management, screen reader support, and color contrast requirements.
 
-## Key Areas
+**Use when** implementing accessible components, auditing UI for accessibility issues, reviewing frontend code for a11y compliance, or building inclusive forms and interactive widgets.
 
-| Area                    | Coverage                                                                  |
-| ----------------------- | ------------------------------------------------------------------------- |
-| **Semantic HTML**       | Correct element usage (`<button>`, `<nav>`, `<main>`, `<dialog>`, etc.)   |
-| **ARIA**                | Roles, states, properties — only when semantic HTML is insufficient       |
-| **Keyboard Navigation** | Tab order, focus traps for modals, arrow key patterns for composites      |
-| **Focus Management**    | Visible focus indicators, focus restoration after dynamic content changes |
-| **Screen Readers**      | Live regions, announcements, accessible names and descriptions            |
-| **Color Contrast**      | 4.5:1 for normal text, 3:1 for large text and UI components               |
+## What it covers
 
-## When to Use
+- Accessibility Implementation Process
+- ARIA Usage Quick Reference
+- Accessibility Checklist
+- RTL / Bidirectional Text Support
 
-- Implementing accessible components (forms, modals, tabs, menus).
-- Auditing frontend code for a11y compliance.
-- Building inclusive forms and interactive widgets.
-- Reviewing code for WCAG violations.
+## Connected skills
 
-## Connected Skills
-
-- `tsh-implementing-frontend` — Component patterns and design system usage.
-- `tsh-implementing-forms` — Accessible form patterns and validation.
-- `tsh-reviewing-frontend` — Accessibility spot-checks during code review.
+- [`tsh-implementing-forms`](./implementing-forms)
+- [`tsh-implementing-frontend`](./implementing-frontend)
+- [`tsh-optimizing-frontend`](./optimizing-frontend)
+- [`tsh-reviewing-frontend`](./reviewing-frontend)
