@@ -54,3 +54,18 @@ test('plan template and gap-analysis template use the same create/modify/reuse t
   }
   for (const text of [plan, gap, read('src/skills/tsh-analyzing-implementation-gaps/SKILL.md')]) assert.ok(text.endsWith('\n'));
 });
+
+test('agents with access read-only are never told to write files', () => {
+  const instructsWrite = /\b(write|save|persist|store|create)\b[^.\n]{0,60}\b(to|into|at|in)\b[^.\n]{0,40}\b(file|files|path|disk|specifications)\b/i;
+  const negated = /\b(never|cannot|can't|not|no)\b|if your role can write|if you can write/i;
+  const readOnly = files('src/agents').filter((f) => f.endsWith('.md') && /^access: read-only$/m.test(read(f)));
+  assert.ok(readOnly.length >= 7, 'expected the read-only agents to be found');
+  for (const rel of readOnly) {
+    read(rel).split('\n').forEach((line, i) => {
+      if (instructsWrite.test(line) && !negated.test(line)) assert.fail(`${rel}:${i + 1} tells a read-only agent to write files: ${line.trim()}`);
+    });
+  }
+  const modes = read('src/partials/agent-modes.md');
+  assert.match(modes, /If your role can write files/);
+  assert.match(modes, /If your role is read-only, never write files/);
+});
