@@ -3,6 +3,7 @@ name: tsh-analyzing-requirements
 description: Analyzes a task and builds its requirements context into a structured research document (.research.md), gathering information from Jira, Confluence, Figma, PDFs and the codebase and surfacing ambiguities as questions. Use when a task is missing requirements or context, before planning a feature, or when asked to research a task.
 metadata:
   short-description: Analyze a task and build its context and research document
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-analyzing-requirements/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

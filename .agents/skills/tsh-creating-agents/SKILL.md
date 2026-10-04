@@ -3,6 +3,7 @@ name: tsh-creating-agents
 description: Guides creating and reviewing custom agents (subagents) for Cursor, Claude Code and Codex, from the neutral source schema in `src/agents/` or as native agent files. Covers the agent schema, per-tool output, separation of concerns, dual-mode behavior, the no-delegation rule and the orchestrator-versus-subagent decision. Use when creating, reviewing or updating an agent, or when deciding whether a role should be an agent, an orchestrator or a skill.
 metadata:
   short-description: Schema, mapping and rules for writing agents
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-creating-agents/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

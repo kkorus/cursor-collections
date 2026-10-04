@@ -3,6 +3,7 @@ name: tsh-refactoring
 description: Behavior-preserving refactoring guidance - scoping, characterization tests, small verifiable steps and outcome verification. Use when restructuring code without changing external behavior, extracting shared logic, reducing complexity, or cleaning up technical debt.
 metadata:
   short-description: Refactor safely with characterization tests and small steps
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-refactoring/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

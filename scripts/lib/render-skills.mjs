@@ -17,7 +17,8 @@ export function renderSkillMarkdown(skill) {
     fm['disable-model-invocation'] = true;
     if (data['argument-hint']) fm['argument-hint'] = data['argument-hint'];
   }
-  if (data.type === 'internal' || data.type === 'orchestrator') fm['user-invocable'] = false;
+  // only commands are meant to be typed by a user; every other type is loaded by name (model or agent)
+  if (data.type !== 'command') fm['user-invocable'] = false;
 
   const cursorExtra = data.targets?.cursor ?? {};
   const claudeExtra = data.targets?.claude ?? {};

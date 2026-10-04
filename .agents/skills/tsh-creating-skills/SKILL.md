@@ -3,6 +3,7 @@ name: tsh-creating-skills
 description: Guides creating and reviewing skills (SKILL.md) for Cursor, Claude Code and Codex, from the neutral source schema in `src/skills/` or as native Agent Skills files. Covers skill types, naming, descriptions, body structure, support-file layout, per-tool output and validation. Use when creating, reviewing or updating a skill, command, orchestrator or internal step, or when discussing skill design and organization.
 metadata:
   short-description: Schema, naming, layout and templates for writing skills
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-creating-skills/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

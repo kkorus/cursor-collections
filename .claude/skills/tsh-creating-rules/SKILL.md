@@ -3,6 +3,7 @@ name: tsh-creating-rules
 description: "Guides creating and reviewing project instructions and scoped rules for Cursor, Claude Code and Codex: AGENTS.md as the single constitution, CLAUDE.md importing it, Cursor .mdc rules, Claude .claude/rules files and Codex nested AGENTS.md. Covers per-tool placement, frontmatter, precedence, templates and the rules-versus-skills decision. Use when creating, reviewing or updating AGENTS.md, CLAUDE.md or scoped rule files."
 metadata:
   short-description: Placement, fields and templates for project instructions and rules
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-creating-rules/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

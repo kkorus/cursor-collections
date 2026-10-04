@@ -3,6 +3,7 @@ name: tsh-managing-secrets
 description: Secrets management patterns for cloud and Kubernetes environments. Use when implementing secure credential storage, secrets rotation, CI/CD authentication, or GitOps-compatible secret management.
 metadata:
   short-description: Secrets storage, rotation and CI/CD authentication
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-managing-secrets/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

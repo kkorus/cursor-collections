@@ -3,6 +3,7 @@ name: tsh-implementing-kubernetes
 description: Kubernetes deployment patterns, Helm charts, GitOps and cluster management. Use when deploying applications to Kubernetes, designing Deployment, StatefulSet, or Job configurations, implementing auto-scaling (HPA, VPA, KEDA), creating or modifying Helm charts, setting up Gateway API routing and GitOps, or configuring resource requests, limits, and QoS.
 metadata:
   short-description: Kubernetes deployments, Helm charts and scaling
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-implementing-kubernetes/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

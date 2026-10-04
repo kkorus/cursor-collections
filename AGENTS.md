@@ -34,10 +34,10 @@ Every skill has a neutral `type` in its frontmatter:
 
 | Type | Purpose | Visibility |
 |---|---|---|
-| `command` | Thin user entry point (`/tsh-<verb>`); has `routes-to` (an agent or orchestrator) | user only (no model invocation) |
+| `command` | Thin user entry point (`/tsh-<verb>`); has `routes-to` (an agent or orchestrator) | user only (no model invocation); the only type a user types |
 | `orchestrator` | Main-thread workflow that delegates to subagents; loaded by name from commands | hidden where the tool supports it |
 | `internal` | Step loaded by an orchestrator or agent by name | hidden where the tool supports it |
-| `skill` | Knowledge skill, loaded by any agent by name | auto-invocable |
+| `skill` | Knowledge skill, loaded by any agent by name | hidden from the user menu where the tool supports it (`user-invocable: false`); the model can still load it |
 
 Agents (`src/agents/`) are leaf subagents: they never delegate (one delegation level everywhere), run in interactive mode by default and in delegated mode only when the task starts with `MODE: delegated` (`agent-modes` partial, STATUS block). Orchestrators and agent-routed commands include `caller-status-handling`. Handoffs are text (`## Suggested next steps` naming commands), never automatic invocations.
 

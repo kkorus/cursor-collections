@@ -3,6 +3,7 @@ name: tsh-optimizing-cloud-cost
 description: Optimize cloud costs through resource rightsizing, tagging strategies, reserved instances, and spending analysis. Use when reducing cloud spending or meeting budget constraints, right-sizing resources from utilization data, implementing cost governance and tagging, or analyzing multi-cloud cost optimization opportunities.
 metadata:
   short-description: Cloud cost rightsizing, tagging and governance
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-optimizing-cloud-cost/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

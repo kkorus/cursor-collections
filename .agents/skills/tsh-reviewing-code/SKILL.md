@@ -3,6 +3,7 @@ name: tsh-reviewing-code
 description: Structured code review of an implementation against a plan or, without a plan, against the task description and the diff, covering correctness, quality, security, testing, best practices and scalability, with a fixed findings format. Use when reviewing implementations, running quality gates, verifying code against a plan, or doing a post-implementation review.
 metadata:
   short-description: "Structured code review: correctness, security, quality"
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-reviewing-code/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

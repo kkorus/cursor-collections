@@ -3,6 +3,7 @@ name: tsh-implementing-ci-cd
 description: CI/CD pipeline design patterns and deployment strategies. Use when designing new pipelines, choosing a deployment strategy (rolling, blue-green, canary), optimizing build caching, or structuring pipelines for monorepos.
 metadata:
   short-description: CI/CD pipeline design and deployment strategies
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-implementing-ci-cd/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

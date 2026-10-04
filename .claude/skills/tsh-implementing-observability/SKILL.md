@@ -3,6 +3,7 @@ name: tsh-implementing-observability
 description: Observability patterns for logging, monitoring, alerting, and distributed tracing. Use when setting up monitoring and alerting, implementing centralized logging, metrics collection, or distributed tracing across services, designing SLOs/SLIs and error budgets, or creating dashboards and runbooks.
 metadata:
   short-description: Logging, monitoring, alerting and tracing patterns
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-implementing-observability/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

@@ -3,6 +3,7 @@ name: tsh-analyzing-implementation-gaps
 description: Compares a planned or expected change with the current state of the system and sorts the work into what is To Be Created, To Be Modified and To Be Reused, with file paths. Use when checking a plan against existing code, deciding what to create, modify or reuse before implementing, or verifying how much of a plan is already implemented.
 metadata:
   short-description: Compare a plan with the current state to find implementation gaps
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-analyzing-implementation-gaps/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

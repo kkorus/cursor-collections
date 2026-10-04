@@ -4,6 +4,7 @@ description: Adversarial review of implementation plans (.plan.md) that finds li
 compatibility: "Requires MCP servers: context7, sequential-thinking"
 metadata:
   short-description: Stress-test an implementation plan and write a plan-review report
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-reviewing-plans/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

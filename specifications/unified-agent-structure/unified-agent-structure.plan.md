@@ -2496,3 +2496,9 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
 - **Warnings fixed:** installer safety (`--force` with source == destination, manifest names as path components, `--update` pruning), schema TypeError, `.gitattributes` patterns, EM review/fix loop cap, refactor mode routing, `DONE` with `QUESTIONS`, output locations, stale infrastructure examples (Helm memory, PDB, provider pins, Azure, retired services), creating-skills/agents/commands accuracy, database and language reference errors, homepage and docs wording.
 - **Also done after the merge:** `tsh-prompt-engineer` now has the Workflow and Output format of the deleted `tsh-engineer-prompt` (restored from git history), WCAG 2.2 in the software engineer, `codebase-analysis/` in the output locations, React pointer in `tsh-reviewing-frontend`.
 - **Gates after the last change:** `npm run check`, `npm test` (165, Node 22 and Node 26) and the website build pass.
+
+### 2026-10-04 - Visibility rule change (D6)
+
+- **Change:** every non-command skill type (`skill`, `internal`, `orchestrator`) now renders `user-invocable: false`. Before, knowledge skills were listed next to the commands in the Claude Code `/` menu, which made it unclear what a user should type (`/tsh-debug` vs `tsh-debugging`).
+- **Verified on Claude Code 2.1.285:** the `/` menu lists exactly the 16 `tsh-` commands; `tsh-debugging` is hidden but loads by name through the Skill tool and returns the right step. Cursor and Codex cannot hide skills, so their menus still show them (documented).
+- **Added:** `website/docs/getting-started/which-command.md` (situation to command table, what not to type), a README pointer, updated `AGENTS.md` type table.

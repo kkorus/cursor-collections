@@ -9,7 +9,7 @@ const render = (files = sourceFiles()) => renderSkills(loadSource(makeRoot(files
 const frontmatter = (text) => parseYaml(/^---\n([\s\S]*?)\n---\n/.exec(text)[1]);
 const keys = (text) => Object.keys(frontmatter(text));
 
-test('type skill: exact frontmatter, neutral keys stripped, compatibility from requires-mcp', () => {
+test('type skill: exact frontmatter, hidden from the user menu, neutral keys stripped, compatibility from requires-mcp', () => {
   const text = render().get('.agents/skills/tsh-reviewing-code/SKILL.md');
   assert.equal(text, [
     '---',
@@ -20,6 +20,7 @@ test('type skill: exact frontmatter, neutral keys stripped, compatibility from r
     '  short-description: Review code',
     'paths:',
     '  - "**/*.ts"',
+    'user-invocable: false',
     '---',
     '<!-- Generated from src/skills/tsh-reviewing-code/SKILL.md by scripts/generate.mjs. Do not edit. -->',
     '',
@@ -42,13 +43,14 @@ test('type command: disable-model-invocation and argument-hint', () => {
   });
 });
 
-test('type internal and orchestrator: user-invocable false', () => {
+test('only commands are user-invocable: skill, internal and orchestrator get user-invocable false', () => {
   const out = render();
-  for (const name of ['tsh-implement-task', 'tsh-engineering-manager']) {
+  for (const name of ['tsh-reviewing-code', 'tsh-implement-task', 'tsh-engineering-manager']) {
     const fm = frontmatter(out.get(`.agents/skills/${name}/SKILL.md`));
-    assert.deepEqual(Object.keys(fm), ['name', 'description', 'metadata', 'user-invocable']);
     assert.equal(fm['user-invocable'], false);
+    assert.ok(!('disable-model-invocation' in fm), 'the model can still load it');
   }
+  assert.ok(!('user-invocable' in frontmatter(out.get('.claude/skills/tsh-review/SKILL.md'))), 'commands stay user-invocable');
 });
 
 test('both trees get byte-identical SKILL.md and support files', () => {

@@ -3,6 +3,7 @@ name: tsh-discovering-technical-context
 description: Discover and establish technical context before implementing any feature. Prioritize project instructions, existing codebase patterns, and external documentation in that order. Use when starting any feature or fix, before writing tests (unit, integration, E2E), before architectural decisions that affect existing code, or when onboarding to a new area of the codebase.
 metadata:
   short-description: Discover project conventions and patterns before coding
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-discovering-technical-context/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

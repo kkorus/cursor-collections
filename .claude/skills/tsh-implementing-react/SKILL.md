@@ -3,6 +3,7 @@ name: tsh-implementing-react
 description: React implementation patterns covering the rules of hooks, effects and cleanup, state and composition, error boundaries, memoization with React 19 and the React Compiler, a hooks review checklist, and XSS-safe rendering with dangerouslySetInnerHTML. Use when writing or reviewing React components and hooks, fixing effect bugs, deciding whether to memoize, or rendering untrusted content.
 metadata:
   short-description: React hooks, effects, memoization and safe rendering
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-implementing-react/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

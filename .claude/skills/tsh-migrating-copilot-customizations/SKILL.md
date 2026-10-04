@@ -3,6 +3,7 @@ name: tsh-migrating-copilot-customizations
 description: Converts GitHub Copilot customization artifacts (agents, skills, prompts, instructions) into the neutral source in `src/` when the repository has one, or into native Cursor, Claude Code and Codex files otherwise. Maps file types, frontmatter fields, paths and terminology, and keeps model, tools and handoffs as structured fields. Use when porting a PR or branch from a Copilot-based repository, adding a Copilot-originated agent, skill or prompt, or verifying a converted artifact.
 metadata:
   short-description: Convert Copilot customizations to the neutral source or native files
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-migrating-copilot-customizations/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

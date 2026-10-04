@@ -3,6 +3,7 @@ name: tsh-delivering-infrastructure
 description: Shared delivery workflow for infrastructure work (Terraform, CI/CD, Kubernetes, observability, cloud cost, audits). Covers context discovery, the three-option output strategy, the FinOps threshold, the skill-loading table and the triggers that require an architect decision. Use when implementing, changing or auditing infrastructure, pipelines, clusters or monitoring.
 metadata:
   short-description: Infrastructure delivery workflow, skill routing and escalation rules
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-delivering-infrastructure/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

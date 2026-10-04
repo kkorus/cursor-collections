@@ -3,6 +3,7 @@ name: tsh-optimizing-frontend
 description: Frontend rendering optimization, code splitting, memoization strategies, bundle size control, asset optimization, and memory management. Use when optimizing component rendering, reducing bundle size, debugging performance issues, implementing lazy loading, or reviewing code for performance regressions.
 metadata:
   short-description: Frontend rendering, bundle and memory optimization
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-optimizing-frontend/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

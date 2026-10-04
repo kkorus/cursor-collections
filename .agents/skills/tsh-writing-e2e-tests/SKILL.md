@@ -3,6 +3,7 @@ name: tsh-writing-e2e-tests
 description: E2E testing standards, patterns, verification procedures, and CI readiness checklists using Playwright. Use when writing, debugging, or reviewing end-to-end tests, fixing flaky tests, creating Page Objects, or mocking external APIs. NOT for unit or integration tests.
 metadata:
   short-description: Playwright E2E testing patterns and CI readiness
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-writing-e2e-tests/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

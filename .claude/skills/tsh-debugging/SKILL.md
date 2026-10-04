@@ -3,6 +3,7 @@ name: tsh-debugging
 description: Systematic debugging process - reproduce, hypothesize, isolate, state the root cause, fix, verify. Use when investigating a bug, error, failing test or unexpected behavior, or when you need a root-cause analysis before changing code.
 metadata:
   short-description: "Debug systematically: reproduce, isolate, fix, verify"
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-debugging/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

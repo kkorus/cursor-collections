@@ -3,6 +3,7 @@ name: tsh-committing
 description: "Conventional Commits message drafting: type/scope inference, format rules, secret-file checks, and split recommendations. Use when drafting commit messages, running /tsh-commit, or analyzing git diffs for commit structure."
 metadata:
   short-description: Draft Conventional Commits messages from git changes
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-committing/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

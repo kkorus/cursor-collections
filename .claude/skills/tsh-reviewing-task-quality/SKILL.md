@@ -3,6 +3,7 @@ name: tsh-reviewing-task-quality
 description: Analyze extracted epics and user stories for quality gaps, missing edge cases, and improvement opportunities. Runs domain-agnostic analysis passes, optionally enriches findings with Jira board context, and produces accept/reject suggestions that refine the task list before Jira formatting. Use when an extracted task list needs a quality review before formatting.
 metadata:
   short-description: Review extracted tasks for quality gaps and edge cases
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-reviewing-task-quality/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

@@ -3,6 +3,7 @@ name: tsh-designing-architecture
 description: Designs the architecture that solves a given task and produces the implementation plan (.plan.md) that engineers follow step by step. Use when a feature needs a technical design or an implementation plan before coding starts, when a plan must be revised after a plan review, or when an architectural decision needs a decision record.
 metadata:
   short-description: Design the architecture and implementation plan for a task
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-designing-architecture/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

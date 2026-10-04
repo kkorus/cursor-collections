@@ -3,6 +3,7 @@ name: tsh-analyzing-codebase
 description: "Analyzes the whole codebase of a system: its structure, dependencies, architecture, business logic, dead code and duplications, and runs code quality audits with a report. Use when onboarding to an unfamiliar repository, mapping a system before a change, producing a codebase analysis document, or auditing code quality. NOT for per-task conventions (use tsh-discovering-technical-context)."
 metadata:
   short-description: "Analyze a codebase: dependencies, business logic, duplications"
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-analyzing-codebase/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

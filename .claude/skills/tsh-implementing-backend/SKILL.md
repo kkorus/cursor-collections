@@ -3,6 +3,7 @@ name: tsh-implementing-backend
 description: Backend service implementation patterns, standards, and procedures for Node.js, PHP, .NET, Java, and Go. Use when building REST/GraphQL APIs or CRUD endpoints with filtering and pagination (DataGrid), setting up authentication, database migrations and repository patterns, external service integrations, logging, Docker-based local development, OpenAPI documentation, testing strategies, or modular architecture with vertical slices.
 metadata:
   short-description: "Backend patterns: APIs, auth, testing, integrations"
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-implementing-backend/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

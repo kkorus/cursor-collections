@@ -3,6 +3,7 @@ name: tsh-guarding-jira-statuses
 description: Defines which Jira statuses make a task protected (immutable) and the rules for handling protected tasks in local files, quality review, formatting, import and push. The status list is configurable; the default is Done, Cancelled and PO APPROVE. Use when a workflow reads, edits, reviews, formats, imports or pushes Jira tasks and must decide whether a task may be changed.
 metadata:
   short-description: Protected Jira status policy for BA and Jira workflows
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-guarding-jira-statuses/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

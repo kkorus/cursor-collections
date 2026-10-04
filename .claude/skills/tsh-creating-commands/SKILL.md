@@ -3,6 +3,7 @@ name: tsh-creating-commands
 description: "Guides creating and reviewing slash commands for Cursor, Claude Code and Codex, from the neutral source (`type: command` skills with `routes-to` and `argument-hint`) or as native command skills. Covers the command schema, per-tool rendering, naming, the thin-router rule and the command template. Use when creating, reviewing or updating a user-invoked command, or when deciding whether a workflow belongs in a command."
 metadata:
   short-description: Schema, mapping and template for writing commands
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-creating-commands/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

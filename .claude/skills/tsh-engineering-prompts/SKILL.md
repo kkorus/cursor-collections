@@ -3,6 +3,7 @@ name: tsh-engineering-prompts
 description: "LLM prompt engineering patterns: structure, optimization, reasoning vs non-reasoning models, native tool calling, security, templates, evaluation, and anti-patterns. Use when designing, writing, optimizing, or reviewing prompts for LLM applications (system prompts, user prompts, RAG templates, agent instructions, chatbot personas). NOT for authoring skills, agents or commands; use tsh-creating-skills, tsh-creating-agents or tsh-creating-commands for those."
 metadata:
   short-description: "LLM prompt patterns: structure, security, evaluation"
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-engineering-prompts/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

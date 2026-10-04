@@ -4,6 +4,7 @@ description: Shared usage rules for the MCP servers of this collection (context7
 compatibility: "Requires MCP servers: context7, pdf-reader, atlassian, figma, playwright, sequential-thinking"
 metadata:
   short-description: When and how to use the collection's MCP servers
+user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-using-mcp-servers/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
