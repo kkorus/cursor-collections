@@ -31,7 +31,7 @@ Markers: skills `SKILL-KNOWLEDGE-M1` (Claude-tree variant `-CLAUDE-VARIANT-M2`),
 - **Observe:** number of `tsh-spike-knowledge` entries per variant; in (b) whether symlinked entries appear and load; in (c) which marker (M1 = `.agents`, M2 = `.claude`) wins, and whether both are listed.
 - **Expected (plan default):** (a) one entry, or two identical entries (acceptable); (b) symlinks listed and loadable; (c) informational only.
 - **Fallback:** (a) confusing duplicates → docs tell users of Cursor + Claude + Codex to turn off the third-party toggle (Q6); (b) broken/ignored → `--mode link` is not shipped.
-- **Result / Evidence:** (a) ___ (b) ___ (c) ___
+- **Result / Evidence:** (a) PARTIAL (2026-10-04, `copies` only): `SKILLS-VISIBLE` seen by a subagent lists `tsh-spike-knowledge` once, although it exists in both `.agents/skills` and `.claude/skills`; it loaded from the `.claude/skills` path. The `/` menu and Settings count were not checked. (b) PARTIAL (2026-10-04, `symlinks`): `/tsh-spike` resolved to `tsh-spike-command` and ran (`COMMAND-MARKER: SKILL-COMMAND-M4`) while `.claude/skills/*` are symlinks to `../../.agents/skills/*`, so symlinked skills load. Typing `/tsh-spike` executes the command instead of listing entries, The agent then reported exactly ONE `tsh-spike-knowledge` entry in `<available_skills>`, registered under the `.claude/skills/...` path (the symlink), not `.agents/skills/...`. So Cursor dedupes by name here and appears to prefer `.claude/skills`; symlinks work on macOS (model-reported). (c) PASS (2026-10-04, `differing`): the skill loaded with `SKILL-KNOWLEDGE-CLAUDE-VARIANT-M2`, i.e. the `.claude/skills` copy wins over `.agents/skills` on a same-name clash (model-reported; entry count not measured in this variant).
 
 ### Q2. Unknown frontmatter keys (R-OQ3) — BLOCKING
 
@@ -39,7 +39,7 @@ Markers: skills `SKILL-KNOWLEDGE-M1` (Claude-tree variant `-CLAUDE-VARIANT-M2`),
 - **Observe:** errors/warnings on `user-invocable`, `argument-hint`, `compatibility`, `metadata.short-description`; whether `tsh-spike-internal` (`user-invocable: false`) shows in `/` (expected: yes, D6); whether `argument-hint` is shown.
 - **Expected:** all keys tolerated, all skills load.
 - **Fallback:** split renderings: Claude-only keys go only into `.claude/skills` (D2, `render-skills.mjs`); record in the Changelog.
-- **Result / Evidence:**
+- **Result / Evidence:** PARTIAL (2026-10-04, `copies`): `/tsh-spike-command hello` ran and returned `COMMAND-MARKER: SKILL-COMMAND-M4` and `ARGS-RECEIVED: hello`; the subagent saw `tsh-spike-internal` (`user-invocable: false`) and loaded `tsh-spike-knowledge`. No load error reported. NOT CHECKED: View → Output warnings, whether `tsh-spike-internal` shows in `/`, `argument-hint` display.
 
 ### Q3. `.codex/agents/*.toml` (R-OQ6) — informational
 
@@ -103,7 +103,7 @@ Markers: skills `SKILL-KNOWLEDGE-M1` (Claude-tree variant `-CLAUDE-VARIANT-M2`),
 - **Observe:** `SKILL-LOADED: SKILL-KNOWLEDGE-M1` (not NONE) and the `SKILLS-VISIBLE` list.
 - **Expected:** the subagent loads the skill by name.
 - **Fallback:** add `"inlinePreload": ["cursor"]` to `src/config/targets.json` (D2).
-- **Result / Evidence:**
+- **Result / Evidence:** PASS, 1 run (2026-10-04): `SKILL-LOADED: SKILL-KNOWLEDGE-M1`, `SKILLS-VISIBLE` includes `tsh-spike-knowledge`, `tsh-spike-internal`, `tsh-spike-claude-only`. Caveat: this is the subagent's own report. Decision: no `inlinePreload` for Cursor unless a smoke test contradicts it.
 
 ### Q11. Named handoff with `MODE: delegated` (M4) — BLOCKING
 
@@ -111,7 +111,7 @@ Markers: skills `SKILL-KNOWLEDGE-M1` (Claude-tree variant `-CLAUDE-VARIANT-M2`),
 - **Observe:** the spawned subagent's name in the UI; `AGENT-MARKER: AGENT-CE-CURSOR-A1` (not a generic agent, not A3); `FIRST-LINE-ECHO: MODE: delegated` exactly; a `STATUS: DONE` block and no question.
 - **Expected:** 3/3 named spawns, prompt verbatim.
 - **Fallback (not fixed in the plan, decide here):** unreliable naming → strengthen the `caller-status-handling` wording (explicit subagent name/type); first line altered → loosen `agent-modes` detection (for example `MODE: delegated` on any of the first lines). Record in the Changelog.
-- **Result / Evidence:** run 1 ___ run 2 ___ run 3 ___
+- **Result / Evidence:** run 1 PASS (2026-10-04): subagent `tsh-spike-context-engineer` spawned by name, `AGENT-MARKER: AGENT-CE-CURSOR-A1` (not A3), `FIRST-LINE-ECHO: MODE: delegated`, `STATUS: DONE`, no question. run 2 PASS, run 3 PASS (2026-10-04): same result each time (A1 marker, `FIRST-LINE-ECHO: MODE: delegated` verbatim, `STATUS: DONE`, no question). **3/3.** Note: the STATUS block is printed on one line (`STATUS: DONE SUMMARY: ...`), so the `caller-status-handling` parser must not depend on line breaks.
 
 ### Q12. Interactive direct use (M3) — informational
 

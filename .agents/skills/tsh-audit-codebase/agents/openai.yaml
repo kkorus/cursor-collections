@@ -1,0 +1,3 @@
+# Generated from src/skills/tsh-audit-codebase/SKILL.md by scripts/generate.mjs. Do not edit.
+policy:
+  allow_implicit_invocation: false

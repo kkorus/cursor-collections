@@ -10,3 +10,9 @@ website/.cache-loader/
 website/node_modules/
 .vercel
 .env*.local
+
+# Local tool state
+.claude/settings.local.json
+.codex/*
+!.codex/agents/
+!.codex/config.toml

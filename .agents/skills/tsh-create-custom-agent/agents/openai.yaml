@@ -1,0 +1,3 @@
+# Generated from src/skills/tsh-create-custom-agent/SKILL.md by scripts/generate.mjs. Do not edit.
+policy:
+  allow_implicit_invocation: false
