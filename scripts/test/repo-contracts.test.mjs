@@ -44,3 +44,13 @@ test('the plan-progress text lives in exactly one src file', () => {
   const holders = files('src').filter((f) => f.endsWith('.md') && read(f).includes(marker));
   assert.deepEqual(holders, ['src/partials/plan-progress.md']);
 });
+
+test('plan template and gap-analysis template use the same create/modify/reuse terms and end with a newline', () => {
+  const plan = read('src/skills/tsh-designing-architecture/assets/plan.template.md');
+  const gap = read('src/skills/tsh-analyzing-implementation-gaps/assets/implementation-gap-analysis.template.md');
+  for (const term of ['To Be Created', 'To Be Modified', 'To Be Reused']) {
+    assert.ok(plan.includes(`### ${term}`), `plan template lacks ${term}`);
+    assert.ok(gap.includes(`### ${term}`), `gap template lacks ${term}`);
+  }
+  for (const text of [plan, gap, read('src/skills/tsh-analyzing-implementation-gaps/SKILL.md')]) assert.ok(text.endsWith('\n'));
+});
