@@ -1,16 +1,16 @@
 ---
 name: tsh-writing-hooks
-description: Custom hook and composable patterns — naming, composition, stable return shapes, lifecycle cleanup, and testing strategies. Use when writing reusable logic units (React hooks, Vue composables), refactoring logic into hooks, debugging hook behavior, or reviewing hook implementations.
+description: Custom React hook patterns — naming, composition, stable return shapes, lifecycle cleanup, and testing strategies. Use when writing reusable logic units as React hooks, refactoring logic into hooks, debugging hook behavior, or reviewing hook implementations.
 type: skill
 metadata:
-  short-description: Custom hook and composable patterns
+  short-description: Custom React hook patterns
 ---
 
 # Writing Hooks
 
-Provides patterns for writing composable, testable custom hooks with stable APIs, proper effect lifecycle management, and clear responsibility boundaries.
+Provides patterns for writing composable, testable custom React hooks with stable APIs, proper effect lifecycle management, and clear responsibility boundaries.
 
-> This skill uses "hook" to refer to any reusable, composable logic unit — React hooks, Vue composables, or equivalent framework abstractions. Adapt naming conventions and specific APIs to the project's framework.
+> The patterns here are written for React hooks. The structural ideas (single responsibility, stable return shapes, lifecycle cleanup, testing) carry over to Vue composables and similar abstractions, but Vue-specific APIs (`ref`, `watch`, `onUnmounted`, reactivity tracking) are not covered; consult the Vue documentation for those.
 
 <principles>
 
@@ -19,7 +19,7 @@ Each hook does one thing. Compose complex behavior by calling multiple hooks, no
 </single-responsibility>
 
 <stable-api-surface>
-Prefer returning an object (rather than a tuple) once the hook returns more than 1–2 values, and keep references stable. Memoize callbacks and derived values using the framework's memoization primitives when consumers may pass them to memoized children. The hook's return shape is its public API — treat it as a contract.
+Prefer returning an object (rather than a tuple) once the hook returns 3 or more values (a tuple is fine for up to 2), and keep references stable. Memoize callbacks and derived values using the framework's memoization primitives when consumers may pass them to memoized children. The hook's return shape is its public API — treat it as a contract.
 </stable-api-surface>
 
 <cleanup-everything>
@@ -134,7 +134,7 @@ Follow these rules during implementation:
 | Async operation | Cancellable operation with `AbortController` signal | `controller.abort()`                  |
 | Subscription    | `source.subscribe(handler)`                         | `subscription.unsubscribe()`          |
 
-The cleanup must execute when the hook unmounts or when dependencies change. See the framework reference for the exact cleanup syntax.
+The cleanup must execute when the hook unmounts or when dependencies change. See the framework skill (for React, `tsh-implementing-react`) for the exact cleanup syntax.
 
 **Error handling**:
 
@@ -182,15 +182,15 @@ it("cleans up the timer on unmount", () => {
 | -------------------------- | ----------------------------------- | ---------------------------------------------- |
 | Single value               | Hook computes one thing             | `useDebounce(value, delay)` → `debouncedValue` |
 | Object                     | Multiple related values or actions  | `{ data, error, isPending, refetch }`          |
-| Object (prefer over tuple) | Readability and evolvability matter | `{ count, increment, decrement, reset }`       |
+| Object (3+ values)         | Readability and evolvability matter | `{ count, increment, decrement, reset }`       |
 
-Prefer objects over tuples for hooks returning more than one value. Objects are self-documenting, allow consumers to destructure only what they need, and evolve without breaking existing call sites.
+A tuple is acceptable for hooks returning up to 2 values (`[value, setValue]`, mirroring `useState`). Return an object for 3 or more values. Objects are self-documenting, allow consumers to destructure only what they need, and evolve without breaking existing call sites.
 
 ## Anti-Patterns
 
 | Anti-Pattern                                     | Instead Do                                    |
 | ------------------------------------------------ | --------------------------------------------- |
-| Tuple return `[value, setter]` for complex hooks | Object return `{ value, setValue, reset }`    |
+| Tuple return for hooks with 3+ values            | Object return `{ value, setValue, reset }`    |
 | Effect with suppressed dependency tracking       | Include all deps; restructure if cycle occurs |
 | New object/array identity every render           | Memoize or lift to module scope               |
 | Side effects in render phase                     | Move to lifecycle effect or event handler     |
@@ -209,19 +209,20 @@ Hook:
 - [ ] Output: object with stable references (memoized where framework supports it)
 - [ ] All dependency tracking complete — no linting suppression
 - [ ] Effects clean up: timers, listeners, subscriptions, abort controllers
-- [ ] Errors surfaced via return value, never thrown from render
+- [ ] Expected runtime errors surfaced via return value (throwing in render only for programmer errors or Error Boundary/Suspense integration)
 - [ ] Tested: initial state, transitions, cleanup, error states
 ```
 
 ## Framework-Specific Patterns
 
-The patterns above are framework-agnostic. For framework-specific hook/composable syntax, load the appropriate reference:
+The patterns above are React-oriented but mostly framework-neutral in structure. For React-specific syntax and rules, load the framework skill:
 
-- **React**: See the React patterns reference of the `tsh-implementing-frontend` skill — `useEffect`, `useMemo`, `useCallback`, dependency arrays, rules of hooks.
+- **React**: Use the `tsh-implementing-react` skill — `useEffect`, `useMemo`, `useCallback`, dependency arrays, rules of hooks.
 
 ## Connected Skills
 
 - `tsh-implementing-frontend` — hooks are used within components; this skill covers component patterns
+- `tsh-implementing-react` — React rules of hooks, effect cleanup syntax and the hooks review checklist
 - `tsh-optimizing-frontend` — for memoization strategies and performance patterns in hooks
 - `tsh-reviewing-frontend` — for hook-specific code review criteria
 - `tsh-implementing-forms` — for form-related custom hooks (field state, validation triggers)

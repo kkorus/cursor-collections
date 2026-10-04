@@ -73,10 +73,10 @@ For every custom hook/composable in the changeset:
   - `addEventListener` without `removeEventListener`
   - `AbortController` not aborted on unmount
   - WebSocket / EventSource connections not closed
-- **Return shape**: Does the hook return an object with stable references? Are callbacks wrapped to maintain referential stability? Tuple returns are acceptable for simple 2-value hooks (`useToggle` → `[value, toggle]`) but objects are preferred for 3+ values to avoid positional confusion.
+- **Return shape**: Does the hook return an object with stable references? Are callbacks wrapped to maintain referential stability? Tuple returns are acceptable for hooks returning up to 2 values (`useToggle` → `[value, toggle]`); return an object once a hook returns 3 or more values, to avoid positional confusion (same threshold as `tsh-writing-hooks`).
 - **Side effects in render phase**: Any fetch, write, or mutation outside the framework's effect/lifecycle mechanism? This is an automatic critical — it causes unpredictable behavior and potential infinite loops. Writing to `localStorage`, calling `fetch`, or dispatching events during render are all violations.
 
-After completing the generic checks above, load the framework-specific reference (see **Framework-Specific Patterns** section) and apply its hooks review checklist for additional framework-specific checks.
+After completing the generic checks above, load the framework-specific skill (see **Framework-Specific Patterns** section; for React, `tsh-implementing-react`) and apply its hooks review checklist for additional framework-specific checks.
 
 **Step 3: Review rendering correctness**
 
@@ -114,7 +114,7 @@ Quick checks — not a full audit. Defer to `tsh-ensuring-accessibility` for com
 
 Quick checks — not a full audit. Defer to `tsh-optimizing-frontend` for deep analysis.
 
-- **Bundle impact**: Will new imports significantly increase bundle size? Flag heavy library additions (charting, date, rich text) that could be lazy-loaded or replaced with lighter alternatives. Check for full-library imports (`import _ from 'lodash'`) where named imports (`import { debounce } from 'lodash/debounce'`) would suffice.
+- **Bundle impact**: Will new imports significantly increase bundle size? Flag heavy library additions (charting, date, rich text) that could be lazy-loaded or replaced with lighter alternatives. Check for full-library imports (`import _ from 'lodash'`) where a per-method import (`import debounce from 'lodash/debounce'`, a default import; or `import { debounce } from 'lodash-es'`) would suffice.
 - **Lazy loading**: Are new routes and heavy components lazy-loaded? Top-level route components should use dynamic imports. Components only visible after user interaction (modals, drawers, tabs beyond the first) are lazy-loading candidates.
 - **Barrel imports**: Does a new or modified barrel file (`index.ts`) pull unused exports into the bundle? Wildcard re-exports (`export *`) break tree shaking. Named re-exports (`export { Button } from './Button'`) are the safe pattern.
 - **Rendering**: Obvious unnecessary re-renders? Missing memo on frequently-rendered list items whose parent re-renders often? Check for context providers with unstable value props — a provider passing `value={{ user, setUser }}` creates a new object every render, re-rendering all consumers.
@@ -193,7 +193,7 @@ Frontend Review:
 
 The review criteria above are framework-agnostic. For framework-specific anti-patterns and API checks, load the appropriate reference:
 
-- **React**: See the React patterns reference of the `tsh-implementing-frontend` skill — React-specific hooks review, `dangerouslySetInnerHTML`, `exhaustive-deps`, memoization API checks.
+- **React**: Use the `tsh-implementing-react` skill — its hooks review checklist, `dangerouslySetInnerHTML` and XSS rules, `exhaustive-deps`, and memoization checks.
 
 ## Connected Skills
 
@@ -202,4 +202,5 @@ The review criteria above are framework-agnostic. For framework-specific anti-pa
 - `tsh-implementing-forms` — for form-specific patterns (validation schemas, field composition, multi-step flows) being reviewed against
 - `tsh-ensuring-accessibility` — for comprehensive accessibility audits beyond spot-checks
 - `tsh-optimizing-frontend` — for deep performance analysis beyond spot-checks
+- `tsh-implementing-react` — React hooks review checklist and safe HTML rendering
 - `tsh-writing-hooks` — for detailed hook quality patterns being reviewed against

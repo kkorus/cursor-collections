@@ -1,8 +1,8 @@
-# React Implementation Patterns
+# React Component Patterns
 
-React-specific patterns for the `tsh-implementing-frontend` skill. Load this reference when the project uses React.
+Composition, state and error-handling patterns for the `tsh-implementing-react` skill. Load this reference when building React components.
 
-## Table of Contents
+## Contents
 
 - [Component Composition](#component-composition)
 - [State Patterns](#state-patterns)
@@ -51,7 +51,7 @@ React uses **error boundaries** — class components with `componentDidCatch` / 
 | Stable callbacks      | `useCallback(fn, [deps])`                            | Callbacks passed to memoized children       |
 | Code splitting        | `React.lazy(() => import('./Heavy'))` + `<Suspense>` | Route-level and heavy component splitting   |
 
-**Rule of thumb**: Don't memoize by default. Measure first. `React.memo` only helps when re-renders are measurably expensive and props don't change often.
+**Rule of thumb**: Don't memoize by default. Measure first. `React.memo` only helps when re-renders are measurably expensive and props don't change often. If the project uses the React Compiler, see the memoization section of `SKILL.md` before adding manual memoization.
 
 ## Anti-Patterns
 

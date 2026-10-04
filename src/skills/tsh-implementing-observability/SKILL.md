@@ -154,6 +154,8 @@ groups:
 
 ## Structured Logging
 
+This skill is the canonical owner of the logging format. Service skills such as `tsh-implementing-backend` link here instead of defining their own fields or levels; language-specific logger libraries stay in the language references of those skills.
+
 ### Log Format (JSON)
 
 ```json
@@ -183,9 +185,25 @@ groups:
 | `timestamp` | When event occurred | Time-based queries |
 | `level` | Severity (debug/info/warn/error) | Filtering |
 | `service` | Source service name | Service filtering |
-| `trace_id` | Distributed trace identifier | Cross-service correlation |
+| `trace_id` | Distributed trace identifier (also used as the request/correlation ID when no separate one exists) | Cross-service correlation |
+| `request_id` | Per-request identifier, propagated in a header through the whole request lifecycle | Single-request lookup |
+| `user_id` | Authenticated user, when known (never emails or names) | Per-user debugging |
 | `message` | Human-readable description | Search |
 
+### Log Levels
+
+| Level | When to Use |
+|-------|-------------|
+| `error` | Unexpected failures, unhandled exceptions, critical issues |
+| `warn` | Recoverable issues, deprecation notices, approaching limits |
+| `info` | Significant business events: user created, order placed, payment processed |
+| `debug` | Detailed diagnostics; disabled in production by default |
+
+### What to Log
+
+- **Always**: incoming requests (method, path, status code, duration), authentication and authorization failures, external service calls (target, status, duration), errors with stack traces.
+- **Never**: passwords, tokens, API keys, card numbers, or PII unless masked or encrypted.
+- Log requests through middleware so every request is covered and carries the request ID.
 ## Process
 
 1. **Discover context** → Check existing observability setup (Prometheus, CloudWatch, etc.)
@@ -227,6 +245,7 @@ End an implementation with the summary in `assets/observability-summary.template
 
 ## Connected Skills
 
+- `tsh-implementing-backend` - Backend services that emit logs in this format
 - `tsh-implementing-kubernetes` - For K8s-native observability setup
 - `tsh-implementing-ci-cd` - For pipeline observability integration
 - `tsh-managing-secrets` - For secure credential storage for observability tools

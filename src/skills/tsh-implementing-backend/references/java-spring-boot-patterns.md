@@ -340,7 +340,7 @@ public record OrderCreatedEvent(
 
 ```dockerfile
 # Build stage
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:<current-lts>-jdk-alpine AS builder
 WORKDIR /app
 COPY pom.xml mvnw ./
 COPY .mvn .mvn
@@ -349,7 +349,7 @@ COPY src src
 RUN ./mvnw package -DskipTests
 
 # Production stage
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:<current-lts>-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001 -G appgroup
