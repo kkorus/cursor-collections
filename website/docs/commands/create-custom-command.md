@@ -5,35 +5,26 @@ title: /tsh-create-custom-command
 
 # /tsh-create-custom-command
 
-**Agent:** Cursor Orchestrator  
-**File:** `.cursor/skills/commands/tsh-create-custom-command/SKILL.md`
+**Source:** `src/skills/tsh-create-custom-command/SKILL.md`  
+**Routes to:** [AI Customization Orchestrator](../agents/ai-customization-orchestrator) orchestrator skill (`tsh-ai-customization-orchestrator`)
 
-Creates a new Cursor slash command (`.cursor/skills/commands/<name>/SKILL.md`). Analyzes existing commands and agents, identifies routing, creates the skill file, and validates the workflow end-to-end.
+Creates a new slash command (a skill of type command with a route to an agent or orchestrator) for Cursor, Claude Code and Codex. In a repository with a neutral source (`src/`) and a generator, it writes the source and regenerates the native files. In other projects it writes native files for the tools you use.
 
 ## Usage
 
 ```text
-/tsh-create-custom-command <command requirements or description>
+/tsh-create-custom-command <command purpose or description>
 ```
 
-## What It Does
+## What it does
 
-1. **Research existing commands** — Analyzes commands in `.cursor/skills/commands/` for frontmatter, body structure, and skill references.
-2. **Research available agents** — Determines the best agent routing target from `.cursor/skills/agents/`.
-3. **Clarify requirements** — Confirms purpose, workflow, required skills, and routing with the user.
-4. **Create the command** — Delegates creation to the artifact creator worker with `disable-model-invocation: true`.
-5. **Review and validate** — Delegates review to the artifact reviewer.
-
-## Skills Loaded
-
-- `tsh-creating-commands` — Command skill creation workflow, templates, and validation checklist.
-- `tsh-technical-context-discovering` — Discover project conventions and workspace patterns.
-- `tsh-codebase-analysing` — Analyze existing commands for structural patterns.
+1. Loads the AI Customization Orchestrator with the governing skill `tsh-creating-commands`.
+2. Researches existing artifacts in your project (naming, structure, conventions) with the Researcher subagent.
+3. Clarifies the requirements with you: purpose and the agent or orchestrator it routes to. If the project has no neutral source, it also asks which tools (Cursor, Claude Code, Codex) to target.
+4. Creates the artifact with the Creator subagent and reviews it against the checklist of `tsh-creating-commands` with the Reviewer subagent. Must-fix findings go back to the Creator (at most 3 cycles).
 
 ## Output
 
-A command skill in `.cursor/skills/commands/<name>/SKILL.md` with correct agent routing and workflow references.
+The command skill, created and validated, with a short summary of what was created.
 
-:::info Orchestrator Workflow
-This command routes to the Cursor Orchestrator which handles the full research → create → review workflow automatically using specialized sub-agents.
-:::
+The orchestrator asks you whenever a design decision is unclear and never leaves manual edits to you. See [AI Customization Orchestrator](../agents/ai-customization-orchestrator).

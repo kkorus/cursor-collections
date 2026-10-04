@@ -5,35 +5,26 @@ title: /tsh-create-custom-skill
 
 # /tsh-create-custom-skill
 
-**Agent:** Cursor Orchestrator  
-**File:** `.cursor/skills/commands/tsh-create-custom-skill/SKILL.md`
+**Source:** `src/skills/tsh-create-custom-skill/SKILL.md`  
+**Routes to:** [AI Customization Orchestrator](../agents/ai-customization-orchestrator) orchestrator skill (`tsh-ai-customization-orchestrator`)
 
-Creates a new workflow skill (`SKILL.md` in `.cursor/skills/workflows/`). Analyzes existing skills for patterns, enforces gerund naming convention, creates the skill file with supporting resources, and validates against best practices.
+Creates a new skill (knowledge skill, internal step or orchestrator) for Cursor, Claude Code and Codex. In a repository with a neutral source (`src/`) and a generator, it writes the source and regenerates the native files. In other projects it writes native files for the tools you use.
 
 ## Usage
 
 ```text
-/tsh-create-custom-skill <skill requirements or description>
+/tsh-create-custom-skill <skill purpose or description>
 ```
 
-## What It Does
+## What it does
 
-1. **Research existing skills** — Analyzes skills in `.cursor/skills/workflows/` for naming conventions (gerund form), folder structure, progressive disclosure patterns, and content structure.
-2. **Clarify requirements** — Determines the skill's domain, purpose, trigger conditions, target workflows, and supporting resources needed.
-3. **Design the skill** — Skill name in gerund form (e.g., `creating-agents`, `analyzing-performance`), folder structure, and supporting resource types.
-4. **Create the skill** — Delegates creation to the artifact creator worker.
-5. **Review and validate** — Delegates review to the artifact reviewer. Fixes issues if found.
-
-## Skills Loaded
-
-- `tsh-creating-skills` — Skill file creation workflow, naming conventions, progressive disclosure, and validation checklist.
-- `tsh-technical-context-discovering` — Discover project conventions and workspace patterns.
-- `tsh-codebase-analysing` — Analyze existing skills for structural patterns.
+1. Loads the AI Customization Orchestrator with the governing skill `tsh-creating-skills`.
+2. Researches existing artifacts in your project (naming, structure, conventions) with the Researcher subagent.
+3. Clarifies the requirements with you: purpose, type and the knowledge it holds. If the project has no neutral source, it also asks which tools (Cursor, Claude Code, Codex) to target.
+4. Creates the artifact with the Creator subagent and reviews it against the checklist of `tsh-creating-skills` with the Reviewer subagent. Must-fix findings go back to the Creator (at most 3 cycles).
 
 ## Output
 
-A skill directory with `SKILL.md` and supporting files in `.cursor/skills/workflows/`.
+The skill directory with `SKILL.md` and support files, created and validated, with a short summary of what was created.
 
-:::info Orchestrator Workflow
-This command routes to the Cursor Orchestrator which handles the full research → create → review workflow automatically using specialized sub-agents.
-:::
+The orchestrator asks you whenever a design decision is unclear and never leaves manual edits to you. See [AI Customization Orchestrator](../agents/ai-customization-orchestrator).

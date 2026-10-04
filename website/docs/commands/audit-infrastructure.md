@@ -5,39 +5,24 @@ title: /tsh-audit-infrastructure
 
 # /tsh-audit-infrastructure
 
-**Agent:** DevOps Engineer
-**File:** `.cursor/skills/commands/tsh-audit-infrastructure/SKILL.md`
+**Source:** `src/skills/tsh-audit-infrastructure/SKILL.md`  
+**Routes to:** [DevOps Engineer](../agents/devops-engineer) subagent (`tsh-devops-engineer`), delegated from the main thread
 
-Performs a comprehensive infrastructure audit to identify security vulnerabilities, cost optimization opportunities, and best practices violations.
+A broad and shallow audit of infrastructure for security gaps, cost waste indicators and best-practice violations across IaC, CI/CD pipelines, Kubernetes and cloud resources. For a deep cost and tagging audit of one AWS account or GCP project use [`/tsh-analyze-cloud-costs`](./analyze-cloud-costs).
 
 ## Usage
 
 ```text
-/tsh-audit-infrastructure <scope: AWS/Azure/GCP/Kubernetes/CI-CD> <focus: security/cost/best-practices/all>
+/tsh-audit-infrastructure [aws|azure|gcp|kubernetes|ci-cd] [security|cost|best-practices|all]
 ```
 
-## What It Does
+## What it does
 
-### 1. IaC Analysis
+1. Establishes the scope, the focus and any compliance requirement (SOC2, HIPAA, PCI-DSS or none). Asks you when they are missing.
+2. Delegates the audit to the DevOps Engineer. The audit is read-only; the agent never deletes or changes resources.
+3. If the audit finds something that needs re-architecture, the decision goes to the Architect and back to the DevOps Engineer.
+4. Saves the report to `specifications/infrastructure-audit-<yyyy-mm-dd>.md` and shows you the path, the executive summary and the top priorities.
 
-- Scans Terraform, CloudFormation, Kubernetes manifests, and CI/CD configurations.
-- Identifies security misconfigurations, missing encryption, and exposed resources.
-- Checks for compliance with tagging policies and naming conventions.
+## Suggested next steps
 
-### 2. Live Infrastructure Validation
-
-- Queries cloud provider APIs to validate against actual deployed state.
-- Identifies resources not captured in IaC (drift detection).
-- Checks for unused or underutilized resources.
-
-### 3. Report Generation
-
-- Produces a prioritized audit report with findings categorized by severity.
-- Includes specific remediation guidance for each finding.
-- Provides cost impact estimates for optimization opportunities.
-
-## Skills Loaded
-
-- `tsh-optimizing-cloud-cost` — Cost optimization and resource rightsizing.
-- `tsh-managing-secrets` — Secrets management security audit.
-- `tsh-technical-context-discovering` — Project conventions and existing patterns.
+`/tsh-implement` with the finding numbers to fix them. Application code security belongs to `/tsh-review`. The command itself fixes nothing.

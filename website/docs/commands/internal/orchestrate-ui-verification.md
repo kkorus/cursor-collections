@@ -1,80 +1,39 @@
 ---
 sidebar_position: 8
-title: /tsh-implement-ui
+title: tsh-orchestrate-ui-verification
 ---
 
-# /tsh-implement-ui
+# tsh-orchestrate-ui-verification
 
-:::info
-Not invoked directly by users. The UI implementation workflow is triggered via [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) uses this internal prompt to orchestrate UI tasks with Figma verification.
-:::
+**Source:** `src/skills/tsh-orchestrate-ui-verification/SKILL.md`  
+**Kind:** internal step. Loaded by the Engineering Manager for every UI task that has a Figma reference.
 
-**Agent:** Engineering Manager  
-**File:** `.cursor/skills/internal/tsh-implement-ui/SKILL.md`
+The single verify-fix loop for UI tasks with Figma designs. It runs in the main thread until the implementation matches the design within the agreed tolerances. This is the only place that defines the loop.
 
-Orchestrates the implementation of UI features with iterative Figma verification, delegating to specialized agents.
+## What it does
 
-## How It's Triggered
+Not invoked directly by you. It runs inside [`/tsh-implement`](../implement) when the plan contains UI tasks with Figma references.
 
-```text
-/tsh-implement <JIRA_ID or task description>
-```
+**Setup, once per session**
 
-When the implementation plan contains UI tasks with Figma references, the Engineering Manager automatically uses this internal prompt to manage the verification loop.
+1. Lists all UI tasks and Figma references from the plan and research files. This inventory is the checklist for the gate below.
+2. Asks you for the dev server URL. It does not guess it from running processes. The confirmed URL is reused for the whole session.
+3. If a component has no Figma URL, it stops for that component and asks you for the link. Verification is never skipped.
 
-## What It Does
+**The loop, per UI component**
 
-Everything from [`/tsh-implement`](../public/implement), plus:
+1. **Implement:** delegates the UI task to the [Software Engineer](../../agents/software-engineer) with the Figma URLs and the plan section.
+2. **Verify:** delegates the [UI Reviewer](../../agents/ui-reviewer) with the Figma URL, the dev server URL and the component name.
+3. **Check the report.** It is valid only if it holds data from Figma, data from the running app and a structured EXPECTED versus ACTUAL comparison. Otherwise the manager finds the cause, asks you to resolve the blocker and verifies again.
+4. **PASS:** checks the task in the plan and moves to the next component. **FAIL:** delegates the fix with the complete report, requires every listed difference to be fixed, and verifies again.
+5. **Iteration cap:** at most 5 verify-fix iterations per component. Then it escalates with the remaining mismatches, what each iteration tried and the suspected root cause, and asks you for guidance.
 
-1. **Extracts Figma URLs** from the research and plan files.
-2. **Confirms dev server URL** with the user before the first verification.
-3. **Delegates UI implementation** to the Software Engineer with Figma design context.
-4. **Delegates UI verification** to the `tsh-ui-reviewer` subagent after each UI component:
-   - If PASS → moves to next component.
-   - If FAIL → delegates fix to Software Engineer, then re-runs verification.
-   - Maximum **5 iterations** per component, then escalates.
-5. **Produces a UI Verification Summary** before handing off to code review.
+**Confidence levels:** HIGH means fix exactly as reported; MEDIUM means fix the obvious differences and ask about unclear ones; LOW means ask you before changing anything.
 
-## Verification Loop
+**Gate before code review:** every UI verification task must have passed, or been escalated with your explicit approval to skip. The manager then produces a UI verification summary: components verified, iterations per component, design gaps and deviations.
 
-```
-BEFORE starting:
-    0. Ensure Figma URL is available → if not, ASK user
-
-REPEAT (max 5 iterations):
-    1. Run tsh-ui-reviewer subagent to verify current implementation
-    2. If PASS → done, exit loop
-    3. If FAIL → fix reported differences → go to step 1
-```
-
-:::warning
-The Software Engineer never verifies UI itself. It delegates to the `tsh-ui-reviewer` subagent which uses Figma MCP and Playwright to extract and compare data. Mental comparison or code reading is not verification.
-:::
-
-### Confidence Levels
-
-- **HIGH** — Fix code to match EXPECTED values exactly.
-- **MEDIUM** — Fix obvious differences, manually verify unclear ones.
-- **LOW** — Manually verify before making changes; tool data may be incomplete.
-
-### Escalation (after 5 iterations)
-
-Stops the loop and prepares an escalation report with:
-
-- Summary of each iteration.
-- Remaining mismatches.
-- Suspected root causes.
-- Recommended next steps.
-
-## Additional Skills Loaded
-
-- `tsh-implementing-frontend` — Component patterns, design system usage, composition.
-- `tsh-ui-verifying` — Verification criteria, tolerances, PASS/FAIL definitions.
-- `tsh-ensuring-accessibility` — WCAG 2.1 AA compliance, semantic HTML, ARIA.
-- `tsh-technical-context-discovering` — Project conventions before implementing.
+If the reviewer keeps returning LOW confidence, `BLOCKED` or tool errors, the manager asks whether you can verify manually and records the issue in the plan's Changelog.
 
 ## Output
 
-Everything from `/tsh-implement`, plus:
-
-- UI Verification Summary listing verified components, iterations per component, design gaps, and deviations with rationale.
+A UI verification summary for the Engineering Manager, and updated verification checkboxes in the plan.

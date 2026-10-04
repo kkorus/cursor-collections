@@ -5,57 +5,52 @@ title: /tsh-implement
 
 # /tsh-implement
 
-**Agent:** Engineering Manager  
-**File:** `.cursor/skills/commands/tsh-implement/SKILL.md`
+**Source:** `src/skills/tsh-implement/SKILL.md`  
+**Routes to:** [Engineering Manager](../agents/engineering-manager) orchestrator skill (`tsh-engineering-manager`), runs in the main thread
 
-Orchestrates the implementation of a feature by delegating tasks from the plan to specialized agents.
+Implements a feature from a plan, a Jira ticket or a plain description. The command only loads the Engineering Manager and recommends a flow; the manager does the work.
 
 ## Usage
 
 ```text
-/tsh-implement <JIRA_ID or task description>
+/tsh-implement <task-id | plan path | description>
 ```
 
-## What It Does
+## What it does
 
-1. Reviews the current state of the task — checks what's already done, gathers missing context via Context Engineer, creates a plan via Architect if missing.
-2. **Validates the plan** (Full Implementation Flow only) — Invokes the **Plan Reviewer** to stress-test failure modes, hidden assumptions, and rework risks. Returns plan to Architect if BLOCKERs found (max 3 iterations). Quick flow skips this because no `.plan.md` is produced. Presents approved plan to user for confirmation.
-3. Reviews the implementation plan and feature context thoroughly.
-4. Creates a **todo for every task** in the plan — each task gets its own tracked item.
-5. Delegates codebase analysis to the **Architect** agent to establish project conventions and patterns (if technical context is missing from the plan).
-6. Processes each task in plan order, delegating based on task type:
-   - **`[CREATE]` / `[MODIFY]`** → delegates to **Software Engineer** (app code), **DevOps Engineer** (infrastructure), or **E2E Engineer** (tests).
-   - **`[REUSE]`** → executes as described in the task definition (e.g., UI verification via **UI Reviewer**).
-7. After each task, updates plan checkboxes and runs quality checks (tsc, lint, build).
-8. Asks for confirmation before deviating from the plan.
-9. Documents all changes in the plan's Changelog section.
-10. **Automatically runs Code Reviewer** at the end if no review phase is defined.
+1. Recommends the **Quick flow** for small, obvious changes or the **Full flow** for multi-component, unclear or UI work, and lets you confirm the choice.
+2. **Quick flow:** delegates the task to the Software Engineer, runs the quality checks and delegates a review of the current diff to the Code Reviewer. No plan file is produced.
+3. **Full flow:**
+   - Checks what already exists (research, plan, plan review). Delegates research to the Context Engineer and the plan to the Architect if they are missing.
+   - Runs the plan review with the Plan Reviewer (maximum 3 iterations) and asks you to confirm the approved plan.
+   - Creates a todo for every task and processes the tasks in plan order, delegating by task type.
+   - After each task, updates the plan checkboxes and runs static analysis, the build and the tests.
+   - Verifies UI tasks with a Figma reference through [`tsh-orchestrate-ui-verification`](./internal/orchestrate-ui-verification), writes E2E tests, then delegates the final review.
+4. Asks you before deviating from the plan and records every change in the plan's Changelog.
 
-## How Delegation Works
+The manager asks you to confirm before moving between research, planning and implementation. See the [Engineering Manager](../agents/engineering-manager) page for the delegation table.
 
-The Engineering Manager automatically delegates each task to the right agent based on the plan:
+## Delegation
 
-| Task Type | Agent |
+| Task type | Subagent |
 |---|---|
-| Plan validation | Plan Reviewer |
-| Backend / general code | Software Engineer |
-| Frontend with Figma | Software Engineer |
-| E2E tests | E2E Engineer |
-| Infrastructure (Kubernetes, Terraform, CI/CD, observability) | DevOps Engineer |
-| UI verification | UI Reviewer |
-| LLM application prompts | Prompt Engineer |
+| Research | [Context Engineer](../agents/context-engineer) |
+| Plan and architecture decisions | [Architect](../agents/architect) |
+| Plan validation | [Plan Reviewer](../agents/plan-reviewer) |
+| Application code (backend, frontend, UI from Figma) | [Software Engineer](../agents/software-engineer) |
+| E2E tests | [E2E Engineer](../agents/e2e-engineer) |
+| Kubernetes, Terraform, CI/CD, observability | [DevOps Engineer](../agents/devops-engineer) |
+| LLM application prompts | [Prompt Engineer](../agents/prompt-engineer) |
+| UI verification | [UI Reviewer](../agents/ui-reviewer) |
+| Final review | [Code Reviewer](../agents/code-reviewer) |
 
-## Key Behaviors
+## Input
 
-- **Orchestrates, never implements** — Delegates all coding to specialized agents.
-- **Strictly follows the plan** — No deviations unless explicitly approved.
-- **Tracks progress with todos** — Each plan task gets its own tracked item.
-- **Runs quality checks after each task** — Ensures nothing breaks as implementation progresses.
-- **Auto-triggers Code Reviewer** — Ensures every implementation gets reviewed.
+A Jira ticket ID (`/tsh-implement PROJ-123`), a path to a plan, or a free-form description (`/tsh-implement Add pagination to the user list API`). Jira and Confluence are read only when you give a key or a page.
 
 ## Output
 
-- Code changes applied by delegated agents as specified in the plan.
-- Updated plan checkboxes showing completion status.
-- Changelog entries for any modifications.
-- Code review findings from the automatic `tsh-code-reviewer` run.
+- Code changes made by the delegated subagents.
+- Research, plan and plan-review files in `specifications/<task>/` (Full flow).
+- Updated plan checkboxes and Changelog entries.
+- The findings of the final code review.

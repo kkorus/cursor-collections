@@ -5,29 +5,26 @@ title: /tsh-commit
 
 # /tsh-commit
 
-**Agent:** (self-contained)  
-**File:** `.cursor/skills/commands/tsh-commit/SKILL.md`
+**Source:** `src/skills/tsh-commit/SKILL.md`  
+**Routes to:** none. The command is standalone and runs in the main thread.
 
-Drafts a [Conventional Commits](https://www.conventionalcommits.org/) message from git changes and commits **only after explicit user approval**.
+Drafts a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) message from the current git changes and commits only after you approve it.
 
 ## Usage
 
 ```text
-/tsh-commit
-/tsh-commit docs: README cleanup
+/tsh-commit [type(scope): subject]
 ```
 
-## What It Does
+## What it does
 
-1. Inspects `git status`, diffs, and recent log.
-2. Drafts message via `tsh-committing` (type, scope, body, footers).
-3. Presents proposal with exact paths to stage — waits for approval.
-4. Runs `git commit` only after user confirms.
+1. Inspects the repository state: `git status`, `git diff`, `git diff --staged` and the last 10 commits. Stops when there is nothing to commit.
+2. Loads the `tsh-committing` skill and drafts the message. It checks for secret and sensitive files before proposing anything. If the changes belong to unrelated domains, it offers a single commit (Option A) or a split into several commits (Option B).
+3. Shows the proposed message and the exact paths to stage, and waits for `approve`, `edit: <your message>` or `cancel`.
+4. After approval it stages only the approved paths, commits and reports the result and the new commit SHA.
 
-## Skills Loaded
+## Constraints
 
-- `tsh-committing`
-
-:::warning
-Never commits without explicit approval. Never stages secret or credential files.
-:::
+- No `git add` or `git commit` before you approve.
+- It never pushes, never uses `--no-verify`, and never amends unless you ask for it.
+- Hints after the command (a type, a scope, `Refs: PROJ-123`) influence the draft but do not skip the approval.

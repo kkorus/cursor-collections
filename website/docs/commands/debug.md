@@ -5,25 +5,25 @@ title: /tsh-debug
 
 # /tsh-debug
 
-**Agent:** Software Engineer (for fix implementation)  
-**File:** `.cursor/skills/commands/tsh-debug/SKILL.md`
+**Source:** `src/skills/tsh-debug/SKILL.md`  
+**Routes to:** [Software Engineer](../agents/software-engineer) subagent (`tsh-software-engineer`), delegated from the main thread
 
-Systematically reproduces, isolates root cause, fixes, and verifies bugs. Focuses on root causes, not symptoms.
+Debugs a bug or unexpected behavior systematically. The command investigates in the main thread and delegates only the fix.
 
 ## Usage
 
 ```text
-/tsh-debug <bug description or failing test>
+/tsh-debug <bug description, error message or failing test>
 ```
 
-## What It Does
+## What it does
 
-1. **Reproduce** — Documents trigger conditions and expected vs actual behavior.
-2. **Isolate** — Narrows root cause with evidence.
-3. **Fix** — Delegates implementation to `tsh-software-engineer`.
-4. **Verify** — Adds or updates regression tests; confirms fix.
+1. Loads the `tsh-debugging` skill and follows steps 1-4: reproduce, hypothesize, isolate, state the root cause. Asks you if the bug cannot be reproduced.
+2. Delegates the fix to the Software Engineer with the root cause, the exact files and lines, the intended behavior and the edge cases. The engineer adds a regression test.
+3. Verifies: the original bug no longer reproduces, the test suite passes, the regression test exists and temporary logging is removed.
 
-## Skills Loaded
+The command never fixes the bug itself and never skips reproduction.
 
-- `tsh-codebase-analysing`
-- `tsh-technical-context-discovering`
+## Suggested next steps
+
+`/tsh-refactor` if the root cause is structural, `/tsh-ask` if the bug raises an architectural question.

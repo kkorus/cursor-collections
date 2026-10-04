@@ -1,42 +1,34 @@
 ---
 sidebar_position: 17
-title: /tsh-analyze-aws-costs
+title: /tsh-analyze-cloud-costs
 ---
 
-# /tsh-analyze-aws-costs
+# /tsh-analyze-cloud-costs
 
-**Agent:** DevOps Engineer
-**File:** `.cursor/skills/commands/tsh-analyze-aws-costs/SKILL.md`
+**Source:** `src/skills/tsh-analyze-cloud-costs/SKILL.md`  
+**Routes to:** [DevOps Engineer](../agents/devops-engineer) subagent (`tsh-devops-engineer`), delegated from the main thread
 
-Performs a comprehensive AWS cost optimization and tagging compliance audit using a hybrid approach — analyzes IaC code first, then validates against live AWS infrastructure via API.
+A cost optimization and tagging compliance audit of one AWS account or one GCP project. It replaces the former separate AWS and GCP commands. The audit is hybrid: it analyzes the IaC code first, then always validates against the live cloud API with read-only calls.
 
 ## Usage
 
 ```text
-/tsh-analyze-aws-costs <AWS Account/Profile, Region, or 'all'> <focus: specific service or 'everything'>
+/tsh-analyze-cloud-costs <aws|gcp> <profile|project> <region>
 ```
 
-## What It Does
+## What it does
 
-### 1. IaC Analysis
+1. Reads the provider, the AWS profile or GCP project, and the region (or all regions) from the arguments. Asks for anything missing.
+2. Delegates the audit to the DevOps Engineer:
+   - analyzes `*.tf`, `*.tfvars`, `terragrunt.hcl`, CloudFormation or Deployment Manager templates
+   - inventories live resources and reports drift and shadow resources
+   - follows the provider checklist and the tagging standards, with three paths per finding (Golden, Cost-Optimized, Velocity)
+   - verifies instance types and pricing against current provider documentation
+3. Writes the report to `specifications/cost-audits/<provider>-<yyyy-mm-dd>.md` and shows you the path, the executive summary and the summary table.
+4. Asks whether to generate Terraform code for selected optimizations. Nothing is generated or changed before you confirm the items.
 
-- Scans Terraform and CloudFormation templates for resource configurations.
-- Identifies over-provisioned instances, missing reserved instance opportunities, and inefficient storage tiers.
-- Checks tagging compliance against organizational policies.
+## Guardrails
 
-### 2. Live Infrastructure Validation
+The audit is analysis only. The agent's zero-deletion and mutation-lock rules apply, and it warns before any suggestion that touches a resource tagged `prod`.
 
-- Queries AWS API MCP to validate actual resource usage against IaC definitions.
-- Identifies orphaned resources, unused EBS volumes, idle load balancers.
-- Checks for savings plan and reserved instance coverage gaps.
-
-### 3. Cost Report
-
-- Produces a detailed cost optimization report with estimated savings.
-- Prioritizes findings by potential monthly cost reduction.
-- Includes specific AWS CLI or Terraform changes for each recommendation.
-
-## Skills Loaded
-
-- `tsh-optimizing-cloud-cost` — Cloud cost optimization strategies and tagging policies.
-- `tsh-technical-context-discovering` — Project conventions and existing patterns.
+Requires the AWS or GCP MCP servers. See [MCP setup](../getting-started/mcp-setup).

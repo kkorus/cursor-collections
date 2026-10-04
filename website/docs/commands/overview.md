@@ -5,88 +5,93 @@ title: Commands Overview
 
 # Commands Overview
 
-Cursor Collections includes **17 slash commands** that trigger specific workflow actions across the full product lifecycle. Commands are stored in `.cursor/skills/commands/` as `SKILL.md` files with `disable-model-invocation: true`, and become available as `/tsh-<name>` shortcuts in Cursor Agent chat.
+TSH AI Collections includes **16 slash commands** that trigger specific workflow actions across the full product lifecycle, plus 2 internal steps that commands and orchestrators load. Commands are skills with `type: command`. They are generated for Cursor, Claude Code and Codex and are available as `/tsh-<name>` in Cursor and Claude Code. The Codex invocation syntax is not yet verified.
 
-## How Commands Work
+## How commands work
 
-Each command skill defines:
+A command is a thin entry point. It contains no domain knowledge. It does one of three things:
 
-- **Trigger** — The slash command name (e.g., `/tsh-implement`)
-- **Target agent** — Which agent skill to invoke (or self-contained workflow)
-- **Workflow** — Step-by-step instructions, required skills, and output format
+- **Loads an orchestrator skill** that runs in the main conversation and delegates to subagents (`/tsh-implement`, `/tsh-refactor`, `/tsh-analyze-materials`, `/tsh-explore-materials`, `/tsh-create-custom-*`).
+- **Delegates to one subagent** (`/tsh-review`, `/tsh-review-ui`, `/tsh-audit-infrastructure`, `/tsh-analyze-cloud-costs`), or investigates in the main thread and delegates the work (`/tsh-ask`, `/tsh-debug`, `/tsh-audit-codebase`).
+- **Runs standalone** in the main thread (`/tsh-commit`).
 
-When you type `/tsh-implement`, `/tsh-review`, etc. in Cursor Agent chat, the corresponding skill is loaded and executed.
+Commands are hidden from automatic model invocation, so they run only when you type them. Everything after the command name is passed as the input.
 
-## Public Commands
+## Commands
 
-### Product Ideation Commands
+### Product ideation
 
-| Command | Agent Skill | Description |
-|---------|------------|-------------|
-| [/tsh-explore-materials](./public/explore-materials) | tsh-business-analyst | Explore workshop materials before backlog extraction |
-| [/tsh-analyze-materials](./public/analyze-materials) | tsh-business-analyst | Process workshop materials into Jira-ready epics and stories |
+| Command | Routes to | Description |
+|---------|-----------|-------------|
+| [/tsh-explore-materials](./explore-materials) | Business Analyst (orchestrator) | Explore workshop materials before backlog extraction |
+| [/tsh-analyze-materials](./analyze-materials) | Business Analyst (orchestrator) | Turn workshop materials into Jira-ready epics and stories |
 
-### Development Commands
+### Development
 
-| Command | Agent Skill | Description |
-|---------|------------|-------------|
-| [/tsh-implement](./public/implement) | tsh-engineering-manager | Orchestrate the full cycle: research/context gathering if needed → plan → implementation |
-| [/tsh-refactor](./public/refactor) | tsh-software-engineer | Structural refactoring without behavior change |
+| Command | Routes to | Description |
+|---------|-----------|-------------|
+| [/tsh-implement](./implement) | Engineering Manager (orchestrator) | Implement a task end to end: research, plan, plan review, implementation, review |
+| [/tsh-refactor](./refactor) | Engineering Manager (orchestrator), refactor mode | Behavior-preserving structural refactoring |
 
-### Quality Commands
+### Quality
 
-| Command | Agent Skill | Description |
-|---------|------------|-------------|
-| [/tsh-review](./public/review) | tsh-code-reviewer | Review implementation against plan and standards |
-| [/tsh-review-ui](./public/review-ui) | tsh-ui-reviewer | Single-pass Figma vs implementation comparison |
-| [/tsh-review-codebase](./public/review-codebase) | tsh-architect | Comprehensive code quality analysis |
+| Command | Routes to | Description |
+|---------|-----------|-------------|
+| [/tsh-review](./review) | Code Reviewer | Review an implementation against the plan, or the current diff |
+| [/tsh-review-ui](./review-ui) | UI Reviewer | Single-pass Figma versus implementation comparison |
+| [/tsh-audit-codebase](./audit-codebase) | Architect (fan-out per layer) | Code quality audit: dead code, duplication, improvements |
 
-### Developer Utilities
+### Developer utilities
 
-| Command | Agent Skill | Description |
-|---------|------------|-------------|
-| [/tsh-ask](./public/ask) | (self-contained) | Architectural Q&A → ADR in `specifications/decisions/` |
-| [/tsh-debug](./public/debug) | tsh-software-engineer | Systematic root-cause debugging |
-| [/tsh-commit](./public/commit) | (self-contained) | Conventional Commits with approval gate |
+| Command | Routes to | Description |
+|---------|-----------|-------------|
+| [/tsh-ask](./ask) | Architect | Architectural Q&A recorded as a decision record in `specifications/decisions/` |
+| [/tsh-debug](./debug) | Software Engineer | Systematic root-cause debugging |
+| [/tsh-commit](./commit) | none (standalone) | Conventional Commits message with an approval gate |
 
-### Cursor Customization Commands
+### AI customization
 
-| Command | Agent Skill | Description |
-|---------|------------|-------------|
-| [/tsh-create-custom-agent](./public/create-custom-agent) | tsh-cursor-orchestrator | Create a new Cursor agent skill |
-| [/tsh-create-custom-skill](./public/create-custom-skill) | tsh-cursor-orchestrator | Create a new workflow skill |
-| [/tsh-create-custom-command](./public/create-custom-command) | tsh-cursor-orchestrator | Create a new slash command skill |
-| [/tsh-create-custom-rules](./public/create-custom-rules) | tsh-cursor-orchestrator | Create Cursor rules (`.cursor/rules/*.mdc`) |
+| Command | Routes to | Description |
+|---------|-----------|-------------|
+| [/tsh-create-custom-agent](./create-custom-agent) | AI Customization Orchestrator | Create a new custom agent |
+| [/tsh-create-custom-skill](./create-custom-skill) | AI Customization Orchestrator | Create a new skill |
+| [/tsh-create-custom-command](./create-custom-command) | AI Customization Orchestrator | Create a new slash command |
+| [/tsh-create-custom-rules](./create-custom-rules) | AI Customization Orchestrator | Create project instructions and scoped rules |
 
-### Infrastructure & Cost Analysis Commands
+### Infrastructure and cost
 
-| Command | Agent Skill | Description |
-|---------|------------|-------------|
-| [/tsh-audit-infrastructure](./public/audit-infrastructure) | tsh-devops-engineer | Audit infrastructure for security gaps, cost waste, and best practices |
-| [/tsh-analyze-aws-costs](./public/analyze-aws-costs) | tsh-devops-engineer | AWS cost optimization and tagging compliance audit |
-| [/tsh-analyze-gcp-costs](./public/analyze-gcp-costs) | tsh-devops-engineer | GCP cost optimization and labeling compliance audit |
+| Command | Routes to | Description |
+|---------|-----------|-------------|
+| [/tsh-audit-infrastructure](./audit-infrastructure) | DevOps Engineer | Audit infrastructure for security gaps, cost waste and best-practice violations |
+| [/tsh-analyze-cloud-costs](./analyze-cloud-costs) | DevOps Engineer | AWS or GCP cost optimization and tagging compliance audit |
+
+## Internal steps
+
+Internal steps are not commands you type. Orchestrators load them by name. Cursor and Codex may list them anyway; their descriptions start with "Internal step of ...".
+
+| Step | Loaded by | Description |
+|------|-----------|-------------|
+| [tsh-implement-task](./internal/implement-task) | Software Engineer (delegated by the Engineering Manager) | Implement a feature from a plan or a task description |
+| [tsh-orchestrate-ui-verification](./internal/orchestrate-ui-verification) | Engineering Manager | The verify-fix loop for UI tasks with Figma designs |
 
 ## Delegation via /tsh-implement
 
-When you run [`/tsh-implement`](./public/implement), the Engineering Manager automatically handles the full development cycle. It first gathers context and creates an implementation plan (if needed), then delegates tasks to specialized agents.
+When you run [`/tsh-implement`](./implement), the [Engineering Manager](../agents/engineering-manager) handles the full development cycle. It gathers context and creates a plan if they are missing, then delegates tasks to subagents.
 
-| Phase | Delegated To |
-|-------|-------------|
-| Research (context gathering) | Context Engineer (via internal `tsh-research` skill) |
-| Planning (architecture) | Architect (via internal `tsh-plan` skill) |
-| Plan validation | Plan Reviewer stress-test (`agents/tsh-plan-reviewer`) |
-| Backend / general code | Software Engineer |
-| Frontend with Figma | Software Engineer (via internal `tsh-implement-ui` skill) |
-| E2E tests | E2E Engineer (via internal `tsh-implement-e2e` skill) |
-| LLM application prompts | Prompt Engineer |
-| Kubernetes, Terraform, CI/CD, observability | DevOps Engineer |
-| UI verification | UI Reviewer |
+| Phase | Delegated to |
+|-------|--------------|
+| Research | [Context Engineer](../agents/context-engineer) |
+| Planning | [Architect](../agents/architect) |
+| Plan validation | [Plan Reviewer](../agents/plan-reviewer) |
+| Backend and general code | [Software Engineer](../agents/software-engineer) (with `tsh-implement-task`) |
+| Frontend with Figma | Software Engineer, then [UI Reviewer](../agents/ui-reviewer) in a loop (`tsh-orchestrate-ui-verification`) |
+| E2E tests | [E2E Engineer](../agents/e2e-engineer) |
+| LLM application prompts | [Prompt Engineer](../agents/prompt-engineer) |
+| Kubernetes, Terraform, CI/CD, observability | [DevOps Engineer](../agents/devops-engineer) |
+| Final review | [Code Reviewer](../agents/code-reviewer) |
 
-## Input Format
+## Input format
 
-All commands accept either:
+Commands accept free text after the command name. For example, `/tsh-implement` takes a Jira ticket ID (`/tsh-implement PROJ-123`) or a task description (`/tsh-implement Add pagination to the user list API`). Jira and Confluence are read only when you give a key. Each command page lists its own arguments.
 
-- A **Jira ticket ID**: `/tsh-implement PROJ-123`
-- A **task description**: `/tsh-implement Add pagination to the user list API`
-
-The agent adapts its behavior based on the input type — pulling context from Jira/Confluence for ticket IDs, or working from the description and codebase for free-form text.
+Commands do not start other commands. At the end they suggest follow-up commands as text, for example `/tsh-review` after an implementation.

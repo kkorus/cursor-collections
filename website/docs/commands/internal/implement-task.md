@@ -1,51 +1,31 @@
 ---
 sidebar_position: 6
-title: /tsh-implement-common-task
+title: tsh-implement-task
 ---
 
-# /tsh-implement-common-task
+# tsh-implement-task
 
-:::info
-Not invoked directly by users. To trigger implementation, use [`/tsh-implement`](../public/implement) — the [Engineering Manager](../../agents/engineering-manager) will automatically delegate to the [Software Engineer](../../agents/software-engineer).
-:::
+**Source:** `src/skills/tsh-implement-task/SKILL.md`  
+**Kind:** internal step. Loaded by the Software Engineer (preloaded) when the Engineering Manager delegates a task.
 
-**Agent:** Software Engineer
-**File:** `.cursor/skills/internal/tsh-implement-common-task/SKILL.md`
+Implements a feature from a plan and feature context, or from a plain task description when no plan exists, including UI tasks based on Figma designs.
 
-The standard delegation prompt for general implementation tasks — backend logic, APIs, database changes, and non-UI frontend work.
+## What it does
 
-## How It's Triggered
+Not invoked directly by you. To implement a task, use [`/tsh-implement`](../implement): the [Engineering Manager](../../agents/engineering-manager) delegates the task to the [Software Engineer](../../agents/software-engineer), which follows this step.
 
-```text
-/tsh-implement <JIRA_ID or task description>
-```
+1. Reviews the implementation plan and feature context, and reads the plan's **Technical Context** section as the primary source of project conventions.
+2. Finds the commands for tests, linting and build, and runs tests and linters before starting and after each phase.
+3. Implements only what the plan contains, step by step, and checks the plan's boxes after each task step. It asks (in delegated mode: returns `NEEDS_INPUT`) before deviating from the plan, and records changes in the plan's Changelog.
+4. Before handing over, makes sure every task in its scope is complete and updates the acceptance criteria checklist.
 
-The Engineering Manager identifies application code tasks in the plan and delegates them to the Software Engineer automatically.
+**No plan (Quick flow):** restates the goal and acceptance criteria, discovers the technical context itself, follows existing patterns, keeps the change small, adds tests and reports what changed.
 
-## What It Does
+**UI tasks (Figma):** also loads `tsh-implementing-frontend` and `tsh-ensuring-accessibility`. Finds the Figma URLs in the research and plan files. If a component has no Figma link, it stops and asks for one. It does not verify the UI itself; verification belongs to the [UI Reviewer](../../agents/ui-reviewer) through [`tsh-orchestrate-ui-verification`](./orchestrate-ui-verification).
 
-### 1. Context Discovery
+## Skills loaded
 
-- Reviews the implementation plan and feature context.
-- Checks `*.mdc rules` for project-specific conventions and coding standards.
-- Loads the `tsh-technical-context-discovering` and `tsh-implementation-gap-analysing` skills.
-- Gathers build, test, and lint commands for the project.
-
-### 2. Implementation
-
-- Follows the plan step by step — no deviations without explicit approval.
-- Runs tests and linters before starting and after each phase.
-- Loads `tsh-sql-and-database-understanding` when working with database schemas, migrations, or ORM-based data access.
-- Updates plan checkboxes after completing each task step.
-
-### 3. Verification
-
-- Ensures all tasks in the plan are completed.
-- Validates acceptance criteria before handing over to review.
-- Documents any changes to the original plan in the Changelog section with timestamps.
-
-## Skills Loaded
-
-- `tsh-technical-context-discovering` — Establishes project conventions before implementing.
-- `tsh-implementation-gap-analysing` — Verifies current state before making changes.
-- `tsh-sql-and-database-understanding` — When working with databases, migrations, queries, or ORMs.
+- `tsh-discovering-technical-context` - project conventions, coding standards and patterns
+- `tsh-analyzing-implementation-gaps` - verify the current state before changing it
+- `tsh-designing-databases` - when implementing schemas, migrations, queries or ORM access
+- `tsh-implementing-backend` - when implementing backend API features

@@ -5,47 +5,23 @@ title: /tsh-review
 
 # /tsh-review
 
-**Agent:** Code Reviewer  
-**File:** `.cursor/skills/commands/tsh-review/SKILL.md`
+**Source:** `src/skills/tsh-review/SKILL.md`  
+**Routes to:** [Code Reviewer](../agents/code-reviewer) subagent (`tsh-code-reviewer`), delegated from the main thread
 
-Performs a structured code review against the implementation plan and feature context.
+Reviews an implementation against the plan and feature context, or reviews the current diff when there is no plan. For a whole-codebase audit use [`/tsh-audit-codebase`](./audit-codebase).
 
 ## Usage
 
 ```text
-/tsh-review <JIRA_ID or task description>
+/tsh-review [plan path | task description]
 ```
 
-## What It Does
+## What it does
 
-1. **Understands context** — Loads `.research.md` and `.plan.md` files, reviews `*.mdc rules` for project guidelines.
-2. **Reviews implementation** — Focuses on correctness, code quality, security, testing, and documentation.
-3. **Verifies definition of done** — Checks each item from the plan's task definitions; marks completed items.
-4. **Verifies acceptance criteria** — Checks each item from the plan's acceptance criteria checklist.
-5. **Summarizes findings** — Provides a summary with issues and recommendations.
-6. **Documents results** — Adds a "Code Review Findings" section to the plan file.
-7. **Updates changelog** — Records that code review was performed.
-
-## Skills Loaded
-
-- `tsh-code-reviewing` — Structured review covering correctness, quality, security, testing, best practices, scalability.
-- `tsh-implementation-gap-analysing` — Compare implementation against the plan for completeness.
-- `tsh-technical-context-discovering` — Understand project conventions and coding standards.
-- `tsh-sql-and-database-understanding` — When reviewing database-related changes.
+1. Delegates to the Code Reviewer and tells it to follow the `tsh-reviewing-code` skill.
+2. Passes the plan and research paths if you gave them or they exist for the task. Without a plan it passes the task description and the reviewer checks the current diff.
+3. Shows you the findings and the agent's suggested next steps.
 
 ## Output
 
-- Updated plan file with checked definition-of-done and acceptance criteria items.
-- "Code Review Findings" section added to the plan file.
-- Changelog entry indicating code review was performed.
-
-## Review Categories
-
-| Category | What It Covers |
-|---|---|
-| **Correctness** | Code functions as intended, meets requirements |
-| **Code Quality** | Clean, efficient, maintainable, follows standards |
-| **Security** | No vulnerabilities, proper security measures |
-| **Testing** | Appropriate tests covering necessary scenarios |
-| **Documentation** | Well-documented code with comments |
-| **Acceptance Criteria** | Each item verified individually |
+Findings grouped by severity, with acceptance criteria checked one by one when a plan exists. The reviewer also runs the project's tests and linters.

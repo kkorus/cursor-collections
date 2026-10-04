@@ -5,35 +5,26 @@ title: /tsh-create-custom-rules
 
 # /tsh-create-custom-rules
 
-**Agent:** Cursor Orchestrator  
-**File:** `.cursor/skills/commands/tsh-create-custom-rules/SKILL.md`
+**Source:** `src/skills/tsh-create-custom-rules/SKILL.md`  
+**Routes to:** [AI Customization Orchestrator](../agents/ai-customization-orchestrator) orchestrator skill (`tsh-ai-customization-orchestrator`)
 
-Creates custom Cursor rules: repository-level `cursor-instructions.md` or file-scoped `.mdc` rules with `globs` patterns in `.cursor/rules/`.
+Creates project instructions and scoped rules for Cursor, Claude Code and Codex. In a repository with a neutral source (`src/`) and a generator, it writes the source and regenerates the native files. In other projects it writes native files for the tools you use.
 
 ## Usage
 
 ```text
-/tsh-create-custom-rules <conventions or requirements to encode>
+/tsh-create-custom-rules <conventions to encode or description>
 ```
 
-## What It Does
+## What it does
 
-1. **Research workspace conventions** — Analyzes existing standards, project structure, and any rule files.
-2. **Determine rule type** — Chooses between repo-level (`cursor-instructions.md`) and file-scoped (`.mdc` with `globs`).
-3. **Clarify requirements** — Captures coding standards, framework patterns, and behavioral guidelines to encode.
-4. **Create the rules** — Delegates creation to the artifact creator worker.
-5. **Review and validate** — Verifies scope, `globs` patterns, and clarity.
-
-## Skills Loaded
-
-- `tsh-creating-rules` — Rules file creation workflow, type selection, and validation checklist.
-- `tsh-technical-context-discovering` — Discover project conventions and workspace patterns.
-- `tsh-codebase-analysing` — Analyze workspace for existing coding conventions.
+1. Loads the AI Customization Orchestrator with the governing skill `tsh-creating-rules`.
+2. Researches existing artifacts in your project (naming, structure, conventions) with the Researcher subagent.
+3. Clarifies the requirements with you: project-wide instructions versus scoped rules, per tool in use. If the project has no neutral source, it also asks which tools (Cursor, Claude Code, Codex) to target.
+4. Creates the artifact with the Creator subagent and reviews it against the checklist of `tsh-creating-rules` with the Reviewer subagent. Must-fix findings go back to the Creator (at most 3 cycles).
 
 ## Output
 
-Rule files under `.cursor/rules/` following Cursor conventions.
+`AGENTS.md` with the `CLAUDE.md` import, Cursor scoped rule files, Claude rule files or nested `AGENTS.md`, as needed, created and validated, with a short summary of what was created.
 
-:::info Orchestrator Workflow
-This command routes to the Cursor Orchestrator which handles the full research → create → review workflow automatically using specialized sub-agents.
-:::
+The orchestrator asks you whenever a design decision is unclear and never leaves manual edits to you. See [AI Customization Orchestrator](../agents/ai-customization-orchestrator).

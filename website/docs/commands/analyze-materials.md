@@ -5,80 +5,29 @@ title: /tsh-analyze-materials
 
 # /tsh-analyze-materials
 
-**Agent:** Business Analyst  
-**File:** `.cursor/skills/commands/tsh-analyze-materials/SKILL.md`
+**Source:** `src/skills/tsh-analyze-materials/SKILL.md`  
+**Routes to:** [Business Analyst](../agents/business-analyst) orchestrator skill (`tsh-business-analyst`)
 
-Processes discovery workshop materials and converts them into structured, Jira-ready epics and user stories. Can also import an existing Jira backlog for local iteration and improvement.
+Turns discovery workshop materials (transcripts, Figma designs, PDFs) into Jira-ready epics and user stories, or iterates on an existing Jira backlog. The command only picks the entry point and the output folder; the Business Analyst owns the workflow, the review gates and every Jira action.
 
 ## Usage
 
 ```text
-/tsh-analyze-materials <workshop materials or Jira project key>
+/tsh-analyze-materials <materials | Jira issue keys | project key>
 ```
 
-## What It Does
+## What it does
 
-### Standard Workflow (workshop materials provided)
+The command detects what you provided:
 
-1. **Process transcript** — Cleans raw transcript using the `tsh-transcript-processing` skill. Removes small talk, structures content by topics, extracts decisions and action items.
-2. **Analyze additional materials and baseline** — Reviews Figma designs, existing codebase, reference documents, and any existing `task-baseline.md` continuity context.
-3. **Draft intent brief** — Synthesizes `intent-brief.md` capturing scope, exclusions, likely epics, overlap, and open questions.
-4. **Gate 0 — Intent Brief Review** — Presents the intent brief for user approval before extraction begins.
-5. **Extract tasks** — Identifies epics and user stories from all processed materials using the `tsh-task-extracting` skill.
-6. **Gate 1 — Task Review** — Presents extracted tasks for user validation. Iterates until approved.
-7. **Quality review** — Runs Lite or Full analysis passes against the approved task list to find gaps, missing edge cases, and improvements.
-8. **Gate 1.5 — Suggestion Review** — Presents quality review suggestions individually for accept/reject and applies accepted changes.
-9. **Format for Jira** — Applies the benchmark template to all tasks using the `tsh-jira-task-formatting` skill.
-10. **Gate 2 — Push Approval** — Presents final formatted tasks for user review before Jira push.
-11. **Push to Jira** — Creates or updates Jira issues with proper linking and reports synced issue keys.
-12. **Post-push verification** — Reads issues back from Jira and verifies key fields against the approved output.
-13. **Archive and baseline refresh** — Refreshes continuity artifacts after a verified sync.
+- **Workshop materials:** runs the standard workflow from the start. Without a raw transcript it skips the transcript step.
+- **Jira issue keys, epic keys or a project key:** imports the issues and iterates on the existing backlog.
+- **Materials too ambiguous to extract from**, or a request to explore first: suggests [`/tsh-explore-materials`](./explore-materials), or starts with Explore Mode if you agree.
 
-### Import Mode (Jira project key provided)
+If the input is unclear, it asks you one question to choose the entry point.
 
-When the user provides existing Jira issue keys or a project key instead of workshop materials, the agent imports existing tasks from Jira into the local format, then proceeds through quality review, formatting, approval, and verified sync.
-
-## Skills Loaded
-
-- `tsh-task-analysing` — Explore business context, ambiguity, and baseline overlap.
-- `tsh-transcript-processing` — Clean and structure raw transcripts.
-- `tsh-task-extracting` — Identify epics and user stories from materials.
-- `tsh-task-quality-reviewing` — Analyze tasks for gaps and improvements.
-- `tsh-jira-task-formatting` — Format tasks for Jira, manage push, and support verification/baseline refresh.
-- `tsh-codebase-analysing` — Understand existing codebase when relevant.
+The workflow has four review gates (Gate 0 intent brief, Gate 1 breakdown, Gate 1.5 quality suggestions, Gate 2 final tasks). Nothing reaches Jira without your approval at each gate. See the [Business Analyst](../agents/business-analyst) page.
 
 ## Output
 
-A set of markdown files placed in `specifications/<workshop-name>/`:
-
-```text
-specifications/
-  user-onboarding/
-    cleaned-transcript.md       ← structured transcript
-    intent-brief.md             ← approved scope brief
-    extracted-tasks.md          ← epics and stories (updated after quality review)
-    quality-review.md           ← quality review report
-    jira-tasks.md               ← final Jira-ready tasks
-
-Optional exploration mode produces:
-
-specifications/
-  user-onboarding/
-    workshop-context-summary.md ← pre-extraction context synthesis
-```
-
-## Input Flexibility
-
-The command accepts various input types:
-
-| Input | Behavior |
-|---|---|
-| Raw transcript text | Runs full workflow starting from transcript processing |
-| Structured notes | Skips transcript processing, starts from task extraction |
-| Figma links | Analyzes designs for functional requirements |
-| Jira project key | Imports existing backlog for local iteration |
-| Combination | Processes all available materials together |
-
-:::tip
-Gate 0, Gate 1, Gate 1.5, and Gate 2 are mandatory. No data is pushed to Jira without your explicit approval at each gate. Review each output carefully — the agent produces business-oriented tasks that stakeholders should be able to understand without technical knowledge.
-:::
+All artifacts go to `specifications/<topic>/` (kebab-case topic). Project-level continuity files live in `specifications/projects/<project-name>/`.

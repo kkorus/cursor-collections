@@ -1,80 +1,28 @@
 ---
 sidebar_position: 9
-title: /tsh-review-codebase
+title: /tsh-audit-codebase
 ---
 
-# /tsh-review-codebase
+# /tsh-audit-codebase
 
-**Agent:** Architect  
-**File:** `.cursor/skills/commands/tsh-review-codebase/SKILL.md`
+**Source:** `src/skills/tsh-audit-codebase/SKILL.md`  
+**Routes to:** [Architect](../agents/architect) subagent (`tsh-architect`), delegated from the main thread (one per layer, in parallel)
 
-Performs a comprehensive code quality analysis covering dead code, duplications, and improvement opportunities.
+A code quality audit covering dead code, duplications and improvement opportunities. The command runs in the main thread and fans out Architect subagents, one per layer or app.
 
 ## Usage
 
 ```text
-/tsh-review-codebase
+/tsh-audit-codebase
 ```
 
-## What It Does
+## What it does
 
-### Phase 1: Context Discovery
+1. Loads the `tsh-discovering-technical-context` skill and identifies the repository type. For a monorepo, it lists every app, package and shared library, and analyzes each separately.
+2. Delegates one Architect subagent per layer or app, in parallel. Each uses the `tsh-analyzing-codebase` and `tsh-reviewing-code` skills and writes `specifications/code-quality/<layer>.findings.md`.
+3. Delegates one more Architect for the architecture review, with the findings files as input.
+4. Compiles the findings, prioritizes them by severity and writes `specifications/code-quality/code-quality-report.md`, keeping the layers separate.
 
-- Loads project conventions from `tsh-technical-context-discovering` skill.
-- Identifies repository type (monorepo vs single system).
-- Identifies tech stack, frameworks, and dependencies per layer/app.
+## Suggested next steps
 
-### Phase 2: Codebase Analysis
-
-Runs parallel subagents per layer/app to detect:
-
-**Dead Code:**
-- Unused imports, exports, components, routes, and endpoints.
-- Unreachable code paths.
-- Deprecated code no longer referenced.
-- Files not imported anywhere.
-- Code only imported in its own test file.
-
-**Duplications:**
-- Duplicated functions, UI components, API patterns.
-- Duplicated validation logic, utilities, type definitions.
-- Copy-pasted code blocks differing only in variable names.
-
-**Improvement Opportunities:**
-- High cyclomatic complexity, deeply nested logic.
-- Single Responsibility Principle violations.
-- Missing or inconsistent error handling.
-- Excessive use of `any` in TypeScript.
-- Outdated patterns that could be modernized.
-- Performance issues and security concerns.
-
-### Phase 3: Architecture Review
-
-- Module/package boundary evaluation.
-- Shared code extraction assessment.
-- Dependency graph analysis (circular dependencies).
-- Separation of concerns verification.
-
-### Phase 4: Report Generation
-
-All findings are prioritized:
-- 🔴 **Critical** — Must be fixed (bugs, security issues, maintenance burden).
-- 🟡 **Important** — Should be fixed (quality, readability, maintainability).
-- 🟢 **Nice to Have** — Optional (polish, optimization).
-
-## Skills Loaded
-
-- `tsh-codebase-analysing` — Structured analysis process.
-- `tsh-technical-context-discovering` — Project conventions and architecture patterns.
-- `tsh-code-reviewing` — Code quality standards and security considerations.
-
-## Output
-
-A `code-quality-report.md` file saved to the repository root, containing:
-
-- Executive summary of overall code health.
-- Findings organized by layer/app.
-- Dead code, duplications, and improvement tables with file paths and line numbers.
-- Architecture observations.
-- Summary counts by severity.
-- Recommended action plan (immediate, short-term, long-term).
+`/tsh-implement` to fix the critical findings, `/tsh-refactor` for the duplications.

@@ -5,35 +5,26 @@ title: /tsh-create-custom-agent
 
 # /tsh-create-custom-agent
 
-**Agent:** Cursor Orchestrator  
-**File:** `.cursor/skills/commands/tsh-create-custom-agent/SKILL.md`
+**Source:** `src/skills/tsh-create-custom-agent/SKILL.md`  
+**Routes to:** [AI Customization Orchestrator](../agents/ai-customization-orchestrator) orchestrator skill (`tsh-ai-customization-orchestrator`)
 
-Creates a new custom agent skill (`SKILL.md` in `.cursor/skills/agents/`). Analyzes existing agents for patterns, guides through design decisions, creates the agent file, and validates against best practices.
+Creates a new custom agent (subagent) for Cursor, Claude Code and Codex. In a repository with a neutral source (`src/`) and a generator, it writes the source and regenerates the native files. In other projects it writes native files for the tools you use.
 
 ## Usage
 
 ```text
-/tsh-create-custom-agent <agent requirements or description>
+/tsh-create-custom-agent <agent role or description>
 ```
 
-## What It Does
+## What it does
 
-1. **Research existing agents** — Analyzes agents in `.cursor/skills/agents/` for naming conventions, structural patterns, tool configurations, and skill references.
-2. **Clarify requirements** — Determines the agent's purpose, responsibilities, target workflows, and tool needs with the user.
-3. **Design the agent** — Makes design decisions based on research findings and user input: agent name, description, personality, tool list, and skill references.
-4. **Create the agent** — Delegates creation to the artifact creator worker.
-5. **Review and validate** — Delegates review to the artifact reviewer. Fixes issues if found.
-
-## Skills Loaded
-
-- `tsh-creating-agents` — Agent file creation workflow, templates, and validation checklist.
-- `tsh-technical-context-discovering` — Discover project conventions and workspace patterns.
-- `tsh-codebase-analysing` — Analyze existing agents for structural patterns.
+1. Loads the AI Customization Orchestrator with the governing skill `tsh-creating-agents`.
+2. Researches existing artifacts in your project (naming, structure, conventions) with the Researcher subagent.
+3. Clarifies the requirements with you: purpose, access level, model tier, MCP servers and skills to load. If the project has no neutral source, it also asks which tools (Cursor, Claude Code, Codex) to target.
+4. Creates the artifact with the Creator subagent and reviews it against the checklist of `tsh-creating-agents` with the Reviewer subagent. Must-fix findings go back to the Creator (at most 3 cycles).
 
 ## Output
 
-A new agent file in `.cursor/skills/agents/` following workspace conventions.
+The agent file (or files) for the tools you use, created and validated, with a short summary of what was created.
 
-:::info Orchestrator Workflow
-This command routes to the Cursor Orchestrator which handles the full research → create → review workflow automatically using specialized sub-agents.
-:::
+The orchestrator asks you whenever a design decision is unclear and never leaves manual edits to you. See [AI Customization Orchestrator](../agents/ai-customization-orchestrator).

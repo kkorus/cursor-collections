@@ -5,65 +5,28 @@ title: /tsh-review-ui
 
 # /tsh-review-ui
 
-**Agent:** UI Reviewer  
-**File:** `.cursor/skills/commands/tsh-review-ui/SKILL.md`
+**Source:** `src/skills/tsh-review-ui/SKILL.md`  
+**Routes to:** [UI Reviewer](../agents/ui-reviewer) subagent (`tsh-ui-reviewer`), delegated from the main thread
 
-Performs a single-pass, read-only verification comparing the implemented UI against the Figma design.
+A single verification pass that compares the running implementation with the Figma design. It reports every difference and does not fix code.
 
 ## Usage
 
-Called automatically by `/tsh-implement` (via the internal UI prompt) in a verification loop. Can also be invoked manually:
-
 ```text
-/tsh-review-ui <component or page description>
+/tsh-review-ui <figma-url> <dev-url> [component]
 ```
 
-## What It Does
+## What it does
 
-1. **Validates inputs** — Ensures Figma URL is available and dev server is running.
-2. **Gets EXPECTED** — Calls Figma MCP to extract design specifications (layer hierarchy, layout, spacing, typography, colors, dimensions).
-3. **Gets ACTUAL** — Uses Playwright MCP to capture the running app (scrolls through entire page, captures accessibility tree).
-4. **Compares** — Follows `tsh-ui-verifying` skill criteria: structure FIRST, then dimensions, then visual.
-5. **Reports** — Generates a structured PASS/FAIL report with difference table.
+1. Takes the Figma URL, the running dev server URL and optionally a component or section name. If one is missing, asks you before delegating.
+2. Delegates to the UI Reviewer, which follows the `tsh-verifying-ui` skill:
+   - validates the inputs
+   - reads EXPECTED values from Figma
+   - reads ACTUAL values from the running app with Playwright (structure, rendered dimensions, screenshot)
+   - compares them by category: Structure, Layout, Dimensions, Visual, Components
+   - writes a structured PASS/FAIL report
+3. The design is the source of truth. The reviewer lists all differences in one pass, so the engineer can fix them together.
 
-## Skills Loaded
+Requires the Figma and Playwright MCP servers. See [MCP setup](../getting-started/mcp-setup).
 
-- `tsh-ui-verifying` — Verification criteria, structure checklist, severity definitions, tolerances.
-
-## Output Format
-
-```markdown
-## Verification Result: [PASS | FAIL]
-
-### Component: [name]
-
-**Confidence:** [HIGH | MEDIUM | LOW]
-
-### Structural Issues (CRITICAL)
-
-| Issue | Expected (Figma) | Actual (Implementation) |
-
-### Dimension/Visual Differences
-
-| Property | Expected (Figma) | Actual (Implementation) | Severity |
-
-### Recommended Fixes
-
-- [specific fix with exact values]
-```
-
-## Key Rules
-
-- **Read-only** — Does not modify code. Only reports differences.
-- **Both tools required** — Uses Figma MCP (EXPECTED) and Playwright MCP (ACTUAL).
-- **Structure mismatches = automatic FAIL** — Layout/hierarchy issues are never ignored.
-- **1-2px tolerance** — Only for browser rendering variance, not for structure/layout.
-- **Reports differences per verification order** — Structure, layout, dimensions, visual — stops on first CRITICAL failure as defined by the skill.
-
-## Confidence Levels
-
-| Level      | Meaning                                                       |
-| ---------- | ------------------------------------------------------------- |
-| **HIGH**   | Both tools returned complete data; comparison is reliable     |
-| **MEDIUM** | Some values could not be extracted; manual review recommended |
-| **LOW**    | Tool errors occurred; treat as incomplete verification        |
+For the verify-fix loop that implements and verifies UI in one flow, use [`/tsh-implement`](./implement).

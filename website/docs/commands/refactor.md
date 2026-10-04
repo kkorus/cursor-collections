@@ -5,31 +5,28 @@ title: /tsh-refactor
 
 # /tsh-refactor
 
-**Agent:** Software Engineer  
-**File:** `.cursor/skills/commands/tsh-refactor/SKILL.md`
+**Source:** `src/skills/tsh-refactor/SKILL.md`  
+**Routes to:** [Engineering Manager](../agents/engineering-manager) orchestrator skill (`tsh-engineering-manager`) in refactor mode
 
-Plans and executes structural refactoring without changing external behavior. Keeps tests green after each step.
+Plans and executes a structural change that improves the codebase without changing external behavior. New functionality belongs to [`/tsh-implement`](./implement), bug fixes to [`/tsh-debug`](./debug).
 
 ## Usage
 
 ```text
-/tsh-refactor <refactoring goal>
+/tsh-refactor <scope or description>
 ```
 
-## What It Does
+## What it does
 
-1. Scopes the refactoring and documents current behavior.
-2. Creates `{topic}.refactor-plan.md` in `specifications/refactoring/`.
-3. Executes step-by-step via software engineer with tests after each step.
-4. Runs post-refactor quality gate via `tsh-code-reviewing`.
+1. Loads the Engineering Manager in **refactor mode** and passes it your scope. If the scope is unclear, it asks what is in scope, which structural problem is solved and what is out of scope.
+2. Produces a standard plan, `specifications/<topic>/<topic>.plan.md`, with `Behavior-preserving: yes` in its Task Details. The plan starts with characterization tests where coverage is insufficient (see the `tsh-refactoring` skill), then atomic steps that each keep the tests green, then a code review.
+3. The manager delegates planning, implementation and review to the subagents.
 
-## Skills Loaded
+## Constraints
 
-- `tsh-codebase-analysing`
-- `tsh-technical-context-discovering`
-- `tsh-implementation-gap-analysing`
-- `tsh-code-reviewing`
+- Behavior and structure never change in the same step.
+- No step starts while the test suite fails.
 
-:::tip
-Use `/tsh-implement` for new features; use `/tsh-debug` for bugs.
-:::
+## Suggested next steps
+
+`/tsh-debug` if the refactoring uncovered a bug, `/tsh-implement` for missing functionality, `/tsh-ask` to record an architectural question as a decision.
