@@ -53,7 +53,7 @@ Collect and thoroughly review all available workshop materials:
 - **Existing codebase**: Use `tsh-analyzing-codebase` skill to understand what already exists and what needs to be built
 - **Other documents**: Confluence pages, shared documents, email threads, or any other reference materials provided by the user
 - **PDF documents**: If available, read PDF files using the `pdf-reader` tool to extract requirements, process descriptions, business rules, or any other relevant content provided by the client
-- **Project baseline** (`specifications/projects/<project-name>/task-baseline.md`, if present): Review for continuity, overlap, and existing backlog context
+- **Project baseline** (`<specs>/projects/<project-name>/task-baseline.md`, if present; see Step 11 for `<specs>`): Review for continuity, overlap, and existing backlog context
 
 Create a mental model of the full scope discussed during the workshop before proceeding to extraction.
 
@@ -150,7 +150,7 @@ This is **Review Gate 1** — the user must approve the task list before proceed
 
 Generate the final outputs following the `assets/intent-brief.template.md` and `assets/extracted-tasks.template.md` templates.
 
-Save `intent-brief.md` and `extracted-tasks.md` to `specifications/<workshop-name>/`.
+Save `intent-brief.md` and `extracted-tasks.md` to `<specs>/<workshop-name>/`. `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).
 
 The extracted tasks document must preserve source traceability in each story and keep acceptance criteria in business-friendly scenario form.
 

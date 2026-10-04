@@ -99,7 +99,7 @@ Rules:
 **Composability example** — molecule hook composing atoms:
 
 ```typescript
-// Atom: single-purpose, no data fetching
+// Atom: single-purpose, no data fetching (a 2-parameter variant, so positional args are fine)
 const useDebounce = (value: string, delay: number) => {
   /* ... */
 };

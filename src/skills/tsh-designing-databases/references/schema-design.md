@@ -240,7 +240,7 @@ CREATE TABLE user_profiles (
 
 | Action | Meaning | When to Use |
 |---|---|---|
-| `RESTRICT` (default) | Prevent deletion if referenced rows exist | Default for most business entities (prevent accidental data loss) |
+| `RESTRICT` (the SQL default is `NO ACTION`) | Prevent deletion if referenced rows exist | Default for most business entities (prevent accidental data loss) |
 | `CASCADE` | Delete/update child rows when parent is deleted/updated | Junction tables, dependent child records that have no meaning without parent |
 | `SET NULL` | Set FK to NULL when parent is deleted | Optional relationships where the child can exist independently |
 | `SET DEFAULT` | Set FK to its default value | Rare — use when a fallback reference makes business sense |

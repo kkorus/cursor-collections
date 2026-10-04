@@ -63,7 +63,7 @@ class UsersControllerTest {
         var response = restTemplate.postForEntity("/api/users", payload, Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).containsEntry("email", "test@example.com");
+        assertThat((Map<?, ?>) response.getBody().get("data")).containsEntry("email", "test@example.com");
     }
 }
 ```
@@ -102,7 +102,7 @@ class UsersApiTest {
 - Use `@Slf4j` (Lombok) or manual `LoggerFactory.getLogger()` per class.
 - Configure structured JSON output via `logback-spring.xml` with `LogstashEncoder`.
 - Use MDC (Mapped Diagnostic Context) for `requestId`, `userId`, `correlationId`.
-- Spring Boot auto-configures request logging — customize via `server.tomcat.accesslog`.
+- Spring Boot does not log requests by default. Add a request-logging filter (for example `CommonsRequestLoggingFilter` or a custom `OncePerRequestFilter`), or enable the server access log explicitly (`server.tomcat.accesslog.enabled=true`).
 
 ## ORM & Database
 
@@ -331,7 +331,7 @@ public record OrderCreatedEvent(
 - Always propagate `correlationId` from message headers into MDC for structured logging.
 - Use `group` on every consumer binding — without it, each restart creates a new ephemeral subscription (messages lost).
 - Enable DLQ (`enable-dlq: true`) for all consumers to prevent message loss on unhandled exceptions.
-- Never throw unchecked exceptions in a `Consumer` without a DLQ configured — it will cause infinite retry loops.
+- Never throw unchecked exceptions in a `Consumer` without a DLQ configured — after the configured retries the message is dropped (data loss).
 - Use `StreamBridge` over producing via `Supplier<>` beans when publishing is triggered by an API call or business event (not a scheduled poll).
 
 ## Docker
@@ -368,7 +368,7 @@ Native compilation produces a standalone binary with ~10× faster startup and lo
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.x</version>
+    <version><current-spring-boot></version>
 </parent>
 
 <build>
@@ -381,7 +381,7 @@ Native compilation produces a standalone binary with ~10× faster startup and lo
 </build>
 ```
 
-**Dockerfile (uses Spring Boot's built-in native buildpack pipeline):**
+**Dockerfile (builds the native image with `native:compile` in a GraalVM image, without buildpacks):**
 
 ```dockerfile
 # Build stage — requires GraalVM JDK (not standard Temurin)

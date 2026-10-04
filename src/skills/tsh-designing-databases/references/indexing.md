@@ -21,7 +21,7 @@ Reference for the `tsh-designing-databases` skill. Load this when choosing, revi
 ### Index Strategy Rules
 
 **Always index:**
-- Foreign key columns (not auto-indexed in PostgreSQL/MySQL InnoDB)
+- Foreign key columns (PostgreSQL does not index them automatically; InnoDB creates an index only if none usable exists, often not the composite you want)
 - Columns frequently used in `WHERE` clauses
 - Columns used in `ORDER BY` on large tables
 - Columns used in `JOIN` conditions
