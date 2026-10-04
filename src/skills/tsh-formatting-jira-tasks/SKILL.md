@@ -1,6 +1,6 @@
 ---
 name: tsh-formatting-jira-tasks
-description: Transform extracted epics and user stories into Jira-ready format following a benchmark template. Handles field mapping, formatting for Jira markdown compatibility, two-gate user review, and guidance for Jira issue creation via Atlassian tools. Use when an approved task list needs to be formatted for Jira.
+description: Transform extracted epics and user stories into Jira-ready format following a benchmark template. Handles field mapping, Markdown storage with conversion to Jira markup at push, two-gate user review, and guidance for Jira issue creation via Atlassian tools. Use when an approved task list needs to be formatted for Jira.
 type: skill
 metadata:
   short-description: Format epics and stories as Jira-ready tasks
@@ -52,7 +52,7 @@ For each epic in the extracted tasks document, create a Jira-ready epic entry wi
   - Business overview
   - Business value statement
   - Success metrics / criteria
-- **Acceptance criteria**: Transferred from extracted tasks, formatted for Jira compatibility
+- **Acceptance criteria**: Transferred from extracted tasks as a Markdown checklist (`- [ ]`)
 - **Labels**: Suggest relevant labels based on the epic's domain (do not hardcode project-specific values)
 - **Priority**: Map from the extracted task priority (Critical → Highest, High → High, Medium → Medium, Low → Low)
 
@@ -69,7 +69,7 @@ For each user story, create a Jira-ready story entry with:
   - User story in "As a… I want… So that…" format
   - Requirements as a numbered list
   - High-level technical notes (only if present in extracted tasks)
-- **Acceptance criteria**: Formatted as a checklist compatible with Jira markdown; scenario-style `GIVEN / WHEN / THEN` criteria are valid and should remain readable after formatting
+- **Acceptance criteria**: Formatted as a Markdown checklist (`- [ ]`); scenario-style `GIVEN / WHEN / THEN` criteria are valid and should remain readable after conversion
 - **Story points guidance**: Include a sizing suggestion (e.g., Small / Medium / Large) based on scope complexity — but note this is a suggestion, not an estimate. The team should estimate during refinement.
 - **Labels**: Consistent with the parent epic's labels plus any story-specific labels
 - **Parent epic**: Reference to the parent epic by title (will be linked by ID after creation)
@@ -168,7 +168,7 @@ If verification finds mismatches, surface them clearly and do not claim the push
 When verification succeeds, archive the current session artifacts under `specifications/projects/<project-name>/sessions/<YYYY-MM-DD>-<workshop-name>/`.
 
 - Use the workshop name as the fallback project key when no explicit project name exists
-- Refresh `specifications/projects/<project-name>/task-baseline.md`
+- Refresh `specifications/projects/<project-name>/task-baseline.md` in the structure of `assets/task-baseline.template.md`
 - Treat `Jira Key` as the primary identity when merging baseline entries
 - Replace same-key entries with the latest synced content and status
 - Add new entries for newly pushed tasks
@@ -198,84 +198,23 @@ When the user requests a change to a specific task outside of the main formattin
 3. **If yes** — use the task's Jira key to update the specific issue via Atlassian MCP. If the task has no Jira key (`—`), inform the user that the task has not been pushed yet and offer to create it
 4. **If no** — the change remains local in `jira-tasks.md` until the next batch push
 
-## Jira Markdown Compatibility
+## Storage format and Jira conversion
 
-When formatting descriptions and acceptance criteria for Jira:
-- Use `h2.`, `h3.` for headings (not `##`, `###`)
-- Use `*bold*` for bold text (not `**bold**`)
-- Use `_italic_` for italic text (not `*italic*`)
-- Use `* item` for bullet lists (with space after asterisk)
-- Use `# item` for numbered lists
-- Use `{noformat}` or `{code}` blocks for preformatted text
-- Acceptance criteria should use `(/) criterion` for checklist items (Jira checkbox format)
-- Scenario-style acceptance criteria remain valid when expressed as `(/) GIVEN ... WHEN ... THEN ...`
+`jira-tasks.md` is standard Markdown, in the structure of `assets/jira-task.template.md`: `##` headings, `**bold**`, `- ` bullets, `1.` numbered lists and `- [ ]` checklist items for acceptance criteria. Keep it in that format at every step, including after an import.
 
-Note: The markdown file saved locally uses standard markdown. The Jira-specific formatting is applied only when creating the actual issues.
+Convert only when the issues are pushed (Step 9), and only if the Atlassian tool does not accept Markdown for the field:
 
-## Import Mode: Jira → Local
+- `##` / `###` headings become `h2.` / `h3.`
+- `**bold**` becomes `*bold*`, and `*italic*` becomes `_italic_`
+- `- item` becomes `* item`, and `1. item` becomes `# item`
+- Code blocks become `{code}` or `{noformat}` blocks
+- Acceptance criteria become plain bullets (`* criterion`), with `GIVEN / WHEN / THEN` scenarios kept as text. Jira wiki markup has no checkbox, and `(/)` renders a check icon rather than a checkbox, so do not use it.
 
-This is an alternative entry point for the skill. Instead of formatting extracted tasks, the agent fetches existing Jira issues and converts them into the `jira-tasks.md` format with Jira keys pre-populated. This enables iterating on existing Jira backlogs using the agent's skills.
+The local file is never rewritten in the converted form.
 
-### Import Process
+## Import Mode
 
-```
-Import progress:
-- [ ] Step I-1: Identify import target
-- [ ] Step I-2: Fetch issues from Jira
-- [ ] Step I-3: Map Jira fields to benchmark template
-- [ ] Step I-4: Generate jira-tasks.md
-- [ ] Step I-5: Present imported tasks for user review
-- [ ] Step I-6: Save to specifications directory
-```
-
-**Step I-1: Identify import target**
-
-Ask the user to specify what to import. Accept any of these:
-- A **Jira project key** (e.g., `PROJ`) — imports all epics and their linked stories
-- **Specific epic keys** (e.g., `PROJ-10, PROJ-15`) — imports those epics and their child stories
-- A **JQL query** — imports issues matching the query
-
-Ask one question to determine the import scope if the user hasn't specified it.
-
-**Step I-2: Fetch issues from Jira**
-
-Using the Atlassian MCP tools:
-1. Fetch the targeted epics and stories from Jira
-2. For each epic, fetch its child stories (linked via parent field)
-3. Collect all fields: Summary, Description, Acceptance Criteria, Priority, Labels, Issue Key, Parent link
-
-**Step I-3: Map Jira fields to benchmark template**
-
-Convert each fetched issue into the benchmark template format:
-
-| Jira Field | Template Field | Notes |
-|---|---|---|
-| Summary | Title (Summary) | Direct mapping |
-| Description | Description sections | Parse into structured sections (Overview/Value/Metrics for epics; Context/User Story/Requirements/Technical Notes for stories). If the Jira description does not follow a structured format, restructure it to match the template as closely as possible. |
-| Priority | Priority | Direct mapping (Highest/High/Medium/Low) |
-| Labels | Labels | Direct mapping |
-| Issue Key | Jira Key | Populate directly (e.g., `PROJ-123`) |
-| Parent link | Parent epic reference | Map to parent epic title |
-| Story Points | Story Points / Sizing Guidance | If estimated, include; otherwise mark as TBD |
-| Status | Status | Direct mapping of the Jira workflow status (e.g., To Do, In Progress, Done). Used to enforce the protected status rules. |
-
-If an imported description cannot be cleanly restructured into the benchmark format, flag it for user review using one question per flagged task.
-
-> **Protected tasks**: After mapping, mark every task with a protected status with `🔒` and preserve its content exactly as fetched. It is never modified locally or pushed back.
-
-**Step I-4: Generate jira-tasks.md**
-
-Create the `jira-tasks.md` file with all imported tasks in the benchmark template format. Every task must have its `Jira Key` field populated with the actual Jira issue key.
-
-**Step I-5: Present imported tasks for user review**
-
-Present each imported task to the user for review using one question per task. Highlight any descriptions that were restructured or fields that could not be mapped cleanly. Ask: "Does this imported task look correct?"
-
-**Step I-6: Save to specifications directory**
-
-Save the final file to `specifications/<project-or-topic>/jira-tasks.md`.
-
-After import, the user can modify the local file. For each change, the agent asks whether to push it to Jira immediately (using the Per-Change Modification Flow above). The user can also batch-push all local changes later using the standard push flow (Step 8 → Step 9).
+Import Mode is the alternative entry point that fetches existing Jira issues into `jira-tasks.md`. It is run by the main thread (the BA orchestrator), never by a delegated worker. Load `references/import-mode.md` for the import steps and the field mapping.
 
 ## Connected Skills
 
