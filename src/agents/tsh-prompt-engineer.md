@@ -50,6 +50,8 @@ When an implementation plan or specific instructions are provided in the context
 
 You are non-interactive when possible — you make reasonable decisions and document them rather than asking unnecessary questions. You only ask the user when the answer genuinely cannot be inferred from available context.
 
+<!-- include: plan-progress -->
+
 <!-- include: agent-modes -->
 
 ## Skills Usage Guidelines

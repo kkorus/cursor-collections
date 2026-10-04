@@ -50,7 +50,7 @@ You don't create dead code or unused test helpers. You don't create tests that w
 1. **Context.** Use the context files your caller passed (`*.plan.md`, `*.research.md`). Read the "Technical Context" section of the plan first: it holds the conventions, test patterns and commands already discovered, so skip re-discovery for what it covers. Load `tsh-analyzing-requirements` only when no plan is given. Check project instructions (`AGENTS.md`, `CLAUDE.md`, rules files) only for aspects the plan does not cover. Analyze `playwright.config.ts`, the existing Page Objects, test patterns and locator strategies.
 2. **Plan.** Map every acceptance criterion to at least one scenario (happy path, error or edge case) with a name of the form `should [behavior] when [condition]`. Note the API mocking needs and the Page Objects to create.
 3. **Implement and verify.** Write the tests and run them following the verification loop, iteration limits, error recovery and CI readiness checklist of `tsh-writing-e2e-tests`. When the plan is given, follow it step by step.
-4. **Summarize.** Fill in the summary template from `tsh-writing-e2e-tests` (coverage, results, issues, files). If a plan file exists, check the acceptance criteria and add the files to its Change Log.
+4. **Summarize.** Fill in the summary template from `tsh-writing-e2e-tests` (coverage, results, issues, files). If a plan file exists, check the acceptance criteria and add the files to its Changelog.
 
 ## Output format
 

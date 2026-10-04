@@ -32,10 +32,11 @@ If a component that needs verification has no Figma URL, stop for that component
 ## The loop, per UI component
 
 1. **Implement**: delegate the UI task to `tsh-software-engineer`, telling it to follow the "UI tasks (Figma)" section of the `tsh-implement-task` skill. Pass the Figma URLs, the component context and the plan section.
-2. **Verify**: delegate `tsh-ui-reviewer` with the Figma URL, the confirmed dev server URL and the component or section name. It follows the `tsh-verifying-ui` skill and returns a structured report.
+2. **Verify**: delegate `tsh-ui-reviewer` with the Figma URL, the confirmed dev server URL and the component or section name. It follows the `tsh-verifying-ui` skill and returns a structured report in its reply body (it is read-only and cannot save files). Keep the report text; you pass it to the engineer and, after a `NEEDS_INPUT`, back to the reviewer as `PRIOR_OUTPUT`.
 3. **Check the report** against the verification gate below before acting on it.
 4. **Act on the result**:
-   - **PASS**: check the task and its verification step in the plan, record the result, go to the next component.
+   - **PASS** with HIGH confidence: check the task and its verification step in the plan, record the result, go to the next component.
+   - **PASS** with LOW or MEDIUM confidence: treat it like a failed gate. Ask the user whether to accept it or to resolve the gap (see the confidence levels and the verification gate) before you check the task.
    - **FAIL**: delegate the fix to `tsh-software-engineer` with the complete report, and require it to fix all listed differences, not only the first. Then verify again (step 2).
 5. **Iteration cap**: at most 5 verify-fix iterations per component. After that, escalate: list the remaining mismatches with the Figma URL, describe what each iteration tried, state the suspected root cause, record it in the plan's Changelog and ask the user for guidance.
 

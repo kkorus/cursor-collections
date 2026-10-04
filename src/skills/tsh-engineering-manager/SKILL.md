@@ -28,7 +28,7 @@ If the caller passed a flow, use it. Otherwise recommend one with a one or two s
 
 ## Artifact Paths
 
-You are the single owner of the artifact naming convention. Resolve `<specs>` with the "Project output locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`, overridden by project instructions). Derive `<task>` from the Jira key or a short kebab-case name.
+You are the single owner of the artifact naming convention. Resolve `<specs>` with the "Resolve the Project Output Locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`, overridden by project instructions). Derive `<task>` from the Jira key or a short kebab-case name.
 
 | Artifact | Path |
 |---|---|
@@ -121,12 +121,17 @@ Before moving between research, planning and implementation, ask the user to con
 
 - Process tasks in plan order, one todo per task. After each code task, run static analysis, the build and the tests, and make sure the delegate checked the plan boxes.
 - After E2E tests are written, run the code review as the next step. Do not hand off to the user in between.
-- Delegate `tsh-code-reviewer`. For `critical` and `warning` findings, ask the user before changing the agreed solution, then delegate the fixes to the responsible engineer and review again.
+- Run the code review and fix loop (maximum 3 iterations): delegate `tsh-code-reviewer`. For `critical` and `warning` findings, ask the user before changing the agreed solution, then delegate the fixes to the responsible engineer and review again. After 3 iterations, or when a new round keeps finding new critical or warning findings, stop: show the remaining findings and let the user decide.
 - Record deviations from the plan in the plan's Changelog with a timestamp.
 
 ## Refactor Mode
 
-Entered from `/tsh-refactor`. The plan is a standard `<specs>/<topic>/<topic>.plan.md` with `Behavior-preserving: yes` in Task Details. Tell the software engineer to follow the `tsh-refactoring` skill: it establishes characterization tests that pin the current behavior before any change, and the code review additionally verifies that behavior is unchanged. Use the Full flow for cross-cutting refactors, otherwise the Quick flow. Details are in [implementation-flows.md](references/implementation-flows.md).
+Entered from `/tsh-refactor`. The plan is a standard `<specs>/<topic>/<topic>.plan.md` with `Behavior-preserving: yes` in Task Details. Use these task texts in the delegation blocks above:
+
+- `tsh-architect` (plan): load the `tsh-refactoring` skill, set `Behavior-preserving: yes` in Task Details and put the characterization tests that pin the current behavior in the first phase, before any structural change.
+- `tsh-plan-reviewer`: check that the plan has the `Behavior-preserving: yes` field and the characterization tests first.
+- `tsh-software-engineer`: follow the `tsh-refactoring` skill; never mix behavior and structure in one step.
+- `tsh-code-reviewer`: load the `tsh-refactoring` skill and additionally verify that no public behavior, contract or data shape changed. Use the Full flow for cross-cutting refactors, otherwise the Quick flow. Details are in [implementation-flows.md](references/implementation-flows.md).
 
 ## Tool Usage Guidelines
 

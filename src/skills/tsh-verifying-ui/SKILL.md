@@ -58,7 +58,7 @@ Use the browser automation tool to capture the running implementation. You MUST 
 
 1. **Structure & content** — element hierarchy, order, grouping (via accessibility snapshot)
 2. **Actual rendered dimensions** — computed widths, heights, paddings, margins, gaps of every major container (via JavaScript evaluation of computed styles). This is the most commonly missed step — without it you cannot detect sizing/layout differences.
-3. **Visual appearance** — full-page screenshot for side-by-side comparison with the design. Save screenshots with the browser tool to the task's specifications folder (default `specifications/<task-id>/screenshots/`, or the location the caller passed) with descriptive filenames including the component name and iteration number (e.g., `establishment-details-form-iteration-1.png`). This creates a visual audit trail for each verification cycle.
+3. **Visual appearance** — full-page screenshot for side-by-side comparison with the design. If your role can write files, save screenshots with the browser tool to the task's specifications folder (default `specifications/<task-id>/screenshots/`, or the location the caller passed) with descriptive filenames including the component name and iteration number (e.g., `establishment-details-form-iteration-1.png`). If your role is read-only, do not save them; just capture and inspect them.
 
 > **CRITICAL**: The accessibility tree does NOT contain CSS dimensions. A full-width container and a narrow centered container produce identical accessibility trees. If you only collected structure without measuring actual rendered dimensions, your verification is INVALID — mark confidence as LOW and report what's missing.
 
