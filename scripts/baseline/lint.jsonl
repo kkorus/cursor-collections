@@ -3,7 +3,6 @@
 {"rule":"agent-no-delegation","file":"src/agents/tsh-cursor-engineer.md","key":"subagent","count":1}
 {"rule":"no-path-refs","file":"src/agents/tsh-cursor-engineer.md","key":".cursor/skills/","count":1}
 {"rule":"agent-no-delegation","file":"src/agents/tsh-devops-engineer.md","key":"spawn","count":11}
-{"rule":"preload-mentioned","file":"src/agents/tsh-software-engineer.md","key":"tsh-implement-task","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":".cursor/skills/","count":5}
 {"rule":"no-path-refs","file":"src/skills/tsh-audit-infrastructure/SKILL.md","key":".cursor/skills/","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-committing/SKILL.md","key":".cursor/skills/","count":3}

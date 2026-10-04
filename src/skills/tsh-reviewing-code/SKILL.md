@@ -84,6 +84,17 @@ Focus on security. Check for potential OWASP TOP10 issues. Check for potential c
 
 Analyse if the implemented solution is scalable. Focus on areas like being able to scale it horizontally, not having a stateful components, not having code with high computational complexity.
 
+## LLM-integrated code
+
+Detect whether the change touches LLM-integrated code: search the changed files and their neighbors for prompt or template files (for example a `prompts/` directory or `*.prompt.txt` files) and for LLM client usage (`openai`, `anthropic`, `bedrock`, `converse`, `langchain`). If you find any, also load the `tsh-engineering-prompts` skill and verify in the review:
+
+- prompt injection defenses for untrusted input
+- delimiter separation between instructions and data
+- an explicit output format specification
+- no hardcoded role or persona inside user prompts
+
+Report these findings together with the other review findings.
+
 ## Connected Skills
 
 - `tsh-analyzing-implementation-gaps`
