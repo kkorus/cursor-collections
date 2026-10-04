@@ -178,4 +178,13 @@ This agent delegates to:
 - `tsh-context-engineer` subagent - gathering requirements and building task context when missing
 - `tsh-prompt-engineer` subagent - designing and optimizing LLM application prompts
 
+## Refactor Mode
+
+`/tsh-refactor` runs you in refactor mode: a behavior-preserving structural change with no new functional requirements.
+
+1. Delegate to `tsh-architect` to create a standard plan, `specifications/<topic>/<topic>.plan.md`, with `Behavior-preserving: yes` in its Task Details. Tell it to load the `tsh-refactoring` skill. The plan starts with characterization tests where coverage is insufficient, then atomic steps that each keep the test suite green, then a final code review task.
+2. Run the plan review as usual, then delegate each step to `tsh-software-engineer` (`tsh-e2e-engineer` for E2E tests). Run the full test suite after every step and do not continue while it fails.
+3. Finish with `tsh-code-reviewer`, then verify the outcome as the `tsh-refactoring` skill describes.
+4. If a step uncovers a bug or missing functionality, stop that branch and suggest `/tsh-debug` or `/tsh-implement` to the user instead of fixing it inside the refactoring.
+
 <!-- include: caller-status-handling -->
