@@ -33,6 +33,8 @@ Installs the generated tsh-* skills and subagents into a user or project tree.
                        (checksum in the manifest) are replaced or removed without a backup;
                        edited copies are moved to the backup first, never deleted
   --migrate-legacy     only run the legacy cleanup (old .cursor/skills layout), then exit
+  --list               list the recorded installs and whether each is behind the clone
+                       (combine only with --source); writes nothing
   --dry-run            print what would happen and change nothing
   --verbose, -v        one line per entry instead of grouped summaries
   --force              replace an unmanaged tsh-* entry (it is moved to the backup first)
@@ -42,21 +44,26 @@ Legacy cleanup runs before every install/update. Symlinks are removed; real dire
 are moved to ~/.tsh-ai-collections-backup/<timestamp>/ and never hard-deleted.
 Home dir: $TSH_HOME if set, else the OS home dir. MCP config is never written; the
 installer prints which generated file to merge for each tool.
+Every real install or update is recorded in ~/.tsh-ai-collections/installs.json (local only,
+safe to delete; each later install or --update records its install again).
 `;
 
 export function parseArgs(argv) {
   const o = { tools: null, scope: 'user', projectDir: null, source: null, mode: 'copy',
-    update: false, migrateLegacy: false, dryRun: false, force: false, help: false, verbose: false };
+    update: false, migrateLegacy: false, dryRun: false, force: false, help: false, verbose: false, list: false };
+  const given = new Set();
   const valued = { '--tools': 'tools', '--scope': 'scope', '--project-dir': 'projectDir',
     '--source': 'source', '--mode': 'mode' };
   const flags = { '--update': 'update', '--migrate-legacy': 'migrateLegacy',
-    '--dry-run': 'dryRun', '--force': 'force', '--verbose': 'verbose', '-v': 'verbose', '--help': 'help', '-h': 'help' };
+    '--dry-run': 'dryRun', '--force': 'force', '--verbose': 'verbose', '-v': 'verbose', '--help': 'help', '-h': 'help',
+    '--list': 'list' };
   for (let i = 0; i < argv.length; i++) {
     let [k, v] = argv[i].startsWith('--') && argv[i].includes('=')
       ? [argv[i].slice(0, argv[i].indexOf('=')), argv[i].slice(argv[i].indexOf('=') + 1)]
       : [argv[i], undefined];
-    if (k in flags) { o[flags[k]] = true; continue; }
+    if (k in flags) { o[flags[k]] = true; given.add(k); continue; }
     if (!(k in valued)) throw new UsageError(`Unknown argument: ${argv[i]}`);
+    given.add(k);
     if (v === undefined) {
       v = argv[++i];
       if (v === undefined || v.startsWith('--')) throw new UsageError(`Missing value for ${k}`);
@@ -69,6 +76,11 @@ export function parseArgs(argv) {
     o.tools = [...new Set(o.tools.split(',').map((s) => s.trim()).filter(Boolean))];
     const bad = o.tools.filter((t) => !TOOLS.includes(t));
     if (bad.length || !o.tools.length) throw new UsageError(`Invalid --tools: ${bad.join(',') || '(empty)'}; use ${TOOLS.join(',')}`);
+  }
+  if (o.list) {
+    // --list reads every recorded install; it takes no target and performs no install
+    const clash = [...given].filter((k) => !['--list', '--source', '--verbose', '-v', '--help', '-h'].includes(k));
+    if (clash.length) throw new UsageError(`--list cannot be combined with ${clash.join(', ')} (only --source is allowed)`);
   }
   return o;
 }
@@ -317,10 +329,15 @@ function listSource(ctx, rel, kind) {
     (kind === 'dir' ? ctx.fs.statSync(path.join(dir, n)).isDirectory() : ctx.fs.statSync(path.join(dir, n)).isFile()));
 }
 
-function sourceCommit(ctx) {
+function git(ctx, args) {
   try {
-    return execFileSync('git', ['-C', ctx.source, 'rev-parse', 'HEAD'], { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    return execFileSync('git', ['-C', ctx.source, ...args], { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
   } catch { return null; }
+}
+
+function sourceCommit(ctx) {
+  if (ctx.commit === undefined) ctx.commit = git(ctx, ['rev-parse', 'HEAD']) || null;
+  return ctx.commit;
 }
 
 /** Remove a managed copy whose on-disk hash still equals the one recorded at install time (no backup). */
@@ -435,6 +452,147 @@ function recordedTools(ctx) {
   return [...tools];
 }
 
+// ---------- install registry (an index of installs; the manifests stay the source of truth) ----------
+
+export function registryPath(home) {
+  return path.join(home, '.tsh-ai-collections', 'installs.json');
+}
+
+const validEntry = (e) => e && typeof e === 'object' && typeof e.path === 'string' && path.isAbsolute(e.path) &&
+  ['user', 'project'].includes(e.scope);
+
+/** Read the registry. Absent: empty. Corrupt or unreadable: warn once, move it aside (unless
+ *  readOnly) and continue with an empty registry, so a bad index never breaks an install. */
+function loadRegistry(ctx, { readOnly = false } = {}) {
+  const f = registryPath(ctx.home);
+  const empty = { version: 1, installs: [] };
+  let j = null, problem = 'corrupt';
+  try { j = JSON.parse(ctx.fs.readFileSync(f, 'utf8')); } catch (e) {
+    if (e.code === 'ENOENT' || e.code === 'ENOTDIR') return empty;
+    if (e.code) problem = `unreadable (${e.code})`;
+  }
+  if (j && typeof j === 'object' && Array.isArray(j.installs)) {
+    const installs = j.installs.filter(validEntry).map((e) => ({ ...e, tools: Array.isArray(e.tools) ? e.tools.filter((t) => TOOLS.includes(t)) : [] }));
+    return { version: 1, installs };
+  }
+  if (readOnly) {
+    ctx.log(`Warning: the install registry ${short(ctx, f)} is ${problem}; ignoring it (the next install or --update moves it aside).`);
+    return empty;
+  }
+  let bak = `${f}.bak`;
+  if (lstat(ctx, bak)) bak = `${f}.${ctx.now().toISOString().replace(/[:.]/g, '-')}.bak`;
+  try {
+    ctx.fs.renameSync(f, bak);
+    ctx.log(`Warning: the install registry was ${problem}; moved it to ${short(ctx, bak)} and started a new one.`);
+  } catch (e) {
+    ctx.log(`Warning: the install registry ${short(ctx, f)} is ${problem} and could not be moved aside (${e.code || e.message}); not recording this install.`);
+    return { ...empty, keep: true }; // never overwrite a file that could not be preserved
+  }
+  return empty;
+}
+
+/** Atomic write: a temp file in the same directory (mode 0600), then rename over the registry. */
+function writeRegistry(ctx, reg) {
+  const f = registryPath(ctx.home);
+  const dir = path.dirname(f);
+  if (!lstat(ctx, dir)) {
+    ctx.fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+    ctx.fs.chmodSync(dir, 0o700); // mkdir's mode is masked by the umask
+  }
+  const tmpFile = path.join(dir, `.installs.json.${process.pid}.${Date.now()}.tmp`);
+  const installs = [...reg.installs].sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : a.scope < b.scope ? -1 : 1));
+  try {
+    ctx.fs.writeFileSync(tmpFile, JSON.stringify({ version: 1, installs }, null, 2) + '\n', { mode: 0o600 });
+    ctx.fs.chmodSync(tmpFile, 0o600);
+    ctx.fs.renameSync(tmpFile, f);
+  } catch (e) {
+    try { ctx.fs.rmSync(tmpFile, { force: true }); } catch { /* best effort */ }
+    throw e;
+  }
+}
+
+/** Add or refresh the entry for this install root, keyed by (path, scope). */
+function registerInstall(ctx, tools) {
+  try {
+    const reg = loadRegistry(ctx);
+    if (reg.keep) return;
+    const root = targetRoot(ctx);
+    const now = ctx.now().toISOString();
+    const prev = reg.installs.find((e) => e.path === root && e.scope === ctx.scope);
+    const entry = {
+      path: root,
+      scope: ctx.scope,
+      tools: [...new Set([...(prev?.tools || []), ...tools])].sort(),
+      mode: ctx.mode,
+      source: ctx.source,
+      sourceCommit: sourceCommit(ctx),
+      installedAt: prev?.installedAt || now,
+      updatedAt: now,
+    };
+    reg.installs = [...reg.installs.filter((e) => e !== prev), entry];
+    writeRegistry(ctx, reg);
+  } catch (e) {
+    ctx.log(`Warning: could not update the install registry ${short(ctx, registryPath(ctx.home))} (${e.code || e.message}); the install itself is complete.`);
+  }
+}
+
+/** Commits between `commit` and HEAD of the source clone, or null when that cannot be told. */
+function commitsBehind(ctx, commit) {
+  if (typeof commit !== 'string' || !/^[0-9a-f]{7,64}$/.test(commit)) return null;
+  const out = git(ctx, ['rev-list', '--count', `${commit}..HEAD`]);
+  return out && /^\d+$/.test(out) ? Number(out) : null;
+}
+
+/** Status of one registry entry, read from the manifests under its root (registry as fallback). */
+function installStatus(ctx, e) {
+  const st = lstat(ctx, e.path);
+  if (!st || !st.isDirectory()) return { status: 'missing', commit: e.sourceCommit };
+  const dirs = [...selectSkillTrees(e.tools), ...e.tools.map((t) => AGENT_DIRS[t])];
+  const manifests = dirs.map((d) => readManifest(ctx, path.join(e.path, d))).filter(Boolean);
+  if (!manifests.length) return { status: 'missing', commit: e.sourceCommit };
+  const commits = [...new Set(manifests.map((m) => m.sourceCommit || null))];
+  if (commits.every((c) => c === null)) commits.splice(0, commits.length, e.sourceCommit || null);
+  // Several manifests: report the oldest one; one that cannot be placed makes the whole install unknown
+  let worst = null;
+  for (const c of commits) {
+    const n = commitsBehind(ctx, c);
+    if (n === null) return { status: 'unknown', commit: c };
+    if (!worst || n > worst.behind) worst = { behind: n, commit: c };
+  }
+  return { status: worst.behind ? `${worst.behind} commit${worst.behind === 1 ? '' : 's'} behind` : 'up to date', ...worst };
+}
+
+const quoteArg = (p) => (/[\s"'$]/.test(p) ? JSON.stringify(p) : p);
+
+function updateCommand(e) {
+  return `node scripts/install.mjs --update --scope ${e.scope}${e.scope === 'project' ? ` --project-dir ${quoteArg(e.path)}` : ''}`;
+}
+
+/** --list: print every recorded install and how far it is behind the source clone. Writes nothing. */
+function listInstalls(ctx) {
+  const reg = loadRegistry(ctx, { readOnly: true });
+  const where = short(ctx, registryPath(ctx.home));
+  if (!reg.installs.length) {
+    ctx.log(`No installs recorded yet (${where}).`);
+    ctx.log('Installs made with this installer version are recorded automatically. To record an existing');
+    ctx.log(`install, run --update in it, for example: ${updateCommand({ scope: 'project', path: '<project dir>' })}`);
+    return;
+  }
+  const rows = reg.installs.map((e) => {
+    const s = installStatus(ctx, e);
+    return { e, s, cells: [short(ctx, e.path), e.scope, e.tools.join(',') || '-', e.mode || '-', s.commit ? s.commit.slice(0, 7) : '-', s.status] };
+  });
+  const widths = rows[0].cells.map((_, i) => Math.max(...rows.map((r) => r.cells[i].length)));
+  ctx.log(`Recorded installs (source: ${ctx.source}):`);
+  for (const r of rows) ctx.log('  ' + r.cells.map((c, i) => (i < r.cells.length - 1 ? c.padEnd(widths[i]) : c)).join('  '));
+  ctx.log('');
+  ctx.log(`Registry: ${where}`);
+  const stale = rows.find((r) => r.s.behind > 0) || rows.find((r) => r.s.status === 'unknown');
+  if (stale) ctx.log(`Refresh with: ${updateCommand(stale.e)}`);
+  else if (rows.every((r) => r.s.status === 'up to date')) ctx.log('All installs are up to date.');
+  else ctx.log('No install is behind; installs marked missing no longer exist on disk.');
+}
+
 function mcpGuidance(ctx, tools) {
   const user = ctx.scope === 'user';
   const lines = ['', 'MCP servers are not configured automatically. Merge the generated file into your config:'];
@@ -470,6 +628,7 @@ export function run(argv, opts = {}) {
   const o = parseArgs(argv);
   if (o.help) { (opts.quiet ? () => {} : (opts.stdout || console.log))(HELP); return { code: 0, lines: [HELP] }; }
   const ctx = makeCtx(opts, o);
+  if (o.list) { listInstalls(ctx); return { code: 0, lines: ctx.lines, ctx }; }
   if (ctx.scope === 'project' && !ctx.projectDir) throw new UsageError('--scope project needs a project dir');
   const realOf = (p) => { try { return ctx.fs.realpathSync(p); } catch { return path.resolve(p); } };
   const srcReal = realOf(ctx.source);
@@ -498,6 +657,7 @@ export function run(argv, opts = {}) {
   for (const t of tools) {
     skipped += installTree(ctx, { targetDir: path.join(root, AGENT_DIRS[t]), srcRel: AGENT_DIRS[t], kind: 'file', tools: [t] }).skipped.length;
   }
+  if (!ctx.dry) registerInstall(ctx, tools); // also after skipped entries: what was installed is recorded
   for (const l of mcpGuidance(ctx, tools)) ctx.log(l);
   if (ctx.backupRoot) ctx.log(`${ctx.dry ? 'Backups would go to' : 'Backups'}: ${short(ctx, ctx.backupRoot)}/ (originals are kept under their absolute path)`);
   if (!ctx.verbose && ctx.dry) ctx.log('Use --verbose to see every entry.');

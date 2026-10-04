@@ -82,6 +82,8 @@ node ~/cursor-collections/scripts/install.mjs --update
 
 `--update` reinstalls the tools recorded in the manifests and prunes `tsh-*` entries that the installer put there earlier but that no longer exist in the source. Installed copies you did not edit (their checksum in the manifest still matches) are replaced or removed without a backup. Copies you edited, and copies from an older installer without a recorded checksum, go to the backup folder first.
 
+Each install and update is recorded in `~/.tsh-ai-collections/installs.json`, a local index with the paths of your installs that never leaves your machine; `--update` also records an install made by an older installer. Run `node ~/cursor-collections/scripts/install.mjs --list` to see every install and how many commits it is behind. You may delete the file at any time; each later install or `--update` records its install again. See [Installation](./installation#where-tsh-is-installed).
+
 ## After upgrading
 
 - Command names changed. The most common ones are below; the full table is in the [Changelog](/changelog).

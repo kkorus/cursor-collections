@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { run, selectSkillTrees, moveEntry, hashEntry, UsageError, MANIFEST } from '../install.mjs';
+import { run, selectSkillTrees, moveEntry, hashEntry, registryPath, UsageError, MANIFEST } from '../install.mjs';
+import { execFileSync } from 'node:child_process';
 
 const SCRIPT = path.resolve(import.meta.dirname, '..', 'install.mjs');
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'tsh-install-test-'));
@@ -118,7 +119,7 @@ test('all three tools: both trees, Cursor duplicate guidance; project scope uses
   for (const p of ['.agents/skills/tsh-alpha', '.claude/skills/tsh-alpha', '.cursor/agents/tsh-agent.md', '.codex/agents/tsh-agent.toml']) {
     assert.ok(exists(path.join(project, p)), p);
   }
-  assert.equal(fs.readdirSync(home).length, 0, 'HOME untouched by project install');
+  assert.deepEqual(fs.readdirSync(home), ['.tsh-ai-collections'], 'HOME holds only the install registry after a project install');
   assert.ok(r.lines.some((l) => /Include Third-Party/.test(l)));
 });
 
@@ -444,6 +445,161 @@ test('CLI: runs as a script against a fixture, exits 2 on usage error', async ()
   assert.ok(exists(path.join(project, '.codex/agents/tsh-agent.toml')));
   const bad = spawnSync(process.execPath, [SCRIPT], { env: { ...process.env, TSH_HOME: home }, encoding: 'utf8' });
   assert.equal(bad.status, 2);
+});
+
+// ---------- install registry and --list ----------
+
+const readReg = (home) => JSON.parse(fs.readFileSync(registryPath(home), 'utf8'));
+const entryOf = (home, root, scope) => readReg(home).installs.find((e) => e.path === root && e.scope === scope);
+const at = (iso) => ({ now: () => new Date(iso) });
+
+/** A throwaway git repo as the source clone: `commit()` adds a commit and returns its sha. */
+function gitSource() {
+  const source = makeSource();
+  const g = (...a) => execFileSync('git', ['-C', source, '-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...a],
+    { stdio: ['ignore', 'pipe', 'ignore'], env: { ...process.env, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: os.devNull } }).toString().trim();
+  g('init', '-q');
+  let i = 0;
+  const commit = () => { put(source, `c${i++}.txt`); g('add', '-A'); g('commit', '-q', '-m', `c${i}`); return g('rev-parse', 'HEAD'); };
+  commit();
+  return { source, commit };
+}
+
+test('an install creates the registry with the expected fields and private modes', () => {
+  const { home, source, go } = env();
+  go(['--tools', 'claude'], at('2026-03-01T10:00:00Z'));
+  const reg = readReg(home);
+  assert.equal(reg.version, 1);
+  assert.deepEqual(reg.installs, [{ path: home, scope: 'user', tools: ['claude'], mode: 'copy', source, sourceCommit: null,
+    installedAt: '2026-03-01T10:00:00.000Z', updatedAt: '2026-03-01T10:00:00.000Z' }]);
+  const dir = path.dirname(registryPath(home));
+  assert.deepEqual(fs.readdirSync(dir), ['installs.json'], 'no temp file left behind');
+  if (process.platform !== 'win32') {
+    assert.equal(fs.statSync(dir).mode & 0o777, 0o700);
+    assert.equal(fs.statSync(registryPath(home)).mode & 0o777, 0o600);
+  }
+});
+
+test('a second install with another tool merges tools, keeps installedAt, refreshes updatedAt', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude'], at('2026-03-01T10:00:00Z'));
+  go(['--tools', 'codex', '--mode', 'link'], at('2026-03-02T10:00:00Z'));
+  const e = entryOf(home, home, 'user');
+  assert.deepEqual(e.tools, ['claude', 'codex']);
+  assert.equal(e.mode, 'link');
+  assert.equal(e.installedAt, '2026-03-01T10:00:00.000Z');
+  assert.equal(e.updatedAt, '2026-03-02T10:00:00.000Z');
+  assert.equal(readReg(home).installs.length, 1);
+});
+
+test('--dry-run, --migrate-legacy and --list write no registry', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude', '--dry-run']);
+  go(['--migrate-legacy']);
+  go(['--list']);
+  assert.ok(!exists(path.dirname(registryPath(home))));
+});
+
+test('an install that skips entries (exit 1) still registers what it installed', () => {
+  const { home, go } = env();
+  put(home, '.claude/skills/tsh-alpha/SKILL.md', 'user edited');
+  assert.equal(go(['--tools', 'claude']).code, 1);
+  assert.deepEqual(entryOf(home, home, 'user').tools, ['claude']);
+});
+
+test('a corrupt registry is moved to .bak (timestamped if .bak exists) and the install succeeds', () => {
+  const { home, go } = env();
+  const f = registryPath(home);
+  put(home, path.relative(home, f), '{not json');
+  const r = go(['--tools', 'claude']);
+  assert.equal(r.code, 0);
+  assert.equal(r.lines.filter((l) => /Warning: .*registry/.test(l)).length, 1, r.lines.join('\n'));
+  assert.equal(fs.readFileSync(`${f}.bak`, 'utf8'), '{not json');
+  assert.deepEqual(entryOf(home, home, 'user').tools, ['claude']);
+  fs.writeFileSync(f, '[]');
+  go(['--tools', 'claude'], at('2026-04-01T00:00:00Z'));
+  assert.equal(fs.readFileSync(`${f}.bak`, 'utf8'), '{not json', 'existing .bak is not overwritten');
+  assert.equal(fs.readFileSync(`${f}.2026-04-01T00-00-00-000Z.bak`, 'utf8'), '[]');
+  assert.ok(entryOf(home, home, 'user'));
+});
+
+test('--update registers an install that had no entry, in project and user scope; entries coexist', () => {
+  const { home, project, go } = env();
+  go(['--tools', 'claude', '--scope', 'project']);
+  go(['--tools', 'codex']);
+  fs.rmSync(path.dirname(registryPath(home)), { recursive: true });
+  go(['--update', '--scope', 'project']);
+  assert.ok(!entryOf(home, home, 'user'));
+  go(['--update']);
+  const reg = readReg(home);
+  assert.deepEqual(reg.installs.map((e) => [e.path, e.scope, e.tools.join(',')]),
+    [[home, 'user', 'codex'], [project, 'project', 'claude']].sort((a, b) => (a[0] < b[0] ? -1 : 1)), 'sorted by path');
+});
+
+test('--list shows up to date, N commits behind, unknown and missing', () => {
+  const { source, commit } = gitSource();
+  const home = tmp(), p1 = tmp(), p2 = tmp(), p3 = tmp(), gone = tmp();
+  const go = (args) => run(args, { home, source, quiet: true });
+  go(['--tools', 'claude', '--scope', 'project', '--project-dir', p1]);
+  go(['--tools', 'claude', '--scope', 'project', '--project-dir', gone]);
+  go(['--tools', 'claude', '--scope', 'project', '--project-dir', p3]);
+  const mf = path.join(p3, '.claude/skills', MANIFEST);
+  fs.writeFileSync(mf, JSON.stringify({ ...JSON.parse(fs.readFileSync(mf, 'utf8')), sourceCommit: 'f'.repeat(40) }));
+  commit(); commit();
+  go(['--tools', 'claude', '--scope', 'project', '--project-dir', p2]);
+  go(['--tools', 'codex']);
+  fs.rmSync(gone, { recursive: true });
+  const before = fs.readFileSync(registryPath(home), 'utf8');
+  const r = go(['--list']);
+  assert.equal(r.code, 0);
+  const line = (p) => r.lines.find((l) => l.trimStart().startsWith(p + ' ')) || '';
+  assert.match(line(p1), /project\s+claude\s+copy\s+[0-9a-f]{7}\s+2 commits behind$/, r.lines.join('\n'));
+  assert.match(line(p2), /up to date$/);
+  assert.match(line(p3), /ffffff\s+unknown$/);
+  assert.match(line(gone), /missing$/);
+  assert.match(line('~'), /user\s+codex\s+copy\s+[0-9a-f]{7}\s+up to date$/);
+  assert.ok(r.lines.some((l) => l === `Registry: ~/.tsh-ai-collections/installs.json`), r.lines.join('\n'));
+  assert.ok(r.lines.some((l) => l === `Refresh with: node scripts/install.mjs --update --scope project --project-dir ${p1}`), r.lines.join('\n'));
+  assert.equal(fs.readFileSync(registryPath(home), 'utf8'), before, '--list writes nothing');
+});
+
+test('--list says all are up to date; an empty registry prints the explanation', () => {
+  const { source } = gitSource();
+  const home = tmp();
+  const empty = run(['--list'], { home, source, quiet: true });
+  assert.equal(empty.code, 0);
+  assert.ok(empty.lines.some((l) => /No installs recorded yet/.test(l)), empty.lines.join('\n'));
+  assert.ok(empty.lines.some((l) => /recorded automatically/.test(l)));
+  assert.ok(empty.lines.some((l) => /--update/.test(l)));
+  run(['--tools', 'cursor'], { home, source, quiet: true });
+  const r = run(['--list'], { home, source, quiet: true });
+  assert.ok(r.lines.includes('All installs are up to date.'), r.lines.join('\n'));
+});
+
+test('--list with a corrupt registry warns and moves nothing', () => {
+  const { home, go } = env();
+  put(home, path.relative(home, registryPath(home)), 'garbage');
+  const r = go(['--list']);
+  assert.equal(r.code, 0);
+  assert.ok(r.lines.some((l) => /Warning: .*corrupt/.test(l)));
+  assert.equal(fs.readFileSync(registryPath(home), 'utf8'), 'garbage');
+  assert.ok(!exists(`${registryPath(home)}.bak`));
+});
+
+test('--list rejects combinations that make no sense', () => {
+  const { go } = env();
+  for (const extra of [['--tools', 'claude'], ['--update'], ['--dry-run'], ['--migrate-legacy'], ['--scope', 'project'], ['--force']]) {
+    assert.throws(() => go(['--list', ...extra]), (e) => e instanceof UsageError && /--list cannot be combined/.test(e.message), extra.join(' '));
+  }
+});
+
+test('a failed registry write warns and leaves no temp file; the install still succeeds', () => {
+  const { home, go } = env();
+  const fsx = { ...fs, renameSync(a, b) { if (String(b).endsWith('installs.json')) throw Object.assign(new Error('x'), { code: 'EIO' }); return fs.renameSync(a, b); } };
+  const r = go(['--tools', 'claude'], { fs: fsx });
+  assert.equal(r.code, 0);
+  assert.ok(r.lines.some((l) => /Warning: could not update the install registry/.test(l)), r.lines.join('\n'));
+  assert.deepEqual(fs.readdirSync(path.dirname(registryPath(home))), []);
 });
 
 test('install.mjs imports only node: built-ins', () => {

@@ -81,6 +81,7 @@ Pick only the tools you use with `--tools` (comma list of `cursor`, `claude`, `c
 | `--scope project [--project-dir <dir>]` | Install into one project |
 | `--mode copy` (default) / `--mode link` | Copy files, or symlink to the clone so `git pull` updates it (Windows: symlinks need Developer Mode or admin rights; prefer copy) |
 | `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist; unedited copies (checksum in the manifest) are replaced without a backup, edited ones are backed up first |
+| `--list` | List the recorded installs (path, scope, tools, mode, installed commit) and whether each is behind the clone; writes nothing |
 | `--dry-run` | Print what would happen and change nothing (grouped by folder) |
 | `--verbose`, `-v` | One line per entry instead of grouped summaries |
 | `--force` | Replace an unmanaged `tsh-*` entry (moved to the backup first) |
@@ -97,7 +98,7 @@ Which skill tree is written depends on the tool combination: with `--tools curso
 
 Importing the repository as a Remote Rule (GitHub) in Cursor is **not verified** for the new layout, so it is not a supported install path.
 
-To update later: `git pull`, then `node scripts/install.mjs --update` (not needed with `--mode link`, except to prune removed entries).
+To update later: `git pull`, then `node scripts/install.mjs --update` (not needed with `--mode link`, except to prune removed entries). `node scripts/install.mjs --list` shows where tsh is installed and which installs are behind the clone; installs are recorded in `~/.tsh-ai-collections/installs.json`, a local file you may delete at any time.
 
 The installer never writes MCP configuration. It prints which generated file to merge for each tool (see below). Backups go to `~/.tsh-ai-collections-backup/<timestamp>/`.
 

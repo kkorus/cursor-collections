@@ -63,6 +63,7 @@ These are the flags printed by `node scripts/install.mjs --help`.
 | `--mode copy\|link` | `copy` (default), or symlink to the clone so `git pull` updates it. On Windows symlinks need Developer Mode or admin rights, so prefer `copy`. |
 | `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Copies you did not edit are replaced or removed without a backup; edited copies are backed up first, never deleted. |
 | `--migrate-legacy` | Run only the legacy cleanup (old `.cursor/skills` layout), then exit. |
+| `--list` | List the recorded installs with path, scope, tools, mode, installed commit and status (`up to date`, `N commits behind`, `unknown` or `missing`). Takes only `--source`; writes nothing. |
 | `--dry-run` | Print what would happen and change nothing. The output is grouped by folder; add `--verbose` for one line per entry. |
 | `--verbose`, `-v` | One line per entry instead of grouped summaries. |
 | `--force` | Replace an unmanaged `tsh-*` entry. It is moved to the backup first. |
@@ -88,6 +89,16 @@ node ~/cursor-collections/scripts/install.mjs --update
 `--update` reads the manifests, so you do not need to repeat `--tools`. Add `--scope project --project-dir <dir>` to update a project install.
 
 In copy mode the manifest records a SHA-256 checksum of every installed entry. On update, an entry whose checksum still matches was not edited, so it is replaced (or, if it is gone from the source, removed) without a backup. An entry you edited is moved to `~/.tsh-ai-collections-backup/<timestamp>/` first. Entries installed by an older installer have no checksum and are backed up to be safe, once; the update records their checksums.
+
+### Where tsh is installed
+
+Every install and update that really runs (not `--dry-run`) is recorded in `~/.tsh-ai-collections/installs.json` (under `$TSH_HOME` if set). The file lists the paths of your projects, so it is readable only by you, and it never leaves your machine. It is only an index: the manifests in the installed folders stay the source of truth. You may delete it at any time; the next install or `--update` rebuilds the entry for that install. To record an install made by an older installer, run `--update` in it once.
+
+```bash
+node ~/cursor-collections/scripts/install.mjs --list
+```
+
+`--list` prints one line per install with its status: `up to date`, `N commits behind` (compared with `HEAD` of the clone, or of `--source`), `unknown` (the installed commit is not recorded or not in the clone) or `missing` (the folder or its manifests are gone). It ends with the `--update` command for the first install that needs a refresh.
 
 ## Cursor shows skills twice
 
