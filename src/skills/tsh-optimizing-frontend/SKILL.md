@@ -69,9 +69,9 @@ Reduce what ships to the user:
 
 Reduce unnecessary re-render work:
 
-- **Component memoization**: Mark pure presentational components for memoization when they receive complex props and their parent re-renders frequently. Use a custom comparison function when props include objects that are structurally equal but referentially different. See the framework reference for the specific memoization API.
-- **Callback memoization**: Stabilize event handler references when passed as props to memoized children. Skip stabilization for handlers that are not passed down — the overhead provides no benefit. See the framework reference for the specific API.
-- **Computed value memoization**: Cache expensive computations — sorting or filtering large lists (1000+ items), complex data transformations, derived state calculations. Skip caching for trivial computations like simple arithmetic or string concatenation. See the framework reference for the specific API.
+- **Component memoization**: Mark pure presentational components for memoization when they receive complex props and their parent re-renders frequently. Use a custom comparison function when props include objects that are structurally equal but referentially different. See the framework skill (for React, `tsh-implementing-react`) for the specific memoization API.
+- **Callback memoization**: Stabilize event handler references when passed as props to memoized children. Skip stabilization for handlers that are not passed down — the overhead provides no benefit. See the framework skill (for React, `tsh-implementing-react`) for the specific API.
+- **Computed value memoization**: Cache expensive computations — sorting or filtering large lists (1000+ items), complex data transformations, derived state calculations. Skip caching for trivial computations like simple arithmetic or string concatenation. See the framework skill (for React, `tsh-implementing-react`) for the specific API.
 - **Avoid object/array literals in the render path**: Inline object/array expressions in the render path create a new reference every render cycle, defeating memoization on child components. Lift static values to module scope or cache dynamic ones.
 - **State granularity**: Keep state as close to where it is consumed as possible. Broad state at the top of the tree causes cascading re-renders. If your state management solution supports selective subscriptions or slices, use them to minimize re-render scope.
 - **Key stability**: Use stable, unique keys for list items (database IDs, UUIDs). Never use array indices as keys — index keys cause unnecessary unmount/remount when items are reordered, added, or removed.
@@ -186,7 +186,7 @@ Performance:
 
 The patterns above are framework-agnostic. For framework-specific optimization APIs, load the appropriate reference:
 
-- **React**: See the React patterns reference of the `tsh-implementing-frontend` skill — `React.memo`, `useMemo`, `useCallback`, `React.lazy`, `Suspense`.
+- **React**: Use the `tsh-implementing-react` skill — `React.memo`, `useMemo`, `useCallback`, `React.lazy`, `Suspense`, and the React Compiler.
 
 ## Connected Skills
 

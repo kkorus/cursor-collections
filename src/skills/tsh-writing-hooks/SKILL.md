@@ -134,7 +134,7 @@ Follow these rules during implementation:
 | Async operation | Cancellable operation with `AbortController` signal | `controller.abort()`                  |
 | Subscription    | `source.subscribe(handler)`                         | `subscription.unsubscribe()`          |
 
-The cleanup must execute when the hook unmounts or when dependencies change. See the framework reference for the exact cleanup syntax.
+The cleanup must execute when the hook unmounts or when dependencies change. See the framework skill (for React, `tsh-implementing-react`) for the exact cleanup syntax.
 
 **Error handling**:
 
@@ -217,11 +217,12 @@ Hook:
 
 The patterns above are framework-agnostic. For framework-specific hook/composable syntax, load the appropriate reference:
 
-- **React**: See the React patterns reference of the `tsh-implementing-frontend` skill — `useEffect`, `useMemo`, `useCallback`, dependency arrays, rules of hooks.
+- **React**: Use the `tsh-implementing-react` skill — `useEffect`, `useMemo`, `useCallback`, dependency arrays, rules of hooks.
 
 ## Connected Skills
 
 - `tsh-implementing-frontend` — hooks are used within components; this skill covers component patterns
+- `tsh-implementing-react` — React rules of hooks, effect cleanup syntax and the hooks review checklist
 - `tsh-optimizing-frontend` — for memoization strategies and performance patterns in hooks
 - `tsh-reviewing-frontend` — for hook-specific code review criteria
 - `tsh-implementing-forms` — for form-related custom hooks (field state, validation triggers)

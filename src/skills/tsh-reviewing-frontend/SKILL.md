@@ -76,7 +76,7 @@ For every custom hook/composable in the changeset:
 - **Return shape**: Does the hook return an object with stable references? Are callbacks wrapped to maintain referential stability? Tuple returns are acceptable for simple 2-value hooks (`useToggle` → `[value, toggle]`) but objects are preferred for 3+ values to avoid positional confusion.
 - **Side effects in render phase**: Any fetch, write, or mutation outside the framework's effect/lifecycle mechanism? This is an automatic critical — it causes unpredictable behavior and potential infinite loops. Writing to `localStorage`, calling `fetch`, or dispatching events during render are all violations.
 
-After completing the generic checks above, load the framework-specific reference (see **Framework-Specific Patterns** section) and apply its hooks review checklist for additional framework-specific checks.
+After completing the generic checks above, load the framework-specific skill (see **Framework-Specific Patterns** section; for React, `tsh-implementing-react`) and apply its hooks review checklist for additional framework-specific checks.
 
 **Step 3: Review rendering correctness**
 
@@ -217,7 +217,7 @@ Frontend Review:
 
 The review criteria above are framework-agnostic. For framework-specific anti-patterns and API checks, load the appropriate reference:
 
-- **React**: See the React patterns reference of the `tsh-implementing-frontend` skill — React-specific hooks review, `dangerouslySetInnerHTML`, `exhaustive-deps`, memoization API checks.
+- **React**: Use the `tsh-implementing-react` skill — its hooks review checklist, `dangerouslySetInnerHTML` and XSS rules, `exhaustive-deps`, and memoization checks.
 
 ## Connected Skills
 
@@ -226,4 +226,5 @@ The review criteria above are framework-agnostic. For framework-specific anti-pa
 - `tsh-implementing-forms` — for form-specific patterns (validation schemas, field composition, multi-step flows) being reviewed against
 - `tsh-ensuring-accessibility` — for comprehensive accessibility audits beyond spot-checks
 - `tsh-optimizing-frontend` — for deep performance analysis beyond spot-checks
+- `tsh-implementing-react` — React hooks review checklist and safe HTML rendering
 - `tsh-writing-hooks` — for detailed hook quality patterns being reviewed against

@@ -70,7 +70,7 @@ Follow these patterns for every component:
 - **Composition**: Use composition patterns — content projection (children/slots), render delegation, compound components — to keep components flexible. Avoid prop sprawl — if a component accepts more than ~7 props, it likely needs decomposition.
 - **Typed props**: Define explicit TypeScript types for all props. Never use `any`. Co-locate types in `ComponentName.types.ts`.
 - **Named exports only**: Use `export { ComponentName }` — no default exports. This ensures consistent imports and simplifies refactoring.
-- **Error handling wrappers**: Wrap data-dependent sections with the framework's error boundary mechanism for graceful failure. See the framework reference for the specific API.
+- **Error handling wrappers**: Wrap data-dependent sections with the framework's error boundary mechanism for graceful failure. See the framework skill (for React, `tsh-implementing-react`) for the specific API.
 - **Three UI states**: Every data-dependent component must handle loading (progress indicator), error (meaningful message + recovery action), and empty (helpful message when no data).
 - **Design tokens**: All visual values (colors, spacing, typography, shadows, radii) must come from the design system. Zero hardcoded values.
 
@@ -142,7 +142,7 @@ Component:
 
 The patterns above are framework-agnostic. For framework-specific implementation guidance, load the appropriate reference:
 
-- **React**: See `./references/react-patterns.md` — hooks, JSX composition, error boundaries, memoization patterns.
+- **React**: Use the `tsh-implementing-react` skill — rules of hooks, effects and cleanup, JSX composition, error boundaries, memoization, safe HTML rendering.
 
 ## Connected Skills
 
@@ -151,5 +151,6 @@ The patterns above are framework-agnostic. For framework-specific implementation
 - `tsh-ensuring-accessibility` — to ensure components meet WCAG 2.1 AA standards
 - `tsh-optimizing-frontend` — for performance considerations during component implementation
 - `tsh-implementing-forms` — for form-specific component patterns and validation
+- `tsh-implementing-react` — for React-specific implementation patterns
 - `tsh-writing-hooks` — for custom hook patterns used within components
 - `tsh-reviewing-frontend` — for frontend-specific code review of implemented components
