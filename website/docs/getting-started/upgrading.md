@@ -80,7 +80,7 @@ git -C ~/cursor-collections pull
 node ~/cursor-collections/scripts/install.mjs --update
 ```
 
-`--update` reinstalls the tools recorded in the manifests and prunes `tsh-*` entries that the installer put there earlier but that no longer exist in the source. Pruned real directories go to the backup folder.
+`--update` reinstalls the tools recorded in the manifests and prunes `tsh-*` entries that the installer put there earlier but that no longer exist in the source. Installed copies you did not edit (their checksum in the manifest still matches) are replaced or removed without a backup. Copies you edited, and copies from an older installer without a recorded checksum, go to the backup folder first.
 
 ## After upgrading
 

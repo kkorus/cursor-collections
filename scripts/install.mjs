@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Consumer installer for the generated skill and agent trees (Task 2.7, plan D2/D3).
 // Node built-ins only. Writes and removes only `tsh-*` entries plus its own manifest.
+import { createHash } from 'node:crypto';
 import nodeFs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -28,7 +29,9 @@ Installs the generated tsh-* skills and subagents into a user or project tree.
   --mode copy|link     copy (default) or symlink to the clone, so "git pull" updates it.
                        Windows: symlinks need Developer Mode or admin rights; prefer copy.
   --update             reinstall the tools recorded in the manifests and prune tsh-*
-                       entries that no longer exist in the source (backed up, not deleted)
+                       entries that no longer exist in the source. Copies you did not edit
+                       (checksum in the manifest) are replaced or removed without a backup;
+                       edited copies are moved to the backup first, never deleted
   --migrate-legacy     only run the legacy cleanup (old .cursor/skills layout), then exit
   --dry-run            print what would happen and change nothing
   --verbose, -v        one line per entry instead of grouped summaries
@@ -111,7 +114,35 @@ function readManifest(ctx, dir) {
   const names = Array.isArray(m.names) ? m.names : [];
   const good = names.filter((n) => typeof n === 'string' && n.startsWith('tsh-') && n === path.basename(n) && !n.includes('\\'));
   if (good.length !== names.length) ctx.log(`ignored ${names.length - good.length} invalid name(s) in ${f}`);
-  return { ...m, names: good, tools: Array.isArray(m.tools) ? m.tools.filter((t) => TOOLS.includes(t)) : [] };
+  // Version 1 manifests have no hashes; only well-formed sha256 values for trusted names are kept
+  const hashes = {};
+  if (m.hashes && typeof m.hashes === 'object') {
+    for (const n of good) if (typeof m.hashes[n] === 'string' && /^[0-9a-f]{64}$/.test(m.hashes[n])) hashes[n] = m.hashes[n];
+  }
+  return { ...m, names: good, hashes, tools: Array.isArray(m.tools) ? m.tools.filter((t) => TOOLS.includes(t)) : [] };
+}
+
+/** sha256 of an installed entry as it is on disk. A file hashes to its bytes. A directory hashes
+ *  every entry below it in sorted order as a framed record (type, relative POSIX path, size or
+ *  link target, bytes), so a changed byte, a renamed or added file all change the hash. */
+export function hashEntry(fsx, p) {
+  if (!fsx.lstatSync(p).isDirectory()) return createHash('sha256').update(fsx.readFileSync(p)).digest('hex');
+  const h = createHash('sha256');
+  const walk = (dir, rel) => {
+    for (const name of fsx.readdirSync(dir).sort()) {
+      const abs = path.join(dir, name), r = rel ? `${rel}/${name}` : name;
+      const st = fsx.lstatSync(abs);
+      if (st.isSymbolicLink()) h.update(`l\0${r}\0${fsx.readlinkSync(abs)}\0`);
+      else if (st.isDirectory()) { h.update(`d\0${r}\0`); walk(abs, r); }
+      else {
+        const data = fsx.readFileSync(abs);
+        h.update(`f\0${r}\0${data.length}\0`);
+        h.update(data);
+      }
+    }
+  };
+  walk(p, '');
+  return h.digest('hex');
 }
 
 /** Copy a file or directory tree, replacing every symlink with the content it points to.
@@ -292,11 +323,25 @@ function sourceCommit(ctx) {
   } catch { return null; }
 }
 
+/** Remove a managed copy whose on-disk hash still equals the one recorded at install time (no backup). */
+function dropUnmodified(ctx, p, verb) {
+  if (ctx.verbose) ctx.log(`${ctx.dry ? `would ${verb}` : `${verb}d`} unmodified ${p} (checksum matches the manifest)`);
+  if (!ctx.dry) ctx.fs.rmSync(p, { recursive: true, force: true });
+}
+
+/** How to handle an existing managed real entry: 'unmodified' (hash matches) or a backup reason. */
+function editState(ctx, old, n, p) {
+  const recorded = old?.hashes?.[n];
+  if (!recorded) return 'no checksum recorded; backed up to be safe';
+  return hashEntry(ctx.fs, p) === recorded ? 'unmodified' : 'edited locally';
+}
+
 function installTree(ctx, { targetDir, srcRel, kind, tools }) {
   const names = listSource(ctx, srcRel, kind);
   const old = readManifest(ctx, targetDir);
   const oldNames = new Set(old?.names || []);
-  const result = { installed: [], skipped: [], pruned: [] };
+  const result = { installed: [], skipped: [], pruned: [], replaced: [], removed: [] };
+  const hashes = {};
   if (ctx.verbose) ctx.log(`${targetDir}: ${names.length} entries from ${srcRel} (${ctx.mode})`);
   else ctx.log(`${ctx.dry ? 'Would install' : 'Installing'} ${names.length} ${kind === 'dir' ? 'skills' : 'agents'} (${ctx.mode}) -> ${short(ctx, targetDir)}`);
   if (!ctx.dry) ctx.fs.mkdirSync(targetDir, { recursive: true });
@@ -312,16 +357,24 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
         continue;
       }
       if (st.isSymbolicLink()) retire(ctx, dest, 'replace symlink');
-      else if (!ctx.force && oldNames.has(n) && treesEqual(ctx, src, dest)) {
+      else if (ctx.force) retire(ctx, dest, 'force overwrite');
+      else if (treesEqual(ctx, src, dest)) {
         if (!ctx.dry) ctx.fs.rmSync(dest, { recursive: true, force: true }); // identical copy: lossless
-      } else retire(ctx, dest, ctx.force && !oldNames.has(n) ? 'force overwrite' : 'managed entry changed locally');
+      } else {
+        const state = editState(ctx, old, n, dest);
+        if (state === 'unmodified') { dropUnmodified(ctx, dest, 'replace'); result.replaced.push(n); }
+        else retire(ctx, dest, state);
+      }
     }
     if (ctx.mode === 'link') {
       if (ctx.verbose) ctx.log(`${ctx.dry ? 'would link' : 'linked'} ${dest} -> ${src}`);
       if (!ctx.dry) ctx.fs.symlinkSync(src, dest, kind === 'dir' ? 'dir' : 'file');
     } else {
       if (ctx.verbose) ctx.log(`${ctx.dry ? 'would copy' : 'copied'} ${src} -> ${dest}`);
-      if (!ctx.dry) copyDereferenced(ctx.fs, src, dest);
+      if (!ctx.dry) {
+        copyDereferenced(ctx.fs, src, dest);
+        hashes[n] = hashEntry(ctx.fs, dest); // what landed on disk, so a later --update can tell edits apart
+      }
     }
     result.installed.push(n);
   }
@@ -330,13 +383,20 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
     for (const n of oldNames) {
       if (names.includes(n)) continue;
       const p = path.join(targetDir, n);
-      if (lstat(ctx, p)) {
-        retire(ctx, p, 'pruned: no longer in source');
-        result.pruned.push(n);
-      }
+      const st = lstat(ctx, p);
+      if (!st) continue;
+      const state = st.isSymbolicLink() ? null : editState(ctx, old, n, p);
+      if (state === 'unmodified') { dropUnmodified(ctx, p, 'remove'); result.removed.push(n); }
+      else retire(ctx, p, state ? `pruned: no longer in source; ${state}` : 'pruned: no longer in source');
+      result.pruned.push(n);
     }
   }
 
+  if (!ctx.verbose) {
+    const count = (k) => `${k} unmodified entr${k === 1 ? 'y' : 'ies'}`;
+    if (result.replaced.length) ctx.log(`  ${ctx.dry ? 'Would replace' : 'Replaced'} ${count(result.replaced.length)} with the new version (no backup needed)`);
+    if (result.removed.length) ctx.log(`  ${ctx.dry ? 'Would remove' : 'Removed'} ${count(result.removed.length)} no longer in the source (no backup needed)`);
+  }
   flushRetired(ctx);
 
   // Names kept in the manifest: everything installed now, plus earlier ones still on disk (unless pruned)
@@ -344,14 +404,18 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
   if (!ctx.update) for (const n of oldNames) if (lstat(ctx, path.join(targetDir, n))) keep.add(n);
   for (const n of result.skipped) if (oldNames.has(n)) keep.add(n);
   if (!ctx.dry) {
+    // Entries kept from an earlier run but not reinstalled now keep their recorded hash
+    for (const n of keep) if (!(n in hashes) && old?.hashes?.[n]) hashes[n] = old.hashes[n];
     const manifest = {
-      version: 1,
+      version: 2,
       tools: [...new Set([...(old?.tools || []), ...tools])].sort(),
       mode: ctx.mode,
       sourceCommit: sourceCommit(ctx),
       source: ctx.source,
       names: [...keep].sort(),
     };
+    // Link mode: entries are symlinks to the clone, there is no installed copy to checksum
+    if (ctx.mode === 'copy') manifest.hashes = Object.fromEntries(Object.keys(hashes).sort().map((n) => [n, hashes[n]]));
     ctx.fs.writeFileSync(path.join(targetDir, MANIFEST), JSON.stringify(manifest, null, 2) + '\n');
   }
   return result;

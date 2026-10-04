@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { run, selectSkillTrees, moveEntry, UsageError, MANIFEST } from '../install.mjs';
+import { run, selectSkillTrees, moveEntry, hashEntry, UsageError, MANIFEST } from '../install.mjs';
 
 const SCRIPT = path.resolve(import.meta.dirname, '..', 'install.mjs');
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'tsh-install-test-'));
@@ -163,7 +163,7 @@ test('does not overwrite an unmanaged tsh-* entry without --force; --force backs
   assert.equal(fs.readFileSync(moved, 'utf8'), 'user edited');
 });
 
-test('--update prunes a renamed skill into the backup when locally edited, removes it when identical', () => {
+test('--update prunes a renamed skill into the backup when locally edited, removes it without backup when unmodified', () => {
   const { home, source, go } = env();
   go(['--tools', 'claude']);
   fs.appendFileSync(path.join(home, '.claude/skills/tsh-beta/SKILL.md'), ' edited');
@@ -179,11 +179,133 @@ test('--update prunes a renamed skill into the backup when locally edited, remov
   assert.ok(exists(path.join(skills, 'tsh-alpha-renamed/SKILL.md')));
   const m = JSON.parse(fs.readFileSync(path.join(skills, MANIFEST), 'utf8'));
   assert.deepEqual(m.names, ['tsh-alpha-renamed', 'tsh-beta-renamed']);
-  // the edited (non-identical) pruned dir is kept in the backup, never hard-deleted
+  // the edited pruned dir is kept in the backup, never hard-deleted; the unmodified one is just removed
   const backups = path.join(home, '.tsh-ai-collections-backup');
   const [stamp] = fs.readdirSync(backups);
   assert.ok(exists(path.join(backups, stamp, skills, 'tsh-beta/SKILL.md')));
-  assert.ok(exists(path.join(backups, stamp, skills, 'tsh-alpha/SKILL.md')));
+  assert.ok(!exists(path.join(backups, stamp, skills, 'tsh-alpha')));
+  assert.ok(r.lines.some((l) => /Removed 1 unmodified entry no longer in the source/.test(l)), r.lines.join('\n'));
+  assert.ok(r.lines.some((l) => /pruned: no longer in source; edited locally/.test(l)), r.lines.join('\n'));
+});
+
+// ---------- content checksums (manifest version 2) ----------
+
+const changeSource = (source, skill = 'tsh-alpha') => {
+  for (const d of ['.agents/skills', '.claude/skills']) fs.writeFileSync(path.join(source, d, skill, 'SKILL.md'), 'new version');
+};
+const manifestOf = (home, rel = '.claude/skills') => JSON.parse(fs.readFileSync(path.join(home, rel, MANIFEST), 'utf8'));
+const backupRoot = (home) => path.join(home, '.tsh-ai-collections-backup');
+
+test('copy install writes version 2 manifests with a sha256 per entry, matching hashEntry of the installed copy', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude']);
+  const m = manifestOf(home);
+  assert.equal(m.version, 2);
+  assert.deepEqual(Object.keys(m.hashes), ['tsh-alpha', 'tsh-beta']);
+  assert.equal(m.hashes['tsh-alpha'], hashEntry(fs, path.join(home, '.claude/skills/tsh-alpha')));
+  const am = manifestOf(home, '.claude/agents');
+  assert.match(am.hashes['tsh-agent.md'], /^[0-9a-f]{64}$/);
+});
+
+test('--update replaces an unmodified copy of a changed source without a backup', () => {
+  const { home, source, go } = env();
+  go(['--tools', 'claude']);
+  changeSource(source);
+  fs.writeFileSync(path.join(source, '.claude/agents/tsh-agent.md'), 'new agent');
+  const r = go(['--update']);
+  assert.equal(r.code, 0);
+  assert.equal(fs.readFileSync(path.join(home, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'new version');
+  assert.equal(fs.readFileSync(path.join(home, '.claude/agents/tsh-agent.md'), 'utf8'), 'new agent');
+  assert.ok(!exists(backupRoot(home)), 'no backup directory');
+  assert.ok(r.lines.some((l) => /Replaced 1 unmodified entry with the new version/.test(l)), r.lines.join('\n'));
+  assert.ok(!r.lines.some((l) => /backup/i.test(l) && !/no backup needed/.test(l)), r.lines.join('\n'));
+  assert.equal(manifestOf(home).hashes['tsh-alpha'], hashEntry(fs, path.join(home, '.claude/skills/tsh-alpha')));
+});
+
+test('--update backs up an edited copy before installing the new version', () => {
+  const { home, source, go } = env();
+  go(['--tools', 'claude']);
+  const f = path.join(home, '.claude/skills/tsh-alpha/SKILL.md');
+  fs.writeFileSync(f, 'my edit');
+  changeSource(source);
+  const r = go(['--update']);
+  assert.equal(fs.readFileSync(f, 'utf8'), 'new version');
+  const [stamp] = fs.readdirSync(backupRoot(home));
+  assert.equal(fs.readFileSync(path.join(backupRoot(home), stamp, f), 'utf8'), 'my edit');
+  assert.ok(r.lines.some((l) => /\[edited locally\]/.test(l)), r.lines.join('\n'));
+});
+
+test('a version 1 manifest (no hashes) keeps the safe backup behavior with an honest reason', () => {
+  const { home, source, go } = env();
+  go(['--tools', 'claude']);
+  const mf = path.join(home, '.claude/skills', MANIFEST);
+  const m = manifestOf(home);
+  delete m.hashes;
+  m.version = 1;
+  fs.writeFileSync(mf, JSON.stringify(m));
+  changeSource(source);
+  const r = go(['--update']);
+  assert.equal(r.code, 0);
+  const [stamp] = fs.readdirSync(backupRoot(home));
+  assert.ok(exists(path.join(backupRoot(home), stamp, home, '.claude/skills/tsh-alpha/SKILL.md')));
+  assert.ok(!exists(path.join(backupRoot(home), stamp, home, '.claude/skills/tsh-beta')), 'identical entry replaced losslessly');
+  assert.ok(r.lines.some((l) => /no checksum recorded; backed up to be safe/.test(l)), r.lines.join('\n'));
+  assert.equal(manifestOf(home).version, 2);
+  assert.ok(manifestOf(home).hashes['tsh-alpha']);
+});
+
+test('an identical source changes nothing and makes no backup', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude']);
+  const before = manifestOf(home).hashes;
+  const r = go(['--update']);
+  assert.ok(!exists(backupRoot(home)));
+  assert.ok(!r.lines.some((l) => /unmodified|backup/i.test(l)), r.lines.join('\n'));
+  assert.deepEqual(manifestOf(home).hashes, before);
+});
+
+test('link mode writes no hashes', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude', '--mode', 'link']);
+  assert.equal(manifestOf(home).version, 2);
+  assert.ok(!('hashes' in manifestOf(home)));
+  assert.ok(!('hashes' in manifestOf(home, '.claude/agents')));
+});
+
+test('hashEntry is deterministic and changes with a byte or a file name', () => {
+  const a = tmp(), b = tmp();
+  for (const root of [a, b]) { put(root, 'e/SKILL.md', 'body'); put(root, 'e/references/r.md', 'ref'); }
+  const h = hashEntry(fs, path.join(a, 'e'));
+  assert.match(h, /^[0-9a-f]{64}$/);
+  assert.equal(hashEntry(fs, path.join(a, 'e')), h);
+  assert.equal(hashEntry(fs, path.join(b, 'e')), h, 'same content in another place hashes the same');
+  fs.writeFileSync(path.join(b, 'e/references/r.md'), 'reF');
+  assert.notEqual(hashEntry(fs, path.join(b, 'e')), h, 'one byte changed');
+  fs.writeFileSync(path.join(b, 'e/references/r.md'), 'ref');
+  assert.equal(hashEntry(fs, path.join(b, 'e')), h);
+  fs.renameSync(path.join(b, 'e/references/r.md'), path.join(b, 'e/references/s.md'));
+  assert.notEqual(hashEntry(fs, path.join(b, 'e')), h, 'file renamed');
+  put(a, 'agent.md', 'x');
+  assert.equal(hashEntry(fs, path.join(a, 'agent.md')), '2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881', 'file entry = sha256 of its bytes');
+});
+
+test('dry-run reports the same decisions as the real run and writes nothing', () => {
+  const { home, source, go } = env();
+  go(['--tools', 'claude']);
+  fs.writeFileSync(path.join(home, '.claude/skills/tsh-beta/SKILL.md'), 'my edit');
+  changeSource(source, 'tsh-alpha');
+  changeSource(source, 'tsh-beta');
+  fs.writeFileSync(path.join(source, '.claude/agents/tsh-agent.md'), 'new agent');
+  const mfBefore = fs.readFileSync(path.join(home, '.claude/skills', MANIFEST), 'utf8');
+  const dry = go(['--update', '--dry-run']);
+  assert.ok(!exists(backupRoot(home)));
+  assert.equal(fs.readFileSync(path.join(home, '.claude/skills', MANIFEST), 'utf8'), mfBefore);
+  assert.equal(fs.readFileSync(path.join(home, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'skill tsh-alpha');
+  const real = go(['--update']);
+  const pick = (lines) => lines.filter((l) => /unmodified|to the backup|edited locally/.test(l))
+    .map((l) => l.replace(/^(\s*)Would (\w)/, (_, s, c) => s + c.toUpperCase()).replace(/^(\s*)(Replace|Remove|Move)\b/, (_, s, v) => `${s}${v}d`));
+  assert.deepEqual(pick(dry.lines), pick(real.lines));
+  assert.ok(pick(real.lines).some((l) => /Replaced 1 unmodified entry/.test(l)) && pick(real.lines).some((l) => /to the backup.*: 1/.test(l)), real.lines.join('\n'));
 });
 
 test('--update without any manifest is an error', () => {

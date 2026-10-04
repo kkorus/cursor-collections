@@ -61,7 +61,7 @@ These are the flags printed by `node scripts/install.mjs --help`.
 | `--project-dir <dir>` | Project root for `--scope project`. Default: the current directory. |
 | `--source <dir>` | Repository root that holds the generated trees and `scripts/legacy-names.json`. Default: the clone the script lives in. The install target must not be inside it. |
 | `--mode copy\|link` | `copy` (default), or symlink to the clone so `git pull` updates it. On Windows symlinks need Developer Mode or admin rights, so prefer `copy`. |
-| `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Pruned entries are backed up, not deleted. |
+| `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Copies you did not edit are replaced or removed without a backup; edited copies are backed up first, never deleted. |
 | `--migrate-legacy` | Run only the legacy cleanup (old `.cursor/skills` layout), then exit. |
 | `--dry-run` | Print what would happen and change nothing. The output is grouped by folder; add `--verbose` for one line per entry. |
 | `--verbose`, `-v` | One line per entry instead of grouped summaries. |
@@ -86,6 +86,8 @@ node ~/cursor-collections/scripts/install.mjs --update
 ```
 
 `--update` reads the manifests, so you do not need to repeat `--tools`. Add `--scope project --project-dir <dir>` to update a project install.
+
+In copy mode the manifest records a SHA-256 checksum of every installed entry. On update, an entry whose checksum still matches was not edited, so it is replaced (or, if it is gone from the source, removed) without a backup. An entry you edited is moved to `~/.tsh-ai-collections-backup/<timestamp>/` first. Entries installed by an older installer have no checksum and are backed up to be safe, once; the update records their checksums.
 
 ## Cursor shows skills twice
 
