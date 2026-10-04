@@ -1,11 +1,7 @@
-<p align="center">
-  <img src="https://cursor.com/favicon.ico" alt="Cursor" width="72" />
-</p>
-
-<h1 align="center">⚙️ Cursor Collections</h1>
+<h1 align="center">TSH AI Collections</h1>
 
 <p align="center">
-  Opinionated Cursor AI IDE setup that covers the <b>full product development lifecycle</b> – from product ideation, through development, to quality assurance.
+  Opinionated AI setup for <b>Cursor</b>, <b>Claude Code</b> and <b>Codex</b> that covers the <b>full product development lifecycle</b> – from product ideation, through development, to quality assurance.
 </p>
 
 <p align="center">
@@ -16,111 +12,115 @@
 
 ## What This Repo Provides
 
-This repository supports the **full product development lifecycle** with AI-powered agent skills, workflow skills, and slash commands organized into four lifecycle phases — plus a cross-cutting track for Cursor customization:
+One neutral source (`src/`) is rendered into the native format of each tool: 16 slash commands, 3 orchestrators, 17 subagents, 41 knowledge skills and 11 MCP server definitions. The content is the same in every tool.
 
 ### Product Ideation – Requirements & Planning
 
-- **Agent skills** – Business Analyst orchestrator (+ 5 internal BA worker agents)
 - **Commands** – `/tsh-explore-materials`, `/tsh-analyze-materials`
-- **Workflow skills** – Task Analysis, Transcript Processing, Task Extraction, Task Quality Review, Jira Task Formatting
+- **Orchestrator** – `tsh-business-analyst` (delegates to 5 internal BA worker subagents)
+- **Skills** – `tsh-analyzing-requirements`, `tsh-processing-transcripts`, `tsh-extracting-tasks`, `tsh-reviewing-task-quality`, `tsh-formatting-jira-tasks`, `tsh-guarding-jira-statuses`
 
 ### Development – Architecture & Implementation
 
-- **Agent skills** – Engineering Manager, Context Engineer, Architect, Software Engineer
-- **Commands** – `/tsh-implement` (internally delegates to Context Engineer for research and Architect for planning)
-- **Workflow skills** – Architecture Design, Technical Context Discovery, Frontend Implementation, Backend Implementation, Implementation Gap Analysis, SQL & Database Engineering, Codebase Analysis
+- **Commands** – `/tsh-implement` (research, planning, implementation and review in one flow), `/tsh-refactor`, `/tsh-debug`, `/tsh-ask`
+- **Orchestrator** – `tsh-engineering-manager`
+- **Subagents** – `tsh-context-engineer`, `tsh-architect`, `tsh-software-engineer`, `tsh-prompt-engineer`, `tsh-devops-engineer`
+- **Skills** – `tsh-designing-architecture`, `tsh-discovering-technical-context`, `tsh-analyzing-implementation-gaps`, `tsh-analyzing-codebase`, `tsh-implementing-frontend`, `tsh-implementing-backend`, `tsh-designing-databases` and more (see [Knowledge skills](#knowledge-skills-41))
 
 ### Quality – Review & Testing
 
-- **Agent skills** – Code Reviewer, UI Reviewer, E2E Engineer
-- **Commands** – `/tsh-review`, `/tsh-review-ui`, `/tsh-review-codebase`
-- **Workflow skills** – Code Review, UI Verification, E2E Testing
-
-### Developer Utilities
-
-- **Commands** – `/tsh-ask` (architectural decisions as ADRs), `/tsh-debug` (systematic root-cause analysis), `/tsh-refactor` (structural refactoring without behavior change), `/tsh-commit` ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with mandatory approval before `git commit`)
-
-### Cursor Customization – Extending the Toolchain
-
-- **Agent skills** – Cursor Engineer, Cursor Orchestrator
-- **Commands** – `/tsh-create-custom-agent`, `/tsh-create-custom-skill`, `/tsh-create-custom-rules`
-- **Workflow skills** – Creating Agent Skills, Creating Skills, Creating Commands, Creating Rules
+- **Commands** – `/tsh-review`, `/tsh-review-ui`, `/tsh-audit-codebase`
+- **Subagents** – `tsh-code-reviewer`, `tsh-ui-reviewer`, `tsh-e2e-engineer`, `tsh-plan-reviewer`
+- **Skills** – `tsh-reviewing-code`, `tsh-verifying-ui`, `tsh-writing-e2e-tests`, `tsh-reviewing-plans`, `tsh-reviewing-frontend`
 
 ### Infrastructure
 
-- **MCP integrations** – Atlassian, Figma Dev Mode, Context7, Playwright, Sequential Thinking, PDF Reader
-- **Cursor setup** – ready-to-plug global configuration via GitHub import or symlinks
+- **Commands** – `/tsh-audit-infrastructure`, `/tsh-analyze-cloud-costs`
+- **Subagent** – `tsh-devops-engineer`
+- **Skills** – `tsh-delivering-infrastructure`, `tsh-implementing-terraform-modules`, `tsh-implementing-kubernetes`, `tsh-implementing-ci-cd`, `tsh-implementing-observability`, `tsh-managing-secrets`, `tsh-optimizing-cloud-cost`, `tsh-designing-multi-cloud-architecture`
+
+### Developer Utilities
+
+- **Commands** – `/tsh-commit` ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with mandatory approval before `git commit`)
+
+### AI Customization – Extending the Toolchain
+
+- **Commands** – `/tsh-create-custom-agent`, `/tsh-create-custom-skill`, `/tsh-create-custom-command`, `/tsh-create-custom-rules`
+- **Orchestrator** – `tsh-ai-customization-orchestrator` (delegates to 3 internal subagents: researcher, creator, reviewer)
+- **Skills** – `tsh-creating-agents`, `tsh-creating-skills`, `tsh-creating-commands`, `tsh-creating-rules`, `tsh-migrating-copilot-customizations`
+
+### MCP integrations
+
+Atlassian, Figma, Context7, Playwright, Sequential Thinking, PDF Reader, AWS (API, documentation) and GCP (gcloud, observability, storage).
 
 ---
 
-> **Why the `tsh-` prefix?** All artifacts use the `tsh-` prefix (e.g., `/tsh-implement`, `tsh-architect`) to avoid naming collisions with your own project-specific skills and rules. You can safely use this alongside your own customizations without renaming anything.
+> **Why the `tsh-` prefix?** All artifacts use the `tsh-` prefix (e.g., `/tsh-implement`, `tsh-architect`) to avoid naming collisions with your own project-specific skills and rules. You can use this alongside your own customizations without renaming anything.
 
 ---
 
-## Installation in Cursor
+## Installation
 
-### Option 1 — GitHub Import (recommended, one click)
-
-1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`)
-2. Navigate to **Rules**
-3. In the **Project Rules** section, click **Add Rule → Remote Rule (GitHub)**
-4. Enter: `https://github.com/kkorus/cursor-collections`
-
-Skills are imported globally and available in every workspace immediately.
-
-### Option 2 — Clone + Symlink (full control, auto-updates via git pull)
+Supported tools: Cursor, Claude Code and Codex. Requires Node.js (see `.nvmrc`).
 
 ```bash
-# 1. Clone alongside your projects
-git clone https://github.com/kkorus/cursor-collections ~/cursor-collections
+git clone https://github.com/kkorus/cursor-collections ~/ai-collections
+cd ~/ai-collections
+npm ci
 
-# 2. Link skills globally so they appear in every workspace
-mkdir -p ~/.cursor/skills
-
-# Agent skills
-for d in ~/cursor-collections/.cursor/skills/agents/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
-
-# Workflow skills
-for d in ~/cursor-collections/.cursor/skills/workflows/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
-
-# Command skills (slash commands)
-for d in ~/cursor-collections/.cursor/skills/commands/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
-
-# Internal skills (delegate-only orchestration steps)
-for d in ~/cursor-collections/.cursor/skills/internal/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
+# Preview first, then install for the tools you use
+node scripts/install.mjs --tools cursor,claude,codex --dry-run
+node scripts/install.mjs --tools cursor,claude,codex
 ```
 
-To update later: `git -C ~/cursor-collections pull`
+Pick only the tools you use with `--tools` (comma list of `cursor`, `claude`, `codex`).
+
+| Option | Meaning |
+|--------|---------|
+| `--scope user` (default) | Install into your home directory (all workspaces) |
+| `--scope project [--project-dir <dir>]` | Install into one project |
+| `--mode copy` (default) / `--mode link` | Copy files, or symlink to the clone so `git pull` updates it (Windows: symlinks need Developer Mode or admin rights; prefer copy) |
+| `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist (backed up, not deleted) |
+| `--dry-run` | Print every action and change nothing |
+| `--force` | Replace an unmanaged `tsh-*` entry (moved to the backup first) |
+
+What is installed where:
+
+| Tool | Skills | Subagents |
+|------|--------|-----------|
+| Cursor | `.agents/skills/` | `.cursor/agents/` |
+| Claude Code | `.claude/skills/` | `.claude/agents/` |
+| Codex | `.agents/skills/` | `.codex/agents/` |
+
+Cursor also reads `.claude/skills`. When both trees are installed, Cursor dedupes by name and a same-name skill resolves to `.claude/skills`. If skills show up twice, turn off **Settings > Include Third-Party Plugins, Skills, and Other Configs**; Cursor then reads `.agents/skills` and `.cursor/agents` natively.
+
+Importing the repository as a Remote Rule (GitHub) in Cursor is **not verified** for the new layout, so it is not a supported install path.
+
+To update later: `git pull`, then `node scripts/install.mjs --update` (not needed with `--mode link`, except to prune removed entries).
+
+The installer never writes MCP configuration. It prints which generated file to merge for each tool (see below). Backups go to `~/.tsh-ai-collections-backup/<timestamp>/`.
+
+### Upgrading from Cursor Collections
+
+The structure and many names changed in this release (a breaking release, no aliases). The installer removes the old `.cursor/skills/tsh-*` layout for you (symlinks are removed, real directories are backed up) before every install. Run `node scripts/install.mjs --migrate-legacy --dry-run` to see what it would do. See [Upgrading](website/docs/getting-started/upgrading.md) for the manual equivalent and the [CHANGELOG](CHANGELOG.md) for the old-to-new name table.
 
 ---
 
 ## MCP Server Configuration
 
-To unlock the full workflow (Jira, Figma, code search, browser automation), configure MCP servers.
+To unlock the full workflow (Jira, Figma, code search, browser automation), configure MCP servers. The source is `src/mcp/servers.json`; the generated files are:
 
-### Option 1 — User Profile (recommended, global across all projects)
+| Tool | Generated file in this repo | Merge into (user scope) | Merge into (project scope) |
+|------|-----------------------------|-------------------------|----------------------------|
+| Cursor | `.cursor/mcp.json` | `~/.cursor/mcp.json` | `<project>/.cursor/mcp.json` |
+| Claude Code | `.mcp.json` | `~/.claude.json` (`mcpServers`) | `<project>/.mcp.json` |
+| Codex | `.codex/config.toml` | `~/.codex/config.toml` | `<project>/.codex/config.toml` |
 
-1. Open **Cursor Settings → MCP**
-2. Click **Add MCP Server**
-3. Copy the contents of [`.cursor/mcp.json`](.cursor/mcp.json) from this repository
-
-### Option 2 — Workspace Configuration
-
-Copy `.cursor/mcp.json` to your project's `.cursor/mcp.json`.
-
-### What each MCP is used for
+These target paths are the ones the installer prints. The user-scope paths for Claude Code and Codex are **not yet verified** by a smoke test.
 
 | MCP | Purpose |
 |-----|---------|
-| **Atlassian** | Access Jira issues for `/tsh-implement` and `/tsh-review` |
+| **Atlassian** | Jira and Confluence access for `/tsh-implement`, `/tsh-review` and the BA flow |
 | **Figma** | Pull design details for UI implementation and verification |
 | **Context7** | Semantic search in external docs and knowledge bases |
 | **Playwright** | Browser automation for UI verification and E2E tests |
@@ -132,21 +132,36 @@ Copy `.cursor/mcp.json` to your project's `.cursor/mcp.json`.
 
 ## How to Use
 
-All commands work in **Cursor Agent chat** (not Ask mode). Type `/` to open the slash palette.
+### Invocation syntax
 
-### Slash menu: commands vs workflow skills
+| | Cursor | Claude Code | Codex |
+|---|--------|-------------|-------|
+| Run a command | `/tsh-implement PROJ-123` in Agent chat | `/tsh-implement PROJ-123` | not yet verified |
+| Pass arguments | text after the command name | text after the command name (appended as `ARGUMENTS:`) | not yet verified |
+| Use a subagent directly | not yet verified (subagents are started by name from commands and orchestrators) | `@agent-tsh-architect`, or start a session with `claude --agent tsh-architect` | not yet verified |
+| Knowledge skills, orchestrators, internal steps | loaded by name by the agent; not meant for manual use | same; hidden from the `/` menu | not yet verified |
 
-The `/` list includes **slash commands** (`.cursor/skills/commands/`) — these are what you should run — and often **workflow skills** (`.cursor/skills/workflows/`) that agents load automatically. Workflow entries are **not** recommended for manual invocation.
+Commands are thin entry points. Each routes to a subagent or an orchestrator, which loads knowledge skills by name. Subagents are leaf workers: they never start other subagents. Hand-offs between commands are text suggestions ("Suggested next steps"), never automatic.
 
-| Use this (command) | Not this (workflow in `/`) |
-| ------------------ | --------------------------- |
-| `/tsh-commit` | ~~`tsh-committing`~~ (agent loads workflow; use command) |
-| `/tsh-review` | ~~`tsh-code-reviewing`~~ (agent loads workflow; use command) |
-| `/tsh-review-ui` | ~~`tsh-ui-verifying`~~ (agent loads workflow; use command) |
+Claude Code: typing the name of a hidden skill (for example `tsh-implement-task`) after `/` runs nothing; use the commands.
 
-Other workflows (e.g. `tsh-technical-context-discovering`, `tsh-implementing-backend`) may still appear in `/` — that is expected; agents use them during `/tsh-implement` and related commands.
+### Commands
 
----
+| Command | What it does |
+|---------|--------------|
+| `/tsh-implement <task-id \| description>` | Full cycle: context, plan, plan review, implementation, UI verification, code review |
+| `/tsh-refactor` | Atomic, step-by-step refactoring plan; each step keeps tests green |
+| `/tsh-debug` | Reproduce, isolate the root cause, fix, verify with regression tests |
+| `/tsh-ask` | Research a question and save the answer as an ADR in `specifications/decisions/` |
+| `/tsh-review` | Structured code review (PASS / BLOCKER / SUGGESTION) |
+| `/tsh-review-ui` | Compare the running app (Playwright) against Figma |
+| `/tsh-audit-codebase` | Whole-repository audit; writes `code-quality-report.md` |
+| `/tsh-audit-infrastructure` | Infrastructure audit |
+| `/tsh-analyze-cloud-costs <aws\|gcp> <profile\|project> <region>` | Cloud cost analysis |
+| `/tsh-explore-materials` | Optional exploration of ambiguous workshop inputs |
+| `/tsh-analyze-materials` | Workshop materials to a Jira-ready backlog |
+| `/tsh-commit` | Conventional Commits message proposal; commits only after you approve |
+| `/tsh-create-custom-agent`, `/tsh-create-custom-skill`, `/tsh-create-custom-command`, `/tsh-create-custom-rules` | Research, design, create and review a customization artifact |
 
 ### New feature from a Jira ticket
 
@@ -154,17 +169,14 @@ Other workflows (e.g. `tsh-technical-context-discovering`, `tsh-implementing-bac
 /tsh-implement PROJ-123
 ```
 
-What happens:
 1. Context Engineer gathers requirements from Jira, Confluence, Figma
-2. You review the research document — confirm to proceed
+2. You review the research document and confirm
 3. Architect creates a step-by-step implementation plan
-4. Plan Reviewer (`tsh-plan-reviewer`, delegate-only) validates the plan — returns it if BLOCKERs found (up to 3 iterations)
-5. You review the plan + review report and approve
+4. Plan Reviewer validates the plan and returns it if BLOCKERs are found (up to 3 iterations)
+5. You review the plan and the review report and approve
 6. Software Engineer implements phase by phase
-7. (UI tasks) Each UI component is verified against Figma automatically — up to 5 fix iterations
+7. UI tasks: each component is verified against Figma, up to 5 fix iterations
 8. Code Reviewer runs the final quality check
-
----
 
 ### New feature from a description (no Jira)
 
@@ -172,264 +184,130 @@ What happens:
 /tsh-implement Add OAuth2 login with Google, using existing NestJS auth module
 ```
 
-Same flow as above, but Context Engineer builds context from your codebase instead of Jira.
+Same flow, but context comes from your codebase instead of Jira.
 
----
-
-### Code review
+### Code review and UI verification
 
 ```
 /tsh-review PROJ-123
-```
-
-Or for changes without a Jira ticket:
-
-```
 /tsh-review Review the recent changes to the payment module
-```
-
-The Code Reviewer checks: acceptance criteria, security, test coverage, code quality. Returns a structured PASS / BLOCKER / SUGGESTION verdict.
-
----
-
-### UI task with Figma verification
-
-```
-/tsh-implement PROJ-456
-```
-
-When the Engineering Manager detects a UI task, it automatically:
-1. Delegates implementation to the Software Engineer (with Figma context)
-2. Runs `/tsh-review-ui` — compares the running app via Playwright against Figma specs
-3. Fixes differences and re-verifies (up to 5 iterations)
-4. Escalates to you if iteration limit is reached
-
-To run UI verification standalone:
-
-```
 /tsh-review-ui
 ```
 
----
-
-### Full codebase review
-
-```
-/tsh-review-codebase
-```
-
-The Architect analyzes the whole repository for: dead code, duplications, architectural issues, security concerns. Returns a prioritized `code-quality-report.md` (Critical / Important / Nice to Have).
-
----
-
 ### Workshop transcript to Jira backlog
-
-Optional exploration when materials are ambiguous:
 
 ```
 /tsh-explore-materials [paste transcript or attach materials]
-```
-
-Full backlog extraction:
-
-```
 /tsh-analyze-materials [paste transcript or attach file]
 ```
 
-The Business Analyst orchestrator: optionally explores context, drafts an intent brief (Gate 0), cleans the transcript, extracts epics and user stories (Gate 1), runs Lite or Full quality review (Gate 1.5), formats for Jira (Gate 2), verifies Jira after sync, and refreshes the project baseline.
+The Business Analyst orchestrator optionally explores context, drafts an intent brief (Gate 0), cleans the transcript, extracts epics and user stories (Gate 1), runs a Lite or Full quality review (Gate 1.5), formats for Jira (Gate 2), verifies Jira after sync and refreshes the project baseline.
 
-Works with: transcripts, Figma designs, PDF documents, codebase context.
-
----
-
-### Infrastructure audit
+### Infrastructure and cloud costs
 
 ```
 /tsh-audit-infrastructure
+/tsh-analyze-cloud-costs aws default eu-west-1
+/tsh-analyze-cloud-costs gcp my-project us-central1
 ```
 
-For AWS cost analysis:
-
-```
-/tsh-analyze-aws-costs default eu-west-1
-```
-
-For GCP:
-
-```
-/tsh-analyze-gcp-costs my-project us-central1
-```
-
----
-
-### E2E tests
-
-The Engineering Manager delegates to the E2E Engineer automatically when tasks include E2E test coverage. To run standalone:
-
-```
-/tsh-implement Write E2E tests for the login flow using Playwright
-```
-
----
-
-### Onboarding a new team member
-
-```
-/tsh-implement PROJ-123
-```
-
-The Engineering Manager's Context Engineer automatically gathers all context from Jira, Confluence, Figma, and the codebase — within ~5 minutes instead of days of reading.
-
----
-
-### Ask an architectural question
+### Architecture questions, debugging, refactoring, commits
 
 ```
 /tsh-ask Why does the payment module use optimistic locking?
-/tsh-ask Should we split the notifications module into a separate service?
-```
-
-Researches the codebase, evaluates options, and saves the answer as a structured ADR in `specifications/decisions/{topic}.decision.md`.
-
----
-
-### Debug a bug
-
-```
 /tsh-debug Login fails silently when session expires
-/tsh-debug The useCart hook triggers an infinite re-render on mobile
-```
-
-Reproduces → isolates root cause → delegates fix to Software Engineer → verifies with regression tests. Never fixes symptoms — always finds the root cause first.
-
----
-
-### Refactor code structure
-
-```
-/tsh-refactor Extract shared validation logic from all form handlers
-/tsh-refactor Split the UserService class — it has too many responsibilities
-```
-
-Creates an atomic, step-by-step refactoring plan in `specifications/refactoring/`. Each step keeps tests green. Delegates implementation to Software Engineer.
-
----
-
-### Commit changes (Conventional Commits)
-
-```
+/tsh-refactor Split the UserService class, it has too many responsibilities
 /tsh-commit
-/tsh-commit docs: README branding cleanup
 ```
 
-Analyzes `git status` and diffs, drafts a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) message, and shows a proposal. Runs `git add` and `git commit` only after you explicitly approve (or after you edit the message and approve again).
-
----
-
-### Create a new Cursor customization artifact
+### Create a new AI customization
 
 ```
 /tsh-create-custom-agent
 /tsh-create-custom-skill
+/tsh-create-custom-command
 /tsh-create-custom-rules
 ```
-
-The Cursor Orchestrator handles research → design → creation → review automatically.
 
 ---
 
 ## Agents
 
-### Product Ideation
+Subagents are leaf workers (one delegation level). Orchestrators run in the main thread and delegate to them.
 
-| Agent | Purpose |
-|-------|---------|
-| Business Analyst | Orchestrate workshop analysis into Jira-ready epics and user stories via internal BA workers |
+| Role | Kind | Purpose |
+|------|------|---------|
+| `tsh-engineering-manager` | orchestrator | Runs the implement and refactor cycles: research, plan, implement, review |
+| `tsh-business-analyst` | orchestrator | Workshop analysis into Jira-ready epics and user stories via BA workers |
+| `tsh-ai-customization-orchestrator` | orchestrator | Coordinates research, creation and review of customization artifacts |
+| `tsh-context-engineer` | subagent | Gather requirements from Jira, Confluence, Figma and the codebase |
+| `tsh-architect` | subagent | Solution architecture and step-by-step implementation plans |
+| `tsh-software-engineer` | subagent | Implement backend, frontend, APIs and data layers |
+| `tsh-prompt-engineer` | subagent | Design, optimize and audit LLM application prompts |
+| `tsh-devops-engineer` | subagent | Cloud infrastructure, CI/CD, Kubernetes, Terraform |
+| `tsh-e2e-engineer` | subagent | Playwright end-to-end tests |
+| `tsh-code-reviewer` | subagent | Structured code review |
+| `tsh-ui-reviewer` | subagent | Figma vs. Playwright comparison, PASS/FAIL verdict |
+| `tsh-plan-reviewer` | subagent (delegated only) | Validate implementation plans: APPROVED or REVISIONS NEEDED |
+| `tsh-ba-transcript-worker`, `tsh-ba-analysis-worker`, `tsh-ba-extraction-worker`, `tsh-ba-quality-worker`, `tsh-ba-formatting-worker` | subagents (delegated only) | BA phases: transcript, analysis, extraction, quality, Jira formatting |
+| `tsh-ai-customization-researcher`, `tsh-ai-customization-creator`, `tsh-ai-customization-reviewer` | subagents (delegated only) | Research, creation and review for customization tasks |
 
-### Development
+Subagents work in interactive mode by default. When a task starts with `MODE: delegated` they do not ask questions and end with a `STATUS` block for the caller.
 
-| Agent | Purpose |
-|-------|---------|
-| Engineering Manager | Orchestrates the full implement cycle: research → plan → implement → review |
-| Context Engineer | Gather requirements from Jira, Confluence, Figma, and codebase |
-| Architect | Design solution architecture and create step-by-step implementation plan |
-| Software Engineer | Implement backend, frontend, APIs, and data layers |
-| Prompt Engineer | Design, optimize, and audit LLM application prompts |
-| DevOps Engineer | Cloud infrastructure, CI/CD pipelines, Kubernetes, Terraform |
-| E2E Engineer | End-to-end tests with Playwright — Page Object patterns, stable locators |
+## Knowledge skills (41)
 
-### Quality
-
-| Agent | Purpose |
-|-------|---------|
-| Code Reviewer | Structured code review: correctness, security, tests, best practices |
-| UI Reviewer | Single-pass Figma vs. Playwright comparison — PASS/FAIL verdict |
-
-### Cursor Customization
-
-| Agent | Purpose |
-|-------|---------|
-| Cursor Engineer | Create, review, and improve Cursor skills, rules, and commands |
-| Cursor Orchestrator | Coordinate complex multi-phase customization tasks |
-
-### Internal Workers (delegate-only, not for direct `@` use)
-
-| Agent | Purpose |
-|-------|---------|
-| Plan Reviewer (`tsh-plan-reviewer`) | Validate implementation plans — APPROVED or REVISIONS NEEDED |
-| BA workers (5) | Transcript, analysis, extraction, quality, and Jira formatting phases |
-| Cursor workers (3) | Research, artifact creation, and artifact review for customization tasks |
-
----
-
-## Workflow skills (34)
-
-Skills are automatically loaded by agents when relevant to the task. No manual invocation needed.
+Loaded by name by agents when relevant. No manual invocation needed.
 
 | Category | Skills |
 |----------|--------|
-| **Product Ideation** | tsh-transcript-processing, tsh-task-extracting, tsh-task-analysing, tsh-jira-task-formatting, tsh-task-quality-reviewing |
-| **Architecture** | tsh-architecture-designing, tsh-technical-context-discovering, tsh-implementation-gap-analysing |
-| **Backend** | tsh-implementing-backend, tsh-sql-and-database-understanding, tsh-engineering-prompts |
-| **Frontend** | tsh-implementing-frontend, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
-| **Infrastructure** | tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
-| **Quality** | tsh-e2e-testing, tsh-codebase-analysing, tsh-reviewing-frontend (code/UI review processes live under `/tsh-review` and `/tsh-review-ui` references) |
-| **Cursor Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-to-cursor |
+| **Product Ideation** | tsh-processing-transcripts, tsh-extracting-tasks, tsh-analyzing-requirements, tsh-formatting-jira-tasks, tsh-reviewing-task-quality, tsh-guarding-jira-statuses |
+| **Architecture** | tsh-designing-architecture, tsh-discovering-technical-context, tsh-analyzing-implementation-gaps, tsh-analyzing-codebase |
+| **Backend** | tsh-implementing-backend, tsh-designing-databases, tsh-engineering-prompts |
+| **Frontend** | tsh-implementing-frontend, tsh-implementing-react, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
+| **Infrastructure** | tsh-delivering-infrastructure, tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
+| **Quality** | tsh-reviewing-code, tsh-reviewing-plans, tsh-verifying-ui, tsh-writing-e2e-tests, tsh-debugging, tsh-refactoring |
+| **Tooling** | tsh-committing, tsh-using-mcp-servers |
+| **AI Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-customizations |
+
+The orchestrators and the two internal steps (`tsh-implement-task`, `tsh-orchestrate-ui-verification`) are skills as well; they are loaded by commands and are hidden from the `/` menu where the tool supports it.
 
 ---
 
 ## Repository structure
 
 ```
-.cursor/
-├── rules/
-│   └── naming-conventions.mdc    # tsh- prefix enforcement
-├── skills/
-│   ├── agents/                    # 21 agent skill definitions (12 user-facing + 9 internal workers)
-│   ├── workflows/                 # 34 domain workflow skills (agent-invoked; may appear in /)
-│   ├── commands/                  # 17 user-invokable slash commands (+ references/ for backing docs)
-│   └── internal/                  # 11 internal sub-workflow skills
-└── mcp.json                       # MCP server configuration
+src/                        # the only source of truth - edit here
+├── skills/                 # commands, orchestrators, internal steps and knowledge skills
+├── agents/                 # subagents (neutral frontmatter)
+├── partials/               # shared text included into skills and agents
+├── mcp/servers.json        # MCP server definitions
+└── config/targets.json     # model tiers and owned output paths
+scripts/                    # generator, lint, reference checker, installer, migration
+AGENTS.md                   # repository rules (CLAUDE.md imports it)
+
+# Generated by `npm run generate` - committed, never edit by hand
+.agents/skills/tsh-*        # Cursor and Codex skills
+.claude/skills/tsh-*        # Claude Code skills (also read by Cursor)
+.cursor/agents/  .claude/agents/  .codex/agents/
+.cursor/mcp.json  .mcp.json  .codex/config.toml
 ```
 
----
+## Contributing
 
-## Migrating new Copilot-based PRs to Cursor
+1. Edit `src/` (or `scripts/`). Never edit the generated paths.
+2. `npm run generate` renders all native outputs.
+3. `npm run check` verifies drift, content rules and name/link references.
+4. `npm test` runs the unit tests.
 
-This repo was migrated from a GitHub Copilot setup. When a new PR appears in the upstream Copilot repo and you want to bring those changes here, use the built-in migration skill:
+Commit `src/` changes together with their regenerated outputs. The rules are in [AGENTS.md](AGENTS.md).
+
+## Migrating Copilot customizations
+
+If you have GitHub Copilot customizations (`.github/agents`, `.github/prompts`, `.github/skills`, `.github/instructions`) to bring over, load the `tsh-migrating-copilot-customizations` skill, for example:
 
 ```
-/tsh-implement Migrate changes from PR #<number> to the Cursor setup
+/tsh-implement Migrate the Copilot customizations in this repository using tsh-migrating-copilot-customizations
 ```
-
-The `tsh-migrating-copilot-to-cursor` workflow skill is loaded automatically and provides the full mapping:
-- `.github/agents/` → `.cursor/skills/agents/` (agent skills)
-- `.github/prompts/` → `.cursor/skills/commands/` (slash commands with `disable-model-invocation: true`)
-- `.github/internal-prompts/` → `.cursor/skills/internal/` (internal skills)
-- `.github/skills/` → `.cursor/skills/workflows/` (workflow skills)
-- `.github/instructions/` → `.cursor/rules/` (`.mdc` rules)
-- `model:` frontmatter → `> Recommended model:` in body
-- Copilot-specific tools (`vscode/runCommand`, `vscode/askQuestions`) → stripped or replaced
 
 ---
 
