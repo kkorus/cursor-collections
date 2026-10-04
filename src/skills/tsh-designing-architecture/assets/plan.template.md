@@ -19,11 +19,12 @@ _Template navigation only: omit this section from the generated document._
 
 | Field            | Value                   |
 | ---------------- | ----------------------- |
-| Jira ID          | <jira-id>               |
+| Task ID          | <jira-id-or-task-slug>  |
 | Title            | <task-title>            |
 | Description      | <task-description>      |
 | Priority         | <priority>              |
 | Related Research | <link-to-research-file> |
+| Behavior-preserving | <yes for refactoring plans; omit otherwise> |
 
 ## Proposed Solution
 
@@ -33,11 +34,11 @@ _Template navigation only: omit this section from the generated document._
 
 ## Current Implementation Analysis
 
-### Already Implemented
+### To Be Created
 
-List of existing components, functions, utilities that will be reused (with file paths):
+List of new components, functions, utilities that need to be built from scratch:
 
-- <component/function> - `<file-path>` - <brief description>
+- <component/function> - <brief description of what it does>
 
 ### To Be Modified
 
@@ -45,11 +46,11 @@ List of existing code that needs changes or extensions (with file paths and desc
 
 - <component/function> - `<file-path>` - <what needs to change>
 
-### To Be Created
+### To Be Reused
 
-List of new components, functions, utilities that need to be built from scratch:
+List of existing components, functions, utilities that will be reused as they are (with file paths):
 
-- <component/function> - <brief description of what it does>
+- <component/function> - `<file-path>` - <brief description>
 
 ## Open Questions
 
@@ -63,7 +64,7 @@ Project conventions, coding standards, and patterns discovered during planning. 
 
 ### Project Instructions
 
-- <summary of relevant `.cursor/rules/*.mdc` rules — file path + key rules>
+- <summary of the relevant project instructions and rule files (AGENTS.md, CLAUDE.md, scoped rules) — file path + key rules>
 
 ### Architecture & Patterns
 
@@ -129,13 +130,13 @@ Project conventions, coding standards, and patterns discovered during planning. 
 
 #### Task 2.2 - [REUSE] UI Verification of <ui-component-name> by the `tsh-ui-reviewer` subagent
 
-**Description**: Run the `tsh-ui-reviewer` subagent via the `tsh-review-ui` skill to verify <ui-component-name> against Figma design. Pass the Figma URL and dev server URL. If verification fails, delegate fix to `tsh-software-engineer` and re-verify (max 5 iterations per component).
+**Description**: Run the `tsh-ui-reviewer` subagent (it follows the `tsh-verifying-ui` skill) to verify <ui-component-name> against the Figma design. Pass the Figma URL and the dev server URL. The engineering manager runs the verify-fix loop of the `tsh-orchestrate-ui-verification` skill: if verification fails, the fix goes to `tsh-software-engineer` and the component is verified again.
 
 **Figma URL**: <figma-url-for-this-component>
 
 **Definition of Done**:
 
-- [ ] UI verification passes or escalated to user after 5 iterations
+- [ ] UI verification passes, or the mismatch is escalated to the user by the verify-fix loop
 - [ ] Verification report documented in Changelog
 
 ### Phase 3: <phase-name>
