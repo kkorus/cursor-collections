@@ -59,6 +59,6 @@ Present each imported task to the user for review using one question per task. H
 
 **Step I-6: Save to specifications directory**
 
-Save the final file to `specifications/<project-or-topic>/jira-tasks.md`.
+Save the final file to `<specs>/<project-or-topic>/jira-tasks.md`. `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).
 
 After import, the user can modify the local file. For each change, the agent asks whether to push it to Jira immediately (using the Per-Change Modification Flow in the skill). The user can also batch-push all local changes later using the standard push flow (Step 8 and Step 9 of the skill).

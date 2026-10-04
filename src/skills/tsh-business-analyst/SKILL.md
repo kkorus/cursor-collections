@@ -32,27 +32,28 @@ Each worker runs its skill in delegated mode. Delegate with the prompt template 
 
 A worker result is handled by its status:
 
-- `DONE`: merge the result and write the artifact yourself.
-- `NEEDS_INPUT`: ask the user the worker's questions at the matching gate, then re-delegate with `PRIOR_OUTPUT` and `USER_ANSWERS`.
+- `DONE`: merge the result and write the artifact yourself. A `DONE` reply may also carry `QUESTIONS` (for example missing metadata or uncertain fields, where the worker finished the work with placeholders). Do not drop them and do not re-delegate: ask them at the matching gate (Gate 0 for the intent brief and analysis, Gate 1 for extraction, Gate 1.5 for quality review, Gate 2 for formatting) and apply the answers yourself when you merge.
+- `NEEDS_INPUT`: the worker could not continue. Ask the user the worker's questions at the matching gate, then re-delegate with `PRIOR_OUTPUT` and `USER_ANSWERS`. The workers are read-only, so their partial result lives in the reply body and not in a file: pass the complete previous reply (body and status block) as `PRIOR_OUTPUT`.
 - `BLOCKED`: report the blocker to the user and ask whether to retry, skip the chunk or stop.
 
 ## Workflow
 
-Choose the entry point from the input. Workshop materials start at step 1. Existing Jira issue keys or a project key start with the Import Mode of the `tsh-formatting-jira-tasks` skill (you fetch the issues) and continue at step 7. If the user wants exploration first, or the materials are too ambiguous to extract from, run Explore Mode: synthesize `workshop-context-summary.md` (step 2) and stop with a readiness recommendation. Create no epics or stories until the user asks to continue. `workshop-context-summary.md` has at least these sections: workshop or topic context, actors and business entities, overlap with the existing backlog or baseline, likely epic candidates, key ambiguities, risks and open questions, and the recommendation on readiness for the intent brief and extraction.
+Choose the entry point from the input. Workshop materials start at step 1. Existing Jira issue keys or a project key start with the Import Mode of the `tsh-formatting-jira-tasks` skill (you fetch the issues), which produces `jira-tasks.md`. Import has no `extracted-tasks.md`, so steps 1-9 and the quality review do not apply. Iterate on `jira-tasks.md` with the Per-Change Modification Flow of that skill, and push batches via Gate 2 and steps 12-13. Run a quality review only if the user asks for it and you first convert the approved tasks into `extracted-tasks.md`. If the user wants exploration first, or the materials are too ambiguous to extract from, run Explore Mode: synthesize `workshop-context-summary.md` (step 2) and stop with a readiness recommendation. Create no epics or stories until the user asks to continue. `workshop-context-summary.md` has at least these sections: workshop or topic context, actors and business entities, overlap with the existing backlog or baseline, likely epic candidates, key ambiguities, risks and open questions, and the recommendation on readiness for the intent brief and extraction.
 
 | Step | What happens | Owner |
 |---|---|---|
 | 1 | Clean the raw transcript (`tsh-processing-transcripts`), save `cleaned-transcript.md` | worker, you save |
-| 2 | Analyze Figma, PDFs, codebase and the project baseline (`specifications/projects/<project-name>/task-baseline.md`) | analysis worker |
-| 3 | Draft `intent-brief.md` (`tsh-extracting-tasks`) | extraction worker, you save |
-| 4 | **Gate 0**: the user approves scope, exclusions and candidate epics | you |
-| 5 | Extract epics and stories into `extracted-tasks.md` | extraction worker(s), you save |
-| 6 | **Gate 1**: the user approves the epic and story breakdown | you |
-| 7 | Quality review in Lite or Full mode (`tsh-reviewing-task-quality`); it runs automatically after Gate 1 | quality worker |
-| 8 | **Gate 1.5**: the user accepts or rejects each suggestion; you apply the accepted ones and save `quality-review.md` | you |
+| 2 | Analyze Figma, PDFs, codebase and the project baseline (`<specs>/projects/<project-name>/task-baseline.md`); in Explore Mode save `workshop-context-summary.md` | analysis worker, you save |
+| 3 | Draft `intent-brief.md` (`tsh-extracting-tasks`, Steps 1-2) | extraction worker, you save |
+| 4 | **Gate 0**: the user approves scope, exclusions and candidate epics. Follow Step 3 of `tsh-extracting-tasks` | you |
+| 5a | Identify the epics (Step 4 of `tsh-extracting-tasks`: 3-10 epics, business capabilities) | you |
+| 5b | Extract the stories of each epic into `extracted-tasks.md` (Steps 5-8 of `tsh-extracting-tasks`) | extraction worker(s), you save |
+| 6 | **Gate 1**: the user approves the epic and story breakdown. Follow Steps 9-10 of `tsh-extracting-tasks` (one question per story, then a final "did I miss anything") | you |
+| 7 | Quality review (`tsh-reviewing-task-quality`); it runs automatically after Gate 1. You choose the mode (Lite for 3 or fewer epics and 14 or fewer stories, Full otherwise or on request) and name it in the task | quality worker |
+| 8 | **Gate 1.5**: the user accepts or rejects each suggestion; you apply the accepted ones and save `quality-review.md`. Follow Steps 6-8 of `tsh-reviewing-task-quality` (suggestion order, Accept/Reject format, apply rules per action type) | you |
 | 9 | Summarize the changes to `extracted-tasks.md` and get confirmation | you |
 | 10 | Format for Jira (`tsh-formatting-jira-tasks`), save `jira-tasks.md` | formatting worker, you save |
-| 11 | **Gate 2**: the user approves the final tasks and the target Jira project | you |
+| 11 | **Gate 2**: the user approves the final tasks and the target Jira project. Follow Steps 6, 8 and 9 of `tsh-formatting-jira-tasks` (review, push approval, sync summary) | you |
 | 12 | Push to Jira (rules below), then read the issues back and verify them | you |
 | 13 | Archive the session and refresh `task-baseline.md` | you |
 
@@ -61,7 +62,8 @@ Rules for the gates:
 - No data reaches Jira without explicit approval at every gate. Gate 0 is mandatory whenever an intent brief is created.
 - Skip the transcript step when there is no raw transcript. Keep every gate.
 - After an import or the first creation, a change to a single task triggers "Push to Jira now?". Batch pushes follow Gate 2.
-- All artifacts go to `specifications/<workshop-name>/` (kebab-case topic name), except the project baseline and archived sessions under `specifications/projects/<project-name>/`.
+- All artifacts go to `<specs>/<workshop-name>/` (kebab-case topic name), except the project baseline and archived sessions under `<specs>/projects/<project-name>/`. `<specs>` is the project's specifications location (default `specifications/`), resolved by the "Project output locations" step of `tsh-discovering-technical-context`. Resolve it once and pass the full paths to the workers.
+- Load `tsh-extracting-tasks`, `tsh-reviewing-task-quality` and `tsh-formatting-jira-tasks` yourself as well: the steps that are "skipped" for the workers in their delegated mode sections (user gates, apply rules, saving, push) are yours.
 
 ## Protected statuses
 

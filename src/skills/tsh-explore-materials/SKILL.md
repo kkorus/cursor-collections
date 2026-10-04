@@ -15,4 +15,4 @@ Explore Mode ends with a business context summary and a readiness recommendation
 
 ## Output folder
 
-Save the result as `specifications/<topic>/workshop-context-summary.md`, where `<topic>` is the workshop topic in kebab-case.
+Save the result as `<specs>/<topic>/workshop-context-summary.md`, where `<topic>` is the workshop topic in kebab-case and `<specs>` is the project's specifications location (default `specifications/`, resolved by the "Project output locations" step of `tsh-discovering-technical-context`).
