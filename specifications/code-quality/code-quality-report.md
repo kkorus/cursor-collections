@@ -1,6 +1,6 @@
 # Code Quality Report - cursor-collections
 
-> **Remediation:** Findings from this report were addressed on 2026-06-05 (reference integrity, docs sync, installation symlinks, Plan Reviewer naming, MCP verification, ADR notes, `scripts/count-skills.sh`).
+> **Remediation:** Findings from this report were addressed on 2026-06-05 (reference integrity, docs sync, installation symlinks, Plan Reviewer naming, MCP verification, ADR notes, a skill-count script, since removed).
 
 ## Overview
 
@@ -162,7 +162,7 @@ User entry points          Orchestrators              Workers / Internal        
 
 - Adding new agents/skills works well (frontmatter conventions enforced).
 - Risk grows with **manual doc mirroring** and **orchestration duplication** — each new flow (UI, infra) tends to copy steps into EM, commands, and internal skills.
-- Recommendation: introduce a lightweight `scripts/count-skills.sh` and a CI check that greps for known-bad patterns (`tsh-creating-instructions`, `/tsh-implement-terraform`, `TheSoftwareHouse/cursor-collections`, `tsh-architect-reviewer` in `.cursor/`).
+- Recommendation: introduce a lightweight skill-count script and a CI check that greps for known-bad patterns (`tsh-creating-instructions`, `/tsh-implement-terraform`, `TheSoftwareHouse/cursor-collections`, `tsh-architect-reviewer` in `.cursor/`).
 
 ---
 

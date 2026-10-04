@@ -119,6 +119,14 @@ test('a baselined finding is a warning; --update-baseline removes fixed entries'
   assert.ok(lines.some((l) => l.startsWith('warning:') && l.includes('tsh-nope (baselined)')));
 });
 
+test('--write-baseline records unresolved names and the result then passes', () => {
+  const root = makeRoot(withBody('\nLoad tsh-nope.\n')(sourceFiles()));
+  assert.equal(checkRefs(root).code, 1);
+  assert.equal(checkRefs(root, { writeBaseline: true }).code, 0);
+  assert.ok(readFileSync(join(root, BASELINE), 'utf8').includes('tsh-nope'));
+  assert.equal(checkRefs(root).code, 0);
+});
+
 test('CLI: --docs and exit codes', () => {
   const root = makeRoot(sourceFiles({ 'AGENTS.md': 'See tsh-ghost.\n' }));
   const run = (...args) => spawnSync(process.execPath, [join(REPO_ROOT, 'scripts/check-refs.mjs'), '--root', root, ...args], { encoding: 'utf8' });

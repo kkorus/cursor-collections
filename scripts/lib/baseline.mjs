@@ -1,7 +1,8 @@
 // Shrinking baseline shared by lint.mjs and check-refs.mjs (plan Task 1.11, M5, N5).
 // A finding is { rule, file, key, line?, message? }. Identical { rule, file, key } findings collapse into one
 // entry with a count. Line numbers are only printed, never stored.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 const id = (e) => JSON.stringify([e.rule, e.file, e.key]);
 
@@ -41,13 +42,20 @@ export function writeBaseline(path, entries) {
  * Compares findings with the baseline.
  * - not baselined, count above baseline, stale entry, count below baseline ("baseline can shrink"): error
  * - count equal to the baseline: warning
+ * With `writeInitial` the baseline is first (re)written from the current findings (never-baselined rules excluded).
  * With `updateBaseline`, stale entries are removed and counts are lowered; entries are never added or raised.
  *
  * @param {{ findings: object[], baselineFile: string, updateBaseline?: boolean,
  *   neverBaselined?: string[], warnOnly?: string[] }} options
  * @returns {{ code: number, lines: string[] }}
  */
-export function applyBaseline({ findings, baselineFile, updateBaseline = false, neverBaselined = [], warnOnly = [] }) {
+export function applyBaseline({ findings, baselineFile, updateBaseline = false, writeInitial = false, neverBaselined = [], warnOnly = [] }) {
+  if (writeInitial) {
+    // Initial recording: replaces the file with every current finding except never-baselined and warn-only rules.
+    const recorded = aggregate(findings).filter((g) => !neverBaselined.includes(g.rule) && !warnOnly.includes(g.rule));
+    mkdirSync(dirname(baselineFile), { recursive: true });
+    writeBaseline(baselineFile, recorded);
+  }
   const baseline = readBaseline(baselineFile);
   const entries = new Map((baseline ?? []).map((e) => [id(e), { ...e }]));
   const errors = [];

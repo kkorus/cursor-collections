@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Checks name and link references (plan Task 1.12). Findings may be baselined in scripts/baseline/refs.jsonl.
 // Scope A (always): src/. Scope B (--docs): README.md, AGENTS.md, CHANGELOG.md (latest entry), website/docs/**.
-// Usage: node scripts/check-refs.mjs [--root <dir>] [--docs] [--update-baseline]
+// Usage: node scripts/check-refs.mjs [--root <dir>] [--docs] [--update-baseline | --write-baseline]
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, posix, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -146,7 +146,7 @@ function walkDocs(root, rel) {
 }
 
 /** @returns {{ code: number, lines: string[] }} */
-export function checkRefs(root, { docs = false, updateBaseline = false } = {}) {
+export function checkRefs(root, { docs = false, updateBaseline = false, writeBaseline = false } = {}) {
   let model;
   try {
     model = loadSource(root);
@@ -158,17 +158,19 @@ export function checkRefs(root, { docs = false, updateBaseline = false } = {}) {
     findings,
     baselineFile: join(root, 'scripts', 'baseline', 'refs.jsonl'),
     updateBaseline,
+    writeInitial: writeBaseline,
     neverBaselined: NEVER_BASELINED,
   });
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { values } = parseArgs({
-    options: { root: { type: 'string' }, docs: { type: 'boolean' }, 'update-baseline': { type: 'boolean' } },
+    options: { root: { type: 'string' }, docs: { type: 'boolean' }, 'update-baseline': { type: 'boolean' }, 'write-baseline': { type: 'boolean' } },
   });
   const { code, lines } = checkRefs(resolve(values.root ?? REPO_ROOT), {
     docs: values.docs,
     updateBaseline: values['update-baseline'],
+    writeBaseline: values['write-baseline'],
   });
   for (const line of lines) console.log(line);
   process.exitCode = code;

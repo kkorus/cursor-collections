@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Lints src/ (plan Task 1.11). Content findings may be baselined in scripts/baseline/lint.jsonl.
-// Usage: node scripts/lint.mjs [--root <dir>] [--update-baseline]
+// Usage: node scripts/lint.mjs [--root <dir>] [--update-baseline | --write-baseline]
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, posix, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -158,7 +158,7 @@ function dotToolDirs(abs, rel) {
 }
 
 /** @returns {{ code: number, lines: string[] }} */
-export function lint(root, { updateBaseline = false } = {}) {
+export function lint(root, { updateBaseline = false, writeBaseline = false } = {}) {
   let model;
   try {
     model = loadSource(root);
@@ -170,6 +170,7 @@ export function lint(root, { updateBaseline = false } = {}) {
     findings,
     baselineFile: join(root, 'scripts', 'baseline', 'lint.jsonl'),
     updateBaseline,
+    writeInitial: writeBaseline,
     neverBaselined: STRUCTURAL_RULES,
     warnOnly: WARN_ONLY_RULES,
   });
@@ -177,8 +178,11 @@ export function lint(root, { updateBaseline = false } = {}) {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { values } = parseArgs({ options: { root: { type: 'string' }, 'update-baseline': { type: 'boolean' } } });
-  const { code, lines } = lint(resolve(values.root ?? REPO_ROOT), { updateBaseline: values['update-baseline'] });
+  const { values } = parseArgs({ options: { root: { type: 'string' }, 'update-baseline': { type: 'boolean' }, 'write-baseline': { type: 'boolean' } } });
+  const { code, lines } = lint(resolve(values.root ?? REPO_ROOT), {
+    updateBaseline: values['update-baseline'],
+    writeBaseline: values['write-baseline'],
+  });
   for (const line of lines) console.log(line);
   process.exitCode = code;
 }

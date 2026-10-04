@@ -134,6 +134,19 @@ test('--update-baseline lowers counts and removes stale entries, but never adds 
   assert.equal(lint(root).code, 0);
 });
 
+test('--write-baseline records content findings (creating the directory) and leaves structural findings as errors', () => {
+  const files = withBody(SKILL, VIOLATION)(sourceFiles());
+  const root = makeRoot(files);
+  const { code } = lint(root, { writeBaseline: true });
+  assert.equal(code, 0);
+  assert.equal(readFileSync(join(root, BASELINE), 'utf8'), `${entry('@tsh-', 2)}\n${entry('Dev Mode', 1)}\n`);
+  assert.equal(lint(root).code, 0);
+  // A structural finding (schema) is never recorded and stays an error.
+  const bad = makeRoot(edit(SKILL, { tools: ['x'] })(withBody(SKILL, VIOLATION)(sourceFiles())));
+  assert.equal(lint(bad, { writeBaseline: true }).code, 1);
+  assert.ok(!readFileSync(join(bad, BASELINE), 'utf8').includes('"schema"'));
+});
+
 test('inserting unrelated lines above a baselined finding keeps its entry valid (no line numbers in keys)', () => {
   const baseline = `${entry('@tsh-', 2)}\n${entry('Dev Mode', 1)}\n`;
   assert.equal(lint(rootWith(VIOLATION, baseline)).code, 0);

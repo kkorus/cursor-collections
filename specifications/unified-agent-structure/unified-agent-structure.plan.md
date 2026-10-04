@@ -2451,3 +2451,10 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
   - Extra schema checks were added.
   - check-refs enables the docs scope with `--docs`; the migration table is marked with `<!-- migration-table -->`.
 - **Carry-over to Task 2.1:** the BA workers need `mcp__atlassian` via `targets.claude.disallowedTools`.
+
+### 2026-10-04 - Phase 2 status
+
+- **Done:** Tasks 2.1-2.8. `src/` holds 18 agents and 65 skills, the native trees are generated and committed (264 files), `.cursor/skills` and `.cursor/rules` are gone, `AGENTS.md` + `CLAUDE.md` (`@AGENTS.md`) exist, the installer is tested. `npm run check` and `npm test` (157) are green; the lint baseline has 212 entries and the refs baseline is empty.
+- **Deviation:** added `--write-baseline` (initial recording) to lint and check-refs, since `--update-baseline` only shrinks.
+- **Decisions:** `preload-skills` pointing at Phase 3 skills (`tsh-delivering-infrastructure`, `tsh-reviewing-plans`) are not emitted until those skills exist. `tsh-cursor-engineer` is in `deleted`, not `nowSubagents`.
+- **Open:** `check-refs --docs` reports about 233 old names in `README.md` and `website/docs` (Phase 4). Unverified Codex/Claude user-scope MCP paths in the installer messages (smoke test 5.3). Cursor spikes Q2 (Output warnings) and Codex spike 1.3 still open.
