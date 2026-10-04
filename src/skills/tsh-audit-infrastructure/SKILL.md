@@ -14,7 +14,7 @@ Audit the project's infrastructure for security gaps, cost waste indicators and 
 ## Required Skills
 
 - `tsh-discovering-technical-context` - project conventions, IaC dialect and existing infrastructure
-- `tsh-delivering-infrastructure` - the audit report template (`assets/infrastructure-audit-report.template.md`) and the severity scale
+- `tsh-delivering-infrastructure` - its audit report template and the severity scale
 - `tsh-analyzing-codebase` - reviewing IaC files, CI/CD configuration and documentation coverage
 - `tsh-optimizing-cloud-cost` - unused resources, rightsizing and reservation findings
 - `tsh-managing-secrets` - secrets audit criteria and exposure risk
