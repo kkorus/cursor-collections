@@ -10,7 +10,7 @@
     "check": "node scripts/generate.mjs --check && node scripts/lint.mjs && node scripts/check-refs.mjs --docs",
     "lint": "node scripts/lint.mjs",
     "refs": "node scripts/check-refs.mjs",
-    "test": "node --test scripts/test/"
+    "test": "node --test \"scripts/test/*.test.mjs\""
   },
   "dependencies": {
     "smol-toml": "^1.9.0",

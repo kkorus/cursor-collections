@@ -106,6 +106,18 @@ function readManifest(ctx, dir) {
   try { return JSON.parse(ctx.fs.readFileSync(f, 'utf8')); } catch { return null; }
 }
 
+/** Copy a file or directory tree, replacing every symlink with the content it points to.
+ *  Not fs.cpSync({ dereference }): on Node 22 it leaves symlinked files inside directories as links. */
+export function copyDereferenced(fsx, from, to) {
+  if (fsx.statSync(from).isDirectory()) {
+    fsx.mkdirSync(to, { recursive: true });
+    for (const name of fsx.readdirSync(from)) copyDereferenced(fsx, path.join(from, name), path.join(to, name));
+  } else {
+    fsx.mkdirSync(path.dirname(to), { recursive: true });
+    fsx.copyFileSync(from, to);
+  }
+}
+
 /** Move to the backup dir. rename, with copy + remove fallback on EXDEV (N6). */
 export function moveEntry(fsx, from, to) {
   fsx.mkdirSync(path.dirname(to), { recursive: true });
@@ -256,7 +268,7 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
       if (!ctx.dry) ctx.fs.symlinkSync(src, dest, kind === 'dir' ? 'dir' : 'file');
     } else {
       ctx.log(`${ctx.dry ? 'would copy' : 'copied'} ${src} -> ${dest}`);
-      if (!ctx.dry) ctx.fs.cpSync(src, dest, { recursive: true, dereference: true });
+      if (!ctx.dry) copyDereferenced(ctx.fs, src, dest);
     }
     result.installed.push(n);
   }
