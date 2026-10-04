@@ -6,7 +6,7 @@ metadata:
   short-description: Reusable Terraform modules for AWS, Azure and GCP
 ---
 
-# Terraform Module Library
+# Implementing Terraform Modules
 
 Production-ready Terraform module patterns for AWS, Azure, and GCP infrastructure.
 
@@ -46,8 +46,9 @@ module-name/
 │   └── complete/
 │       ├── main.tf
 │       └── variables.tf
-└── tests/           # Terratest files
-    └── module_test.go
+└── tests/           # Native terraform test files (and optional Terratest)
+    ├── unit.tftest.hcl
+    └── integration_test.go   # optional
 ```
 
 ## AWS VPC Module Example
@@ -171,14 +172,14 @@ output "vpc_cidr_block" {
 ## Best Practices
 
 1. **Use semantic versioning** for modules
-2. **Pin provider versions** in versions.tf — use `aws ~> 6.0`, `azurerm ~> 4.0`, `google ~> 5.0`
+2. **Pin versions** in `versions.tf`: set `required_version` and a pessimistic constraint on the current major version of each provider (`~> <major>.<minor>`), and commit `.terraform.lock.hcl`. Look up the current provider versions with `context7` or the registry, and never copy a version number from an old module. Modules declare a minimum provider version. Root modules pin tighter.
 3. **Document all variables** with descriptions
 4. **Provide examples** in examples/ directory
 5. **Use validation blocks** for input validation
 6. **Output important attributes** for module composition
 7. **Use locals** for computed values
 8. **Implement conditional resources** with count/for_each
-9. **Test modules** with Terratest
+9. **Test modules** with `terraform test` (see Testing)
 10. **Tag all resources** consistently
 
 ## Reference Files
@@ -186,22 +187,55 @@ output "vpc_cidr_block" {
 - `references/aws-modules.md` - AWS module patterns
 - `references/azure-modules.md` - Azure module patterns
 - `references/gcp-modules.md` - GCP module patterns
+- `references/ci-pipelines.md` - Terraform and Terragrunt CI/CD pipelines, remote state, scanning and the IaC checklist
 
 ## Testing
 
-Use **Terratest** (Go) to test Terraform modules. Every module must include:
+Use the native `terraform test` command (Terraform 1.6 and newer, OpenTofu has an equivalent) for unit tests, and add Terratest only for integration tests that need real infrastructure.
 
-- `examples/complete/` — a root module that calls the module under test with realistic values and re-exports its outputs
-- `tests/module_test.go` — Go test file that runs `InitAndApply`, reads outputs, asserts expected values, and always defers `Destroy`
+**Unit tests with `mock_provider`** (Terraform 1.7 and newer) run without cloud credentials, because the provider is replaced by a mock:
 
-Apply the following rules when writing tests:
-- Always call `t.Parallel()`
-- Always wrap options with `terraform.WithDefaultRetryableErrors`
-- Always use `runtime.Caller(0)` to resolve `examples/complete/` path relative to the test file — never use hardcoded relative paths
-- Always use `single_nat_gateway = true` (or equivalent cost-reducing flags) in test examples
-- Provide a **plan-only** variant of each test (using `InitAndPlanAndShowWithStruct`) for fast PR validation that requires no AWS credentials
-- Use a dedicated AWS test account — never run against production
-- Set `-timeout 30m` in CI to avoid hanging runs
+```hcl
+# tests/unit.tftest.hcl
+mock_provider "aws" {}
+
+variables {
+  name                 = "test"
+  cidr_block           = "10.0.0.0/16"
+  availability_zones   = ["eu-west-1a", "eu-west-1b"]
+  private_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]
+}
+
+run "creates_private_subnets" {
+  command = plan
+
+  assert {
+    condition     = length(aws_subnet.private) == 2
+    error_message = "Expected one private subnet per CIDR."
+  }
+}
+
+run "rejects_invalid_cidr" {
+  command = plan
+
+  variables {
+    cidr_block = "not-a-cidr"
+  }
+
+  expect_failures = [var.cidr_block]
+}
+```
+
+Rules:
+- Every module has `tests/*.tftest.hcl` with `mock_provider` runs that check resource counts, naming, tags and variable validation.
+- A plain `command = plan` run against the real provider still needs credentials, because the provider configures itself and data sources are read. Only `mock_provider` (or `override_data`) removes that need.
+- Keep `examples/complete/` as a root module that calls the module with realistic values. It also serves as the target of integration tests.
+
+**Integration tests (optional)** with Terratest (Go) or a `command = apply` run:
+- Use a dedicated test account. Never run against production.
+- Use the cost-reducing settings the module exposes (for example a single NAT gateway) in the example.
+- With Terratest: call `t.Parallel()`, wrap options with `terraform.WithDefaultRetryableErrors`, resolve the example path with `runtime.Caller(0)`, and always defer `Destroy`.
+- Set a timeout (for example `-timeout 30m`) in CI to avoid hanging runs.
 
 ## Terraform vs Terragrunt Decision
 
@@ -212,10 +246,12 @@ Use **plain Terraform** when:
 
 Use **Terragrunt** when:
 - 4+ environments or multi-region deployments
-- Monorepo with many independent stacks (need `run-all`, dependency orchestration)
+- Monorepo with many independent stacks (need `terragrunt run --all`, dependency orchestration)
 - Team needs strict environment parity via inheritance
 - Multi-account AWS (landing zone pattern)
 - Greenfield with expected growth
+
+Current Terragrunt versions use `terragrunt run --all <command>`. The older `run-all` form is deprecated, so check the installed version. Verify flags with `context7`.
 
 **Terragrunt Golden Path structure:**
 ```
@@ -235,6 +271,10 @@ infrastructure/
     └── ...
 ```
 
+## OpenTofu
+
+OpenTofu is a drop-in alternative for Terraform. Modules written to the patterns above work with both, including `tofu test` and S3 `use_lockfile`. Check which CLI the project uses (`.terraform-version`, `.opentofu-version`, CI configuration) and use its command name. Do not switch tools without an explicit decision.
+
 ## Guardrails
 
 - Always run `terraform plan` before any apply, and apply the saved plan.
@@ -251,3 +291,6 @@ End an implementation with the summary in `assets/terraform-summary.template.md`
 
 - `tsh-designing-multi-cloud-architecture` - For architectural decisions
 - `tsh-optimizing-cloud-cost` - For cost-effective designs
+- `tsh-implementing-ci-cd` - For general pipeline design
+- `tsh-managing-secrets` - For credentials and OIDC in pipelines
+- `tsh-delivering-infrastructure` - For skill routing and architect escalation
