@@ -108,7 +108,7 @@ Component composition (`children`, render props, compound components, slots), th
 | `useMemo` | An expensive calculation, or a value whose identity matters to a memoized child or another hook's dependency list |
 | `useCallback` | A function is passed to a memoized child or is a hook dependency |
 | `useTransition` / `useDeferredValue` | Keeping input responsive while an expensive update renders |
-| `React.lazy` + `Suspense` | Route-level and heavy component code splitting |
+| `React.lazy` + `Suspense` | Route-level and heavy component code splitting; with named exports use `lazy(() => import('./Heavy').then(m => ({ default: m.Heavy })))` |
 
 **React Compiler.** The React Compiler is a build-time tool that automatically memoizes components and hooks that follow the Rules of React. In a project that has adopted it:
 

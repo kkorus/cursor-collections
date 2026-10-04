@@ -252,7 +252,7 @@ Query optimisation process:
 EXPLAIN SELECT * FROM orders WHERE customer_id = 42;
 
 -- Key MySQL EXPLAIN columns:
--- type: ALL (full scan) → index → range → ref → eq_ref → const → system (best to worst)
+-- type: ALL (full scan) → index → range → ref → eq_ref → const → system (worst to best)
 -- possible_keys: indexes the optimiser considered
 -- key: index actually used
 -- rows: estimated rows scanned

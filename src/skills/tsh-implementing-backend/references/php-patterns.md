@@ -116,7 +116,7 @@ class UsersControllerTest extends TestCase
 - Symfony: Configure channels in `config/packages/monolog.yaml`.
 - Laravel: Configure channels in `config/logging.php`.
 - Use structured JSON logging for production (`JsonFormatter`).
-- Use fingerscrossed handler (Symfony) to buffer logs and only flush on errors.
+- Use the `fingers_crossed` handler (Monolog `FingersCrossedHandler`) to buffer logs and only flush on errors.
 
 ## ORM & Database
 
@@ -198,7 +198,8 @@ class User extends Model
 # Build stage
 FROM php:<current-supported>-fpm-alpine AS builder
 WORKDIR /app
-RUN apk add --no-cache $PHPIZE_DEPS \
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN apk add --no-cache $PHPIZE_DEPS postgresql-dev \
     && docker-php-ext-install pdo pdo_pgsql opcache
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
@@ -208,8 +209,10 @@ RUN composer dump-autoload --optimize
 # Production stage
 FROM php:<current-supported>-fpm-alpine
 WORKDIR /app
-RUN apk add --no-cache \
-    && docker-php-ext-install pdo pdo_pgsql opcache
+RUN apk add --no-cache postgresql-dev \
+    && docker-php-ext-install pdo pdo_pgsql opcache \
+    && apk del postgresql-dev \
+    && apk add --no-cache libpq
 COPY --from=builder /app /app
 RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001 -G appgroup
 USER appuser
