@@ -4,6 +4,15 @@ This document defines the expected structure and fields for Jira epics and stori
 
 ---
 
+## Contents
+
+_Template navigation only: omit this section from the generated document._
+
+- [Epic Template](#epic-template)
+- [Story Template](#story-template)
+- [Formatting Guidelines](#formatting-guidelines)
+- [Example: Fully Populated Epic with Stories](#example-fully-populated-epic-with-stories)
+
 ## Epic Template
 
 ### Fields

@@ -1,6 +1,8 @@
 ---
 name: tsh-analyzing-codebase
-description: Analyse the codebase of the system. Look for dependencies. Understand how the business logic is implemented. Look for duplications.
+description: "Analyzes the codebase of a system: its dependencies, how the business logic is implemented, and where code is duplicated. Use when onboarding to an unfamiliar repository, mapping a system before a change, or producing a codebase analysis document."
+metadata:
+  short-description: "Analyze a codebase: dependencies, business logic, duplications"
 ---
 <!-- Generated from src/skills/tsh-analyzing-codebase/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
@@ -130,3 +132,9 @@ When this skill is invoked by another prompt or workflow that defines its own re
 
 For standalone reports following `assets/codebase-analysis.template.md`, don't add or remove any sections from the template. Follow the structure and naming conventions strictly to ensure clarity and consistency.
 For monorepo repositories, duplicate the relevant sections (Backend Analysis, Frontend Analysis, etc.) per app/package when they differ significantly, and clearly label each with the app/package name.
+
+## Connected Skills
+
+- `tsh-discovering-technical-context` — for the project conventions and patterns the analysis should respect
+- `tsh-analyzing-implementation-gaps` — for comparing a plan with the analyzed current state
+- `tsh-designing-architecture` — for turning analysis findings into a technical design

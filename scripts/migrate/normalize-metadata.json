@@ -1,0 +1,157 @@
+{
+  "shortDescriptions": {
+    "tsh-ai-customization-orchestrator": "Orchestrate multi-step AI customization work: research, create, review",
+    "tsh-analyze-cloud-costs": "Audit AWS cost optimization and tagging compliance",
+    "tsh-analyze-gcp-costs": "Audit GCP cost optimization and labeling compliance",
+    "tsh-analyze-materials": "Turn workshop materials into Jira-ready epics and stories",
+    "tsh-analyzing-codebase": "Analyze a codebase: dependencies, business logic, duplications",
+    "tsh-analyzing-implementation-gaps": "Compare a plan with the current state to find implementation gaps",
+    "tsh-analyzing-requirements": "Analyze a task and build its context and research document",
+    "tsh-ask": "Answer architecture questions and record decisions as ADRs",
+    "tsh-audit-codebase": "Audit code quality: dead code, duplication, improvements",
+    "tsh-audit-infrastructure": "Audit infrastructure for security, cost and best practices",
+    "tsh-business-analyst": "Orchestrate BA workers from workshop materials to Jira-ready tasks",
+    "tsh-commit": "Draft a Conventional Commits message and commit after approval",
+    "tsh-committing": "Draft Conventional Commits messages from git changes",
+    "tsh-create-custom-agent": "Create a new custom agent definition",
+    "tsh-create-custom-command": "Create a new custom command",
+    "tsh-create-custom-rules": "Create custom project rules or instructions",
+    "tsh-create-custom-skill": "Create a new custom skill",
+    "tsh-creating-agents": "Guidelines and templates for writing agent definitions",
+    "tsh-creating-commands": "Guidelines and templates for writing command skills",
+    "tsh-creating-rules": "Guidelines and templates for writing project rules",
+    "tsh-creating-skills": "Guidelines and templates for writing skills",
+    "tsh-debug": "Debug systematically: reproduce, isolate, fix, verify",
+    "tsh-deploy-kubernetes": "Deploy Kubernetes workloads and Helm charts",
+    "tsh-designing-architecture": "Design the architecture and implementation plan for a task",
+    "tsh-designing-databases": "SQL and database design: schemas, indexing, queries, ORMs",
+    "tsh-designing-multi-cloud-architecture": "Choose and integrate services across AWS, Azure and GCP",
+    "tsh-discovering-technical-context": "Discover project conventions and patterns before coding",
+    "tsh-engineer-prompt": "Design, optimize and review LLM application prompts",
+    "tsh-engineering-manager": "Orchestrate implementation across specialized subagents",
+    "tsh-engineering-prompts": "LLM prompt patterns: structure, security, evaluation",
+    "tsh-ensuring-accessibility": "WCAG accessibility: semantic HTML, ARIA, keyboard, contrast",
+    "tsh-explore-materials": "Explore workshop materials for business context first",
+    "tsh-extracting-tasks": "Extract epics and user stories from workshop materials",
+    "tsh-formatting-jira-tasks": "Format epics and stories as Jira-ready tasks",
+    "tsh-implement-e2e": "Write Playwright E2E tests with Page Objects",
+    "tsh-implement-observability": "Implement metrics, logs, traces and alerting",
+    "tsh-implement-pipeline": "Create or modify CI/CD pipelines",
+    "tsh-implement-task": "Implement a feature from a plan and feature context",
+    "tsh-implement-terraform": "Create or modify Terraform modules and infrastructure",
+    "tsh-implement-ui-common-task": "Implement UI features from Figma designs",
+    "tsh-implement": "Implement a task end to end via the engineering manager",
+    "tsh-implementing-backend": "Backend patterns: APIs, auth, testing, integrations",
+    "tsh-implementing-ci-cd": "CI/CD pipeline design and deployment strategies",
+    "tsh-implementing-forms": "Form architecture, validation and accessible patterns",
+    "tsh-implementing-frontend": "Frontend components, design tokens and Figma-to-code",
+    "tsh-implementing-kubernetes": "Kubernetes deployments, Helm charts and scaling",
+    "tsh-implementing-observability": "Logging, monitoring, alerting and tracing patterns",
+    "tsh-implementing-terraform-modules": "Reusable Terraform modules for AWS, Azure and GCP",
+    "tsh-managing-secrets": "Secrets storage, rotation and CI/CD authentication",
+    "tsh-migrating-copilot-customizations": "Convert Copilot customizations to native agent files",
+    "tsh-optimizing-cloud-cost": "Cloud cost rightsizing, tagging and governance",
+    "tsh-optimizing-frontend": "Frontend rendering, bundle and memory optimization",
+    "tsh-orchestrate-ui-verification": "Run the UI implement and Figma verify loop",
+    "tsh-plan": "Create a detailed implementation plan from research",
+    "tsh-processing-transcripts": "Clean and structure raw workshop transcripts",
+    "tsh-refactor": "Plan and run a behavior-preserving refactoring",
+    "tsh-research": "Research a task and produce a structured research file",
+    "tsh-review-ui": "Verify a UI implementation against its Figma design",
+    "tsh-review": "Review an implementation against the plan",
+    "tsh-reviewing-code": "Structured code review: correctness, security, quality",
+    "tsh-reviewing-frontend": "Frontend code review criteria and anti-patterns",
+    "tsh-reviewing-task-quality": "Review extracted tasks for quality gaps and edge cases",
+    "tsh-verifying-ui": "UI verification criteria and report format against Figma",
+    "tsh-writing-e2e-tests": "Playwright E2E testing patterns and CI readiness",
+    "tsh-writing-hooks": "Custom hook and composable patterns"
+  },
+  "descriptions": {
+    "tsh-managing-secrets": "Secrets management patterns for cloud and Kubernetes environments. Use when implementing secure credential storage, secrets rotation, CI/CD authentication, or GitOps-compatible secret management.",
+    "tsh-implementing-observability": "Observability patterns for logging, monitoring, alerting, and distributed tracing. Use when setting up monitoring and alerting, implementing centralized logging, metrics collection, or distributed tracing across services, designing SLOs/SLIs and error budgets, or creating dashboards and runbooks.",
+    "tsh-implementing-terraform-modules": "Build reusable Terraform modules for AWS, Azure, and GCP infrastructure following infrastructure-as-code best practices. Use when creating reusable infrastructure modules, standardizing cloud provisioning, building multi-cloud compatible modules, or establishing organizational Terraform standards.",
+    "tsh-implementing-backend": "Backend service implementation patterns, standards, and procedures for Node.js, PHP, .NET, Java, and Go. Use when building REST/GraphQL APIs or CRUD endpoints with filtering and pagination (DataGrid), setting up authentication, database migrations and repository patterns, external service integrations, logging, Docker-based local development, OpenAPI documentation, testing strategies, or modular architecture with vertical slices.",
+    "tsh-discovering-technical-context": "Discover and establish technical context before implementing any feature. Prioritize project instructions, existing codebase patterns, and external documentation in that order. Use when starting any feature or fix, before writing tests (unit, integration, E2E), before architectural decisions that affect existing code, or when onboarding to a new area of the codebase.",
+    "tsh-implementing-ci-cd": "CI/CD pipeline design patterns and deployment strategies. Use when designing new pipelines, implementing deployment strategies (rolling, blue-green, canary), setting up GitOps workflows, or configuring secure CI/CD credentials.",
+    "tsh-optimizing-cloud-cost": "Optimize cloud costs through resource rightsizing, tagging strategies, reserved instances, and spending analysis. Use when reducing cloud spending or meeting budget constraints, right-sizing resources from utilization data, implementing cost governance and tagging, or analyzing multi-cloud cost optimization opportunities.",
+    "tsh-implementing-kubernetes": "Kubernetes deployment patterns, Helm charts, and cluster management. Use when deploying applications to Kubernetes, designing Deployment, StatefulSet, or Job configurations, implementing auto-scaling (HPA, VPA, KEDA), creating or modifying Helm charts, setting up ingress, networking, and service mesh, or configuring resource requests, limits, and QoS.",
+    "tsh-designing-multi-cloud-architecture": "Design multi-cloud architectures using a decision framework to select and integrate services across AWS, Azure, and GCP. Use when designing multi-cloud strategies, migrating between cloud providers, selecting cloud services for a workload, avoiding vendor lock-in, or leveraging best-of-breed services from multiple providers.",
+    "tsh-analyzing-codebase": "Analyzes the codebase of a system: its dependencies, how the business logic is implemented, and where code is duplicated. Use when onboarding to an unfamiliar repository, mapping a system before a change, or producing a codebase analysis document.",
+    "tsh-analyzing-implementation-gaps": "Implementation gap analysis: verifies what has to be implemented, what is already implemented, and compares a plan with the current state of the system. Use when checking a plan against existing code or deciding what to create, modify, or reuse.",
+    "tsh-analyzing-requirements": "Analyzes a task description, expands its context, inspects the current state of the system in the context of the task, and gathers information from different sources to build a PRD or research document. Use when a task is missing requirements or context, or before planning a feature.",
+    "tsh-designing-architecture": "Designs the architecture that solves a given task and proposes solutions that follow best practices and standards. Use when a feature needs a technical design or an implementation plan before coding starts.",
+    "tsh-extracting-tasks": "Identify and structure epics and user stories from workshop materials (cleaned transcripts, Figma designs, codebase analysis, and other documents). Produces a business-oriented task breakdown with dependencies, assumptions, and open questions. Use when turning workshop materials into a structured epic and story breakdown.",
+    "tsh-formatting-jira-tasks": "Transform extracted epics and user stories into Jira-ready format following a benchmark template. Handles field mapping, formatting for Jira markdown compatibility, two-gate user review, and guidance for Jira issue creation via Atlassian tools. Use when an approved task list needs to be formatted for Jira.",
+    "tsh-processing-transcripts": "Clean raw workshop or meeting transcripts from small talk, filler words, and off-topic tangents. Extract and structure business-relevant content into a standardized format with discussion topics, key decisions, action items, and open questions. Use when a raw transcript needs cleaning before analysis.",
+    "tsh-reviewing-task-quality": "Analyze extracted epics and user stories for quality gaps, missing edge cases, and improvement opportunities. Runs domain-agnostic analysis passes, optionally enriches findings with Jira board context, and produces accept/reject suggestions that refine the task list before Jira formatting. Use when an extracted task list needs a quality review before formatting.",
+    "tsh-writing-e2e-tests": "E2E testing patterns, verification procedures, and CI readiness checklists using Playwright. Use when writing, debugging, or reviewing end-to-end tests, fixing flaky tests, creating Page Objects, or mocking external APIs."
+  },
+  "connectedSkills": {
+    "tsh-analyzing-codebase": [
+      [
+        "tsh-discovering-technical-context",
+        "for the project conventions and patterns the analysis should respect"
+      ],
+      [
+        "tsh-analyzing-implementation-gaps",
+        "for comparing a plan with the analyzed current state"
+      ],
+      [
+        "tsh-designing-architecture",
+        "for turning analysis findings into a technical design"
+      ]
+    ],
+    "tsh-writing-e2e-tests": [
+      [
+        "tsh-discovering-technical-context",
+        "for existing test conventions and tooling"
+      ],
+      [
+        "tsh-ensuring-accessibility",
+        "for semantic markup that makes accessible locators possible"
+      ],
+      [
+        "tsh-implementing-ci-cd",
+        "for running E2E tests in pipelines"
+      ],
+      [
+        "tsh-reviewing-code",
+        "for reviewing test code and quality gates"
+      ]
+    ],
+    "tsh-analyzing-implementation-gaps": [
+      [
+        "tsh-analyzing-codebase",
+        "for a broader analysis of the existing system"
+      ],
+      [
+        "tsh-analyzing-requirements",
+        "for the task context the gap analysis builds on"
+      ],
+      [
+        "tsh-designing-architecture",
+        "for the plan that consumes the gap analysis"
+      ]
+    ],
+    "tsh-discovering-technical-context": [
+      [
+        "tsh-analyzing-codebase",
+        "for a deeper, system-wide codebase analysis"
+      ],
+      [
+        "tsh-designing-architecture",
+        "for planning with the discovered context"
+      ],
+      [
+        "tsh-reviewing-code",
+        "for checking an implementation against the discovered conventions"
+      ]
+    ],
+    "tsh-committing": [
+      [
+        "tsh-discovering-technical-context",
+        "for project-specific commit scopes and conventions in the project instructions"
+      ]
+    ]
+  }
+}

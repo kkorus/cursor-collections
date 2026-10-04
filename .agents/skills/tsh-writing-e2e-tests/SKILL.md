@@ -1,6 +1,8 @@
 ---
 name: tsh-writing-e2e-tests
-description: E2E testing patterns, verification procedures, and CI readiness checklists using Playwright. Use for writing, debugging, or reviewing end-to-end tests, fixing flaky tests, creating Page Objects, mocking external APIs.
+description: E2E testing patterns, verification procedures, and CI readiness checklists using Playwright. Use when writing, debugging, or reviewing end-to-end tests, fixing flaky tests, creating Page Objects, or mocking external APIs.
+metadata:
+  short-description: Playwright E2E testing patterns and CI readiness
 ---
 <!-- Generated from src/skills/tsh-writing-e2e-tests/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
@@ -68,3 +70,10 @@ RUN → FAIL? → DEBUG (browser_snapshot) → FIX → REPEAT
 
 **Always**: accessible locators, unique test data, 3+ passes, mock external APIs
 **Never**: `waitForTimeout()`, CSS selectors, test interdependencies, hardcoded creds
+
+## Connected Skills
+
+- `tsh-discovering-technical-context` — for existing test conventions and tooling
+- `tsh-ensuring-accessibility` — for semantic markup that makes accessible locators possible
+- `tsh-implementing-ci-cd` — for running E2E tests in pipelines
+- `tsh-reviewing-code` — for reviewing test code and quality gates

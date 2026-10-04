@@ -73,6 +73,16 @@ Description of another foundational rule.
 
 <!-- REQUIRED: Process / Workflow -->
 
+## Contents
+
+_Template navigation only: omit this section from the generated document._
+
+- [<Skill Process Name> Process](#skill-process-name-process)
+- [Quick Reference](#quick-reference)
+- [Examples](#examples)
+- [Validation Checklist](#validation-checklist)
+- [Connected Skills](#connected-skills)
+
 ## <Skill Process Name> Process
 
 Use the checklist below and track your progress:

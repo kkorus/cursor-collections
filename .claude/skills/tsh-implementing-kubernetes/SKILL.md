@@ -1,19 +1,12 @@
 ---
 name: tsh-implementing-kubernetes
-description: Kubernetes deployment patterns, Helm charts, and cluster management. Use when deploying applications to K8s, designing workload configurations, implementing scaling strategies, or managing cluster resources.
+description: Kubernetes deployment patterns, Helm charts, and cluster management. Use when deploying applications to Kubernetes, designing Deployment, StatefulSet, or Job configurations, implementing auto-scaling (HPA, VPA, KEDA), creating or modifying Helm charts, setting up ingress, networking, and service mesh, or configuring resource requests, limits, and QoS.
+metadata:
+  short-description: Kubernetes deployments, Helm charts and scaling
 ---
 <!-- Generated from src/skills/tsh-implementing-kubernetes/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # Kubernetes Patterns
-
-## When to Use
-
-- Deploying applications to Kubernetes
-- Designing Deployment, StatefulSet, or Job configurations
-- Implementing auto-scaling (HPA, VPA, KEDA)
-- Creating or modifying Helm charts
-- Setting up ingress, networking, and service mesh
-- Configuring resource requests, limits, and QoS
 
 ## Project Detection
 
@@ -317,7 +310,7 @@ containers:
 | Hardcode values in manifests | Use Helm values or Kustomize overlays |
 | Ignore pod eviction | Set PDB to maintain availability |
 
-## Related Skills
+## Connected Skills
 
 - `tsh-implementing-observability` - For K8s monitoring and logging setup
 - `tsh-implementing-ci-cd` - For K8s deployment pipelines

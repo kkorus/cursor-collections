@@ -2,7 +2,7 @@
 
 PHP-specific patterns for the `tsh-implementing-backend` skill. Load this reference when the project uses PHP (Symfony, Laravel).
 
-## Table of Contents
+## Contents
 
 - [Dependency Injection](#dependency-injection)
 - [Testing Tools](#testing-tools)

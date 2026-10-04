@@ -2,12 +2,14 @@
 name: tsh-explore-materials
 description: Explore workshop materials for business context before backlog extraction. Use when the user types /tsh-explore-materials or wants to understand likely scope before committing to backlog extraction. Routes to the tsh-business-analyst agent.
 disable-model-invocation: true
+metadata:
+  short-description: Explore workshop materials for business context first
 ---
 <!-- Generated from src/skills/tsh-explore-materials/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # /tsh-explore-materials
 
-Load and follow the @tsh-business-analyst agent skill. Explore the provided workshop materials and produce a business/context summary before any backlog extraction begins. Use this when the user explicitly wants exploration first, or when the materials are too ambiguous to commit to epics and stories yet.
+Load and follow the `tsh-business-analyst` skill. Explore the provided workshop materials and produce a business/context summary before any backlog extraction begins. Use this when the user explicitly wants exploration first, or when the materials are too ambiguous to commit to epics and stories yet.
 
 The expected outcome is a focused `workshop-context-summary.md` placed in `specifications/<workshop-name>/` that captures the business context, likely epics, open questions, and a recommendation on whether the work is ready for `intent-brief.md` and extraction.
 

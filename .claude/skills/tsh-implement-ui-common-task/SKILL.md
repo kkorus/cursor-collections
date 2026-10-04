@@ -1,6 +1,8 @@
 ---
 name: tsh-implement-ui-common-task
 description: Implement a UI feature using Figma designs as the source of truth for visual implementation. Extends tsh-implement-task with UI-specific behaviors.
+metadata:
+  short-description: Implement UI features from Figma designs
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-implement-ui-common-task/SKILL.md by scripts/generate.mjs. Do not edit. -->

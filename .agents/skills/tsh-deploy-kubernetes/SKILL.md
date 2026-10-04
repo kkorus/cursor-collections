@@ -1,6 +1,8 @@
 ---
 name: tsh-deploy-kubernetes
 description: Create Kubernetes deployments, Helm charts, and workload configurations following production-ready patterns.
+metadata:
+  short-description: Deploy Kubernetes workloads and Helm charts
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-deploy-kubernetes/SKILL.md by scripts/generate.mjs. Do not edit. -->
@@ -24,7 +26,7 @@ Before starting, load and follow these skills:
 Follow the `tsh-discovering-technical-context` skill to identify existing Kubernetes setup.
 
 Additionally, always:
-- Check `*.mdc rules` → project-specific conventions
+- Check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) → project-specific conventions
 - Analyze existing Kubernetes manifests, Helm charts, or Kustomize overlays
 - Discover namespace organization and resource patterns
 

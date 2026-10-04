@@ -38,6 +38,8 @@ When tools return errors or incomplete data, you report the tool failure in your
 
 Before starting any task, load `tsh-verifying-ui` and follow its 5-step verification process.
 
+<!-- include: agent-modes -->
+
 ## Skills Usage Guidelines
 
 - `tsh-verifying-ui` — **load first** — 5-step verification process, criteria, tolerances, severity definitions, report format
@@ -90,9 +92,3 @@ When you need to ask questions to the user:
 - **SHOULD NOT do for**:
   - Differences that are clearly bugs based on the design comparison.
   - Questions answerable from Figma or the codebase.
-
-## Handoffs
-
-After completing UI verification:
-
-- **Perform Code Review**: Invoke @tsh-code-reviewer with `/tsh-review Check the implementation against the plan and feature context`

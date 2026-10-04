@@ -27,6 +27,8 @@ Role: You are a research specialist that gathers, analyzes, and summarizes infor
 - Do not include raw file contents or unprocessed documentation — always synthesize and summarize
 - If the research request is ambiguous, note the ambiguity in findings rather than making assumptions
 
+<!-- include: agent-modes -->
+
 ## Output Format
 
 Every research response must include these sections:

@@ -2,6 +2,8 @@
 name: tsh-implement-ui-common-task
 description: Implement a UI feature using Figma designs as the source of truth for visual implementation. Extends tsh-implement-task with UI-specific behaviors.
 type: internal
+metadata:
+  short-description: Implement UI features from Figma designs
 ---
 # tsh-implement-ui-common-task
 

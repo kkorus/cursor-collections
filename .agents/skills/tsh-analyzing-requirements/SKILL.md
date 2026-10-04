@@ -1,6 +1,8 @@
 ---
 name: tsh-analyzing-requirements
-description: Analyse task description, performs gap analysis, expand the context for the task, analyse the current state of the system in the context of the task, helps build PRD, creates a context for the task, gathers information about the task from different sources.
+description: Analyzes a task description, expands its context, inspects the current state of the system in the context of the task, and gathers information from different sources to build a PRD or research document. Use when a task is missing requirements or context, or before planning a feature.
+metadata:
+  short-description: Analyze a task and build its context and research document
 ---
 <!-- Generated from src/skills/tsh-analyzing-requirements/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

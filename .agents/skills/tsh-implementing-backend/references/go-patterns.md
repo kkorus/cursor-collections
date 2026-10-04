@@ -2,7 +2,7 @@
 
 Go-specific patterns for the `tsh-implementing-backend` skill. Load this reference when the project uses Go.
 
-## Table of Contents
+## Contents
 
 - [Dependency Injection](#dependency-injection)
 - [Testing Tools](#testing-tools)

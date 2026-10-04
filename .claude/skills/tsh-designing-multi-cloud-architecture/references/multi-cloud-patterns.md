@@ -4,6 +4,18 @@ Detailed reference for multi-cloud design patterns, integration strategies, and 
 
 ---
 
+## Contents
+
+- [Pattern 1: Single Provider with Disaster Recovery (DR)](#pattern-1-single-provider-with-disaster-recovery-dr)
+- [Pattern 2: Best-of-Breed (Polycloud)](#pattern-2-best-of-breed-polycloud)
+- [Pattern 3: Geographic Distribution](#pattern-3-geographic-distribution)
+- [Pattern 4: Cloud-Agnostic Abstraction](#pattern-4-cloud-agnostic-abstraction)
+- [Pattern 5: Cloud Bursting](#pattern-5-cloud-bursting)
+- [Pattern 6: Data Mesh / Analytics on Best Provider](#pattern-6-data-mesh--analytics-on-best-provider)
+- [Decision Framework](#decision-framework)
+- [Cross-Cutting Concerns](#cross-cutting-concerns)
+- [Related References](#related-references)
+
 ## Pattern 1: Single Provider with Disaster Recovery (DR)
 
 ### Overview

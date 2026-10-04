@@ -2,6 +2,8 @@
 name: tsh-implementing-forms
 description: Form architecture, schema-based validation, field composition, error handling, multi-step form flows, and accessible form patterns. Use when building forms, implementing validation, creating multi-step wizards, or integrating form fields with a component library.
 type: skill
+metadata:
+  short-description: Form architecture, validation and accessible patterns
 ---
 
 # Implementing Forms

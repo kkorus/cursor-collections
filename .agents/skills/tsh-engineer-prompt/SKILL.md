@@ -1,6 +1,8 @@
 ---
 name: tsh-engineer-prompt
 description: Design, optimize, audit, or review LLM application prompts for quality, security, and consistency.
+metadata:
+  short-description: Design, optimize and review LLM application prompts
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-engineer-prompt/SKILL.md by scripts/generate.mjs. Do not edit. -->

@@ -1,17 +1,12 @@
 ---
 name: tsh-implementing-ci-cd
-description: CI/CD pipeline design patterns and deployment strategies. Use when designing pipelines, implementing deployment strategies, or setting up automated delivery.
+description: CI/CD pipeline design patterns and deployment strategies. Use when designing new pipelines, implementing deployment strategies (rolling, blue-green, canary), setting up GitOps workflows, or configuring secure CI/CD credentials.
 type: skill
+metadata:
+  short-description: CI/CD pipeline design and deployment strategies
 ---
 
 # CI/CD Pipeline Patterns
-
-## When to Use
-
-- Designing new CI/CD pipelines
-- Implementing deployment strategies (rolling, blue-green, canary)
-- Setting up GitOps workflows
-- Configuring secure CI/CD credentials
 
 ## Platform Detection
 
@@ -189,7 +184,7 @@ apply:
 
 ---
 
-## Related Skills
+## Connected Skills
 
 - `tsh-managing-secrets` - For credential configuration
 - `tsh-discovering-technical-context` - For finding existing patterns

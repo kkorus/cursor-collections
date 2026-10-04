@@ -1,6 +1,8 @@
 ---
 name: tsh-plan
 description: Create a detailed implementation plan for a feature based on the research context file.
+metadata:
+  short-description: Create a detailed implementation plan from research
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-plan/SKILL.md by scripts/generate.mjs. Do not edit. -->
@@ -26,13 +28,13 @@ Before starting, load and follow these skills:
 1. **Analyze context**: Review the feature context file (`.research.md`) thoroughly to understand the requirements and scope. Cross-check with industry, domain, and company best practices.
 2. **Analyze tech stack**: Understand the project's tech stack, industry, and domain to identify best practices for implementation.
 3. **Verify current implementation**: Before planning, perform a thorough analysis of the existing codebase:
-   - Use semantic search to find components, functions, hooks, utilities, or files related to the feature requirements.
+   - Use code search to find components, functions, hooks, utilities, or files related to the feature requirements.
    - Identify what is already implemented and functional.
    - Identify what exists but needs modification or extension.
    - Identify what needs to be created from scratch.
    - Document findings in the "Current Implementation Analysis" section.
-4. **Persist technical context**: During steps 2-3, capture all discovered project conventions, coding standards, architecture patterns, tech stack details, testing patterns, and relevant `*.mdc rules`. Save them in the **"Technical Context"** section of the plan file. This section is critical — downstream implementation agents will read it to avoid redundant codebase analysis. Be thorough: include framework conventions, naming patterns, test commands, linting rules, and any project-specific standards.
-5. **Understand project standards**: Review project best practices and quality standards (check `*.mdc rules` files). Incorporate findings into the "Technical Context" section.
+4. **Persist technical context**: During steps 2-3, capture all discovered project conventions, coding standards, architecture patterns, tech stack details, testing patterns, and relevant project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`). Save them in the **"Technical Context"** section of the plan file. This section is critical — downstream implementation agents will read it to avoid redundant codebase analysis. Be thorough: include framework conventions, naming patterns, test commands, linting rules, and any project-specific standards.
+5. **Understand project standards**: Review project best practices and quality standards (check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`)). Incorporate findings into the "Technical Context" section.
 6. **Prepare implementation plan**: Create detailed code changes broken down into phases.
 7. **Define tasks**: For each phase, identify specific tasks with:
    - Clear title
@@ -40,7 +42,7 @@ Before starting, load and follow these skills:
    - Action type: `[CREATE]`, `[MODIFY]`, or `[REUSE]`
    - Definition of done as a checkbox list for each task
 8. **Address security**: Include security considerations relevant to the implementation.
-9. **UI verification tasks**: For features with UI components based on Figma designs, add a `[REUSE]` UI verification task immediately after each implementation task that produces visible UI. The verification task should reference `tsh-ui-reviewer` agent, include the Figma URL, and describe the verify-fix loop (max 5 iterations). Non-visual tasks (data fetching, state management, API integration) do not need verification tasks.
+9. **UI verification tasks**: For features with UI components based on Figma designs, add a `[REUSE]` UI verification task immediately after each implementation task that produces visible UI. The verification task should reference the `tsh-ui-reviewer` subagent, include the Figma URL, and describe the verify-fix loop (max 5 iterations). Non-visual tasks (data fetching, state management, API integration) do not need verification tasks.
 10. **Save the plan**: Follow the `plan.example.md` template from the `tsh-designing-architecture` skill strictly.
 11. **Scope control**: Focus ONLY on changes specific to THIS task. Do not include prerequisite work or dependencies - assume those are already done. Do not plan features not in the original requirements (document them separately in an Improvements section).
 12. **Avoid duplication**: Never plan to create components, functions, or utilities that already exist. Use the "Current Implementation Analysis" section and plan to reuse or modify existing code.

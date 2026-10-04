@@ -1,17 +1,12 @@
 ---
 name: tsh-managing-secrets
-description: Secrets management patterns for cloud and Kubernetes environments. Use when implementing secure credential storage, rotation, or CI/CD authentication.
+description: Secrets management patterns for cloud and Kubernetes environments. Use when implementing secure credential storage, secrets rotation, CI/CD authentication, or GitOps-compatible secret management.
+metadata:
+  short-description: Secrets storage, rotation and CI/CD authentication
 ---
 <!-- Generated from src/skills/tsh-managing-secrets/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # Secrets Management
-
-## When to Use
-
-- Storing application credentials securely
-- Configuring CI/CD authentication
-- Implementing secrets rotation
-- Setting up GitOps-compatible secret management
 
 ## Solution Decision Matrix
 
@@ -84,7 +79,7 @@ Check for existing patterns:
 | Long-lived CI/CD credentials | OIDC federation with short-lived tokens |
 | Secrets in ConfigMaps | Use Kubernetes Secrets (encrypted at rest) |
 
-## Related Skills
+## Connected Skills
 
 - `tsh-implementing-ci-cd` - For pipeline credential setup
 - `tsh-implementing-terraform-modules` - For IaC secret resource patterns

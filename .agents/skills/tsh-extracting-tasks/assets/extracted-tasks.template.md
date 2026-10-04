@@ -1,5 +1,18 @@
 # <workshop-topic> - Extracted Tasks
 
+## Contents
+
+_Template navigation only: omit this section from the generated document._
+
+- [Workshop Summary](#workshop-summary)
+- [Epics Overview](#epics-overview)
+- [Epic 1: <Epic Title>](#epic-1-epic-title)
+- [Epic 2: <Epic Title>](#epic-2-epic-title)
+- [Dependencies](#dependencies)
+- [Assumptions](#assumptions)
+- [Out of Scope](#out-of-scope)
+- [Open Questions for Stakeholders](#open-questions-for-stakeholders)
+
 ## Workshop Summary
 
 | Field | Value |

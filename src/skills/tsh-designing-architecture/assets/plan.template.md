@@ -1,5 +1,20 @@
 # <task-name> - Implementation Plan
 
+## Contents
+
+_Template navigation only: omit this section from the generated document._
+
+- [Task Details](#task-details)
+- [Proposed Solution](#proposed-solution)
+- [Current Implementation Analysis](#current-implementation-analysis)
+- [Open Questions](#open-questions)
+- [Technical Context](#technical-context)
+- [Implementation Plan](#implementation-plan)
+- [Security Considerations](#security-considerations)
+- [Quality Assurance](#quality-assurance)
+- [Improvements (Out of Scope)](#improvements-out-of-scope)
+- [Changelog](#changelog)
+
 ## Task Details
 
 | Field            | Value                   |
@@ -112,9 +127,9 @@ Project conventions, coding standards, and patterns discovered during planning. 
 - [ ] <specific verifiable criterion>
 - [ ] <specific verifiable criterion>
 
-#### Task 2.2 - [REUSE] UI Verification of <ui-component-name> by `tsh-ui-reviewer` agent
+#### Task 2.2 - [REUSE] UI Verification of <ui-component-name> by the `tsh-ui-reviewer` subagent
 
-**Description**: Run `tsh-ui-reviewer` agent via the `tsh-review-ui` skill to verify <ui-component-name> against Figma design. Pass the Figma URL and dev server URL. If verification fails, delegate fix to `tsh-software-engineer` and re-verify (max 5 iterations per component).
+**Description**: Run the `tsh-ui-reviewer` subagent via the `tsh-review-ui` skill to verify <ui-component-name> against Figma design. Pass the Figma URL and dev server URL. If verification fails, delegate fix to `tsh-software-engineer` and re-verify (max 5 iterations per component).
 
 **Figma URL**: <figma-url-for-this-component>
 

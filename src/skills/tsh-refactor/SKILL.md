@@ -3,6 +3,8 @@ name: tsh-refactor
 description: Plan and execute a structural refactoring without changing external behavior. Use when the user types /tsh-refactor, wants to reorganize code, extract shared logic, rename modules, reduce complexity, or clean up technical debt — when there are no new functional requirements, only structural improvements.
 type: command
 routes-to: tsh-engineering-manager
+metadata:
+  short-description: Plan and run a behavior-preserving refactoring
 ---
 
 # /tsh-refactor

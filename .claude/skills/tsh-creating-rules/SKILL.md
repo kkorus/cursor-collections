@@ -1,6 +1,8 @@
 ---
 name: tsh-creating-rules
 description: Creates custom rule files (.cursor/rules/*.mdc) for Cursor. Covers repository-level instructions (cursor-instructions.md) and granular file-based rules with globs and alwaysApply frontmatter. Provides templates and decision framework for rules vs. skill placement. Use when creating, reviewing, or updating .mdc rule files.
+metadata:
+  short-description: Guidelines and templates for writing project rules
 ---
 <!-- Generated from src/skills/tsh-creating-rules/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

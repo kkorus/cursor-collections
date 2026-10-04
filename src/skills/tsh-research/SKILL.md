@@ -2,6 +2,8 @@
 name: tsh-research
 description: Research a task based on Jira ID or task description and produce a structured research file.
 type: internal
+metadata:
+  short-description: Research a task and produce a structured research file
 ---
 # tsh-research
 

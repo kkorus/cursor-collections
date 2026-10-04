@@ -1,212 +1,21 @@
-{"rule":"agent-contract","file":"src/agents/tsh-ai-customization-creator.md","key":"agent-modes","count":1}
 {"rule":"no-path-refs","file":"src/agents/tsh-ai-customization-creator.md","key":".cursor/skills/","count":4}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ai-customization-creator.md","key":"*.mdc rules","count":3}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ai-customization-creator.md","key":"create_file","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ai-customization-creator.md","key":"cursor-instructions.md","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ai-customization-researcher.md","key":"agent-modes","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ai-customization-reviewer.md","key":"agent-modes","count":1}
 {"rule":"no-path-refs","file":"src/agents/tsh-ai-customization-reviewer.md","key":".cursor/skills/","count":5}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ai-customization-reviewer.md","key":"*.mdc rules","count":2}
-{"rule":"agent-contract","file":"src/agents/tsh-architect.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-architect.md","key":"*.mdc rules","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-architect.md","key":"@tsh-","count":2}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-architect.md","key":"Dev Mode","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-architect.md","key":"grep_search","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ba-analysis-worker.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ba-analysis-worker.md","key":"Task tool","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ba-extraction-worker.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ba-extraction-worker.md","key":"Task tool","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ba-formatting-worker.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ba-formatting-worker.md","key":"Task tool","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ba-quality-worker.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ba-quality-worker.md","key":"Task tool","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ba-transcript-worker.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ba-transcript-worker.md","key":"Task tool","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-code-reviewer.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-code-reviewer.md","key":"*.mdc rules","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-code-reviewer.md","key":"@tsh-","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-code-reviewer.md","key":"Dev Mode","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-code-reviewer.md","key":"cursor-instructions.md","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-context-engineer.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-context-engineer.md","key":"@tsh-","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-context-engineer.md","key":"Dev Mode","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-cursor-engineer.md","key":"agent-modes","count":1}
 {"rule":"agent-no-delegation","file":"src/agents/tsh-cursor-engineer.md","key":"subagent","count":1}
 {"rule":"no-path-refs","file":"src/agents/tsh-cursor-engineer.md","key":".cursor/skills/","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-cursor-engineer.md","key":"*.mdc rules","count":3}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-cursor-engineer.md","key":"cursor-instructions.md","count":2}
-{"rule":"agent-contract","file":"src/agents/tsh-devops-engineer.md","key":"agent-modes","count":1}
 {"rule":"agent-no-delegation","file":"src/agents/tsh-devops-engineer.md","key":"spawn","count":11}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-devops-engineer.md","key":"*.mdc rules","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-devops-engineer.md","key":"@tsh-","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-devops-engineer.md","key":"agentId","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-e2e-engineer.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-e2e-engineer.md","key":"@tsh-","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-e2e-engineer.md","key":"Dev Mode","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-plan-reviewer.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-plan-reviewer.md","key":"Task tool","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-prompt-engineer.md","key":"agent-modes","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-software-engineer.md","key":"agent-modes","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-software-engineer.md","key":"@tsh-","count":2}
 {"rule":"preload-mentioned","file":"src/agents/tsh-software-engineer.md","key":"tsh-implement-task","count":1}
-{"rule":"agent-contract","file":"src/agents/tsh-ui-reviewer.md","key":"agent-modes","count":1}
 {"rule":"agent-no-delegation","file":"src/agents/tsh-ui-reviewer.md","key":"subagent","count":1}
-{"rule":"no-tool-syntax","file":"src/agents/tsh-ui-reviewer.md","key":"@tsh-","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":"caller-status-handling","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":".cursor/skills/","count":5}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":"*.mdc rules","count":2}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":"@tsh-","count":12}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":"Task tool","count":1}
-{"rule":"short-description","file":"src/skills/tsh-ai-customization-orchestrator/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-analyze-cloud-costs/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"no-path-refs","file":"src/skills/tsh-analyze-cloud-costs/SKILL.md","key":"read_file","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-analyze-cloud-costs/SKILL.md","key":"read_file","count":5}
-{"rule":"short-description","file":"src/skills/tsh-analyze-cloud-costs/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-analyze-gcp-costs/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"no-path-refs","file":"src/skills/tsh-analyze-gcp-costs/SKILL.md","key":"read_file","count":2}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-analyze-gcp-costs/SKILL.md","key":"read_file","count":6}
-{"rule":"short-description","file":"src/skills/tsh-analyze-gcp-costs/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-analyze-materials/SKILL.md","key":"@tsh-","count":1}
-{"rule":"short-description","file":"src/skills/tsh-analyze-materials/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-analyzing-codebase/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-analyzing-codebase/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-analyzing-codebase/assets/codebase-analysis.template.md","key":"## Contents","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-analyzing-implementation-gaps/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-analyzing-implementation-gaps/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-analyzing-requirements/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-analyzing-requirements/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-ask/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-ask/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-ask/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-audit-codebase/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"short-description","file":"src/skills/tsh-audit-codebase/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-audit-infrastructure/SKILL.md","key":"caller-status-handling","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-audit-infrastructure/SKILL.md","key":".cursor/skills/","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-audit-infrastructure/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-audit-infrastructure/SKILL.md","key":"@tsh-","count":1}
-{"rule":"short-description","file":"src/skills/tsh-audit-infrastructure/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-business-analyst/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-business-analyst/SKILL.md","key":"@tsh-","count":6}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-business-analyst/SKILL.md","key":"Claude Sonnet","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-business-analyst/SKILL.md","key":"Dev Mode","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-business-analyst/SKILL.md","key":"GPT-","count":3}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-business-analyst/SKILL.md","key":"Gemini","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-business-analyst/SKILL.md","key":"Task tool","count":3}
-{"rule":"short-description","file":"src/skills/tsh-business-analyst/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-commit/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-committing/SKILL.md","key":"References","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-committing/SKILL.md","key":".cursor/skills/","count":3}
-{"rule":"short-description","file":"src/skills/tsh-committing/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-create-custom-agent/SKILL.md","key":".cursor/skills/","count":3}
-{"rule":"short-description","file":"src/skills/tsh-create-custom-agent/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-create-custom-command/SKILL.md","key":".cursor/skills/","count":6}
-{"rule":"short-description","file":"src/skills/tsh-create-custom-command/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-create-custom-rules/SKILL.md","key":"cursor-instructions.md","count":6}
-{"rule":"short-description","file":"src/skills/tsh-create-custom-rules/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-create-custom-skill/SKILL.md","key":".cursor/skills/","count":3}
-{"rule":"short-description","file":"src/skills/tsh-create-custom-skill/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-agents/SKILL.md","key":".cursor/skills/","count":5}
-{"rule":"short-description","file":"src/skills/tsh-creating-agents/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-commands/SKILL.md","key":".cursor/skills/","count":9}
-{"rule":"short-description","file":"src/skills/tsh-creating-commands/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-commands/assets/prompt.template.md","key":".cursor/skills/","count":1}
-{"rule":"short-description","file":"src/skills/tsh-creating-rules/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-skills/SKILL.md","key":".cursor/skills/","count":3}
-{"rule":"short-description","file":"src/skills/tsh-creating-skills/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-skills/assets/skill.template.md","key":".cursor/skills/","count":2}
-{"rule":"reference-toc","file":"src/skills/tsh-creating-skills/assets/skill.template.md","key":"## Contents","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-creating-skills/references/common-patterns.md","key":"## Contents","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-debug/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"short-description","file":"src/skills/tsh-debug/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-deploy-kubernetes/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-deploy-kubernetes/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-designing-architecture/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-designing-architecture/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-designing-architecture/assets/plan.template.md","key":"## Contents","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-designing-databases/SKILL.md","key":"description","count":1}
 {"rule":"max-lines","file":"src/skills/tsh-designing-databases/SKILL.md","key":"SKILL.md","count":1}
-{"rule":"short-description","file":"src/skills/tsh-designing-databases/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-designing-multi-cloud-architecture/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-designing-multi-cloud-architecture/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-designing-multi-cloud-architecture/references/multi-cloud-patterns.md","key":"## Contents","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-designing-multi-cloud-architecture/references/service-comparison.md","key":"Gemini","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-designing-multi-cloud-architecture/references/service-comparison.md","key":"## Contents","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-discovering-technical-context/SKILL.md","key":"description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-discovering-technical-context/SKILL.md","key":"cursor-instructions.md","count":1}
-{"rule":"short-description","file":"src/skills/tsh-discovering-technical-context/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-engineer-prompt/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-engineering-manager/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-engineering-manager/SKILL.md","key":"@tsh-","count":13}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-engineering-manager/SKILL.md","key":"GPT-","count":1}
-{"rule":"short-description","file":"src/skills/tsh-engineering-manager/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-engineering-prompts/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-ensuring-accessibility/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-explore-materials/SKILL.md","key":"@tsh-","count":1}
-{"rule":"short-description","file":"src/skills/tsh-explore-materials/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-extracting-tasks/SKILL.md","key":"description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-extracting-tasks/SKILL.md","key":"popup","count":1}
-{"rule":"short-description","file":"src/skills/tsh-extracting-tasks/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-extracting-tasks/assets/extracted-tasks.template.md","key":"## Contents","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-formatting-jira-tasks/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-formatting-jira-tasks/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-formatting-jira-tasks/assets/jira-task.template.md","key":"## Contents","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-implement-e2e/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement-e2e/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-implement-observability/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement-observability/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-implement-pipeline/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement-pipeline/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-implement-task/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement-task/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-implement-terraform/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement-terraform/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement-ui-common-task/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implement/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-implementing-backend/SKILL.md","key":"description","count":1}
 {"rule":"max-lines","file":"src/skills/tsh-implementing-backend/SKILL.md","key":"SKILL.md","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-backend/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-implementing-backend/references/dotnet-patterns.md","key":"## Contents","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-implementing-backend/references/go-patterns.md","key":"## Contents","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-implementing-backend/references/java-spring-boot-patterns.md","key":"## Contents","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-implementing-backend/references/nodejs-patterns.md","key":"## Contents","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-implementing-backend/references/php-patterns.md","key":"## Contents","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-implementing-ci-cd/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-ci-cd/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-forms/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-frontend/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-implementing-kubernetes/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-kubernetes/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-implementing-observability/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-observability/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-implementing-terraform-modules/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-implementing-terraform-modules/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-managing-secrets/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-managing-secrets/SKILL.md","key":"metadata.short-description","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-migrating-copilot-customizations/SKILL.md","key":".cursor/skills/","count":9}
-{"rule":"short-description","file":"src/skills/tsh-migrating-copilot-customizations/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"connected-skills-heading","file":"src/skills/tsh-optimizing-cloud-cost/SKILL.md","key":"Related Skills","count":1}
-{"rule":"short-description","file":"src/skills/tsh-optimizing-cloud-cost/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-optimizing-frontend/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-orchestrate-ui-verification/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-plan/SKILL.md","key":"*.mdc rules","count":2}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-plan/SKILL.md","key":"semantic search","count":1}
-{"rule":"short-description","file":"src/skills/tsh-plan/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-processing-transcripts/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-processing-transcripts/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-refactor/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-research/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-review-ui/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"short-description","file":"src/skills/tsh-review-ui/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"caller-status-handling","file":"src/skills/tsh-review/SKILL.md","key":"caller-status-handling","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-review/SKILL.md","key":"*.mdc rules","count":1}
-{"rule":"short-description","file":"src/skills/tsh-review/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-reviewing-code/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-reviewing-frontend/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-reviewing-task-quality/SKILL.md","key":"description","count":1}
-{"rule":"no-tool-syntax","file":"src/skills/tsh-reviewing-task-quality/SKILL.md","key":"popup","count":3}
-{"rule":"short-description","file":"src/skills/tsh-reviewing-task-quality/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"reference-toc","file":"src/skills/tsh-reviewing-task-quality/assets/quality-review.template.md","key":"## Contents","count":1}
-{"rule":"short-description","file":"src/skills/tsh-verifying-ui/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"description-trigger","file":"src/skills/tsh-writing-e2e-tests/SKILL.md","key":"description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-writing-e2e-tests/SKILL.md","key":"metadata.short-description","count":1}
-{"rule":"short-description","file":"src/skills/tsh-writing-hooks/SKILL.md","key":"metadata.short-description","count":1}

@@ -2,6 +2,8 @@
 name: tsh-reviewing-code
 description: Structured code review process covering correctness, quality, security, testing, best practices, and scalability. Use when reviewing implementations, running quality gates, or verifying code against a plan.
 type: skill
+metadata:
+  short-description: "Structured code review: correctness, security, quality"
 ---
 
 # Code Reviewing

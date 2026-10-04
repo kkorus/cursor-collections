@@ -2,7 +2,7 @@
 
 Java Spring Boot–specific patterns for the `tsh-implementing-backend` skill. Load this reference when the project uses Java with Spring Boot.
 
-## Table of Contents
+## Contents
 
 - [Dependency Injection](#dependency-injection)
 - [Testing Tools](#testing-tools)

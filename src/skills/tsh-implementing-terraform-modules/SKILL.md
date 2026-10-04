@@ -1,7 +1,9 @@
 ---
 name: tsh-implementing-terraform-modules
-description: Build reusable Terraform modules for AWS, Azure, and GCP infrastructure following infrastructure-as-code best practices. Use when creating infrastructure modules, standardizing cloud provisioning, or implementing reusable IaC components.
+description: Build reusable Terraform modules for AWS, Azure, and GCP infrastructure following infrastructure-as-code best practices. Use when creating reusable infrastructure modules, standardizing cloud provisioning, building multi-cloud compatible modules, or establishing organizational Terraform standards.
 type: skill
+metadata:
+  short-description: Reusable Terraform modules for AWS, Azure and GCP
 ---
 
 # Terraform Module Library
@@ -11,14 +13,6 @@ Production-ready Terraform module patterns for AWS, Azure, and GCP infrastructur
 ## Purpose
 
 Create reusable, well-tested Terraform modules for common cloud infrastructure patterns across multiple cloud providers.
-
-## When to Use
-
-- Build reusable infrastructure components
-- Standardize cloud resource provisioning
-- Implement infrastructure as code best practices
-- Create multi-cloud compatible modules
-- Establish organizational Terraform standards
 
 ## Module Structure
 
@@ -241,7 +235,7 @@ infrastructure/
     └── ...
 ```
 
-## Related Skills
+## Connected Skills
 
 - `tsh-designing-multi-cloud-architecture` - For architectural decisions
 - `tsh-optimizing-cloud-cost` - For cost-effective designs

@@ -2,6 +2,8 @@
 name: tsh-implement-observability
 description: Implement comprehensive observability solutions covering metrics, logs, traces, and alerting.
 type: internal
+metadata:
+  short-description: Implement metrics, logs, traces and alerting
 ---
 # tsh-implement-observability
 
@@ -22,7 +24,7 @@ Follow the `tsh-discovering-technical-context` skill to identify existing observ
 
 Additionally, always:
 - **Read the "Technical Context" section from the plan file** (`*.plan.md`) if it exists — it contains project conventions and patterns already discovered during planning. Use it as your primary source and skip re-discovery for aspects already covered.
-- Check `*.mdc rules` only for aspects **not covered** by the plan's Technical Context
+- Check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) only for aspects **not covered** by the plan's Technical Context
 - Analyze existing monitoring configurations (Prometheus, Grafana, CloudWatch, etc.)
 - Discover existing alerting rules and dashboards
 

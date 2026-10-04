@@ -1,5 +1,16 @@
 # <Workshop Topic> — Quality Review Report
 
+## Contents
+
+_Template navigation only: omit this section from the generated document._
+
+- [Review Context](#review-context)
+- [Domain Model](#domain-model)
+- [Suggestions](#suggestions)
+- [Epic N: <Epic Title>](#epic-n-epic-title)
+- [Applied Changes Summary](#applied-changes-summary)
+- [Rejected Suggestions](#rejected-suggestions)
+
 ## Review Context
 
 | Field | Value |

@@ -3,6 +3,8 @@ name: tsh-commit
 description: Draft a Conventional Commits message from current git changes and commit only after explicit user approval. Use when the user types /tsh-commit, wants to commit work in progress, or needs a structured commit message before git commit.
 type: command
 standalone: true
+metadata:
+  short-description: Draft a Conventional Commits message and commit after approval
 ---
 
 # /tsh-commit

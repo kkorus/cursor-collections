@@ -3,10 +3,12 @@ name: tsh-create-custom-agent
 description: Create a new Cursor Agent Skill (.cursor/skills/agents/<name>/SKILL.md). Analyzes existing agents for patterns, guides through design decisions, creates the agent file, and validates against best practices. Use when the user types /tsh-create-custom-agent or asks to create a new agent.
 type: command
 routes-to: tsh-ai-customization-orchestrator
+metadata:
+  short-description: Create a new custom agent definition
 ---
 # /tsh-create-custom-agent
 
-Load and follow the tsh-ai-customization-orchestrator agent skill. Create a new custom agent for Cursor. The orchestrator handles research of existing agents, design decisions, agent file creation, and review against best practices. The user's message following this skill may contain specific agent requirements or a description of the desired agent.
+Load and follow the `tsh-ai-customization-orchestrator` skill. Create a new custom agent for Cursor. The orchestrator handles research of existing agents, design decisions, agent file creation, and review against best practices. The user's message following this skill may contain specific agent requirements or a description of the desired agent.
 
 ## Required Skills
 

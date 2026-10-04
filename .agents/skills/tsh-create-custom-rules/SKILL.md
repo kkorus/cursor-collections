@@ -1,13 +1,15 @@
 ---
 name: tsh-create-custom-rules
-description: Create custom Cursor rules (.cursor/rules/*.mdc or cursor-instructions.md). Analyzes existing project conventions, determines appropriate rule type and scope, creates the rules file, and validates against best practices. Use when the user types /tsh-create-custom-rules or asks to create coding rules or instructions for Cursor.
+description: Create custom Cursor rules (`.cursor/rules/*.mdc` or `AGENTS.md`). Analyzes existing project conventions, determines appropriate rule type and scope, creates the rules file, and validates against best practices. Use when the user types /tsh-create-custom-rules or asks to create coding rules or instructions for Cursor.
 disable-model-invocation: true
+metadata:
+  short-description: Create custom project rules or instructions
 ---
 <!-- Generated from src/skills/tsh-create-custom-rules/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # /tsh-create-custom-rules
 
-Load and follow the tsh-ai-customization-orchestrator agent skill. Create custom rules for Cursor. There are two types: repository-level rules (`cursor-instructions.md`) that apply to all Cursor interactions, and file-scoped rules (`.mdc` files with `globs` patterns in `.cursor/rules/`) that target specific files or directories. The user's message following this skill may contain specific requirements or conventions to encode.
+Load and follow the `tsh-ai-customization-orchestrator` skill. Create custom rules for Cursor. There are two types: repository-level rules (`AGENTS.md`) that apply to all Cursor interactions, and file-scoped rules (`.mdc` files with `globs` patterns in `.cursor/rules/`) that target specific files or directories. The user's message following this skill may contain specific requirements or conventions to encode.
 
 ## Required Skills
 
@@ -21,10 +23,10 @@ Before starting, load and follow these skills:
 1. **Research workspace conventions**: Analyze the workspace for existing coding standards and conventions:
    - Project structure and technology stack
    - Existing coding patterns and standards
-   - Any existing rule files (`.cursor/rules/*.mdc` or `cursor-instructions.md`)
+   - Any existing rule files (`.cursor/rules/*.mdc` or `AGENTS.md`)
    - Note: this repository currently has NO rule files of either type
 2. **Determine rule type**: Help the user choose the appropriate rule type:
-   - **Repo-level** (`cursor-instructions.md`): applies to all Cursor interactions in the workspace
+   - **Repo-level** (`AGENTS.md`): applies to all Cursor interactions in the workspace
    - **File-scoped** (`.mdc` files in `.cursor/rules/` with `globs` patterns): applies only when matching files are in context
    - Guide the decision based on the user's needs and scope
 3. **Clarify requirements**: Determine what conventions, standards, or behaviors to encode:
@@ -40,7 +42,7 @@ Before starting, load and follow these skills:
 
 ## Guidelines
 
-- **Repo-level rules** (`cursor-instructions.md`): Place in `.cursor/rules/cursor-instructions.md`. Apply to all Cursor interactions — use for project-wide coding standards, naming conventions, architecture decisions.
+- **Repo-level rules** (`AGENTS.md`): Place in `AGENTS.md`. Apply to all Cursor interactions — use for project-wide coding standards, naming conventions, architecture decisions.
 - **File-scoped rules** (`.mdc` files with `globs`): Place in `.cursor/rules/` directory. Use `globs` glob patterns (relative to workspace root) to target specific files or directories.
 - This repository currently has NO rule files — the user is starting from scratch. Communicate this context during the research step.
 

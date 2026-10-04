@@ -2,10 +2,10 @@
 
 Reusable formatting patterns for skill authors. Use these when structuring workflows, templates, decision points, and validation loops in SKILL.md files.
 
-## Table of Contents
+## Contents
 
 - [Common Patterns](#common-patterns)
-  - [Table of Contents](#table-of-contents)
+  - [Contents](#contents)
     - [Workflow with Checklist](#workflow-with-checklist)
     - [Template Pattern](#template-pattern)
     - [Conditional Workflow Pattern](#conditional-workflow-pattern)

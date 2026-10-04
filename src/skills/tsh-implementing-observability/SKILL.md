@@ -1,18 +1,12 @@
 ---
 name: tsh-implementing-observability
-description: Observability patterns for logging, monitoring, alerting, and distributed tracing. Use when implementing metrics collection, log aggregation, alerting rules, or distributed tracing across services.
+description: Observability patterns for logging, monitoring, alerting, and distributed tracing. Use when setting up monitoring and alerting, implementing centralized logging, metrics collection, or distributed tracing across services, designing SLOs/SLIs and error budgets, or creating dashboards and runbooks.
 type: skill
+metadata:
+  short-description: Logging, monitoring, alerting and tracing patterns
 ---
 
 # Observability Patterns
-
-## When to Use
-
-- Setting up monitoring and alerting for applications
-- Implementing centralized logging
-- Adding distributed tracing to microservices
-- Designing SLOs/SLIs and error budgets
-- Creating dashboards and runbooks
 
 ## Three Pillars of Observability
 
@@ -227,7 +221,7 @@ groups:
 | Alerts without runbooks | Every alert links to response procedure |
 | Store logs indefinitely | Define retention based on compliance needs |
 
-## Related Skills
+## Connected Skills
 
 - `tsh-implementing-kubernetes` - For K8s-native observability setup
 - `tsh-implementing-ci-cd` - For pipeline observability integration

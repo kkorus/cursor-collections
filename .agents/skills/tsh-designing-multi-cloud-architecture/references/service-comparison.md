@@ -4,6 +4,21 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 
 ---
 
+## Contents
+
+- [Compute](#compute)
+- [Storage](#storage)
+- [Database](#database)
+- [Networking](#networking)
+- [Security & Identity](#security--identity)
+- [Messaging & Integration](#messaging--integration)
+- [Developer Tools & CI/CD](#developer-tools--cicd)
+- [AI & Machine Learning](#ai--machine-learning)
+- [Analytics & Big Data](#analytics--big-data)
+- [Monitoring & Observability](#monitoring--observability)
+- [Pricing Models Comparison](#pricing-models-comparison)
+- [Related References](#related-references)
+
 ## Compute
 
 | Category | AWS | Azure | GCP |
@@ -115,7 +130,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 |---|---|---|---|
 | ML Platform | SageMaker | Azure Machine Learning | Vertex AI |
 | Pre-built AI APIs | Rekognition, Comprehend, Transcribe, … | Cognitive Services | Cloud AI APIs (Vision, Speech, NLP, …) |
-| Large Language Models | Amazon Bedrock | Azure OpenAI Service | Vertex AI (Gemini) |
+| Large Language Models | Amazon Bedrock | Azure OpenAI Service | Vertex AI (Google foundation models) |
 | Data Labelling | SageMaker Ground Truth | Azure ML Data Labelling | Vertex AI Data Labeling |
 | ML Notebooks | SageMaker Studio | Azure ML Notebooks | Vertex AI Workbench |
 | TPU / GPU Acceleration | Trainium / Inferentia (EC2) | NDsv5 (H100) | Cloud TPU |

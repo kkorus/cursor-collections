@@ -1,10 +1,10 @@
 ---
 name: tsh-reviewing-task-quality
-description: Analyze extracted epics and user stories for quality gaps, missing edge cases, and improvement opportunities. Runs domain-agnostic analysis passes, optionally enriches findings with Jira board context, and produces accept/reject suggestions that refine the task list before Jira formatting.
+description: Analyze extracted epics and user stories for quality gaps, missing edge cases, and improvement opportunities. Runs domain-agnostic analysis passes, optionally enriches findings with Jira board context, and produces accept/reject suggestions that refine the task list before Jira formatting. Use when an extracted task list needs a quality review before formatting.
+metadata:
+  short-description: Review extracted tasks for quality gaps and edge cases
 ---
 <!-- Generated from src/skills/tsh-reviewing-task-quality/SKILL.md by scripts/generate.mjs. Do not edit. -->
-
-# Task Quality Reviewing
 
 # Task Quality Review
 
@@ -289,7 +289,7 @@ Present all suggestions to the user for individual accept/reject decisions:
 
 1. **Order suggestions**: Order by epic, then by confidence within each epic (High first, then Medium, then Low). If a suggestion proposes a new epic, present it after all existing-epic suggestions.
 
-2. **One suggestion per popup**: Present exactly **one suggestion per question**. Each popup must be self-contained — the user should be able to make a decision without needing context from a previous popup. For each suggestion, show:
+2. **One suggestion per question**: Ask the user about exactly one suggestion at a time. Each question must be self-contained — the user should be able to make a decision without needing context from a previous question. For each suggestion, show:
    - The parent epic title and affected story title/ID (e.g., "[Epic: User Auth > Story 1.2: User can log in]")
    - The suggestion summary and rationale
    - The confidence level (High / Medium / Low)

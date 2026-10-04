@@ -3,10 +3,12 @@ name: tsh-analyze-gcp-costs
 description: Comprehensive GCP cost optimization and labeling compliance audit. Checks IaC code first, then validates against live infrastructure via API. Use when the user types /tsh-analyze-gcp-costs or asks to audit GCP costs. Routes to the tsh-devops-engineer agent.
 type: command
 routes-to: tsh-devops-engineer
+metadata:
+  short-description: Audit GCP cost optimization and labeling compliance
 ---
 # /tsh-analyze-gcp-costs
 
-Load and follow the tsh-devops-engineer agent skill. Perform an exhaustive, evidence-based GCP cost optimization and labeling compliance audit. Use a **hybrid approach**: analyze Terraform/IaC code first (if available), then **always** validate against live GCP infrastructure via API. The goal is to inspect every nook and cranny — every service, every resource, every configuration — for optimization opportunities, waste, misconfigurations, and labeling gaps.
+Delegate to the `tsh-devops-engineer` subagent. Perform an exhaustive, evidence-based GCP cost optimization and labeling compliance audit. Use a **hybrid approach**: analyze Terraform/IaC code first (if available), then **always** validate against live GCP infrastructure via API. The goal is to inspect every nook and cranny — every service, every resource, every configuration — for optimization opportunities, waste, misconfigurations, and labeling gaps.
 
 When the user does not specify a narrow scope, **default to auditing everything** in the given project and region.
 
@@ -27,12 +29,12 @@ Before starting, load and follow these skills (in this order):
    - If the user specifies a focus (e.g., "Compute Engine only"), respect that scope. Otherwise, **audit all services** — compute, storage, databases, networking, serverless, containers, AI/ML, security, and any other active resources.
 
 2. **Load required skills** (MUST complete before any analysis):
-   - **Always load** the `tsh-discovering-technical-context` skill (`read_file` on the `tsh-discovering-technical-context` skill) — follow its process to identify existing IaC patterns, labeling conventions, and project context.
-   - **Always load** the `tsh-analyzing-codebase` skill (`read_file` on the `tsh-analyzing-codebase` skill) — even if no IaC files are found initially, this skill's Step 7 (infrastructure code) helps identify IaC in unexpected locations, and Step 2 (dependencies) reveals infrastructure-related dependencies in any project.
-   - **Always load** the `tsh-optimizing-cloud-cost` skill (`read_file` on the `tsh-optimizing-cloud-cost` skill and `references/tagging-standards.md`) — use its GCP columns in the Pricing Model Decision table, Storage Tiering Decision table, Process steps, Checklist, and Anti-Patterns. Adapt the "Core 5" Mandatory Tags for GCP as **labels**: `cost_center`, `environment`, `service`, `owner`, `data_class` (lowercase with underscores — GCP label format). If the skill file cannot be found, use the following hardcoded defaults for the Core 5 Mandatory Labels: `cost_center`, `environment`, `service`, `owner`, `data_class`.
-   - **Conditionally load** the `tsh-designing-multi-cloud-architecture` skill (`read_file` on the `tsh-designing-multi-cloud-architecture` skill) — load when evaluating GCP service alternatives or comparing GCP services against each other. Use its GCP service comparison tables for compute, storage, database, and networking decisions.
-   - **Conditionally load** the `tsh-implementing-terraform-modules` skill (`read_file` on the `tsh-implementing-terraform-modules` skill and `references/gcp-modules.md`) — load when Terraform files (`*.tf`, `*.tfvars`, `terragrunt.hcl`) are found. Use it as the reference standard for module structure, naming conventions, provider pinning, and GCP-specific module patterns when evaluating IaC quality and generating Terraform code.
-   - **Conditionally load** the `tsh-managing-secrets` skill (`read_file` on the `tsh-managing-secrets` skill) — load when the audit scope includes security (which is always for a full audit). Use its Security Checklist, Anti-Patterns, and Cloud-Native Detection patterns when evaluating secrets management, Cloud KMS keys, and credential handling.
+   - **Always load** the `tsh-discovering-technical-context` skill — follow its process to identify existing IaC patterns, labeling conventions, and project context.
+   - **Always load** the `tsh-analyzing-codebase` skill — even if no IaC files are found initially, this skill's Step 7 (infrastructure code) helps identify IaC in unexpected locations, and Step 2 (dependencies) reveals infrastructure-related dependencies in any project.
+   - **Always load** the `tsh-optimizing-cloud-cost` skill (including its `references/tagging-standards.md` reference) — use its GCP columns in the Pricing Model Decision table, Storage Tiering Decision table, Process steps, Checklist, and Anti-Patterns. Adapt the "Core 5" Mandatory Tags for GCP as **labels**: `cost_center`, `environment`, `service`, `owner`, `data_class` (lowercase with underscores — GCP label format). If the skill file cannot be found, use the following hardcoded defaults for the Core 5 Mandatory Labels: `cost_center`, `environment`, `service`, `owner`, `data_class`.
+   - **Conditionally load** the `tsh-designing-multi-cloud-architecture` skill — load when evaluating GCP service alternatives or comparing GCP services against each other. Use its GCP service comparison tables for compute, storage, database, and networking decisions.
+   - **Conditionally load** the `tsh-implementing-terraform-modules` skill (including its `references/gcp-modules.md` reference) — load when Terraform files (`*.tf`, `*.tfvars`, `terragrunt.hcl`) are found. Use it as the reference standard for module structure, naming conventions, provider pinning, and GCP-specific module patterns when evaluating IaC quality and generating Terraform code.
+   - **Conditionally load** the `tsh-managing-secrets` skill — load when the audit scope includes security (which is always for a full audit). Use its Security Checklist, Anti-Patterns, and Cloud-Native Detection patterns when evaluating secrets management, Cloud KMS keys, and credential handling.
    - **Fallback**: If any skill file cannot be loaded, log the failure, note the skill gap in the final report's Executive Summary, and proceed with available skills.
    - Do **not** proceed to step 3 until all applicable skills have been read and their processes initiated.
 
@@ -204,3 +206,5 @@ All standard DevOps agent guardrails (Mutation Lock, Zero-Deletion Policy, FinOp
 - Always warn before suggesting modifications to resources labeled `environment:prod`.
 - All remediation output (gcloud CLI scripts, Terraform code) is for user review and manual execution only — never execute directly.
 - When modifying existing Terraform code, show a diff preview of proposed changes before writing to files.
+
+<!-- include: caller-status-handling -->

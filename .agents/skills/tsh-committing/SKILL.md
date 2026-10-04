@@ -1,6 +1,8 @@
 ---
 name: tsh-committing
 description: "Conventional Commits message drafting: type/scope inference, format rules, secret-file checks, and split recommendations. Use when drafting commit messages, running /tsh-commit, or analyzing git diffs for commit structure."
+metadata:
+  short-description: Draft Conventional Commits messages from git changes
 ---
 <!-- Generated from src/skills/tsh-committing/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
@@ -117,6 +119,10 @@ feat(commands): add conventional commit workflow for /tsh-commit
 fix(tsh-implement): correct plan validation skip condition
 ```
 
-## References
+## Specification
 
 - Full spec: [conventionalcommits.org/en/v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
+
+## Connected Skills
+
+- `tsh-discovering-technical-context` — for project-specific commit scopes and conventions in the project instructions

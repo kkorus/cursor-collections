@@ -1,5 +1,24 @@
 # Codebase Analysis Report - <repository-name>
 
+## Contents
+
+_Template navigation only: omit this section from the generated document._
+
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Dependencies Analysis](#dependencies-analysis)
+- [Available Scripts](#available-scripts)
+- [High-Level Architecture](#high-level-architecture)
+- [Backend Analysis](#backend-analysis)
+- [Frontend Analysis](#frontend-analysis)
+- [Infrastructure Analysis](#infrastructure-analysis)
+- [Third-Party Integrations](#third-party-integrations)
+- [Testing Approach](#testing-approach)
+- [Security Assessment](#security-assessment)
+- [Dead Code & Duplications](#dead-code--duplications)
+- [Proposed Improvements](#proposed-improvements)
+- [Summary](#summary)
+
 ## Overview
 
 | Field | Value |

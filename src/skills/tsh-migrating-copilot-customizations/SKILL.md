@@ -2,6 +2,8 @@
 name: tsh-migrating-copilot-customizations
 description: Convert GitHub Copilot customization artifacts (agents, skills, prompts, instructions) to their Cursor AI IDE equivalents (SKILL.md files, .mdc rules). Use when porting a PR or branch from a Copilot-based repo to this Cursor setup, adding a new Copilot-originated agent or skill, or verifying that a converted artifact follows the correct Cursor structure.
 type: skill
+metadata:
+  short-description: Convert Copilot customizations to native agent files
 ---
 
 # Migrating Copilot to Cursor

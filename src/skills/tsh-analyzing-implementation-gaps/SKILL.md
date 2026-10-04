@@ -1,7 +1,9 @@
 ---
 name: tsh-analyzing-implementation-gaps
-description: Implementation gap analysis. Verify what has to be implemented. Verify what was implemented. Compare plan to current state.
+description: "Implementation gap analysis: verifies what has to be implemented, what is already implemented, and compares a plan with the current state of the system. Use when checking a plan against existing code or deciding what to create, modify, or reuse."
 type: skill
+metadata:
+  short-description: Compare a plan with the current state to find implementation gaps
 ---
 
 # Implementation Gap Analysis
@@ -37,3 +39,9 @@ Based on the current code and task information, verify which part have to be cre
 Prepare a analysis report following the `assets/implementation-gap-analysis.template.md` template.
 
 Don't add or remove any sections from the template. Follow the structure and naming conventions strictly to ensure clarity and consistency.
+
+## Connected Skills
+
+- `tsh-analyzing-codebase` — for a broader analysis of the existing system
+- `tsh-analyzing-requirements` — for the task context the gap analysis builds on
+- `tsh-designing-architecture` — for the plan that consumes the gap analysis

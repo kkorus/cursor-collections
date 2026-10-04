@@ -1,6 +1,8 @@
 ---
 name: tsh-designing-multi-cloud-architecture
-description: Design multi-cloud architectures using a decision framework to select and integrate services across AWS, Azure, and GCP. Use when building multi-cloud systems, avoiding vendor lock-in, or leveraging best-of-breed services from multiple providers.
+description: Design multi-cloud architectures using a decision framework to select and integrate services across AWS, Azure, and GCP. Use when designing multi-cloud strategies, migrating between cloud providers, selecting cloud services for a workload, avoiding vendor lock-in, or leveraging best-of-breed services from multiple providers.
+metadata:
+  short-description: Choose and integrate services across AWS, Azure and GCP
 ---
 <!-- Generated from src/skills/tsh-designing-multi-cloud-architecture/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
@@ -11,14 +13,6 @@ Decision framework and patterns for architecting applications across AWS, Azure,
 ## Purpose
 
 Design cloud-agnostic architectures and make informed decisions about service selection across cloud providers.
-
-## When to Use
-
-- Design multi-cloud strategies
-- Migrate between cloud providers
-- Select cloud services for specific workloads
-- Implement cloud-agnostic architectures
-- Optimize costs across providers
 
 ## Cloud Service Comparison
 
@@ -194,7 +188,7 @@ AWS / Azure / GCP
 - `references/service-comparison.md` - Complete service comparison
 - `references/multi-cloud-patterns.md` - Architecture patterns
 
-## Related Skills
+## Connected Skills
 
 - `tsh-implementing-terraform-modules` - For IaC implementation
 - `tsh-optimizing-cloud-cost` - For cost management

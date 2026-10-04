@@ -1,6 +1,8 @@
 ---
 name: tsh-verifying-ui
 description: UI verification criteria, tolerances, and report format for comparing implementations against Figma designs. Use when verifying UI components, reviewing Figma vs implementation, or running /tsh-review-ui.
+metadata:
+  short-description: UI verification criteria and report format against Figma
 ---
 <!-- Generated from src/skills/tsh-verifying-ui/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

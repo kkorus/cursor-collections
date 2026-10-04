@@ -3,10 +3,12 @@ name: tsh-audit-infrastructure
 description: Audit infrastructure for security gaps, cost waste, and best practices violations. Use when the user types /tsh-audit-infrastructure or asks to audit cloud infrastructure. Routes to the tsh-devops-engineer agent.
 type: command
 routes-to: tsh-devops-engineer
+metadata:
+  short-description: Audit infrastructure for security, cost and best practices
 ---
 # /tsh-audit-infrastructure
 
-Load and follow the tsh-devops-engineer agent skill. Perform a comprehensive infrastructure audit to identify security vulnerabilities, cost optimization opportunities, and best practices violations across your cloud environment. Systematically examine IaC configurations, CI/CD pipelines, and cloud resources to produce an actionable audit report with prioritized findings.
+Delegate to the `tsh-devops-engineer` subagent. Perform a comprehensive infrastructure audit to identify security vulnerabilities, cost optimization opportunities, and best practices violations across your cloud environment. Systematically examine IaC configurations, CI/CD pipelines, and cloud resources to produce an actionable audit report with prioritized findings.
 
 The audit covers three key dimensions: security (IAM, encryption, network exposure, secrets), cost (unused resources, rightsizing, reservations), and operational excellence (tagging, IaC coverage, documentation). Findings are classified by severity and linked to remediation skills for immediate action.
 
@@ -26,7 +28,7 @@ Determine audit scope (if not provided):
 - **Compliance requirements?** SOC2, HIPAA, PCI-DSS, or none
 
 Additionally, always:
-- Check `*.mdc rules` → project-specific conventions
+- Check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) → project-specific conventions
 - Analyze existing IaC files and CI/CD configurations
 - Discover existing infrastructure patterns in the codebase
 
@@ -95,5 +97,7 @@ Skip for: adding tags, updating configurations, simple fixes.
 ## Scope
 
 **Does NOT handle** (redirect to):
-- Implementing fixes → delegate to `@tsh-devops-engineer` and load the matching internal skill: `tsh-implement-terraform`, `tsh-deploy-kubernetes`, `tsh-implement-pipeline`, or `tsh-implement-observability` (`.cursor/skills/internal/<name>/SKILL.md`)
+- Implementing fixes → delegate to the `tsh-devops-engineer` subagent and load the matching internal skill: `tsh-implement-terraform`, `tsh-deploy-kubernetes`, `tsh-implement-pipeline`, or `tsh-implement-observability` (`.cursor/skills/internal/<name>/SKILL.md`)
 - Application code security → coordinate with software engineer
+
+<!-- include: caller-status-handling -->

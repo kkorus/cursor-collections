@@ -1,6 +1,8 @@
 ---
 name: tsh-creating-skills
 description: Create new skills (SKILL.md) for Cursor. Provides naming conventions (gerund form), description guidelines, body structure, progressive disclosure patterns, templates, and validation checklists. Use when creating, reviewing, or updating SKILL.md files, or when discussing skill design and organization.
+metadata:
+  short-description: Guidelines and templates for writing skills
 ---
 <!-- Generated from src/skills/tsh-creating-skills/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

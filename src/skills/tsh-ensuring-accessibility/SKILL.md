@@ -2,6 +2,8 @@
 name: tsh-ensuring-accessibility
 description: WCAG 2.1 AA compliance, semantic HTML, ARIA patterns, keyboard navigation, focus management, screen reader support, and color contrast requirements. Use when implementing accessible components, auditing UI for accessibility issues, reviewing frontend code for a11y compliance, or building inclusive forms and interactive widgets.
 type: skill
+metadata:
+  short-description: "WCAG accessibility: semantic HTML, ARIA, keyboard, contrast"
 ---
 
 # Ensuring Accessibility

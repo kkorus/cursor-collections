@@ -1,6 +1,8 @@
 ---
 name: tsh-creating-commands
 description: "Create Cursor entry-point command skills (.cursor/skills/commands/<name>/SKILL.md) with disable-model-invocation: true. These act as slash-command workflow triggers that route work to the right context and agents. Use when creating, reviewing, or updating command entry-point skills."
+metadata:
+  short-description: Guidelines and templates for writing command skills
 ---
 <!-- Generated from src/skills/tsh-creating-commands/SKILL.md by scripts/generate.mjs. Do not edit. -->
 

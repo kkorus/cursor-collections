@@ -1,10 +1,10 @@
 ---
 name: tsh-extracting-tasks
-description: Identify and structure epics and user stories from workshop materials (cleaned transcripts, Figma designs, codebase analysis, and other documents). Produces a business-oriented task breakdown with dependencies, assumptions, and open questions.
+description: Identify and structure epics and user stories from workshop materials (cleaned transcripts, Figma designs, codebase analysis, and other documents). Produces a business-oriented task breakdown with dependencies, assumptions, and open questions. Use when turning workshop materials into a structured epic and story breakdown.
 type: skill
+metadata:
+  short-description: Extract epics and user stories from workshop materials
 ---
-
-# Task Extracting
 
 # Task Extraction
 
@@ -20,8 +20,8 @@ This skill helps you identify discrete pieces of work (epics and user stories) f
 
 ## What This Skill Does NOT Produce
 
-- Technical architecture or implementation details (use `tsh-architect` agent for that)
-- Detailed acceptance criteria from a QA perspective (use `tsh-context-engineer` agent for that)
+- Technical architecture or implementation details (use the `tsh-architect` subagent for that)
+- Detailed acceptance criteria from a QA perspective (use the `tsh-context-engineer` subagent for that)
 - Story point estimates (left for team estimation sessions)
 - Sprint or release planning
 
@@ -134,7 +134,7 @@ Review all extracted tasks and identify:
 - Conflicting information between different materials (e.g., transcript says one thing, Figma shows another)
 - Missing information that would significantly affect the task breakdown
 
-Ask questions to the user to clarify these items with the user. Ask exactly **one question per question**. Each question must clearly identify the specific epic or story it relates to — include the story identifier and title in the question header and context (e.g., "[Epic: User Auth > Story 1.2: User can log in] The transcript mentions SSO but the Figma shows email/password only. Which scope is correct?"). This ensures each popup is self-contained and the user can focus on one decision at a time.
+Ask the user to clarify these items. Ask exactly **one question at a time**. Each question must clearly identify the specific epic or story it relates to — include the story identifier and title in the question header and context (e.g., "[Epic: User Auth > Story 1.2: User can log in] The transcript mentions SSO but the Figma shows email/password only. Which scope is correct?"). This ensures each question is self-contained and the user can focus on one decision at a time.
 
 **Step 10: Present task list for user validation**
 

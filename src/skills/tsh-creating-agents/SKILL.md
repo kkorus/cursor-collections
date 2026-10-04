@@ -2,6 +2,8 @@
 name: tsh-creating-agents
 description: Create custom agent skills (SKILL.md in .cursor/skills/agents/) for Cursor. Provides templates, guidelines, and a structured process for building agent definitions that describe behavior, personality, responsibilities, and problem-solving approaches. Use when creating, reviewing, or updating agent skill files.
 type: skill
+metadata:
+  short-description: Guidelines and templates for writing agent definitions
 ---
 
 # Creating Agents

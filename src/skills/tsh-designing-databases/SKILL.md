@@ -1,7 +1,9 @@
 ---
 name: tsh-designing-databases
-description: SQL writing and database engineering patterns, standards, and procedures. Use for designing database schemas, writing performant SQL queries, normalisation strategies, indexing, joins optimisation, locking mechanics, transactions, query debugging with EXPLAIN, and ORM integration. Applies to PostgreSQL, MySQL, MariaDB, SQL Server, and Oracle. Covers ORM usage with TypeORM, Prisma, Doctrine, Eloquent, Entity Framework, Hibernate, and GORM.
+description: SQL writing and database engineering patterns, standards, and procedures. Use when designing database schemas, writing performant SQL queries, normalisation strategies, indexing, joins optimisation, locking mechanics, transactions, query debugging with EXPLAIN, and ORM integration. Applies to PostgreSQL, MySQL, MariaDB, SQL Server, and Oracle. Covers ORM usage with TypeORM, Prisma, Doctrine, Eloquent, Entity Framework, Hibernate, and GORM.
 type: skill
+metadata:
+  short-description: "SQL and database design: schemas, indexing, queries, ORMs"
 ---
 
 # SQL & Database Engineering

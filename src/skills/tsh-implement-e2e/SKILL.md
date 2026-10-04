@@ -2,6 +2,8 @@
 name: tsh-implement-e2e
 description: Implement E2E tests using Playwright following Page Object patterns and CI readiness checklists.
 type: internal
+metadata:
+  short-description: Write Playwright E2E tests with Page Objects
 ---
 # tsh-implement-e2e
 
@@ -22,7 +24,7 @@ Follow the `tsh-analyzing-requirements` skill's **Step 0 (Determine input source
 
 Additionally, always:
 - **Read the "Technical Context" section from the plan file** (`*.plan.md`) if it exists — it contains project conventions, test patterns, and commands already discovered during planning. Use it as your primary source and skip re-discovery for aspects already covered.
-- Check `*.mdc rules` only for aspects **not covered** by the plan's Technical Context
+- Check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) only for aspects **not covered** by the plan's Technical Context
 - Analyze `playwright.config.ts` + existing Page Objects
 - Discover existing test patterns and locator strategies in the codebase
 
@@ -86,4 +88,4 @@ Update plan (if plan file exists): check acceptance criteria, add files to Chang
 
 ## 5. Code Review (automatic)
 
-After completing E2E tests implementation, always run `tsh-code-reviewer` agent to review the E2E tests against best practices and test quality standards. The agent should be executed automatically without user confirmation. Update the changelog section of the plan file to indicate that E2E code review was performed and include a summary of the findings.
+After completing E2E tests implementation, always run the `tsh-code-reviewer` subagent to review the E2E tests against best practices and test quality standards. The agent should be executed automatically without user confirmation. Update the changelog section of the plan file to indicate that E2E code review was performed and include a summary of the findings.

@@ -3,10 +3,12 @@ name: tsh-audit-codebase
 description: Comprehensive code quality analysis covering dead code, duplications, and improvement opportunities. Use when the user types /tsh-audit-codebase, asks for a codebase audit, or wants a quality report. Routes to the tsh-architect agent.
 type: command
 routes-to: tsh-architect
+metadata:
+  short-description: "Audit code quality: dead code, duplication, improvements"
 ---
 # /tsh-audit-codebase
 
-Load and follow the tsh-architect agent skill. Your goal is to perform a thorough code quality analysis of the repository. The analysis should cover dead code detection, code duplication identification, and improvement proposals. The results must be saved to a markdown report file.
+Delegate to the `tsh-architect` subagent. Your goal is to perform a thorough code quality analysis of the repository. The analysis should cover dead code detection, code duplication identification, and improvement proposals. The results must be saved to a markdown report file.
 
 ## Required Skills
 
@@ -166,3 +168,5 @@ The report must follow this structure:
 - For monorepos, clearly separate findings per layer/app — do not mix them.
 - Use subagents efficiently: delegate file-level scanning work to subagents and focus on architectural assessment yourself.
 - The final report must be self-contained and understandable without additional context.
+
+<!-- include: caller-status-handling -->

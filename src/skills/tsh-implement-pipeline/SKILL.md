@@ -2,6 +2,8 @@
 name: tsh-implement-pipeline
 description: Create or modify CI/CD pipelines with proper deployment stages, environment protection, and secure authentication.
 type: internal
+metadata:
+  short-description: Create or modify CI/CD pipelines
 ---
 # tsh-implement-pipeline
 
@@ -23,7 +25,7 @@ Follow the `tsh-discovering-technical-context` skill to identify existing CI/CD 
 
 Additionally, always:
 - **Read the "Technical Context" section from the plan file** (`*.plan.md`) if it exists — it contains project conventions and patterns already discovered during planning. Use it as your primary source and skip re-discovery for aspects already covered.
-- Check `*.mdc rules` only for aspects **not covered** by the plan's Technical Context
+- Check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) only for aspects **not covered** by the plan's Technical Context
 - Analyze existing pipeline configurations (GitHub Actions, GitLab CI, Bitbucket, etc.)
 - Discover branching strategy and deployment targets
 

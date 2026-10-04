@@ -1,6 +1,6 @@
 ---
 name: tsh-ba-analysis-worker
-description: Internal worker that synthesizes workshop context, backlog overlap, and open questions for the BA orchestrator. Delegated to by tsh-business-analyst via Task tool — not for direct user invocation.
+description: Internal worker that synthesizes workshop context, backlog overlap, and open questions for the BA orchestrator. Delegated to by the `tsh-business-analyst` skill — not for direct user invocation.
 type: agent
 model-tier: deep
 access: read-only
@@ -26,6 +26,8 @@ You focus on likely epic candidates, overlap with existing baseline or Jira cont
 When Jira context, board context, or read-back verification payloads are needed, the orchestrator provides them; you do not call Jira directly.
 
 
+
+<!-- include: agent-modes -->
 
 ## Skills Usage
 

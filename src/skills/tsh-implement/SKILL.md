@@ -3,10 +3,12 @@ name: tsh-implement
 description: Implement a feature according to the plan or task description. Use when the user types /tsh-implement, asks to implement a task, or references a Jira ticket for implementation. Routes to the tsh-engineering-manager agent.
 type: command
 routes-to: tsh-engineering-manager
+metadata:
+  short-description: Implement a task end to end via the engineering manager
 ---
 # /tsh-implement
 
-Load and follow the tsh-engineering-manager agent skill. Your goal is to implement the feature according to the provided task description or implementation plan.
+Load and follow the `tsh-engineering-manager` skill. Your goal is to implement the feature according to the provided task description or implementation plan.
 
 ## Workflow
 
@@ -33,11 +35,11 @@ Before starting any work, perform a quick assessment of the task:
 
 If the Quick flow is selected, follow these streamlined steps:
 
-1. **Delegate implementation** — Delegate directly to `tsh-software-engineer` agent with the task description and any available context. The software engineer implements the solution following project conventions.
+1. **Delegate implementation** — Delegate directly to the `tsh-software-engineer` subagent with the task description and any available context. The software engineer implements the solution following project conventions.
 
 2. **Run quality checks** — After implementation, run static code analysis, build the project, and run tests to verify correctness.
 
-3. **Delegate code review** — Delegate to `tsh-code-reviewer` agent via the the `tsh-review` skill skill. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
+3. **Delegate code review** — Delegate to the `tsh-code-reviewer` subagent via the `tsh-review` skill. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
 
 4. **Before making any changes** to the original solution during review fixes, ask for confirmation.
 
@@ -47,9 +49,9 @@ If the Quick flow is selected, follow these streamlined steps:
 
 If the Full flow is selected, follow the complete workflow below:
 
-1. **Review the current state of the task** - Check what's already done and decide whether you have enough context and information to start the implementation or if you need to delegate to `tsh-context-engineer` agent to gather more context and requirements before starting the implementation. If the plan is missing, delegate to `tsh-architect` agent to create a detailed implementation plan based on the feature context and requirements.
+1. **Review the current state of the task** - Check what's already done and decide whether you have enough context and information to start the implementation or if you need to delegate to the `tsh-context-engineer` subagent to gather more context and requirements before starting the implementation. If the plan is missing, delegate to the `tsh-architect` subagent to create a detailed implementation plan based on the feature context and requirements.
 
-2. **Validate the plan** — After the architect produces or updates the `.plan.md`, invoke the `tsh-plan-reviewer` agent skill (the `tsh-plan-reviewer` skill) to stress-test the plan for failure modes, hidden assumptions, and costly rework risks. If REVISIONS NEEDED with BLOCKERs → send the review report back to the architect for corrections and re-validate (max 3 iterations, then escalate to user). If the plan is already approved and unchanged since the last review, skip re-validation. Once APPROVED, present the plan and review summary to the user for implementation confirmation. Only proceed once the plan is APPROVED and the user confirms.
+2. **Validate the plan** — After the architect produces or updates the `.plan.md`, invoke the `tsh-plan-reviewer` subagent to stress-test the plan for failure modes, hidden assumptions, and costly rework risks. If REVISIONS NEEDED with BLOCKERs → send the review report back to the architect for corrections and re-validate (max 3 iterations, then escalate to user). If the plan is already approved and unchanged since the last review, skip re-validation. Once APPROVED, present the plan and review summary to the user for implementation confirmation. Only proceed once the plan is APPROVED and the user confirms.
 
 3. **Review the plan** — Read the implementation plan and feature context thoroughly. Identify every task, its type (`[CREATE]`, `[MODIFY]`, `[REUSE]`), and which agent should handle it. Create a **todo for every task** in the plan — not one per phase. Each task gets its own todo.
 
@@ -57,7 +59,7 @@ If the Full flow is selected, follow the complete workflow below:
 
 4. **Confirm dev server URL** — If your UI verification inventory from step 3 contains ANY tasks, ask the user **now** for the dev server URL (e.g., "What URL is the frontend app running at?"). Do not defer this — you need the confirmed URL before any UI verification can start. Do not guess from running processes or port scans. Store the confirmed URL for all subsequent verifications.
 
-5. **Delegate codebase analysis (if needed)** — Check if the plan file (`*.plan.md`) contains a populated **"Technical Context"** section. If it does, skip this step — the context was already captured during planning. If the section is missing or empty, use `tsh-architect` agent to perform codebase analysis and technical context discovery to establish project conventions, coding standards, architecture patterns, and existing codebase patterns before implementing any feature. This will help you identify which agents to delegate specific tasks to during implementation.
+5. **Delegate codebase analysis (if needed)** — Check if the plan file (`*.plan.md`) contains a populated **"Technical Context"** section. If it does, skip this step — the context was already captured during planning. If the section is missing or empty, use the `tsh-architect` subagent to perform codebase analysis and technical context discovery to establish project conventions, coding standards, architecture patterns, and existing codebase patterns before implementing any feature. This will help you identify which agents to delegate specific tasks to during implementation.
 
 6. **Confirm with user before implementation** — Confirm with the user before proceeding to the implementation phase after research and planning phases.
 
@@ -78,7 +80,7 @@ If the Full flow is selected, follow the complete workflow below:
 
    If ANY UI verification task was not processed, go back and process it now. Do NOT proceed to code review with unverified UI components. If verification cannot be completed (tool errors, missing Figma links), document it in the plan's Changelog and get explicit user approval before continuing.
 
-10. **Delegate code review** — Delegate to `tsh-code-reviewer` agent via the `tsh-review` skill. Include E2E test execution as part of the review. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
+10. **Delegate code review** — Delegate to the `tsh-code-reviewer` subagent via the `tsh-review` skill. Include E2E test execution as part of the review. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
 
 11. **Before making any changes** to the original solution during implementation, ask for confirmation. Document changes in the plan file's Changelog section with timestamps.
 

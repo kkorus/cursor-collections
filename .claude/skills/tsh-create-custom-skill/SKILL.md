@@ -2,12 +2,14 @@
 name: tsh-create-custom-skill
 description: Create a new Cursor workflow skill (SKILL.md) in .cursor/skills/workflows/. Analyzes existing skills for patterns, guides through design decisions, creates the skill file with supporting resources, and validates against best practices. Use when the user types /tsh-create-custom-skill or asks to create a new workflow skill.
 disable-model-invocation: true
+metadata:
+  short-description: Create a new custom skill
 ---
 <!-- Generated from src/skills/tsh-create-custom-skill/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # /tsh-create-custom-skill
 
-Load and follow the tsh-ai-customization-orchestrator agent skill. Create a new custom workflow skill for Cursor. The orchestrator handles research of existing skills, design decisions, skill file creation with supporting resources, and review against best practices. The user's message following this skill may contain specific skill requirements or a description of the desired skill.
+Load and follow the `tsh-ai-customization-orchestrator` skill. Create a new custom workflow skill for Cursor. The orchestrator handles research of existing skills, design decisions, skill file creation with supporting resources, and review against best practices. The user's message following this skill may contain specific skill requirements or a description of the desired skill.
 
 ## Required Skills
 

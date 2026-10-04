@@ -2,6 +2,8 @@
 name: tsh-implement-task
 description: Implement a feature according to the provided implementation plan and feature context.
 type: internal
+metadata:
+  short-description: Implement a feature from a plan and feature context
 ---
 # tsh-implement-task
 
@@ -27,7 +29,7 @@ Before starting, load and follow these skills:
 ## Workflow
 
 1. Review the implementation plan and feature context thoroughly.
-2. **Read the "Technical Context" section from the plan file** (`*.plan.md`). This section contains project conventions, coding standards, architecture patterns, tech stack details, testing patterns, and relevant `*.mdc rules` already discovered during planning. Use it as your primary source of truth — do NOT re-scan the codebase or re-read rule files for information already captured there. Only perform additional discovery for aspects not covered by the persisted context.
+2. **Read the "Technical Context" section from the plan file** (`*.plan.md`). This section contains project conventions, coding standards, architecture patterns, tech stack details, testing patterns, and relevant project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) already discovered during planning. Use it as your primary source of truth — do NOT re-scan the codebase or re-read rule files for information already captured there. Only perform additional discovery for aspects not covered by the persisted context.
 3. Gather a list of commands you will need during implementation: running tests (unit, integration, E2E and others), linters, building the project, running and generating migrations, etc. These may already be documented in the plan's Technical Context section. Run tests and linters **before** starting implementation and **after** completing each phase.
 4. Focus only on the implementation plan. Don't implement anything not part of the plan unless explicitly instructed.
 5. Don't implement improvements from the plan's improvements section unless explicitly instructed.

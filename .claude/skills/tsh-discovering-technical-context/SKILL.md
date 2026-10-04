@@ -1,19 +1,14 @@
 ---
 name: tsh-discovering-technical-context
-description: Discover and establish technical context before implementing any feature. Prioritize project instructions, existing codebase patterns, and external documentation in that order. Use for any task requiring understanding of project conventions, coding standards, architecture patterns, and established practices before writing code.
+description: Discover and establish technical context before implementing any feature. Prioritize project instructions, existing codebase patterns, and external documentation in that order. Use when starting any feature or fix, before writing tests (unit, integration, E2E), before architectural decisions that affect existing code, or when onboarding to a new area of the codebase.
+metadata:
+  short-description: Discover project conventions and patterns before coding
 ---
 <!-- Generated from src/skills/tsh-discovering-technical-context/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # Technical Context Discovery
 
 This skill provides a systematic approach for understanding a project's technical context before making any code changes. It ensures consistency with existing patterns and prevents introducing conflicting conventions.
-
-## When to Use
-
-- Before implementing any feature or fix
-- Before writing tests (unit, integration, E2E)
-- Before making architectural decisions that affect existing code
-- When onboarding to a new area of the codebase
 
 ## Technical Context Discovery Process
 
@@ -44,7 +39,7 @@ If no plan file exists, or the "Technical Context" section is missing/empty:
 
 **ALWAYS check first** for existing Cursor rules in the project:
 
-- Search for `.cursor/rules/cursor-instructions.md` at the repository root.
+- Search for `AGENTS.md` at the repository root.
 - Search for `*.mdc` rule files in the `.cursor/rules/` directory.
 - Search for `.cursor/` directory with configuration files.
 
@@ -97,3 +92,9 @@ Based on what you discovered, apply this decision hierarchy:
 | No rules, no existing patterns | Apply documentation-based best practices and industry standards. Document decisions for future reference. |
 
 **Critical rule**: Never introduce new patterns unless explicitly requested by the user or specified in the implementation plan.
+
+## Connected Skills
+
+- `tsh-analyzing-codebase` — for a deeper, system-wide codebase analysis
+- `tsh-designing-architecture` — for planning with the discovered context
+- `tsh-reviewing-code` — for checking an implementation against the discovered conventions

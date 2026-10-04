@@ -2,12 +2,14 @@
 name: tsh-analyze-materials
 description: Process discovery workshop materials and create Jira-ready epics and user stories, or iterate on an existing Jira backlog. Use when the user types /tsh-analyze-materials or provides workshop transcripts, Figma designs, or PDFs. Routes to the tsh-business-analyst agent.
 disable-model-invocation: true
+metadata:
+  short-description: Turn workshop materials into Jira-ready epics and stories
 ---
 <!-- Generated from src/skills/tsh-analyze-materials/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # /tsh-analyze-materials
 
-Load and follow the @tsh-business-analyst agent skill. Analyze the provided workshop materials (transcripts, Figma designs, PDF documents, codebase context, or other reference documents) and convert them into structured, Jira-ready epics and user stories. Alternatively, import an existing Jira backlog for local iteration and improvement.
+Load and follow the `tsh-business-analyst` skill. Analyze the provided workshop materials (transcripts, Figma designs, PDF documents, codebase context, or other reference documents) and convert them into structured, Jira-ready epics and user stories. Alternatively, import an existing Jira backlog for local iteration and improvement.
 
 The file outcomes should be markdown files placed in the `specifications` directory under a folder named after the workshop topic in kebab-case format (e.g., `specifications/user-onboarding/`):
 - `cleaned-transcript.md` — Cleaned and structured transcript

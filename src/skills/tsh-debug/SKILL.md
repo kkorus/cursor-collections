@@ -3,6 +3,8 @@ name: tsh-debug
 description: Systematically debug a bug, error, or unexpected behavior by reproducing, isolating root cause, implementing a fix, and verifying with tests. Use when the user types /tsh-debug, reports a bug, describes unexpected behavior, needs to track down a failing test, or wants a structured root-cause analysis before fixing.
 type: command
 routes-to: tsh-software-engineer
+metadata:
+  short-description: "Debug systematically: reproduce, isolate, fix, verify"
 ---
 
 # /tsh-debug
@@ -64,6 +66,8 @@ Systematically reproduce, isolate, fix, and verify a bug or unexpected behavior.
 - Do NOT add defensive code around broken logic without fixing the logic itself.
 - If the root cause turns out to be a design flaw requiring significant refactoring, recommend `/tsh-refactor` instead of patching inline.
 - If the bug is in a third-party dependency, document the workaround and create a ticket to upgrade.
+
+<!-- include: caller-status-handling -->
 
 ## Connected Skills
 

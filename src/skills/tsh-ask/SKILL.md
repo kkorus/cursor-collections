@@ -3,6 +3,8 @@ name: tsh-ask
 description: Answer a technical or architectural question about the codebase and record the decision as a structured ADR (Architecture Decision Record). Use when the user types /tsh-ask, asks 'why does X work this way', needs a quick architectural consultation, wants to evaluate trade-offs between approaches, or needs a decision documented for future reference.
 type: command
 routes-to: tsh-architect
+metadata:
+  short-description: Answer architecture questions and record decisions as ADRs
 ---
 
 # /tsh-ask
@@ -18,7 +20,7 @@ Answer a technical or architectural question by researching the codebase, evalua
 
 1. **Understand the question** — Identify what is being asked: a "why" question (explain existing decision), a "should we" question (evaluate options), or a "what is the right pattern" question (prescribe approach).
 
-2. **Research context** — Search the codebase for relevant files, patterns, and prior decisions. Read `*.mdc rules` for existing constraints.
+2. **Research context** — Search the codebase for relevant files, patterns, and prior decisions. Read project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) for existing constraints.
 
 3. **Evaluate options** — For "should we" and "pattern" questions, identify 2–3 concrete options. For each:
    - What problem does it solve?
@@ -73,6 +75,8 @@ Answer a technical or architectural question by researching the codebase, evalua
 - If the answer is obvious and requires no trade-off analysis, still save it — it becomes reference documentation.
 - Do NOT implement anything. This command is read-only + write-one-file only.
 - If the question requires implementation work, recommend `/tsh-implement` after answering.
+
+<!-- include: caller-status-handling -->
 
 ## Connected Skills
 

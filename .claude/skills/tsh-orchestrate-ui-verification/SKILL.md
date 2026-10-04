@@ -1,6 +1,8 @@
 ---
 name: tsh-orchestrate-ui-verification
 description: Implement a UI feature orchestrating iterative Figma verification until the implementation matches within agreed tolerances.
+metadata:
+  short-description: Run the UI implement and Figma verify loop
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-orchestrate-ui-verification/SKILL.md by scripts/generate.mjs. Do not edit. -->
@@ -39,13 +41,13 @@ Do NOT skip verification or delegate without a Figma reference.
 
 1. **Review the plan** — Review the implementation plan and feature context thoroughly. Identify which tasks are UI implementation tasks (need Figma verification) and which are non-visual tasks. Extract all Figma URLs from the research/plan files.
 
-2. **Delegate codebase analysis (if needed)** — Check if the plan file (`*.plan.md`) contains a populated **"Technical Context"** section. If it does, skip this step — the context was already captured during planning. If the section is missing or empty, use `tsh-architect` agent to perform codebase analysis and technical context discovery to establish project conventions, coding standards, architecture patterns, and existing codebase patterns before implementing.
+2. **Delegate codebase analysis (if needed)** — Check if the plan file (`*.plan.md`) contains a populated **"Technical Context"** section. If it does, skip this step — the context was already captured during planning. If the section is missing or empty, use the `tsh-architect` subagent to perform codebase analysis and technical context discovery to establish project conventions, coding standards, architecture patterns, and existing codebase patterns before implementing.
 
 3. **Confirm dev server URL** — Ask the user for the dev server URL (e.g., "What URL is the frontend app running at? Is it http://localhost:3000?"). Do not defer this to later — you need the confirmed URL before any verification can start. Do not guess from running processes or port scans — multiple services may run on different ports. Use the confirmed URL for all subsequent verifications in this session.
 
-4. **Delegate UI implementation** — For each UI implementation task, invoke the agent skill the `tsh-implement-ui-common-task` skill for `tsh-software-engineer`. Pass the relevant Figma URLs, component context, and plan section. For non-Figma frontend and backend tasks, use the `tsh-implement-task` skill.
+4. **Delegate UI implementation** — For each UI implementation task, delegate to the `tsh-software-engineer` subagent, instructing it to follow the `tsh-implement-ui-common-task` skill. Pass the relevant Figma URLs, component context, and plan section. For non-Figma frontend and backend tasks, use the `tsh-implement-task` skill.
 
-5. **Delegate UI verification** — After each UI implementation task completes, invoke the agent skill the `tsh-review-ui` skill for `tsh-ui-reviewer`. Pass: the Figma URL, the user-confirmed dev server URL from step 3, and the component/section name. The ui-reviewer will compare the Figma design against the running implementation and return a structured report. **Note:** You do NOT need `figma` or `playwright` tools yourself — the `tsh-ui-reviewer` agent has them. Just invoke the agent skill to delegate. Never skip verification because these tools aren't in your own tool list.
+5. **Delegate UI verification** — After each UI implementation task completes, delegate to the `tsh-ui-reviewer` subagent, instructing it to follow the `tsh-review-ui` skill. Pass: the Figma URL, the user-confirmed dev server URL from step 3, and the component/section name. The ui-reviewer will compare the Figma design against the running implementation and return a structured report. **Note:** You do NOT need `figma` or `playwright` tools yourself — the `tsh-ui-reviewer` subagent has them. Just invoke the agent skill to delegate. Never skip verification because these tools aren't in your own tool list.
 
 6. **Handle verification results**:
    - If **PASS** → mark the task and its verification step as complete in the plan. Move to the next task.
@@ -68,7 +70,7 @@ Do NOT skip verification or delegate without a Figma reference.
 - Design gaps discovered and how they were handled
 - Any deviations from design with rationale
 
-11. **Delegate code review** — Invoke the agent skill the `tsh-review` skill for `tsh-code-reviewer`. Include E2E test execution as part of the review. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
+11. **Delegate code review** — delegate to the `tsh-code-reviewer` subagent, instructing it to follow the `tsh-review` skill. Include E2E test execution as part of the review. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
 
 ## Verification Rules
 

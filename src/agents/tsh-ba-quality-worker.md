@@ -1,6 +1,6 @@
 ---
 name: tsh-ba-quality-worker
-description: Internal worker that runs Lite or Full BA quality review passes and returns structured findings. Delegated to by tsh-business-analyst via Task tool — not for direct user invocation.
+description: Internal worker that runs Lite or Full BA quality review passes and returns structured findings. Delegated to by the `tsh-business-analyst` skill — not for direct user invocation.
 type: agent
 model-tier: deep
 access: read-only
@@ -23,6 +23,8 @@ You do not write files, do not ask the user questions directly, and do not perfo
 When Jira context, board context, or read-back verification payloads are needed, the orchestrator provides them; you do not call Jira directly.
 
 
+
+<!-- include: agent-modes -->
 
 ## Skills Usage
 

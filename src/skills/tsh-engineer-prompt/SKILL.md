@@ -2,6 +2,8 @@
 name: tsh-engineer-prompt
 description: Design, optimize, audit, or review LLM application prompts for quality, security, and consistency.
 type: internal
+metadata:
+  short-description: Design, optimize and review LLM application prompts
 ---
 # tsh-engineer-prompt
 

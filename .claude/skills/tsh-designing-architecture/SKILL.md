@@ -1,6 +1,8 @@
 ---
 name: tsh-designing-architecture
-description: Design the architecture to solve a given task. Propose the solutions to be used to deliver the task following the best practices and standards.
+description: Designs the architecture that solves a given task and proposes solutions that follow best practices and standards. Use when a feature needs a technical design or an implementation plan before coding starts.
+metadata:
+  short-description: Design the architecture and implementation plan for a task
 ---
 <!-- Generated from src/skills/tsh-designing-architecture/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
@@ -67,11 +69,11 @@ Make sure to use `tsh-analyzing-implementation-gaps` skill to verify what was al
 
 Make sure to divide the plan into a small phases.Each phase should have a list of tasks with special place to mark the finished tasks later on. After phase is finished only the fast running tests and quality checks should be run to verify that the implementation is on the right track - unit tests, integration tests, static code analysis, linters, formatting check and project build.
 
-The plan has to include code review phase at the end, fully done by `tsh-code-reviewer` agent using the `tsh-review` skill. Make sure to pass e2e execution to that agent as a part of the prompt and do not run those tests by yourself.
+The plan has to include code review phase at the end, fully done by the `tsh-code-reviewer` subagent using the `tsh-review` skill. Make sure to pass e2e execution to that agent as a part of the prompt and do not run those tests by yourself.
 
-For features with UI components based on Figma designs, each UI implementation task should be followed by a `[REUSE]` UI verification task delegated to `tsh-ui-reviewer` agent using the `tsh-review-ui` skill. Include the Figma URL in every verification task. Do not run UI verification from the software engineer level — let the engineering manager orchestrate the verify-fix loop.
+For features with UI components based on Figma designs, each UI implementation task should be followed by a `[REUSE]` UI verification task delegated to the `tsh-ui-reviewer` subagent using the `tsh-review-ui` skill. Include the Figma URL in every verification task. Do not run UI verification from the software engineer level — let the engineering manager orchestrate the verify-fix loop.
 
-For features involving LLM application prompts (system prompts, RAG templates, tool-calling instructions, classification/extraction prompts), add a `[REUSE]` prompt engineering task delegated to `tsh-prompt-engineer` agent using the `tsh-engineer-prompt` skill. Separate prompt design from application code — the software engineer implements the integration code, the prompt engineer designs the prompt content. Include the use case, target model, and any existing prompt drafts in the task description.
+For features involving LLM application prompts (system prompts, RAG templates, tool-calling instructions, classification/extraction prompts), add a `[REUSE]` prompt engineering task delegated to the `tsh-prompt-engineer` subagent using the `tsh-engineer-prompt` skill. Separate prompt design from application code — the software engineer implements the integration code, the prompt engineer designs the prompt content. Include the use case, target model, and any existing prompt drafts in the task description.
 
 Don't provide deployment plans, code pushing instructions, code review instructions on repository.
 

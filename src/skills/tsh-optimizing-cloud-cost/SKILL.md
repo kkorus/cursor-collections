@@ -1,17 +1,12 @@
 ---
 name: tsh-optimizing-cloud-cost
-description: Optimize cloud costs through resource rightsizing, tagging strategies, reserved instances, and spending analysis. Use when reducing cloud expenses, analyzing infrastructure costs, or implementing cost governance policies.
+description: Optimize cloud costs through resource rightsizing, tagging strategies, reserved instances, and spending analysis. Use when reducing cloud spending or meeting budget constraints, right-sizing resources from utilization data, implementing cost governance and tagging, or analyzing multi-cloud cost optimization opportunities.
 type: skill
+metadata:
+  short-description: Cloud cost rightsizing, tagging and governance
 ---
 
 # Cloud Cost Optimization
-
-## When to Use
-
-- Reducing cloud spending or meeting budget constraints
-- Right-sizing resources based on utilization
-- Implementing cost governance and tagging
-- Analyzing multi-cloud cost optimization opportunities
 
 ## Pricing Model Decision
 
@@ -91,7 +86,7 @@ type: skill
 
 - `references/tagging-standards.md` - Tagging conventions and enforcement
 
-## Related Skills
+## Connected Skills
 
 - `tsh-implementing-terraform-modules` - For resource provisioning
 - `tsh-designing-multi-cloud-architecture` - For cloud selection

@@ -1,6 +1,8 @@
 ---
 name: tsh-research
 description: Research a task based on Jira ID or task description and produce a structured research file.
+metadata:
+  short-description: Research a task and produce a structured research file
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-research/SKILL.md by scripts/generate.mjs. Do not edit. -->

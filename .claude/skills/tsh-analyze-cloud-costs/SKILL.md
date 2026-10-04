@@ -2,12 +2,14 @@
 name: tsh-analyze-cloud-costs
 description: Comprehensive AWS cost optimization and tagging compliance audit. Checks IaC code first, then validates against live infrastructure via API. Use when the user types /tsh-analyze-cloud-costs or asks to audit AWS costs. Routes to the tsh-devops-engineer agent.
 disable-model-invocation: true
+metadata:
+  short-description: Audit AWS cost optimization and tagging compliance
 ---
 <!-- Generated from src/skills/tsh-analyze-cloud-costs/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # /tsh-analyze-cloud-costs
 
-Load and follow the tsh-devops-engineer agent skill. Perform an exhaustive, evidence-based AWS cost optimization and tagging compliance audit. Use a **hybrid approach**: analyze Terraform/IaC code first (if available), then **always** validate against live AWS infrastructure via API. The goal is to inspect every nook and cranny — every service, every resource, every configuration — for optimization opportunities, waste, misconfigurations, and tagging gaps.
+Delegate to the `tsh-devops-engineer` subagent. Perform an exhaustive, evidence-based AWS cost optimization and tagging compliance audit. Use a **hybrid approach**: analyze Terraform/IaC code first (if available), then **always** validate against live AWS infrastructure via API. The goal is to inspect every nook and cranny — every service, every resource, every configuration — for optimization opportunities, waste, misconfigurations, and tagging gaps.
 
 When the user does not specify a narrow scope, **default to auditing everything** in the given account and region.
 
@@ -27,11 +29,11 @@ Before starting, load and follow these skills (in this order):
    - If the user specifies a focus (e.g., "EC2 only"), respect that scope. Otherwise, **audit all services** — compute, storage, databases, networking, serverless, containers, AI/ML, security, and any other active resources.
 
 2. **Load required skills** (MUST complete before any analysis):
-   - **Always load** the `tsh-discovering-technical-context` skill (`read_file` on the `tsh-discovering-technical-context` skill) — follow its process to identify existing IaC patterns, tagging conventions, and project context.
-   - **Always load** the `tsh-analyzing-codebase` skill (`read_file` on the `tsh-analyzing-codebase` skill) — even if no IaC files are found initially, this skill's Step 7 (infrastructure code) helps identify IaC in unexpected locations, and Step 2 (dependencies) reveals infrastructure-related dependencies in any project.
-   - **Always load** the `tsh-optimizing-cloud-cost` skill (`read_file` on the `tsh-optimizing-cloud-cost` skill and `references/tagging-standards.md`) — use it to establish the "Core 5" Mandatory Tags, Pricing Model Decision table, Storage Tiering Decision table, Process steps, Checklist, and Anti-Patterns. If the skill file cannot be found, use the following hardcoded defaults for the Core 5 Mandatory Tags: `CostCenter`, `Environment`, `Service`, `Owner`, `DataClass`.
-   - **Conditionally load** the `tsh-implementing-terraform-modules` skill (`read_file` on the `tsh-implementing-terraform-modules` skill) — load when Terraform files (`*.tf`, `*.tfvars`, `terragrunt.hcl`) are found. Use it as the reference standard for module structure, naming conventions, provider pinning, and AWS-specific module patterns when evaluating IaC quality and generating Terraform code.
-   - **Conditionally load** the `tsh-managing-secrets` skill (`read_file` on the `tsh-managing-secrets` skill) — load when the audit scope includes security (which is always for a full audit). Use its Security Checklist, Anti-Patterns, and Cloud-Native Detection patterns when evaluating secrets management, KMS keys, and credential handling.
+   - **Always load** the `tsh-discovering-technical-context` skill — follow its process to identify existing IaC patterns, tagging conventions, and project context.
+   - **Always load** the `tsh-analyzing-codebase` skill — even if no IaC files are found initially, this skill's Step 7 (infrastructure code) helps identify IaC in unexpected locations, and Step 2 (dependencies) reveals infrastructure-related dependencies in any project.
+   - **Always load** the `tsh-optimizing-cloud-cost` skill (including its `references/tagging-standards.md` reference) — use it to establish the "Core 5" Mandatory Tags, Pricing Model Decision table, Storage Tiering Decision table, Process steps, Checklist, and Anti-Patterns. If the skill file cannot be found, use the following hardcoded defaults for the Core 5 Mandatory Tags: `CostCenter`, `Environment`, `Service`, `Owner`, `DataClass`.
+   - **Conditionally load** the `tsh-implementing-terraform-modules` skill — load when Terraform files (`*.tf`, `*.tfvars`, `terragrunt.hcl`) are found. Use it as the reference standard for module structure, naming conventions, provider pinning, and AWS-specific module patterns when evaluating IaC quality and generating Terraform code.
+   - **Conditionally load** the `tsh-managing-secrets` skill — load when the audit scope includes security (which is always for a full audit). Use its Security Checklist, Anti-Patterns, and Cloud-Native Detection patterns when evaluating secrets management, KMS keys, and credential handling.
    - **Fallback**: If any skill file cannot be loaded, log the failure, note the skill gap in the final report's Executive Summary, and proceed with available skills.
    - Do **not** proceed to step 3 until all applicable skills have been read and their processes initiated.
 
@@ -200,3 +202,44 @@ All standard DevOps agent guardrails (Mutation Lock, Zero-Deletion Policy, FinOp
 - Always warn before suggesting modifications to resources tagged `Environment:prod`.
 - All remediation output (CLI scripts, Terraform code) is for user review and manual execution only — never execute directly.
 - When modifying existing Terraform code, show a diff preview of proposed changes before writing to files.
+
+## Delegating and Handling Agent Status
+
+Delegation goes one level deep. You delegate from the main thread, and the agents you delegate to never delegate further. Delegated agents start with a clean context and do not see this conversation, so put everything they need into the delegation prompt.
+
+### Delegation prompt template
+
+```
+MODE: delegated
+CALLER: <name of your skill or command>
+TASK: <what to do, stated specifically>
+INPUT_ARTIFACTS:
+- <explicit path of each file the agent needs>
+PRIOR_OUTPUT: <re-delegation only: the previous STATUS block, verbatim>
+USER_ANSWERS: <re-delegation only: the user's answers, numbered like the questions>
+```
+
+- The first line must be exactly `MODE: delegated`. Without it the agent runs in interactive mode and will ask the user instead of returning a status.
+- Pass artifact paths explicitly. Never ask the agent to search for them.
+- Omit `PRIOR_OUTPUT` and `USER_ANSWERS` on the first delegation.
+
+### Reading the returned status
+
+Every delegated agent ends its reply with a `STATUS:` block (`STATUS`, `ARTIFACTS`, `SUMMARY`, `QUESTIONS`, `DECISION_NEEDED`, `BLOCKER`). Some tools return the block on a single line (`STATUS: DONE SUMMARY: ...`), so parsing must not depend on line breaks:
+
+- Find the last `STATUS:` followed by one of the four values.
+- Read each field as the text after its capitalized name and colon, up to the next field name or the end of the reply.
+
+### Handling each status
+
+| Status | What you do |
+|---|---|
+| `DONE` | Continue with the workflow. Use the paths in `ARTIFACTS`. |
+| `NEEDS_INPUT` | Ask the user the listed `QUESTIONS` in the main thread, all at once and numbered. Then delegate to the same agent again with `PRIOR_OUTPUT` and `USER_ANSWERS`. |
+| `NEEDS_ARCHITECT_DECISION` | Delegate to the `tsh-architect` subagent with `DECISION_NEEDED` as the task. Then delegate to the original agent again, with the status block followed by the architect's decision in `PRIOR_OUTPUT`. |
+| `BLOCKED` | Show the `BLOCKER` to the user and stop that branch of the work. |
+| Missing or unparsable | Treat it as `BLOCKED` and show the raw output to the user. |
+
+### Iteration cap
+
+Re-delegate to the same agent at most 3 times per task. After that, stop and escalate to the user with the latest output. Loops that a workflow defines with their own caps (plan review, UI verification) keep those caps.

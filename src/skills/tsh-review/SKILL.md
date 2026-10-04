@@ -3,10 +3,12 @@ name: tsh-review
 description: Review the implementation against the plan and feature context. Use when the user types /tsh-review, asks to review code, or wants a quality check on the implementation. Routes to the tsh-code-reviewer agent.
 type: command
 routes-to: tsh-code-reviewer
+metadata:
+  short-description: Review an implementation against the plan
 ---
 # /tsh-review
 
-Load and follow the tsh-code-reviewer agent skill. Your goal is to review the implementation against the provided implementation plan and feature context.
+Delegate to the `tsh-code-reviewer` subagent. Your goal is to review the implementation against the provided implementation plan and feature context.
 
 Make sure to review not only the code and its acceptance criteria but also consider security aspects, code quality, testing coverage, and documentation.
 
@@ -22,7 +24,7 @@ Before starting, load and follow these skills:
 
 ## Workflow
 
-1. **Understand context**: Load the `*.research.md` and `*.plan.md` files to understand the task requirements and implementation plan. Ensure to review `*.mdc rules` files for project-specific guidelines.
+1. **Understand context**: Load the `*.research.md` and `*.plan.md` files to understand the task requirements and implementation plan. Ensure to review project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) for project-specific guidelines.
 2. **Review implementation**: Focus on code correctness, code quality, security, testing, and documentation.
 3. **Verify definition of done**: Check each item from the tasks' definition of done defined in the plan phases. When the definition of done is met, check the box for the completed item in the plan document.
 4. **Verify acceptance criteria**: Check each item from the acceptance criteria checklist in the plan file. When the acceptance criteria is met, check the box for the completed item.
@@ -32,3 +34,5 @@ Before starting, load and follow these skills:
 8. **Update changelog**: Add information that code review was performed to the changelog section of the plan file.
 
 When it comes to updating the definition of done and acceptance criteria checklist, you can only update those by checking the box for completed items. Do not modify the text of those sections.
+
+<!-- include: caller-status-handling -->
