@@ -5,7 +5,7 @@ title: Integrations Overview
 
 # Integrations Overview
 
-Cursor Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Cursor Agent sessions — enabling the end-to-end product engineering workflow.
+TSH AI Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Cursor Agent sessions — enabling the end-to-end product engineering workflow.
 
 ## What is MCP?
 

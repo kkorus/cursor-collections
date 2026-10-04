@@ -51,7 +51,7 @@ const cards: CardItem[] = [
     icon: <IntegrationsIcon className={styles.cardIcon} />,
     title: 'MCP Tool Integrations',
     description:
-      'Jira, Figma Dev Mode, Context7, Playwright, Sequential Thinking, AWS API, GCP Gcloud, and more — wired into the workflow phases, not bolted on. Context flows through every step automatically.',
+      'Jira, Figma, Context7, Playwright, Sequential Thinking, AWS API, GCP Gcloud, and more — wired into the workflow phases, not bolted on. Context flows through every step automatically.',
   },
 ];
 

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "generate": "node scripts/generate.mjs",
-    "check": "node scripts/generate.mjs --check && node scripts/lint.mjs && node scripts/check-refs.mjs",
+    "check": "node scripts/generate.mjs --check && node scripts/lint.mjs && node scripts/check-refs.mjs --docs",
     "lint": "node scripts/lint.mjs",
     "refs": "node scripts/check-refs.mjs",
     "test": "node --test scripts/test/"

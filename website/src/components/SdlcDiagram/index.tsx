@@ -20,7 +20,7 @@ export default function SdlcDiagram(): React.JSX.Element {
         {/* AI Agent */}
         <div className={styles.agentNode}>
           <div className={styles.agentTitle}>AI Agent</div>
-          <div className={styles.agentSub}>Copilot Collections</div>
+          <div className={styles.agentSub}>TSH AI Collections</div>
         </div>
         <div className={`${styles.conn} ${styles.conn36}`} />
 
