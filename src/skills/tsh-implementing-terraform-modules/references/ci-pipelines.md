@@ -29,7 +29,7 @@ Lint (fmt) → Validate → Security Scan → Plan → [Manual Approval] → App
 | Element | Implementation | Why |
 |---------|---------------|-----|
 | Cloud credentials | OIDC federation (see `tsh-managing-secrets` for the per-platform table) | No long-lived secrets |
-| State backend | S3 with native locking (`use_lockfile = true`, Terraform 1.10 or newer, also supported by OpenTofu), GCS, or Azure Blob | Persistent state and protection against concurrent runs |
+| State backend | S3 with native locking (`use_lockfile = true`; introduced in Terraform 1.10 and still experimental there, so check the release notes of your version and of OpenTofu), GCS, or Azure Blob | Persistent state and protection against concurrent runs |
 | Plan artifact | `terraform plan -out=tfplan` and an uploaded artifact | Apply matches the reviewed plan |
 | PR comment | A script step or a maintained PR-comment action | Reviewers see the changes before merge |
 | Security scan | Trivy (`trivy config`, which includes the former tfsec rules) or Checkov | Catch misconfigurations early |
@@ -56,7 +56,7 @@ steps:
 
 **Rule:** Always use OIDC federation. Never store cloud access keys as secrets. The role ARN is not a secret, so a variable is enough. For GitLab (`id_tokens:`), Bitbucket (`oidc: true`) and other clouds, use the table in `tsh-managing-secrets`.
 
-Scope the role's trust policy to the repository and branch or environment. Use a read-only role for the plan job and a separate role, limited to the protected environment, for the apply job.
+Scope the role's trust policy to the repository and branch or environment. Use a read-only role for the plan job (note that `plan` takes the state lock by default, so with S3 `use_lockfile` the role also needs write access to the lock object, or run `plan -lock=false`) and a separate role, limited to the protected environment, for the apply job.
 
 ## Environment protection
 
