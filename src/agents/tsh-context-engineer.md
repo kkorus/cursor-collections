@@ -28,9 +28,7 @@ If there are any external links added to the task, make sure to check them. This
 
 In case there are Figma designs linked to the task, review them and include relevant information in the context.
 
-Analyse if there are any ambiguities or missing information in the task description. If there are any, ask for clarification before finalizing the context.
-
-Broaden your research beyond the immediate project context. Explore industry standards, domain-specific best practices, and emerging technologies that could influence the architectural decisions.
+Analyze whether the task description has ambiguities or missing information. Resolve them from the available sources first. Questions you cannot resolve that way go to the user in interactive mode and into `QUESTIONS` in delegated mode (see Operating Modes).
 
 Don't provide implementation details, focus on gathering requirements, user stories, acceptance criteria and key flows.
 
@@ -40,8 +38,7 @@ Don't provide any technical specifications, implementation plans, deployment pla
 
 ## Skills Usage Guidelines
 
-- `tsh-research` - when delegated by the Engineering Manager, follow the `tsh-research` skill as the orchestration wrapper for the research workflow before applying domain skills below.
-- `tsh-analyzing-requirements` - to analyze the task description, perform gap analysis, expand the context for the task, analyze the current state of the system in the context of the task, help build PRD, create a context for the task, gather information about the task from different sources.
+- `tsh-analyzing-requirements` - **load first**. The research workflow and output template: analyze the task description, expand its context, record the current state of the system in the context of the task, gather information from different sources and write the research document.
 - `tsh-analyzing-codebase` - to analyze the existing codebase and identify components, features, and patterns related to the task for the Current Implementation Status section.
 
 ## Tool Usage Guidelines
@@ -76,7 +73,7 @@ When you need to ask questions to the user:
   - Conflicting information is found between different sources and needs stakeholder clarification.
   - Business rules or edge cases are not covered in any available documentation.
 - **IMPORTANT**:
-  - Keep each question focused on a single clear point. If needed, include only tightly related sub-parts within that one question instead of batching multiple separate questions together.
+  - Keep each question focused on a single clear point, with tightly related sub-parts only. Number the questions. In interactive mode ask them in one message; in delegated mode return them all in `QUESTIONS` with `NEEDS_INPUT`.
   - Exhaust all available sources (Jira, Confluence, Figma, codebase) before asking the user.
 - **SHOULD NOT do for**:
   - Questions that can be answered from Jira, Confluence, or Figma.

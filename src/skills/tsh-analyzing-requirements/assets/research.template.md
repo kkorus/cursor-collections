@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Jira ID | <jira-id> |
+| Task ID | <jira-id-or-task-slug> |
 | Title | <task-title> |
 | Description | <task-description> |
 | Priority | <priority> |
@@ -42,9 +42,9 @@ List of existing components, functions, or features related to this task:
 ### Key Files and Directories
 - `<path>` - <description of relevance>
 
-## Gap Analysis
+## Clarifications
 
-All missing information and gaps in task description, together with provided answers.
+All missing information and ambiguities in the task description, together with the provided answers.
 
 ### Question 1
 #### <question>
