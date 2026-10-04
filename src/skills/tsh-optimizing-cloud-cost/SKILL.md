@@ -14,8 +14,8 @@ metadata:
 |---------------|-----|-------|-----|---------|
 | Steady-state (24/7) | Reserved Instances / Savings Plans | Reserved VMs | Committed Use | 30-72% |
 | Variable / burst | On-Demand + Auto-scaling | Pay-as-you-go | On-Demand | Baseline |
-| Fault-tolerant batch | Spot Instances | Spot VMs | Preemptible | Up to 90% |
-| Serverless / event-driven | Lambda | Functions | Cloud Functions | Pay-per-use |
+| Fault-tolerant batch | Spot Instances | Spot VMs | Spot VMs | Up to 90% |
+| Serverless / event-driven | Lambda | Functions | Cloud Run functions | Pay-per-use |
 
 ## Storage Tiering Decision
 
@@ -30,15 +30,30 @@ metadata:
 
 ## Required Tags
 
+The required set is the same five tags everywhere (this file, `references/tagging-standards.md` and the audit commands).
+
 | Tag | Purpose | Example |
 |-----|---------|---------|
-| `Environment` | Cost allocation by env | `production`, `staging` |
-| `Project` | Cost allocation by project | `my-project` |
-| `CostCenter` | Finance reporting | `engineering` |
-| `Owner` | Contact for unused resources | `team@example.com` |
-| `ManagedBy` | Track IaC vs manual | `terraform` |
+| `CostCenter` | Finance reporting and chargeback | `cc-102` |
+| `Environment` | Cost allocation by environment | `dev`, `staging`, `prod` |
+| `Service` | Cost allocation by workload | `auth-api` |
+| `Owner` | Contact for unused resources | `platform-team` |
+| `DataClass` | Security classification | `public`, `confidential`, `pii` |
 
-**Reference:** See `references/tagging-standards.md` for full standards.
+On GCP these are labels (`cost_center`, `environment`, `service`, `owner`, `data_class`). `ManagedBy` (`terraform`, `manual`) is optional.
+
+**Reference:** See `references/tagging-standards.md` for the full standards, the provider key formats and enforcement.
+
+## Pricing Models by Provider
+
+| Pricing Model | AWS | Azure | GCP |
+|---------------|-----|-------|-----|
+| 1-year or 3-year commitment | Reserved Instances, Savings Plans | Reserved VM Instances | Committed Use Discounts |
+| Flexible spend commitment | Compute Savings Plans | Savings plan for compute | Flexible committed use discounts |
+| Spot | Spot Instances | Spot VMs | Spot VMs |
+| Automatic discount | - | - | Sustained use discounts (on supported machine types) |
+
+Check the current discount levels and eligible services in the provider's pricing documentation before you quote numbers.
 
 ## Process
 
@@ -49,15 +64,15 @@ metadata:
 5. **Apply pricing models** → Reserved/Committed for steady, Spot for batch
 6. **Implement tiering** → Storage lifecycle policies, database right-sizing
 7. **Set up alerts** → Budget alerts at 50%, 80%, 100% thresholds
-8. **Schedule reviews** → Weekly cost review, monthly optimization
+8. **Schedule reviews** → Weekly cost and anomaly review, monthly optimization review (rightsizing and commitments)
 
 ## Checklist
 
 - [ ] Cost allocation tags applied to all resources
-- [ ] Unused resources deleted (EBS, EIPs, snapshots, idle instances)
+- [ ] Unused resources identified (EBS, EIPs, snapshots, idle instances) and reviewed for removal (nothing is deleted without an explicit decision)
 - [ ] Instances right-sized based on utilization metrics
 - [ ] Reserved capacity purchased for steady workloads (>70% utilization)
-- [ ] Spot/preemptible used for fault-tolerant workloads
+- [ ] Spot capacity used for fault-tolerant workloads
 - [ ] Storage lifecycle policies configured
 - [ ] Budget alerts enabled (50%, 80%, 100%)
 - [ ] Cost anomaly detection enabled
@@ -71,7 +86,7 @@ metadata:
 | Use On-Demand for steady workloads | Use Reserved/Committed for predictable usage |
 | Store all data in hot tier | Implement lifecycle policies |
 | Skip tagging | Tag everything for cost visibility |
-| Review costs monthly | Review weekly, alert on anomalies |
+| Review costs only at month end | Review weekly, alert on anomalies, run the optimization review monthly |
 
 ## Tools
 
@@ -93,3 +108,4 @@ metadata:
 
 - `tsh-implementing-terraform-modules` - For resource provisioning
 - `tsh-designing-multi-cloud-architecture` - For cloud selection
+- `tsh-delivering-infrastructure` - For the audit workflow and architect escalation
