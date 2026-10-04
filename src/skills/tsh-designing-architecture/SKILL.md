@@ -73,7 +73,7 @@ The plan has to include code review phase at the end, fully done by the `tsh-cod
 
 For features with UI components based on Figma designs, each UI implementation task should be followed by a `[REUSE]` UI verification task delegated to the `tsh-ui-reviewer` subagent using the `tsh-review-ui` skill. Include the Figma URL in every verification task. Do not run UI verification from the software engineer level — let the engineering manager orchestrate the verify-fix loop.
 
-For features involving LLM application prompts (system prompts, RAG templates, tool-calling instructions, classification/extraction prompts), add a `[REUSE]` prompt engineering task delegated to the `tsh-prompt-engineer` subagent using the `tsh-engineer-prompt` skill. Separate prompt design from application code — the software engineer implements the integration code, the prompt engineer designs the prompt content. Include the use case, target model, and any existing prompt drafts in the task description.
+For features involving LLM application prompts (system prompts, RAG templates, tool-calling instructions, classification/extraction prompts), add a `[REUSE]` prompt engineering task delegated to the `tsh-prompt-engineer` subagent. Separate prompt design from application code — the software engineer implements the integration code, the prompt engineer designs the prompt content. Include the use case, target model, and any existing prompt drafts in the task description.
 
 Don't provide deployment plans, code pushing instructions, code review instructions on repository.
 
