@@ -121,13 +121,13 @@ Look for code that is only used in their own test files and can be moved there o
 
 ## Large codebase
 
-The process might take a while and because of that create a document containing a section for each step. Save it as `specifications/codebase-analysis/codebase-analysis.md` (or the path the caller gives you).
+The process might take a while and because of that create a document containing a section for each step. Save it as `<specs>/codebase-analysis/codebase-analysis.md` (or the path the caller gives you), where `<specs>` is resolved by the "Resolve the Project Output Locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`).
 
 During the processing make sure to update the document over the time.
 
 ## Code Quality Audit
 
-For a code quality audit (dead code, duplications, improvement opportunities, architecture review), use the checklists in [references/audit-checklists.md](references/audit-checklists.md) for each layer or app, and write the result with [assets/code-quality-report.template.md](assets/code-quality-report.template.md). The audit report is saved as `specifications/code-quality/code-quality-report.md`. In a monorepo, each app, package and shared library is audited and reported separately.
+For a code quality audit (dead code, duplications, improvement opportunities, architecture review), use the checklists in [references/audit-checklists.md](references/audit-checklists.md) for each layer or app, and write the result with [assets/code-quality-report.template.md](assets/code-quality-report.template.md). The audit report is saved as `<specs>/code-quality/code-quality-report.md` (or the path the caller gives you). In a monorepo, each app, package and shared library is audited and reported separately.
 
 The `/tsh-audit-codebase` command runs this audit: it fans out one architect subagent per layer and compiles the report in the main thread.
 
