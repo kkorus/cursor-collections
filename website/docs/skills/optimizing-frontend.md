@@ -1,39 +1,31 @@
 ---
-sidebar_position: 29
-title: Frontend Optimization
+sidebar_position: 19
+title: Optimizing Frontend
 ---
 
-# Frontend Optimization
+# Optimizing Frontend
 
-**Folder:** `.cursor/skills/workflows/tsh-optimizing-frontend/`  
+**Skill name:** `tsh-optimizing-frontend`  
+**Source:** `src/skills/tsh-optimizing-frontend/`  
 **Used by:** Software Engineer
 
-Provides frontend rendering optimization strategies, code splitting patterns, memoization guidelines, bundle size control, asset optimization, and memory management practices.
+Frontend rendering optimization, code splitting, memoization strategies, bundle size control, asset optimization, and memory management.
 
-## Key Areas
+**Use when** optimizing component rendering, reducing bundle size, debugging performance issues, implementing lazy loading, or reviewing code for performance regressions.
 
-| Area               | Coverage                                                               |
-| ------------------ | ---------------------------------------------------------------------- |
-| **Rendering**      | Avoiding unnecessary re-renders, proper memoization, stable references |
-| **Code Splitting** | Route-based and component-based lazy loading strategies                |
-| **Bundle Size**    | Tree shaking, import optimization, dependency analysis                 |
-| **Assets**         | Image optimization, lazy loading, responsive images                    |
-| **Memory**         | Leak prevention, cleanup patterns, subscription management             |
+## What it covers
 
-## When to Use
+- Optimization Process
+- Memoization Decision Guide
+- Bundle Size Red Flags
+- Performance Checklist
+- Anti-Patterns
+- Framework-Specific Patterns
 
-- Optimizing component rendering performance.
-- Reducing bundle size.
-- Debugging performance issues (slow renders, memory leaks).
-- Implementing lazy loading.
-- Reviewing code for performance regressions.
+## Connected skills
 
-## Reference Files
-
-- `references/react-patterns.md` — React-specific optimization patterns (memoization, refs, previous value tracking).
-
-## Connected Skills
-
-- `tsh-implementing-frontend` — Component patterns and design system usage.
-- `tsh-writing-hooks` — Hook lifecycle and cleanup patterns.
-- `tsh-reviewing-frontend` — Performance spot-checks during code review.
+- [`tsh-ensuring-accessibility`](./ensuring-accessibility)
+- [`tsh-implementing-frontend`](./implementing-frontend)
+- [`tsh-implementing-react`](./implementing-react)
+- [`tsh-reviewing-frontend`](./reviewing-frontend)
+- [`tsh-writing-hooks`](./writing-hooks)

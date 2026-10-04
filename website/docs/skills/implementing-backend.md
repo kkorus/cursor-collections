@@ -1,73 +1,49 @@
 ---
-sidebar_position: 11
-title: Backend Implementation
+sidebar_position: 20
+title: Implementing Backend
 ---
 
-# Backend Implementation
+# Implementing Backend
 
-**Folder:** `.cursor/skills/workflows/tsh-implementing-backend/`  
-**Used by:** Software Engineer
+**Skill name:** `tsh-implementing-backend`  
+**Source:** `src/skills/tsh-implementing-backend/`  
+**Used by:** Software Engineer, `tsh-implement-task` (step)
 
-Provides patterns for building backend API services with modular architecture, structured testing, and production-ready infrastructure. Applies to Node.js, PHP, .NET, Java, and Go backends.
+Backend service implementation patterns, standards, and procedures for Node.js, PHP, .NET, Java, and Go.
 
-## Architecture: Vertical Slice / Modular Structure
+**Use when** building REST/GraphQL APIs or CRUD endpoints with filtering and pagination (DataGrid), setting up authentication, database migrations and repository patterns, external service integrations, logging, Docker-based local development, OpenAPI documentation, testing strategies, or modular architecture with vertical slices.
 
-Organize code by **domain/feature**, not by technical layer. All artifacts for a domain live in the same directory:
+## What it covers
 
-```
-src/
-├── users/
-│   ├── users.controller.ts      # HTTP layer (routes, request/response)
-│   ├── users.service.ts          # Business logic
-│   ├── users.repository.ts       # Data access
-│   ├── users.module.ts           # Module registration / DI wiring
-│   ├── dto/
-│   ├── entities/
-│   └── tests/
-├── shared/                       # Cross-cutting concerns only
-│   ├── middleware/
-│   ├── guards/
-│   └── utils/
-```
+- Guiding Principles
+- Architecture: Vertical Slice / Modular Structure
+- REST API Design
+- DataGrid: Filtering, Sorting & Pagination (TSH Standard)
+- Authentication & Authorization
+- Dependency Injection
+- Database Handling
+- External Service Adapters (Third-Party Clients)
+- Testing Strategy
+- API Documentation
+- Local Development
+- Health Check
+- Logging & Observability
+- Scalability & Security
+- Configuration & Environment
+- Implementation Procedure
+- Technology-Specific Patterns
 
-## Guiding Principles
+## Support files
 
-| Principle | Application |
-|---|---|
-| **SRP** | Controllers handle HTTP, services handle business logic, repositories handle data access |
-| **DRY** | Extract shared validation, mapping, or query logic into reusable utilities |
-| **KISS** | Prefer simple, readable solutions — avoid over-engineering |
-| **YAGNI** | Implement what is needed now, not "just in case" |
+- `references/`: `datagrid-standard.md`, `dotnet-patterns.md`, `go-patterns.md`, `java-spring-boot-patterns.md`, `local-development.md`, `nodejs-patterns.md`, `php-patterns.md`
 
-## REST API Patterns
+## Connected skills
 
-- Use plural nouns for resource names (`/users`, `/orders`)
-- `GET /resource` — list with pagination and filtering
-- `POST /resource` — create
-- `PATCH /resource/:id` — partial update
-- `DELETE /resource/:id` — delete
-- Return consistent error envelopes: `{ message, code, statusCode }`
-
-## Testing Strategy
-
-| Level | Tool | What to Test |
-|---|---|---|
-| **Unit** | Jest / Vitest | Business logic, utilities, validators |
-| **Integration** | Supertest / testcontainers | Endpoints, database queries |
-| **E2E** | Playwright | Full user flows |
-
-## Anti-Patterns
-
-| Anti-Pattern | Correction |
-|---|---|
-| Business logic in controllers | Move to service layer |
-| Direct DB access in controllers | Use repository pattern |
-| Raw SQL strings in services | Use ORM query builder or parameterized queries |
-| Missing input validation | Validate all incoming DTOs at the controller boundary |
-| Unhandled promise rejections | Always wrap async routes in error middleware |
-
-## Connected Skills
-
-- `tsh-sql-and-database-understanding` — Database schema, indexing, ORM patterns.
-- `tsh-technical-context-discovering` — Project conventions and existing patterns.
-- `tsh-implementing-observability` — Logging, metrics, and distributed tracing.
+- [`tsh-analyzing-codebase`](./analyzing-codebase)
+- [`tsh-analyzing-implementation-gaps`](./analyzing-implementation-gaps)
+- [`tsh-designing-databases`](./designing-databases)
+- [`tsh-discovering-technical-context`](./discovering-technical-context)
+- [`tsh-implementing-ci-cd`](./implementing-ci-cd)
+- [`tsh-implementing-observability`](./implementing-observability)
+- [`tsh-managing-secrets`](./managing-secrets)
+- [`tsh-writing-e2e-tests`](./writing-e2e-tests)

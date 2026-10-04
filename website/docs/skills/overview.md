@@ -5,127 +5,96 @@ title: Skills Overview
 
 # Skills Overview
 
-Cursor Collections includes **34 reusable workflow skills** — knowledge modules that provide specialized domain expertise, structured processes, and quality templates. They encode tested best practices for every phase of the product lifecycle. Skills are stored in `.cursor/skills/workflows/` and loaded automatically by agents when their domain applies to the current task.
+TSH AI Collections includes **41 knowledge skills**: modules that provide specialized domain expertise, structured processes and quality templates. They encode tested best practices for every phase of the product lifecycle.
+
+The same skills are installed for Cursor, Claude Code and Codex from one neutral source (`src/skills/`). Cursor and Codex read them from `.agents/skills/`, Claude Code from `.claude/skills/`. Agents load a skill when its description matches the current task. You can also ask for one by name in chat. Codex behavior is not yet verified.
 
 ## How Skills Work
 
 Each skill folder contains a `SKILL.md` file with:
 
-- **Domain-specific guidelines** — Best practices, checklists, and processes.
-- **Templates** — Example output formats (e.g., `plan.example.md`, `research.example.md`).
-- **Connected skills** — References to other skills that complement or support this one.
+- **Domain-specific guidelines**: best practices, checklists and processes.
+- **Templates**: example output formats in `assets/`.
+- **Deep-dive material**: longer references in `references/`, loaded only when needed.
+- **Connected skills**: references by name to skills that complement this one.
 
-When an agent starts a task, it checks all available skills and decides which ones to load. Multiple skills can be combined for tasks spanning different domains.
-
-Skills can also be referenced manually with `@tsh-skill-name` in chat.
+Skills reference each other by name, never by path. Commands, orchestrators and internal workflow steps are not knowledge skills and are documented in the Commands section.
 
 ## Available Skills
 
-### Product Ideation Skills
+### Product ideation
 
-| Skill | Description | Used By |
+| Skill | Description | Used by |
 |-------|-------------|---------|
-| [tsh-task-analysing](./task-analysis) | Workshop context synthesis, ambiguity resolution, baseline overlap | Business Analyst, Context Engineer, E2E Engineer |
-| [tsh-transcript-processing](./transcript-processing) | Workshop transcript cleaning and structuring | Business Analyst |
-| [tsh-task-extracting](./task-extraction) | Intent brief, epic and story extraction with source traceability | Business Analyst |
-| [tsh-task-quality-reviewing](./task-quality-review) | Lite/Full quality analysis for extracted task lists | Business Analyst |
-| [tsh-jira-task-formatting](./jira-task-formatting) | Jira-ready formatting, verification, and baseline refresh | Business Analyst |
+| [tsh-analyzing-requirements](./analyzing-requirements) | Analyze a task and build its context and research document | BA Analysis Worker, Context Engineer, E2E Engineer |
+| [tsh-processing-transcripts](./processing-transcripts) | Clean and structure raw workshop transcripts | BA Transcript Worker, Business Analyst (orchestrator) |
+| [tsh-extracting-tasks](./extracting-tasks) | Extract epics and user stories from workshop materials | BA Extraction Worker, Business Analyst (orchestrator) |
+| [tsh-reviewing-task-quality](./reviewing-task-quality) | Review extracted tasks for quality gaps and edge cases | BA Quality Worker, Business Analyst (orchestrator) |
+| [tsh-formatting-jira-tasks](./formatting-jira-tasks) | Format epics and stories as Jira-ready tasks | BA Formatting Worker, Business Analyst (orchestrator) |
+| [tsh-guarding-jira-statuses](./guarding-jira-statuses) | Protected Jira status policy for BA and Jira workflows | BA Quality Worker, Business Analyst (orchestrator) |
 
-### Development Skills
+### Development
 
-| Skill | Description | Used By |
+| Skill | Description | Used by |
 |-------|-------------|---------|
-| [tsh-architecture-designing](./architecture-design) | Solution architecture design and implementation plan creation | Architect |
-| [tsh-technical-context-discovering](./technical-context-discovery) | Project conventions and pattern discovery | Architect, CR, SE, E2E, CE |
-| [tsh-implementing-frontend](./frontend-implementation) | UI component patterns, composition, design tokens | Software Engineer |
-| [tsh-implementing-forms](./implementing-forms) | Form architecture, schema validation, multi-step flows | Software Engineer |
-| [tsh-writing-hooks](./writing-hooks) | Custom hook/composable patterns, lifecycle, testing | Software Engineer |
-| [tsh-ensuring-accessibility](./ensuring-accessibility) | WCAG 2.1 AA compliance, semantic HTML, ARIA, keyboard nav | Software Engineer |
-| [tsh-optimizing-frontend](./optimizing-frontend) | Rendering optimization, code splitting, bundle size | Software Engineer |
-| [tsh-implementing-backend](./implementing-backend) | REST/GraphQL APIs, CRUD, auth, database handling | Software Engineer |
-| [tsh-implementation-gap-analysing](./implementation-gap-analysis) | Gap analysis between plan and current state | Architect, CR, SE |
-| [tsh-sql-and-database-understanding](./sql-and-database) | Database engineering standards and ORM integration | Architect, CR, SE |
-| [tsh-codebase-analysing](./codebase-analysis) | Deep codebase analysis and dependency mapping | Architect, BA, CE, SE |
-| [tsh-engineering-prompts](./prompt-engineering) | LLM prompt design, optimization, security, and evaluation | PE, SE, Architect, CR |
+| [tsh-designing-architecture](./designing-architecture) | Design the architecture and implementation plan for a task | Architect, Plan Reviewer, `/tsh-ask`, Engineering Manager (orchestrator) |
+| [tsh-reviewing-plans](./reviewing-plans) | Stress-test an implementation plan and write a plan-review report | Plan Reviewer |
+| [tsh-discovering-technical-context](./discovering-technical-context) | Discover project conventions and patterns before coding | Architect, Code Reviewer, DevOps Engineer, E2E Engineer, Plan Reviewer, Prompt Engineer, Software Engineer, `/tsh-analyze-cloud-costs`, `/tsh-ask`, `/tsh-audit-codebase`, `/tsh-audit-infrastructure`, `/tsh-create-custom-agent`, `/tsh-create-custom-command`, `/tsh-create-custom-rules`, `/tsh-create-custom-skill`, Engineering Manager (orchestrator), `tsh-implement-task` (step) |
+| [tsh-analyzing-codebase](./analyzing-codebase) | Analyze a codebase: dependencies, business logic, duplications | Architect, BA Analysis Worker, Context Engineer, DevOps Engineer, Plan Reviewer, Software Engineer, `/tsh-analyze-cloud-costs`, `/tsh-ask`, `/tsh-audit-codebase`, `/tsh-audit-infrastructure`, `/tsh-create-custom-agent`, `/tsh-create-custom-command`, `/tsh-create-custom-rules`, `/tsh-create-custom-skill` |
+| [tsh-analyzing-implementation-gaps](./analyzing-implementation-gaps) | Compare a plan with the current state to find implementation gaps | Architect, Code Reviewer, Plan Reviewer, Software Engineer, `tsh-implement-task` (step) |
+| [tsh-designing-databases](./designing-databases) | SQL and database design: schemas, indexing, queries, ORMs | Architect, Code Reviewer, Plan Reviewer, Software Engineer, `tsh-implement-task` (step) |
+| [tsh-implementing-frontend](./implementing-frontend) | Frontend components, design tokens and Figma-to-code | Software Engineer, `tsh-implement-task` (step) |
+| [tsh-implementing-react](./implementing-react) | React hooks, effects, memoization and safe rendering | any agent |
+| [tsh-implementing-forms](./implementing-forms) | Form architecture, validation and accessible patterns | Software Engineer |
+| [tsh-writing-hooks](./writing-hooks) | Custom React hook patterns | Software Engineer |
+| [tsh-ensuring-accessibility](./ensuring-accessibility) | WCAG accessibility: semantic HTML, ARIA, keyboard, contrast | Software Engineer, `tsh-implement-task` (step) |
+| [tsh-optimizing-frontend](./optimizing-frontend) | Frontend rendering, bundle and memory optimization | Software Engineer |
+| [tsh-implementing-backend](./implementing-backend) | Backend patterns: APIs, auth, testing, integrations | Software Engineer, `tsh-implement-task` (step) |
+| [tsh-debugging](./debugging) | Debug systematically: reproduce, isolate, fix, verify | `/tsh-debug` |
+| [tsh-refactoring](./refactoring) | Refactor safely with characterization tests and small steps | Engineering Manager (orchestrator), `/tsh-refactor` |
+| [tsh-engineering-prompts](./engineering-prompts) | LLM prompt patterns: structure, security, evaluation | Architect, Code Reviewer, Prompt Engineer |
 
-### Cloud & Infrastructure Skills
+### Cloud and infrastructure
 
-| Skill | Description | Used By |
+| Skill | Description | Used by |
 |-------|-------------|---------|
-| [tsh-implementing-ci-cd](./ci-cd-implementation) | CI/CD pipeline design patterns and deployment strategies | DevOps Engineer |
-| [tsh-implementing-kubernetes](./kubernetes-implementation) | Kubernetes deployment patterns, Helm charts, and cluster management | DevOps Engineer |
-| [tsh-implementing-terraform-modules](./terraform-modules) | Reusable Terraform modules for AWS, Azure, and GCP infrastructure | DevOps Engineer |
-| [tsh-implementing-observability](./observability-implementation) | Observability patterns for logging, monitoring, alerting, and distributed tracing | DevOps Engineer |
-| [tsh-managing-secrets](./secrets-management) | Secrets management patterns for cloud and Kubernetes environments | DevOps Engineer |
-| [tsh-optimizing-cloud-cost](./cloud-cost-optimization) | Cloud cost optimization through rightsizing, tagging, and spending analysis | DevOps Engineer |
-| [tsh-designing-multi-cloud-architecture](./multi-cloud-architecture) | Multi-cloud architecture design across AWS, Azure, and GCP | DevOps Engineer, Architect |
+| [tsh-delivering-infrastructure](./delivering-infrastructure) | Infrastructure delivery workflow, skill routing and escalation rules | DevOps Engineer, `/tsh-audit-infrastructure`, Engineering Manager (orchestrator) |
+| [tsh-implementing-ci-cd](./implementing-ci-cd) | CI/CD pipeline design and deployment strategies | Architect, DevOps Engineer |
+| [tsh-implementing-kubernetes](./implementing-kubernetes) | Kubernetes deployments, Helm charts and scaling | Architect, DevOps Engineer |
+| [tsh-implementing-terraform-modules](./implementing-terraform-modules) | Reusable Terraform modules for AWS, Azure and GCP | Architect, DevOps Engineer, `/tsh-analyze-cloud-costs` |
+| [tsh-implementing-observability](./implementing-observability) | Logging, monitoring, alerting and tracing patterns | Architect, DevOps Engineer |
+| [tsh-managing-secrets](./managing-secrets) | Secrets storage, rotation and CI/CD authentication | Architect, DevOps Engineer, `/tsh-analyze-cloud-costs`, `/tsh-audit-infrastructure` |
+| [tsh-optimizing-cloud-cost](./optimizing-cloud-cost) | Cloud cost rightsizing, tagging and governance | Architect, DevOps Engineer, `/tsh-analyze-cloud-costs`, `/tsh-audit-infrastructure` |
+| [tsh-designing-multi-cloud-architecture](./designing-multi-cloud-architecture) | Choose and integrate services across AWS, Azure and GCP | Architect, DevOps Engineer |
 
-### Quality Skills
+### Quality
 
-| Skill | Description | Used By |
+| Skill | Description | Used by |
 |-------|-------------|---------|
-| [tsh-code-reviewing](./code-review) | Structured code review process | Code Reviewer |
-| [tsh-reviewing-frontend](./reviewing-frontend) | Frontend-specific review: components, hooks, rendering, a11y | Code Reviewer |
-| [tsh-ui-verifying](./ui-verification) | Figma vs implementation verification criteria | UI Reviewer, SE |
-| [tsh-e2e-testing](./e2e-testing) | Playwright E2E testing patterns and verification | E2E Engineer |
+| [tsh-reviewing-code](./reviewing-code) | Structured code review: correctness, security, quality | Code Reviewer, Prompt Engineer, `/tsh-audit-codebase`, Engineering Manager (orchestrator), `/tsh-review` |
+| [tsh-reviewing-frontend](./reviewing-frontend) | Frontend code review criteria and anti-patterns | Code Reviewer |
+| [tsh-verifying-ui](./verifying-ui) | UI verification criteria and report format against Figma | Software Engineer, UI Reviewer, `tsh-orchestrate-ui-verification` (step), `/tsh-review-ui` |
+| [tsh-writing-e2e-tests](./writing-e2e-tests) | Playwright E2E testing patterns and CI readiness | E2E Engineer |
 
-### Cursor Customization Skills
+### Collection authoring and tooling
 
-| Skill | Description | Used By |
+| Skill | Description | Used by |
 |-------|-------------|---------|
-| [tsh-creating-agents](./creating-agents) | Creating Cursor agent skills (`SKILL.md` in `agents/`) | Cursor Engineer |
-| [tsh-creating-skills](./creating-skills) | Creating workflow skills (`SKILL.md` in `workflows/`) | Cursor Engineer |
-| [tsh-creating-commands](./creating-commands) | Creating Cursor slash command skills (`disable-model-invocation: true`) | Cursor Engineer |
-| [tsh-creating-rules](./creating-instructions) | Creating Cursor rules (`.cursor/rules/*.mdc`) | Cursor Engineer |
-| [tsh-committing](./committing) | Conventional Commits message drafting for `/tsh-commit` | `/tsh-commit` command |
-| [tsh-migrating-copilot-to-cursor](./migrating-copilot-to-cursor) | Port Copilot customization artifacts to Cursor equivalents | Cursor Engineer, Cursor Orchestrator |
-
-## Agent–Skill Matrix
-
-| Skill | BA | CE | Architect | SE | PE | CR | UI | E2E | DevOps | Cursor Eng. |
-|-------|----|----|-----------|----|----|----|----|-----|--------|-------------|
-| tsh-architecture-designing | | | ✅ | | | | | | | |
-| tsh-code-reviewing | | | | | ✅ | ✅ | | | | |
-| tsh-codebase-analysing | ✅ | ✅ | ✅ | ✅ | | | | | ✅ | ✅ |
-| tsh-creating-agents | | | | | | | | | | ✅ |
-| tsh-creating-rules | | | | | | | | | | ✅ |
-| tsh-creating-commands | | | | | | | | | | ✅ |
-| tsh-creating-skills | | | | | | | | | | ✅ |
-| tsh-committing | | | | | | | | | | |
-| tsh-migrating-copilot-to-cursor | | | | | | | | | | ✅ |
-| tsh-designing-multi-cloud-architecture | | | ✅ | | | | | | ✅ | |
-| tsh-e2e-testing | | | | | | | | ✅ | | |
-| tsh-engineering-prompts | | | ✅ | ✅ | ✅ | ✅ | | | | |
-| tsh-ensuring-accessibility | | | | ✅ | | | | | | |
-| tsh-implementing-backend | | | | ✅ | | | | | | |
-| tsh-implementing-ci-cd | | | ✅ | | | | | | ✅ | |
-| tsh-implementing-forms | | | | ✅ | | | | | | |
-| tsh-implementing-frontend | | | | ✅ | | | | | | |
-| tsh-implementing-kubernetes | | | ✅ | | | | | | ✅ | |
-| tsh-implementing-observability | | | ✅ | | | | | | ✅ | |
-| tsh-implementing-terraform-modules | | | ✅ | | | | | | ✅ | |
-| tsh-implementation-gap-analysing | | | ✅ | ✅ | | ✅ | | | | |
-| tsh-jira-task-formatting | ✅ | | | | | | | | | |
-| tsh-managing-secrets | | | ✅ | | | | | | ✅ | |
-| tsh-optimizing-cloud-cost | | | ✅ | | | | | | ✅ | |
-| tsh-optimizing-frontend | | | | ✅ | | | | | | |
-| tsh-reviewing-frontend | | | | | | ✅ | | | | |
-| tsh-sql-and-database-understanding | | | ✅ | ✅ | | ✅ | | | | |
-| tsh-task-analysing | | ✅ | | | | | | ✅ | | |
-| tsh-task-extracting | ✅ | | | | | | | | | |
-| tsh-task-quality-reviewing | ✅ | | | | | | | | | |
-| tsh-technical-context-discovering | | ✅ | ✅ | ✅ | ✅ | ✅ | | ✅ | ✅ | ✅ |
-| tsh-transcript-processing | ✅ | | | | | | | | | |
-| tsh-ui-verifying | | | | ✅ | | | ✅ | | | |
-| tsh-writing-hooks | | | | ✅ | | | | | | |
+| [tsh-creating-agents](./creating-agents) | Schema, mapping and rules for writing agents | AI Customization Creator, AI Customization Reviewer, AI Customization Orchestrator (orchestrator), `/tsh-create-custom-agent` |
+| [tsh-creating-skills](./creating-skills) | Schema, naming, layout and templates for writing skills | AI Customization Creator, AI Customization Reviewer, AI Customization Orchestrator (orchestrator), `/tsh-create-custom-skill` |
+| [tsh-creating-commands](./creating-commands) | Schema, mapping and template for writing commands | AI Customization Creator, AI Customization Reviewer, AI Customization Orchestrator (orchestrator), `/tsh-create-custom-command` |
+| [tsh-creating-rules](./creating-rules) | Placement, fields and templates for project instructions and rules | AI Customization Creator, AI Customization Reviewer, AI Customization Orchestrator (orchestrator), `/tsh-create-custom-rules` |
+| [tsh-migrating-copilot-customizations](./migrating-copilot-customizations) | Convert Copilot customizations to the neutral source or native files | any agent |
+| [tsh-committing](./committing) | Draft Conventional Commits messages from git changes | `/tsh-commit` |
+| [tsh-using-mcp-servers](./using-mcp-servers) | When and how to use the collection's MCP servers | Architect, Code Reviewer, Context Engineer, DevOps Engineer, E2E Engineer, Prompt Engineer, Software Engineer, Business Analyst (orchestrator) |
 
 ## Loading Priority
 
 Skills follow a strict priority hierarchy:
 
-1. **Cursor rules** (`.cursor/rules/*.mdc` files) — highest priority.
-2. **Existing codebase patterns** — replicate established conventions.
-3. **Skill guidelines** — domain best practices and templates.
-4. **External documentation** — framework docs, OWASP, industry standards.
+1. **Project instructions and rules** (`AGENTS.md`, `CLAUDE.md`, Cursor `.mdc` rules): highest priority.
+2. **Existing codebase patterns**: replicate established conventions.
+3. **Skill guidelines**: domain best practices and templates.
+4. **External documentation**: framework docs, OWASP, industry standards.
 
 This ensures consistency: existing patterns are never overridden unless explicitly requested.

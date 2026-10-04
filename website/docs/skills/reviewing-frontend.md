@@ -1,39 +1,31 @@
 ---
-sidebar_position: 30
-title: Frontend Review
+sidebar_position: 33
+title: Reviewing Frontend
 ---
 
-# Frontend Review
+# Reviewing Frontend
 
-**Folder:** `.cursor/skills/workflows/tsh-reviewing-frontend/`  
+**Skill name:** `tsh-reviewing-frontend`  
+**Source:** `src/skills/tsh-reviewing-frontend/`  
 **Used by:** Code Reviewer
 
-Provides frontend-specific code review criteria covering component anti-patterns, hooks quality, rendering correctness, accessibility and performance spot-checks, and module organization issues.
+Frontend-specific code review criteria, component anti-patterns, hooks quality, rendering correctness, accessibility and performance spot-checks, and module organization issues.
 
-## Key Areas
+**Use when** reviewing frontend pull requests, auditing component quality, or identifying UI-specific code smells beyond general code review.
 
-| Area                    | Coverage                                                         |
-| ----------------------- | ---------------------------------------------------------------- |
-| **Component Quality**   | Anti-patterns, composition issues, prop drilling, god components |
-| **Hooks Correctness**   | Dependency arrays, cleanup, rules of hooks violations            |
-| **Rendering**           | Unnecessary re-renders, unstable references, missing memoization |
-| **Accessibility**       | Missing ARIA, keyboard traps, contrast violations                |
-| **Performance**         | Bundle impact, large dependencies, unoptimized assets            |
-| **Module Organization** | Barrel files, circular dependencies, colocation issues           |
+## What it covers
 
-## When to Use
+- Frontend Review Process
+- Frontend Review Checklist
+- Common Frontend Anti-Patterns
+- Framework-Specific Patterns
 
-- Reviewing frontend pull requests.
-- Auditing component quality.
-- Identifying UI-specific code smells beyond general code review.
+## Connected skills
 
-## Reference Files
-
-- `references/react-patterns.md` — React-specific review checklist items.
-
-## Connected Skills
-
-- `tsh-code-reviewing` — General code review process (this skill extends it for frontend).
-- `tsh-implementing-frontend` — The patterns this skill reviews against.
-- `tsh-ensuring-accessibility` — Detailed a11y criteria for deeper checks.
-- `tsh-optimizing-frontend` — Performance criteria for deeper checks.
+- [`tsh-ensuring-accessibility`](./ensuring-accessibility)
+- [`tsh-implementing-forms`](./implementing-forms)
+- [`tsh-implementing-frontend`](./implementing-frontend)
+- [`tsh-implementing-react`](./implementing-react)
+- [`tsh-optimizing-frontend`](./optimizing-frontend)
+- [`tsh-reviewing-code`](./reviewing-code)
+- [`tsh-writing-hooks`](./writing-hooks)

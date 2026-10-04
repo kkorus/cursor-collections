@@ -1,22 +1,33 @@
 ---
-sidebar_position: 20
+sidebar_position: 41
 title: Committing
 ---
 
 # Committing
 
-**Folder:** `.cursor/skills/workflows/tsh-committing/`  
-**Used by:** `/tsh-commit` command
+**Skill name:** `tsh-committing`  
+**Source:** `src/skills/tsh-committing/`  
+**Used by:** `/tsh-commit`
 
-Procedural rules for drafting [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) messages: type/scope inference, format rules, secret-file checks, and split recommendations. The workflow skill does not run `git commit` — the `/tsh-commit` command handles inspection, user approval, and execution.
+Conventional Commits message drafting: type/scope inference, format rules, secret-file checks, and split recommendations.
 
-## Key Guidelines
+**Use when** drafting commit messages, running /tsh-commit, or analyzing git diffs for commit structure.
 
-- Subject line: imperative mood, lowercase after the colon, no trailing period, max ~72 characters.
-- Body: explain **why**, not **what** (the diff shows what changed).
-- Never commit files that likely contain secrets (`.env`, credentials, keys).
-- Recommend splitting unrelated changes into separate commits.
+## What it covers
 
-## Connected Skills
+- Message Format
+- Allowed Types
+- Inferring Type from Diff
+- Scope
+- Breaking Changes
+- Revert Commits
+- Split vs Single Commit
+- Anti-Patterns (reject and rewrite)
+- Secret and Sensitive Files
+- Examples
+- Specification
 
-- [`/tsh-commit`](../prompts/public/commit) — User-facing slash command that loads this workflow.
+## Connected skills
+
+- [`tsh-discovering-technical-context`](./discovering-technical-context)
+- [`tsh-reviewing-code`](./reviewing-code)
