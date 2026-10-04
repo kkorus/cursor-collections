@@ -170,6 +170,8 @@ test('old-layout fixture: dangling category symlink removed, copied tsh-architec
   assert.ok(!exists(path.join(home, '.claude/skills/tsh-old-gone')));
   assert.equal(fs.readFileSync(path.join(cs, 'my-skill/SKILL.md'), 'utf8'), 'mine');
   assert.ok(exists(path.join(cs, 'workflows/other/SKILL.md')));
+  assert.ok(!exists(path.join(cs, 'commands')), 'emptied legacy category folder is removed');
+  assert.ok(exists(path.join(cs, 'workflows')), 'category folder with other content stays');
   assert.ok(exists(path.join(home, '.claude/skills/my-other/SKILL.md')));
   const bk = path.join(home, '.tsh-ai-collections-backup');
   const [stamp] = fs.readdirSync(bk);

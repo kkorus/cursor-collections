@@ -24,7 +24,7 @@ Installs the generated tsh-* skills and subagents into a user or project tree.
   --tools <list>       comma list of: cursor, claude, codex (required for install)
   --scope user|project where to install (default: user = home dir)
   --project-dir <dir>  project root for --scope project (default: current dir)
-  --source <dir>       repo root holding the generated trees (default: this clone)
+  --source <dir>       repo root holding the generated trees and scripts/legacy-names.json (default: this clone)
   --mode copy|link     copy (default) or symlink to the clone, so "git pull" updates it.
                        Windows: symlinks need Developer Mode or admin rights; prefer copy.
   --update             reinstall the tools recorded in the manifests and prune tsh-*
@@ -200,6 +200,8 @@ export function cleanupLegacy(ctx) {
         for (const m of listDir(ctx, p)) {
           if (m.startsWith(PREFIX)) hit(path.join(p, m), `legacy: category folder ${n}/ under .cursor/skills`);
         }
+        // the old layout's category folder is empty now: remove it, never one that still holds other files
+        if (!ctx.dry && listDir(ctx, p).length === 0) ctx.fs.rmdirSync(p);
       }
     }
     // (c): other target skills dirs

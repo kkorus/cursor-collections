@@ -2390,6 +2390,12 @@ Potential improvements identified during planning that are not part of the curre
 - **Cursor menu clutter:** hiding internal/orchestrator skills from Cursor's `/` menu once Cursor supports an equivalent of `user-invocable: false`.
 - **Vue reference:** `references/vue-patterns.md` for `tsh-writing-hooks` (WF-34), if Vue support is wanted.
 - **Repo and domain rename:** rename the GitHub repo `cursor-collections` → `tsh-ai-collections` (GitHub redirects old URLs, but clone paths in the docs and the installer examples must be updated at the same time), and move the website domain `copilot-collections.tsh.io`. These are repo-owner actions outside this repo (OQ1).
+- **Codex runtime verification:** the `codex` CLI was not available, so spike 1.3 and the Codex smoke tests are open (hyphenated agent names, read-only sandbox, dotted MCP server names, skill listing budget, `$tsh-implement`).
+- **Cursor IDE checks:** the `/` palette count, the agents picker, MCP approval and the Settings toggles (spike Q6, Q9) can only be checked in the IDE.
+- **Consumer root instructions:** the installer does not install `AGENTS.md` or `CLAUDE.md` into a consumer project (they are project-owned). Consider an opt-in snippet.
+- **Atlassian deny:** `mcp__atlassian` only matches a server named `atlassian`; connectors with other names are not denied.
+- **Installer re-runs:** a second run is idempotent but re-copies every entry and logs each line; make it skip identical entries.
+- **Website polish:** `for-ctos.md` still has an unverified price comparison; the skill pages are generated from `SKILL.md` and lost the old hand-written detail.
 
 ## Changelog
 
@@ -2474,3 +2480,9 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
 - **Decisions confirmed:** no `inlinePreload` for Cursor; `--mode link` ships; keep `CLAUDE.md` = `@AGENTS.md`.
 - **New caveats for D5/D6:** the CLI has no skill tool, so "load by name" is a file read of `.claude/skills/*/SKILL.md` (skill names must stay unique across trees); the subagent's STATUS block can be glued to the preceding sentence, so detection must not assume a line boundary; Claude hooks in `.claude/settings.json` are not executed by `cursor-agent`; a subagent asks its question and the turn ends (continue with `--continue`).
 - **Still unverified:** Codex (CLI not installed), the Cursor IDE settings (Q6 third-party toggle, Q9 GitHub import), user-scope MCP paths for Claude and Codex.
+
+### 2026-10-04 - Phase 5 status
+
+- **Done:** 5.1 (`.github/workflows/validate.yml`), 5.2 (migration tooling removed), 5.3 (`smoke-tests.md`: Claude Code 2.1.285, `cursor-agent` 2026.10.01, upgrade path; Codex not tested).
+- **Found and fixed on the way:** `npm test` passed a directory, which fails on Node 22 (now a file glob); the installer's copy mode left symlinks in copied skills on Node 22 (`copyDereferenced`); empty legacy category folders are removed after the cleanup; upgrading docs describe the backup layout. All 160 tests pass on Node 22 and Node 26.
+- **Smoke results:** no FAIL in any tested tool; see `smoke-tests.md`. Untested items are listed under "Improvements (Out of Scope)".

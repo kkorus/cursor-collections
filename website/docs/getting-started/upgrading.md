@@ -47,7 +47,9 @@ The cleanup runs before every install and update. It touches only entries whose 
 | Copied category folders (`agents/`, `commands/`, `workflows/`, `internal/`) under those two folders that contain `tsh-*` entries | Reported, and the `tsh-*` entries inside are moved to the backup. |
 | In the new skill folders (`~/.agents/skills`, `~/.claude/skills` and project equivalents): a dangling symlink, a symlink into the old category layout, or an entry whose name is listed in `scripts/legacy-names.json` | Symlinks are removed. Real directories are moved to the backup. |
 
-**Backup location:** `~/.tsh-ai-collections-backup/<timestamp>/`. Nothing is hard-deleted. If you edited an old skill, your copy is there.
+**Backup location:** `~/.tsh-ai-collections-backup/<timestamp>/`, with every entry stored under its original absolute path (for example `<timestamp>/Users/you/.cursor/skills/tsh-architect`). Backups of project-scope entries also go to this folder in your home directory. Nothing is hard-deleted. If you edited an old skill, your copy is there. Category folders that are empty after the cleanup are removed; folders that still hold other files stay.
+
+An install with `--scope project` also cleans legacy entries in `~/.cursor/skills`, because the old layout was usually installed there.
 
 The installer prints every action it takes.
 
