@@ -28,7 +28,7 @@ When Jira context, board context, or read-back verification payloads are needed,
 
 ## Skills Usage
 
-- `tsh-reviewing-task-quality` - use for Lite and Full review passes, structured findings, confidence scoring, and suggestions for task improvement.
+- `tsh-reviewing-task-quality` - run it in delegated mode (see its "Delegated mode" section); use it for Lite and Full review passes, structured findings, confidence scoring, and suggestions for task improvement.
 
 
 
@@ -58,8 +58,8 @@ Use orchestrator-provided Jira or board context when available instead of queryi
 
 ## Constraints
 
-- Never write files.
-- Never ask the user questions directly.
+- Never write files. You are read-only: return your complete result in the reply body, before the status block (`ARTIFACTS: none`). The orchestrator saves it.
+- Never ask the user. Put every question in `QUESTIONS` and return `NEEDS_INPUT`.
 - Never create or update Jira issues.
 - Never call Jira directly; Jira context is supplied by the orchestrator when needed.
 - Respect the protected status policy.

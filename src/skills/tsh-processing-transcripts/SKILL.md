@@ -116,6 +116,15 @@ Review the output to ensure:
 - Decisions, action items, and open questions are complete
 - The document is readable and useful as a standalone reference
 
+## Delegated mode
+
+When you run as a delegated worker (the task starts with `MODE: delegated`), the orchestrator owns every interaction and every file write:
+
+- **Step 1 (ask for missing metadata):** skipped. Leave the field as "not stated" and list the missing metadata in `QUESTIONS`.
+- **Step 8 (save):** skipped. Do not write files. Return the complete cleaned transcript in the reply body, in the structure of `assets/cleaned-transcript.template.md`. The orchestrator saves it as `cleaned-transcript.md`.
+- **Input:** read only the files listed in `INPUT_ARTIFACTS`. Extract PDF text with the PDF reader first.
+- **Everything else:** Steps 2-7 run unchanged.
+
 ## Connected Skills
 
 - `tsh-extracting-tasks` - uses the cleaned transcript as a primary input for identifying epics and stories

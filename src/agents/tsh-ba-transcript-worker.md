@@ -29,7 +29,7 @@ You focus on clarity, topic grouping, decision capture, action items, and open q
 
 ## Skills Usage
 
-- `tsh-processing-transcripts` - use for transcript cleanup, topic structuring, decision extraction, and keeping the result close to the established transcript-processing format.
+- `tsh-processing-transcripts` - run it in delegated mode (see its "Delegated mode" section); use it for transcript cleanup, topic structuring, decision extraction, and keeping the result close to the established transcript-processing format.
 
 
 
@@ -64,8 +64,8 @@ Return cleaned transcript output in-memory to `tsh-business-analyst`. Keep the s
 
 ## Constraints
 
-- Never write files.
-- Never ask the user questions directly.
+- Never write files. You are read-only: return your complete result in the reply body, before the status block (`ARTIFACTS: none`). The orchestrator saves it.
+- Never ask the user. Put every question in `QUESTIONS` and return `NEEDS_INPUT`.
 - Never create backlog items or Jira tasks.
 - Never present results directly to the user.
 - Use `tsh-processing-transcripts` as the governing workflow.

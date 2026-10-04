@@ -326,6 +326,15 @@ The report serves as an audit trail documenting:
 - The user's decision for each suggestion (accepted/rejected)
 - A summary of changes applied to `extracted-tasks.md`
 
+## Delegated mode
+
+When you run as a delegated worker (the task starts with `MODE: delegated`), the orchestrator owns every Jira call, every user gate and every file write:
+
+- **Step 2 (Jira board context):** skipped. Do not call any Atlassian tool and do not ask for a project key. Use the Jira context in `INPUT_ARTIFACTS` or in the task, if the orchestrator supplied it.
+- **Step 7 (present to the user), Step 8 (apply) and Step 9 (save):** skipped. Do not write files and do not modify `extracted-tasks.md`. Return the structured suggestions (ID, confidence, action type, target story, finding, proposed change) in the reply body, grouped by pass or epic. Note excluded protected tasks explicitly. The orchestrator deduplicates, runs the user review, applies accepted suggestions and writes the report.
+- **Passes:** run only the passes named in the task; if none are named, the passes of the selected review mode.
+- **Everything else:** Steps 1 and 3-6 run unchanged.
+
 ## Analysis Categories Reference
 
 | Pass | Category | Confidence Default | Typical Action |

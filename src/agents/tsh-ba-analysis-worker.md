@@ -31,7 +31,7 @@ When Jira context, board context, or read-back verification payloads are needed,
 
 ## Skills Usage
 
-- `tsh-analyzing-requirements` - use for business/context synthesis, ambiguity resolution, and baseline overlap analysis.
+- `tsh-analyzing-requirements` - run it in delegated mode (see its "Delegated mode" section); use it for business/context synthesis, ambiguity resolution, and baseline overlap analysis.
 - `tsh-analyzing-codebase` - use when codebase context is relevant to understanding current capabilities or scope overlap.
 
 
@@ -74,8 +74,8 @@ If Jira enrichment or verification context is needed, consume the orchestrator-p
 
 ## Constraints
 
-- Never write files.
-- Never ask the user questions directly.
+- Never write files. You are read-only: return your complete result in the reply body, before the status block (`ARTIFACTS: none`). The orchestrator saves it.
+- Never ask the user. Put every question in `QUESTIONS` and return `NEEDS_INPUT`.
 - Never create final epics or stories for Jira.
 - Never present results directly to the user.
 - Never call Jira directly; use only orchestrator-supplied Jira context when provided.

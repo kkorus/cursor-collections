@@ -176,6 +176,18 @@ When verification succeeds, archive the current session artifacts under `specifi
 
 If any issue creation or update fails, inform the user immediately and ask how to proceed.
 
+## Delegated mode
+
+When you run as a delegated worker (the task starts with `MODE: delegated`), you only prepare content. The orchestrator owns every question, every file write and every Atlassian call:
+
+- **Steps 1-4 (load, format epics and stories, validate):** run unchanged.
+- **Step 5 (ask about uncertain fields):** skipped. Put each uncertain field in `QUESTIONS` and mark it in the output.
+- **Steps 6 and 8 (user review and push approval), Step 9 (push) and the Per-Change Modification Flow:** skipped. Never call an Atlassian tool.
+- **Step 7 (save):** skipped. Return the Jira-ready document in the reply body, in the structure of the template. The orchestrator saves `jira-tasks.md`.
+- **Step 10 (verification):** compare the read-back payload supplied in `INPUT_ARTIFACTS` with the local tasks and return the discrepancies. Do not fetch the issues yourself.
+- **Step 11 (archive and baseline):** return the computed baseline content. Do not write files.
+- **Import Mode:** not available. The orchestrator fetches the issues and runs it.
+
 ## Per-Change Modification Flow
 
 When the user requests a change to a specific task outside of the main formatting workflow (e.g., "add acceptance criteria to Story 2.3" or "change the priority of Epic 1"):

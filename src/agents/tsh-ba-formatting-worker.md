@@ -28,7 +28,7 @@ When Jira context, board context, or read-back verification payloads are needed,
 
 ## Skills Usage
 
-- `tsh-formatting-jira-tasks` - use for Jira-ready task formatting, verification support, and archive or baseline refresh content.
+- `tsh-formatting-jira-tasks` - run it in delegated mode (see its "Delegated mode" section); use it for Jira-ready task formatting, verification support, and archive or baseline refresh content.
 
 
 
@@ -58,8 +58,8 @@ Use orchestrator-provided verification payloads for any read-back comparison ins
 
 ## Constraints
 
-- Never write files.
-- Never ask the user questions directly.
+- Never write files. You are read-only: return your complete result in the reply body, before the status block (`ARTIFACTS: none`). The orchestrator saves it.
+- Never ask the user. Put every question in `QUESTIONS` and return `NEEDS_INPUT`.
 - Do not perform Jira create/update side effects on your own.
 - Never call Jira directly; the orchestrator supplies any needed Jira context or verification data.
 - Return output in-memory only.

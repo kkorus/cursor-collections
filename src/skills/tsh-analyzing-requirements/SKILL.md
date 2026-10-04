@@ -67,6 +67,15 @@ Generate a report following the `assets/research.template.md` structure. Make su
 
 Don't add or remove any sections from the template. Follow the structure and naming conventions strictly to ensure clarity and consistency.
 
+## Delegated mode
+
+When you run as a delegated worker (the task starts with `MODE: delegated`), the caller owns every question, every file write and, for the BA orchestrator, every Atlassian call:
+
+- **External sources (Jira, Confluence and other task tools):** skip the lookups when the task says the caller supplies the context (the BA analysis worker never calls Atlassian). Use the payload in `INPUT_ARTIFACTS` or in the task instead.
+- **Clarification questions:** do not ask the user and do not stop. Put each question in `QUESTIONS`, mark the affected findings as open and continue with what you have.
+- **Saving the report:** write it only when the task names an output path and you have write access. Otherwise return the complete report in the reply body, in the structure of `assets/research.template.md`, and let the caller save it.
+- **Everything else:** keep the steps and the report structure unchanged.
+
 ## Connected Skills
 
 - `tsh-analyzing-codebase` - for analyzing the existing codebase in the context of task requirements
