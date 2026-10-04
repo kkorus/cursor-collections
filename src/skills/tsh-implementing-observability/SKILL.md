@@ -221,6 +221,10 @@ groups:
 | Alerts without runbooks | Every alert links to response procedure |
 | Store logs indefinitely | Define retention based on compliance needs |
 
+## Summary Output
+
+End an implementation with the summary in `assets/observability-summary.template.md`. Stack choices for a greenfield project, cross-service tracing design and centralized logging with compliance requirements are architect decisions (see `tsh-delivering-infrastructure`). Instrumenting application code belongs to the software engineer, so list what the application teams must add in the "Instrumentation Guide" section.
+
 ## Connected Skills
 
 - `tsh-implementing-kubernetes` - For K8s-native observability setup

@@ -233,7 +233,7 @@ Run baseline workloads on-premises or in a primary cloud; burst overflow capacit
 ### Implementation Notes
 
 - Use Kubernetes Cluster API or Karpenter for dynamic node provisioning across clouds
-- Leverage spot/preemptible VMs in burst cloud for maximum savings
+- Leverage Spot VMs in the burst cloud for maximum savings
 - Ensure burst cloud has access to shared data layer (NFS, object storage) before scaling
 
 ---
@@ -314,7 +314,7 @@ Is analytics / BI the primary cross-cloud integration point?
 
 ### Cost Management
 
-- Tag all resources with `environment`, `team`, `cost-centre`, and `project`
+- Tag all resources with the required tag set from `tsh-optimizing-cloud-cost` (`references/tagging-standards.md`), using the same keys in every cloud
 - Use a cross-cloud FinOps platform (CloudHealth, Apptio Cloudability, FOCUS standard)
 - Set budget alerts in each cloud; roll up to a central dashboard
 - Review reserved/committed usage quarterly

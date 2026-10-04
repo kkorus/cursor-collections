@@ -1,6 +1,6 @@
 ---
 name: tsh-implementing-ci-cd
-description: CI/CD pipeline design patterns and deployment strategies. Use when designing new pipelines, implementing deployment strategies (rolling, blue-green, canary), setting up GitOps workflows, or configuring secure CI/CD credentials.
+description: CI/CD pipeline design patterns and deployment strategies. Use when designing new pipelines, choosing a deployment strategy (rolling, blue-green, canary), optimizing build caching, or structuring pipelines for monorepos.
 type: skill
 metadata:
   short-description: CI/CD pipeline design and deployment strategies
@@ -38,16 +38,11 @@ Lint → Test → Build → Deploy (staging) → Deploy (production)
 | **Canary** | High traffic, want gradual validation | Instant | Very Low |
 | **Recreate** | Dev/test, breaking changes only | Slow | High |
 
-## Credentials Strategy Decision
+Blue-green and canary need traffic routing, so they rely on the platform (load balancer, service mesh or a progressive delivery controller). Adding one of them to a pipeline is routine when the organization already runs it. A strategy that is new to the organization is an architect decision (see `tsh-delivering-infrastructure`). GitOps delivery (Argo CD, Flux) belongs to `tsh-implementing-kubernetes`.
 
-| Scenario | Approach |
-|----------|----------|
-| AWS from GitHub/GitLab | OIDC federation (no long-lived keys) |
-| AWS from Bitbucket | Repository variables + IAM role |
-| Multi-cloud | HashiCorp Vault with CI/CD auth |
-| Simple/small team | Platform native secrets |
+## Credentials
 
-**Rule:** Prefer OIDC federation over long-lived access keys. Use `tsh-managing-secrets` skill for implementation details.
+Prefer OIDC federation over long-lived access keys. The credentials table (per CI platform and cloud, including Bitbucket) and the implementation details live in `tsh-managing-secrets`. Look them up there and do not restate them in the pipeline notes.
 
 ## Monorepo Strategy
 
@@ -63,7 +58,7 @@ Lint → Test → Build → Deploy (staging) → Deploy (production)
 2. **Detect platform** → Check for CI config files listed above
 3. **Look up syntax** → Use `context7` for platform-specific YAML syntax
 4. **Choose deployment strategy** → Use decision table above
-5. **Configure credentials** → Use `tsh-managing-secrets` skill
+5. **Configure credentials** → Use the credentials table in `tsh-managing-secrets`
 6. **Validate** → Run pipeline in dry-run/plan mode first
 
 ## Checklist
@@ -83,108 +78,18 @@ Lint → Test → Build → Deploy (staging) → Deploy (production)
 - Deploying without artifact verification
 - Direct pushes to main/master
 
----
-
 ## Infrastructure as Code Pipelines
 
-### Terraform/Terragrunt Pipeline Structure
+Terraform and Terragrunt pipelines (plan and apply stages, remote state and locking, security scanning, OIDC, plan artifacts, PR comments) are described in `tsh-implementing-terraform-modules` (`references/ci-pipelines.md`).
 
-```
-Lint (fmt) → Validate → Security Scan → Plan → [Manual Approval] → Apply
-                                          ↓
-                                    Save Plan Artifact
-                                          ↓
-                                    PR Comment with Diff
-```
+## Summary Output
 
-**Rule:** Never use local state in CI/CD. Always configure remote backend before pipeline runs.
-
-### Required Elements
-
-| Element | Implementation | Why |
-|---------|---------------|-----|
-| AWS Credentials | `aws-actions/configure-aws-credentials@v4` with OIDC | No long-lived secrets |
-| State Backend | S3 + DynamoDB locking | Persistent state, concurrent access protection |
-| Plan Artifact | `terraform plan -out=tfplan` + upload artifact | Ensure apply matches reviewed plan |
-| PR Comment | `actions/github-script` or `terraform-pr-commenter` | Reviewers see changes before merge |
-| Security Scan | `aquasecurity/tfsec-action` or `bridgecrewio/checkov-action` | Catch misconfigurations early |
-| Production Guard | `environment: production` with required reviewers | Human approval before infra changes |
-| Cache | `actions/cache` for `.terraform` directory | Faster init, reduced API calls |
-
-### GitHub Actions OIDC for AWS
-
-```yaml
-permissions:
-  id-token: write
-  contents: read
-
-steps:
-  - uses: aws-actions/configure-aws-credentials@v4
-    with:
-      role-to-arn: ${{ secrets.AWS_ROLE_ARN }}
-      aws-region: ${{ vars.AWS_REGION }}
-```
-
-**Rule:** Always use OIDC federation. Never store AWS access keys as secrets.
-
-### Environment Protection
-
-```yaml
-apply:
-  runs-on: ubuntu-latest
-  needs: plan
-  environment: production  # Requires manual approval
-  if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-```
-
-Configure in GitHub: Settings → Environments → production → Required reviewers.
-
-### Plan Artifact Pattern
-
-```yaml
-plan:
-  steps:
-    - run: terraform plan -out=tfplan
-    - uses: actions/upload-artifact@v4
-      with:
-        name: tfplan
-        path: tfplan
-
-apply:
-  steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: tfplan
-    - run: terraform apply tfplan
-```
-
-**Rule:** Apply must use the exact plan that was reviewed, not regenerate it.
-
-### IaC Anti-Patterns
-
-- `apply -auto-approve` without environment protection gates
-- Repeating `terraform init` in every job without cache
-- Missing remote state backend configuration
-- No plan artifact between plan and apply jobs
-- Skipping security scanning (tfsec, checkov, trivy)
-- Using `latest` provider versions instead of pinned versions
-- Not posting plan output to PR for review
-
-### IaC Checklist
-
-- [ ] Remote state backend configured (S3/GCS/Azure Blob)
-- [ ] State locking enabled (DynamoDB/native)
-- [ ] OIDC federation for cloud credentials
-- [ ] Security scanning in pipeline (tfsec/checkov)
-- [ ] Plan artifact saved and reused in apply
-- [ ] Plan diff posted as PR comment
-- [ ] Environment protection on production
-- [ ] Provider versions pinned in `versions.tf`
-- [ ] `.terraform` directory cached between runs
-
----
+End an implementation with the summary in `assets/pipeline-summary.template.md`. A blue-green or canary strategy that is new to the organization, multi-environment promotion pipelines and GitOps workflows are architect decisions (see `tsh-delivering-infrastructure`). Adding a strategy the organization already uses, test stages, caching, version updates and pipeline bug fixes are not.
 
 ## Connected Skills
 
 - `tsh-managing-secrets` - For credential configuration
 - `tsh-discovering-technical-context` - For finding existing patterns
+- `tsh-implementing-terraform-modules` - For Terraform and Terragrunt pipelines
+- `tsh-implementing-kubernetes` - For GitOps delivery and cluster deployments
+- `tsh-delivering-infrastructure` - For skill routing and architect escalation

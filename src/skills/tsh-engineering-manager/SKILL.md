@@ -84,7 +84,7 @@ Before moving between research, planning and implementation, ask the user to con
 ### `tsh-devops-engineer`
 
 - **Delegate when**: infrastructure as code, Kubernetes, CI/CD pipelines, observability or secrets work.
-- **Task text**: implement the named infrastructure tasks; the agent loads the matching implementation skills itself.
+- **Task text**: implement the named infrastructure tasks with the `tsh-delivering-infrastructure` skill, which routes to the matching domain skill.
 - **Inputs**: plan path and scope, Technical Context, target environment.
 - **Do not delegate**: application code.
 
