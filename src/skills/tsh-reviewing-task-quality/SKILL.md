@@ -105,7 +105,7 @@ This model is derived entirely from the task list content. It is not a technical
 
 **Step 4: Run analysis passes**
 
-> **Protected Status Filter**: Before running analysis passes, filter out all tasks (epics and stories) whose Status field is Done, Cancelled, or PO APPROVE. These tasks are considered immutable and must not generate findings or suggestions. They may still be referenced as dependencies by other tasks, but they themselves are excluded from all analysis.
+> **Protected tasks**: Load the `tsh-guarding-jira-statuses` skill and filter out all protected tasks before running the passes. They generate no findings or suggestions, but other tasks may still depend on them.
 
 Execute only the analysis passes active for the selected review mode. Each pass is independent and produces zero or more findings. A finding is a potential gap or improvement that will become a suggestion.
 
@@ -283,7 +283,7 @@ Transform each finding from the analysis passes into a structured suggestion:
 
 **Step 7: Present suggestions for user review**
 
-> **Protected Status Safety Net**: Before presenting suggestions, verify that no suggestion targets a task with a protected status (Done, Cancelled, or PO APPROVE). If any such suggestion exists, drop it silently — it should not have been generated (see Step 4 guard), but this acts as a defensive safety net.
+> **Protected tasks**: Before presenting suggestions, drop any suggestion that targets a protected task. It should not exist after the Step 4 filter; this is a safety net.
 
 Present all suggestions to the user for individual accept/reject decisions:
 
@@ -302,7 +302,7 @@ Present all suggestions to the user for individual accept/reject decisions:
 
 **Step 8: Apply accepted suggestions**
 
-> **Protected Status Final Guard**: Before applying any accepted suggestion, re-check the target task's Status field. If the status is Done, Cancelled, or PO APPROVE, do not apply the change. Log it in the quality review report as "Skipped — task has protected status".
+> **Protected tasks**: Before applying an accepted suggestion, re-check the target task's status. If it is protected, do not apply the change and log it in the report as "Skipped - task has protected status".
 
 For each accepted suggestion, apply the proposed change to `extracted-tasks.md`:
 
@@ -354,3 +354,4 @@ When you run as a delegated worker (the task starts with `MODE: delegated`), the
 
 - `tsh-extracting-tasks` — provides the extracted tasks used as primary input for the quality review
 - `tsh-formatting-jira-tasks` — consumes the updated task list after quality review suggestions are applied
+- `tsh-guarding-jira-statuses` — defines the protected Jira statuses whose tasks the review must exclude

@@ -63,16 +63,9 @@ Rules for the gates:
 - After an import or the first creation, a change to a single task triggers "Push to Jira now?". Batch pushes follow Gate 2.
 - All artifacts go to `specifications/<workshop-name>/` (kebab-case topic name), except the project baseline and archived sessions under `specifications/projects/<project-name>/`.
 
-## Protected Status Policy
+## Protected statuses
 
-Tasks whose Jira status is **Done**, **Cancelled** or **PO APPROVE** are immutable. This section is the single source of truth for the list.
-
-1. Never edit them locally in `jira-tasks.md` or `extracted-tasks.md`, and never update them in Jira.
-2. Quality review must exclude them and may not target them with suggestions.
-3. Formatting and push skip them; list every skipped task and status to the user.
-4. Import brings them in read-only with a `🔒` marker, so the backlog stays visible.
-5. If the user asks to edit one, refuse: "This task has a protected status ([status]). Tasks with status Done, Cancelled, or PO APPROVE cannot be modified. If this status is incorrect, please update it in Jira first, then re-import."
-6. A protected task's baseline entry is read-only until Jira itself changes it in a valid import and push cycle.
+Load the `tsh-guarding-jira-statuses` skill. It defines which Jira statuses are protected and the rules for them; do not keep a copy of the list here. You apply the rules on import, before every formatting step and before every push, and you refuse user requests to edit a protected task. Name the protected tasks in every quality review delegation.
 
 ## Tool usage
 
@@ -99,7 +92,7 @@ Load the `tsh-using-mcp-servers` skill before you call an MCP server tool. As th
 ## Constraints
 
 - Never let a worker write files, call Atlassian or talk to the user.
-- Never push before Gate 2 and never weaken the protected status policy.
+- Never push before Gate 2 and never weaken the protected status rules.
 - Keep every backlog item business-facing and Jira-first.
 
 ## Suggested next steps
