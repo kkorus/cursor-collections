@@ -85,6 +85,9 @@ metadata:
 ## Reference Files
 
 - `references/tagging-standards.md` - Tagging conventions and enforcement
+- `references/aws-audit-checklist.md` - Resource categories and data sources for an AWS cost audit
+- `references/gcp-audit-checklist.md` - Resource categories and data sources for a GCP cost audit
+- `assets/cost-audit-report.template.md` - Report template for a cost audit
 
 ## Connected Skills
 
