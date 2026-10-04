@@ -5,98 +5,99 @@ title: Installation
 
 # Installation
 
-Follow these steps to install Cursor Collections and make it available across all your projects.
+TSH AI Collections is installed with a small Node script that copies the generated skills and agents into the folders your tools read. It works for **Cursor**, **Claude Code** and **Codex**, in your user profile (all projects) or in a single project.
 
-## Option 1 — GitHub Import (recommended)
-
-The fastest way to get started — no cloning required.
-
-1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`)
-2. Navigate to **Rules**
-3. In the **Project Rules** section, click **Add Rule → Remote Rule (GitHub)**
-4. Enter: `https://github.com/kkorus/cursor-collections`
-
-Skills are imported globally and available in every workspace immediately.
-
-:::tip
-Cursor's GitHub import keeps skills in sync with the repository. You can re-import to pick up updates.
+:::info Upgrading from Cursor Collections?
+The installer cleans up the old `~/.cursor/skills/` layout for you. Read [Upgrading](./upgrading) first and run a dry run.
 :::
 
----
-
-## Option 2 — Clone + Symlink (recommended for teams who want full control)
-
-This approach lets you pin a specific version, review changes before updating, and contribute back.
-
-### 1. Clone the repository
+## 1. Clone the repository
 
 ```bash
 git clone https://github.com/kkorus/cursor-collections ~/cursor-collections
 ```
 
-### 2. Link skills globally
+## 2. Run the installer
+
+Choose the tools with `--tools` (a comma list of `cursor`, `claude`, `codex`) and the place with `--scope`.
 
 ```bash
-mkdir -p ~/.cursor/skills
+# Preview every action, change nothing
+node ~/cursor-collections/scripts/install.mjs --tools cursor,claude,codex --dry-run
 
-# Agent skills
-for d in ~/cursor-collections/.cursor/skills/agents/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
+# User scope (default): installs into your home directory, available in every project
+node ~/cursor-collections/scripts/install.mjs --tools cursor,claude,codex
 
-# Workflow skills
-for d in ~/cursor-collections/.cursor/skills/workflows/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
-
-# Slash command skills
-for d in ~/cursor-collections/.cursor/skills/commands/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
-
-# Internal skills (delegate-only orchestration steps)
-for d in ~/cursor-collections/.cursor/skills/internal/*/; do
-  ln -sf "$d" ~/.cursor/skills/
-done
+# Project scope: installs into one project
+node ~/cursor-collections/scripts/install.mjs --tools claude --scope project --project-dir ~/code/my-app
 ```
 
-Skills at `~/.cursor/skills/` are available globally in every Cursor workspace.
+### What gets installed where
 
-To update later:
+The installer writes only `tsh-*` entries and a manifest file (`.tsh-install-manifest.json`) in each target root. Your other skills and agents are never touched.
+
+| Tools selected | Skills installed into | Agents installed into |
+|---|---|---|
+| `cursor` | `.agents/skills` | `.cursor/agents` |
+| `claude` | `.claude/skills` | `.claude/agents` |
+| `codex` | `.agents/skills` | `.codex/agents` (TOML) |
+| `cursor,claude` | `.claude/skills` only | `.cursor/agents`, `.claude/agents` |
+| `cursor,codex` | `.agents/skills` only | `.cursor/agents`, `.codex/agents` |
+| `claude,codex` | `.claude/skills` and `.agents/skills` | `.claude/agents`, `.codex/agents` |
+| `cursor,claude,codex` | `.claude/skills` and `.agents/skills` | all three agent folders |
+
+With user scope these folders are under your home directory (`~/.agents/skills`, `~/.claude/skills`, and so on; `$TSH_HOME` overrides the home directory). With project scope they are under the project root.
+
+Cursor also reads `.claude/skills`, which is why `cursor,claude` needs only one skills folder.
+
+### Installer flags
+
+These are the flags printed by `node scripts/install.mjs --help`.
+
+| Flag | Meaning |
+|---|---|
+| `--tools <list>` | Comma list of `cursor`, `claude`, `codex`. Required for an install. |
+| `--scope user\|project` | Where to install. Default `user` (home directory). |
+| `--project-dir <dir>` | Project root for `--scope project`. Default: the current directory. |
+| `--source <dir>` | Repository root that holds the generated trees. Default: the clone the script lives in. |
+| `--mode copy\|link` | `copy` (default), or symlink to the clone so `git pull` updates it. On Windows symlinks need Developer Mode or admin rights, so prefer `copy`. |
+| `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Pruned entries are backed up, not deleted. |
+| `--migrate-legacy` | Run only the legacy cleanup (old `.cursor/skills` layout), then exit. |
+| `--dry-run` | Print every action and change nothing. |
+| `--force` | Replace an unmanaged `tsh-*` entry. It is moved to the backup first. |
+| `--help` | Show the help text. |
+
+Legacy cleanup runs before every install and update. Symlinks are removed; real directories are moved to `~/.tsh-ai-collections-backup/<timestamp>/` and never hard-deleted.
+
+:::note Link mode
+`--mode link` is implemented, but how Cursor treats symlinked skill folders was only partly checked (a symlinked skill loaded on macOS). If you use Cursor on Windows, use the default `copy` mode.
+:::
+
+## 3. Configure MCP servers
+
+The installer **never writes MCP configuration**. At the end it prints which generated file to merge into each tool's config. Follow [MCP Setup](./mcp-setup).
+
+## 4. Updating
 
 ```bash
 git -C ~/cursor-collections pull
+node ~/cursor-collections/scripts/install.mjs --update
 ```
 
----
+`--update` reads the manifests, so you do not need to repeat `--tools`. Add `--scope project --project-dir <dir>` to update a project install.
 
-## MCP Server Configuration
+## Cursor shows skills twice
 
-MCP servers unlock Jira, Figma, code search, and browser automation.
+If you install for all three tools, Cursor can read the same skills from `.agents/skills` and `.claude/skills`. In a check with identical copies, Cursor listed one skill once (it deduplicated by name). If you still see duplicates, turn off **Settings → "Include Third-Party Plugins, Skills, and Other Configs"**. Cursor then reads only `.agents/skills` and `.cursor/agents`. The effect of that setting was not yet verified in the spikes.
 
-### User Profile (recommended — global across all projects)
+## Using it
 
-1. Open **Cursor Settings → MCP**
-2. Click **Add MCP Server**
-3. Copy the contents of [`.cursor/mcp.json`](https://github.com/kkorus/cursor-collections/blob/main/.cursor/mcp.json) into your user MCP configuration
+1. Open your project in Cursor, Claude Code or Codex.
+2. Type `/` (Cursor, Claude Code) to see the installed `tsh-*` entries. In Codex, type `$` or run `/skills` (not yet verified).
+3. Start with `/tsh-implement` to implement a task, or `/tsh-review` to review changes.
 
-### Workspace (project-specific)
-
-Copy `.cursor/mcp.json` to your project's `.cursor/mcp.json`.
-
----
-
-## Using in Your Projects
-
-Once installed:
-
-1. Open your project in **Cursor**
-2. Open **Agent chat** (`Cmd/Ctrl + Shift + I`, switch to Agent mode)
-3. Type `/` to see available slash commands
-4. Start with `/tsh-implement` to implement a task, or `/tsh-review` to review changes
-
-All skills leverage context from your project while respecting your own code patterns.
+How each command, orchestrator and agent is invoked in each tool is described in [Supported Tools](./supported-tools).
 
 :::info
-Skills work in **Agent mode** only, not Ask mode. Make sure Agent mode is selected in the chat panel.
+In Cursor, skills work in **Agent mode**, not Ask mode.
 :::
