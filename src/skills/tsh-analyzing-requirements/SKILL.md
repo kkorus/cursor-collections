@@ -58,11 +58,12 @@ Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>
 
 ## Delegated mode
 
-When your task starts with `MODE: delegated` (for example when the context engineer or a BA analysis worker runs this skill), there is nobody to answer you:
+When your task starts with `MODE: delegated` (for example when the context engineer or a BA analysis worker runs this skill), the caller owns every question, every file write and, for the BA orchestrator, every Atlassian call. There is nobody to answer you:
 
-- Do not ask questions in Step 4. Collect them, save the research document with what you have, and return `NEEDS_INPUT` with the numbered questions. When the caller re-delegates with `PRIOR_OUTPUT` and `USER_ANSWERS`, continue from the saved document.
-- Use only the information sources you were given and the tools your role lists. A role without an Atlassian tool (such as the BA analysis worker) works from the files and text in the task and does not look up Jira or Confluence. Record anything you could not look up as a question instead.
-- Write only the research document at the path you were given.
+- **Clarification questions:** do not ask the user. Put each question in `QUESTIONS` and mark the affected findings as open. If the missing answers block the document, return `NEEDS_INPUT`; otherwise continue with what you have and return `DONE` with the questions listed. When the caller re-delegates with `PRIOR_OUTPUT` and `USER_ANSWERS`, continue from the saved or returned document and treat the answers as authoritative.
+- **External sources (Jira, Confluence and other task tools):** use only the sources you were given and the tools your role lists. A role without an Atlassian tool (such as the BA analysis worker) works from the files and text in the task, or from the payload in `INPUT_ARTIFACTS`, and does not look up Jira or Confluence. Record anything you could not look up as a question.
+- **Saving the document:** write it only at the path the task names and only when you have write access. Otherwise return the complete document in the reply body, in the structure of `assets/research.template.md`, with `ARTIFACTS: none`, and let the caller save it.
+- **Everything else:** keep the steps and the document structure unchanged.
 
 ## Connected Skills
 

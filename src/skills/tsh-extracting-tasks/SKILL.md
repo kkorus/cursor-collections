@@ -47,7 +47,7 @@ Extraction progress:
 **Step 1: Gather and review all input materials**
 
 Collect and thoroughly review all available workshop materials:
-- **`workshop-context-summary.md`** (if available): Explore Mode summary that captures business context, likely epics, and ambiguities before extraction
+- **`workshop-context-summary.md`** (if available): the summary that Explore Mode of the `tsh-business-analyst` skill produces (business context, likely epics, ambiguities) before extraction
 - **Cleaned transcript** (`cleaned-transcript.md`): Primary source — review all discussion topics, decisions, action items, and open questions
 - **Figma/FigJam designs**: If available, analyze screens, flows, and annotations for functional requirements
 - **Existing codebase**: Use `tsh-analyzing-codebase` skill to understand what already exists and what needs to be built
@@ -70,7 +70,7 @@ Include at least:
 - Baseline overlap or existing backlog notes
 - Open questions
 
-If the user requested Explore Mode, this draft may be accompanied by a `workshop-context-summary.md`, but it still must not become a backlog artifact.
+If Explore Mode of the `tsh-business-analyst` skill produced a `workshop-context-summary.md`, use it as input. The summary itself is never a backlog artifact.
 
 **Step 3: Review Gate 0 with the user and approve the intent brief**
 
@@ -154,8 +154,17 @@ Save `intent-brief.md` and `extracted-tasks.md` to `specifications/<workshop-nam
 
 The extracted tasks document must preserve source traceability in each story and keep acceptance criteria in business-friendly scenario form.
 
+## Delegated mode
+
+When you run as a delegated worker (the task starts with `MODE: delegated`), the orchestrator owns every user gate and every file write:
+
+- **Step 3 (Gate 0), Step 9 (ask) and Step 10 (Gate 1):** skipped. Do not present anything to the user. Put every ambiguity in `QUESTIONS`, or record it as an assumption or open question in the output.
+- **Step 11 (save):** skipped. Do not write files. Return the content in the reply body, in the structure of `assets/intent-brief.template.md` and `assets/extracted-tasks.template.md`. The orchestrator saves it.
+- **Scope:** do only the part the task names: the intent brief (Steps 1-2), or the stories of the epics assigned to you (Steps 5-8). Use the epic definitions and sources in `INPUT_ARTIFACTS` and do not re-derive the epic list.
+- **Everything else:** keep source traceability and GIVEN / WHEN / THEN criteria exactly as in interactive mode.
+
 ## Connected Skills
 
 - `tsh-processing-transcripts` - provides the cleaned transcript used as primary input
 - `tsh-analyzing-codebase` - for understanding existing system context when analyzing scope
-- `tsh-analyzing-requirements` - for business-context exploration, baseline comparison, and intent brief drafting before extraction
+- `tsh-analyzing-requirements` - for business-context exploration and baseline comparison before extraction (the intent brief itself is drafted in Step 2 of this skill)
