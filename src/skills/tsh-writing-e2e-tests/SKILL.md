@@ -124,3 +124,4 @@ Report the result with the template in [assets/e2e-summary.template.md](assets/e
 - `tsh-ensuring-accessibility` - for semantic markup that makes accessible locators possible
 - `tsh-implementing-ci-cd` - for running E2E tests in pipelines
 - `tsh-reviewing-code` - for reviewing test code and quality gates
+- `tsh-debugging` - for a systematic process when the cause of a failure is unclear
