@@ -2458,3 +2458,10 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
 - **Deviation:** added `--write-baseline` (initial recording) to lint and check-refs, since `--update-baseline` only shrinks.
 - **Decisions:** `preload-skills` pointing at Phase 3 skills (`tsh-delivering-infrastructure`, `tsh-reviewing-plans`) are not emitted until those skills exist. `tsh-cursor-engineer` is in `deleted`, not `nowSubagents`.
 - **Open:** `check-refs --docs` reports about 233 old names in `README.md` and `website/docs` (Phase 4). Unverified Codex/Claude user-scope MCP paths in the installer messages (smoke test 5.3). Cursor spikes Q2 (Output warnings) and Codex spike 1.3 still open.
+
+### 2026-10-04 - Phase 3 status
+
+- **Done:** Tasks 3.1-3.55. Batch A (3.1-3.5) ran sequentially; 3.6-3.54 ran as six parallel groups (orch, devops, ba, aicust, cmds, knowledge) in separate worktrees and were merged. `npm run check` and `npm test` (165) are green; `scripts/baseline/` is removed. The generator reports 17 agents, 3 orchestrators, 16 commands, 2 internal steps, 41 skills.
+- **Merge conflicts resolved by hand:** `tsh-engineering-manager` (group 1 rewrite kept; devops block points at `tsh-delivering-infrastructure`; Refactor Mode points at `tsh-refactoring`), `tsh-analyzing-requirements` (one merged "Delegated mode" section), `tsh-designing-architecture` and `tsh-prompt-engineer` (rewritten side kept).
+- **Unverified claims to check in review (reported by the engineers):** Terragrunt `run --all` syntax, Google Wire maintenance status, TBT thresholds (200/600 ms), React 19 / React Compiler statements, Claude connector name for Atlassian tools (`mcp__claude_ai_*`).
+- **Open from engineers:** read-only agents return results in the reply (`ARTIFACTS: none`), which deliberately overrides "persist partial work" in `agent-modes`; a note in the partial is still needed. `tsh-reviewing-frontend` findings-format reuse (row 75) was not done.
