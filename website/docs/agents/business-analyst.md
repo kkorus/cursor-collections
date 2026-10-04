@@ -3,11 +3,12 @@ sidebar_position: 2
 title: Business Analyst
 ---
 
-# Business Analyst Agent
+# Business Analyst (orchestrator)
 
-**File:** `.cursor/skills/agents/tsh-business-analyst/SKILL.md`
+**Source:** `src/skills/tsh-business-analyst/SKILL.md`  
+**Kind:** orchestrator skill (runs in the main thread)
 
-The Business Analyst agent orchestrates discovery workshop materials (transcripts, Figma designs, codebase context) into structured, Jira-ready epics and user stories. It can also explore ambiguous workshop inputs before extraction and import existing Jira backlogs for local iteration.
+The Business Analyst is an orchestrator skill, not a subagent. It runs in the main thread, so it can talk to you at every gate. [`/tsh-analyze-materials`](../commands/analyze-materials) and [`/tsh-explore-materials`](../commands/explore-materials) load it, and it turns discovery workshop materials (transcripts, Figma designs, codebase context) into structured, Jira-ready epics and user stories. It can also explore ambiguous workshop inputs before extraction and import existing Jira backlogs for local iteration.
 
 ## Responsibilities
 
@@ -49,39 +50,33 @@ The Business Analyst enforces a strict review process — no data is pushed to J
 | **Gate 1.5** | After quality review | User accepts or rejects individual improvement suggestions |
 | **Gate 2** | After Jira formatting | User reviews final formatted tasks before Jira push |
 
-## Tool Access
+## Tool access
 
-| Tool | Usage |
-|---|---|
-| **Atlassian** | Create/update Jira issues, fetch existing backlogs, link stories to epics, and verify synced issues |
-| **Figma** | Analyze workshop designs, wireframes, and FigJam boards for functional requirements |
-| **PDF Reader** | Read and extract content from PDF workshop materials |
-| **Sequential Thinking** | Analyze complex discussions, resolve conflicts between materials, plan task structure |
-| **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **Sub-agents** | Delegate subtasks to specialized agents |
-| **Todo** | Track task progress with structured checklists |
+- **Atlassian** - only the orchestrator uses it: reads issues to import a backlog, creates and updates issues after Gate 2. Workers never get Jira access (the Atlassian tools are denied to them on Claude Code).
+- **PDF Reader** - reads PDF materials in full.
+- **Sequential Thinking** - conflicting materials, splitting or merging stories, dependency chains.
+- On Claude Code, the worker deny-rule matches a server named `atlassian`, as in the generated `.mcp.json`. An Atlassian server added as a claude.ai connector appears as `mcp__claude_ai_<server>__*`; whether the rule covers it is not yet verified.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-task-analysing` — Explore workshop context, ambiguity, and baseline overlap before extraction.
-- `tsh-transcript-processing` — Clean raw transcripts, structure by topics, extract decisions and action items.
-- `tsh-task-extracting` — Identify epics and user stories from all processed materials.
-- `tsh-task-quality-reviewing` — Run analysis passes to find gaps, edge cases, and improvements.
-- `tsh-jira-task-formatting` — Format tasks for Jira, manage review gates, handle import mode, support verification and baseline refresh.
-- `tsh-codebase-analysing` — Understand existing system context when relevant to task scope.
+- `tsh-processing-transcripts`, `tsh-analyzing-requirements`, `tsh-extracting-tasks`, `tsh-reviewing-task-quality`, `tsh-formatting-jira-tasks` - the skills of the five phases, loaded by the workers.
+- `tsh-guarding-jira-statuses` - the rules for protected Jira statuses, applied on import, before formatting and before every push.
+- `tsh-analyzing-codebase` - existing system context when it matters for the scope.
 
-## Internal BA Workers
+## BA workers
 
-The Business Analyst stays user-facing, but routes focused phases to internal workers:
+The orchestrator delegates each phase to a leaf subagent. Workers are read-only and have no shell. They run in delegated mode and return a `STATUS` block; the orchestrator writes the artifacts, asks you their questions at the matching gate and re-delegates with the answers.
 
-- **Transcript worker** — Cleans and structures raw transcript material.
-- **Analysis worker** — Synthesizes workshop context, baseline overlap, and ambiguities.
-- **Extraction worker** — Drafts the intent brief and extracts epics and stories.
-- **Quality worker** — Runs Lite or Full quality-review passes.
-- **Formatting worker** — Prepares Jira-ready output, post-push verification support, and baseline refresh content.
+| Phase | Worker | Model tier |
+|---|---|---|
+| Transcript cleanup and structuring | `tsh-ba-transcript-worker` | fast |
+| Multi-source analysis, overlap checks, open questions | `tsh-ba-analysis-worker` | deep |
+| Intent brief, epic identification, story extraction | `tsh-ba-extraction-worker` | balanced |
+| Lite and Full quality review passes | `tsh-ba-quality-worker` | deep |
+| Jira-ready formatting, read-back comparison, baseline content | `tsh-ba-formatting-worker` | fast |
 
-## Handoffs
+Workers are not meant for direct use.
 
-After completing workshop analysis, the Business Analyst can hand off to:
+## Suggested next steps
 
-- **Engineering Manager** → `/tsh-implement` (the Engineering Manager will automatically delegate to Context Engineer for research and Architect for planning)
+After the tasks are approved and pushed, run `/tsh-implement Start implementation for the current task`. The Engineering Manager then delegates research to the Context Engineer and planning to the Architect.

@@ -5,7 +5,8 @@ title: Architect
 
 # Architect Agent
 
-**File:** `.cursor/skills/agents/tsh-architect/SKILL.md`
+**Source:** `src/agents/tsh-architect.md`  
+**Kind:** subagent, model tier `deep`, read-write access
 
 The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Plan Reviewer before implementation begins.
 
@@ -27,41 +28,37 @@ Each technical specification includes:
 4. **Security Considerations** — Security aspects to address during implementation.
 5. **Quality Assurance** — Guidelines for ensuring implementation quality.
 
-## Tool Access
+## Tool access
 
-| Tool                      | Usage                                                                  |
-| ------------------------- | ---------------------------------------------------------------------- |
-| **Atlassian**             | Gather requirements from Jira issues and Confluence pages              |
-| **Context7**              | Evaluate libraries, verify compatibility, search integration patterns  |
-| **Figma**                 | Translate visual requirements into technical specifications            |
-| **PDF Reader**            | Read and extract content from PDF requirement documents                |
-| **Sequential Thinking**   | Design complex architectures, evaluate trade-offs, break down features |
-| **Terminal**              | Run build tools, scripts, and validation commands                      |
-| **File Read/Edit/Search** | Read, modify, and search workspace files                               |
-| **Terminal commands**      | Execute VS Code commands and run tasks                                 |
-| **Sub-agents**            | Delegate subtasks to specialized agents                                |
-| **Todo**                  | Track task progress with structured checklists                         |
+- **Read-write.**
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Atlassian, Context7, Figma, PDF Reader, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-architecture-designing` — Solution design, components, data flows, implementation plan creation.
-- `tsh-codebase-analysing` — Analyze current architecture, components, and patterns.
-- `tsh-implementation-gap-analysing` — Focus the plan on necessary changes without duplicating existing work.
-- `tsh-technical-context-discovering` — Establish project conventions and patterns before designing.
-- `tsh-sql-and-database-understanding` — Database schema design, indexing strategies, transaction patterns.
-- `tsh-designing-multi-cloud-architecture` — Cross-provider infrastructure design and service selection across AWS, Azure, and GCP.
-- `tsh-optimizing-cloud-cost` — Cost implications of architectural decisions, pricing model comparison.
-- `tsh-implementing-ci-cd` — CI/CD pipeline design, deployment strategies, delivery workflows.
-- `tsh-implementing-terraform-modules` — IaC structure, Terraform module hierarchy, Terragrunt patterns.
-- `tsh-managing-secrets` — Secrets management, credential rotation, vault integration.
-- `tsh-implementing-kubernetes` — K8s workload configurations, scaling strategies, Helm chart structure.
-- `tsh-implementing-observability` — Monitoring architecture, SLO frameworks, alerting, distributed tracing.
-- `tsh-engineering-prompts` — LLM prompt architecture: prompt template strategy, system prompt design, few-shot vs zero-shot decisions.
+- `tsh-designing-architecture` (preloaded) - Design the architecture and implementation plan for a task
+- `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
+- `tsh-analyzing-implementation-gaps` - Compare a plan with the current state to find implementation gaps
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-designing-databases` - SQL and database design: schemas, indexing, queries, ORMs
+- `tsh-designing-multi-cloud-architecture` - Choose and integrate services across AWS, Azure and GCP
+- `tsh-optimizing-cloud-cost` - Cloud cost rightsizing, tagging and governance
+- `tsh-implementing-ci-cd` - CI/CD pipeline design and deployment strategies
+- `tsh-implementing-terraform-modules` - Reusable Terraform modules for AWS, Azure and GCP
+- `tsh-managing-secrets` - Secrets storage, rotation and CI/CD authentication
+- `tsh-implementing-kubernetes` - Kubernetes deployments, Helm charts and scaling
+- `tsh-implementing-observability` - Logging, monitoring, alerting and tracing patterns
+- `tsh-engineering-prompts` - LLM prompt patterns: structure, security, evaluation
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 
-## Handoffs
+## Invocation and modes
 
-After creating the plan, the Architect hands off to:
+- **Delegated by:** `/tsh-ask` and `/tsh-audit-codebase` (commands running in the main thread) and the `tsh-engineering-manager` (planning and plan revisions). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
 
-- **Plan Reviewer** — The Engineering Manager automatically invokes the [Plan Reviewer](./plan-reviewer) to validate the produced `.plan.md` before implementation begins. If `REVISIONS NEEDED` with BLOCKERs, the plan is returned to the Architect for revision.
-- **Software Engineer** → `/tsh-implement` (standard implementation, after plan is approved)
-- **Software Engineer** → `/tsh-implement` (frontend implementation with Figma verification via internal UI prompt, after plan is approved)
+## Suggested next steps
+
+The agent recommends these commands as text; it never starts them itself.
+
+- `/tsh-implement Implement feature according to the plan` to start implementation.
+- `/tsh-implement Implement the infrastructure according to the architectural plan` for infrastructure work; the engineering manager routes those tasks to the DevOps engineer.

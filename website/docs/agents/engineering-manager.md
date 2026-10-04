@@ -3,73 +3,63 @@ sidebar_position: 4
 title: Engineering Manager
 ---
 
-# Engineering Manager Agent
+# Engineering Manager (orchestrator)
 
-**File:** `.cursor/skills/agents/tsh-engineering-manager/SKILL.md`
+**Source:** `src/skills/tsh-engineering-manager/SKILL.md`  
+**Kind:** orchestrator skill (runs in the main thread)
 
-The Engineering Manager agent orchestrates the implementation phase. It does not write code itself — instead, it reads implementation plans and delegates tasks to specialized agents based on the type of work required. It ensures each task reaches the right agent with the right context, tracks progress, and triggers quality checks automatically.
+The Engineering Manager is an orchestrator skill, not a subagent. [`/tsh-implement`](../commands/implement) and [`/tsh-refactor`](../commands/refactor) load it in the main conversation, so it can ask you questions at every phase gate. It does not write code. It decides what happens next, delegates each step to a subagent with full context, checks the result and keeps the plan up to date.
 
-## Delegation Flow
+Because subagents start with a clean context, every delegation names the input files by explicit path and starts with `MODE: delegated`. Each subagent answers with a `STATUS` block (`DONE`, `NEEDS_INPUT`, `NEEDS_ARCHITECT_DECISION` or `BLOCKED`). The manager asks you the questions of a `NEEDS_INPUT` status and delegates again with your answers. Delegation goes one level deep: the subagents never delegate further.
 
-```
-Implementation Plan
-        │
-        ▼
-┌──────────────────────┐
-│  Engineering Manager  │ ← Reads plan, delegates tasks
-└──────┬───────────────┘
-       │
-  ┌────┼────┬────┬────┬────┬────┐
-  ▼    ▼    ▼    ▼    ▼    ▼    ▼
- SE   E2E  DevOps Arch  CR  UIR  PE
-```
+## Flows
 
-The Engineering Manager is bound to the `/tsh-implement` public prompt. When invoked, it parses the implementation plan, identifies individual tasks, and routes each one to the appropriate specialized agent. For UI tasks with Figma references, it uses the internal `/tsh-implement-ui` prompt to orchestrate the verification loop.
+The manager recommends a flow and lets you confirm or override it.
 
-## Agent Delegation
-
-| Agent | Handles | When Used |
+| Flow | When | Steps |
 |---|---|---|
-| **Software Engineer** | Application code, features, bug fixes | Task involves writing or modifying application code |
-| **E2E Engineer** | End-to-end tests | Task requires writing or updating E2E test suites |
-| **DevOps Engineer** | Infrastructure, CI/CD, deployments | Task involves infrastructure changes or pipeline configuration |
-| **Architect** | Codebase analysis, technical context | Before implementation starts, to establish codebase understanding |
-| **Code Reviewer** | Code quality, best practices | After implementation completes, or when no review phase is defined |
-| **Prompt Engineer** | LLM application prompts | Task involves designing, optimizing, or securing LLM prompts |
-| **UI Reviewer** | Figma verification, visual correctness | After UI implementation, to verify against design specifications |
+| **Quick** | Bug fixes, small self-contained features, config changes, added tests | Implement, quality checks, code review in diff mode (no plan file) |
+| **Full** | Multi-component features, unclear requirements, architectural changes, UI work with Figma | Research, plan, plan review, implementation per task, UI verification, E2E tests, code review |
+| **Refactor** | Entered from `/tsh-refactor`; behavior must not change | Plan with `Behavior-preserving: yes`, characterization tests first, atomic steps, review (uses the `tsh-refactoring` skill) |
 
-## How to Use
+Before moving between research, planning and implementation, the manager asks you to confirm.
 
-All delegation happens automatically when you run [`/tsh-implement`](../prompts/public/implement). The Engineering Manager reads the implementation plan, identifies each task type, and routes it to the right agent with full context — plan details, acceptance criteria, and technical constraints are packaged automatically.
+## Delegation
 
-## Tool Access
+| Subagent | Handles | When |
+|---|---|---|
+| [Context Engineer](./context-engineer) | Requirements and context (research file) | The task lacks the information needed for a plan |
+| [Architect](./architect) | Plan, plan revisions, technical context, architecture decisions | The plan is missing, incomplete or needs revision |
+| [Plan Reviewer](./plan-reviewer) | Plan stress-test | After every new or updated plan in the Full flow |
+| [Software Engineer](./software-engineer) | Application code, bug fixes | A task changes backend, API, database or frontend code |
+| [E2E Engineer](./e2e-engineer) | End-to-end tests | The plan has E2E test tasks |
+| [DevOps Engineer](./devops-engineer) | Infrastructure, CI/CD, observability, secrets | A task changes infrastructure (uses `tsh-delivering-infrastructure`) |
+| [Prompt Engineer](./prompt-engineer) | LLM application prompts | The plan contains prompt work |
+| [UI Reviewer](./ui-reviewer) | Figma verification | After each UI task with a Figma reference, through [`tsh-orchestrate-ui-verification`](../commands/internal/orchestrate-ui-verification) |
+| [Code Reviewer](./code-reviewer) | Final review | After implementation and the UI gate, or when the plan defines no review phase |
 
-| Tool | Usage |
+## Loops the manager owns
+
+- **Plan review** (maximum 3 iterations): the Plan Reviewer returns `APPROVED` or `REVISIONS NEEDED`. On `REVISIONS NEEDED` the Architect must resolve every BLOCKER, then the plan is reviewed again. After 3 iterations, or with unresolved BLOCKERs, the manager stops and lets you decide.
+- **Implementation to review**: tasks run in plan order with one todo per task. After each code task the manager runs static analysis, the build and the tests. After the review, `critical` and `warning` findings go to you before anything changes.
+- **UI verification**: implement, verify, fix, with at most 5 iterations per component. See [`tsh-orchestrate-ui-verification`](../commands/internal/orchestrate-ui-verification).
+
+## Artifacts
+
+The manager owns the artifact naming. `<specs>` is `specifications/` unless the project instructions say otherwise.
+
+| Artifact | Path |
 |---|---|
-| **Atlassian** | Gathers Jira tickets and Confluence documentation for task context |
-| **Sequential Thinking** | Decides which agent to delegate to when the task type is ambiguous |
-| **Sub-agents** | Invokes specialized agents for delegation |
-| **Terminal** | Runs commands to verify environment state |
-| **File Read/Edit/Search** | Navigates the codebase and implementation plan |
-| **Todo** | Tracks task completion within the plan |
-| **Terminal commands** | Executes VS Code commands and asks user for clarification |
+| Research | `<specs>/<task>/<task>.research.md` |
+| Plan | `<specs>/<task>/<task>.plan.md` |
+| Plan review | `<specs>/<task>/<task>.plan-review.md` |
 
-## Key Behaviors
+## Tool access
 
-- **Delegates every task** — Never writes code itself; all implementation is routed to specialized agents.
-- **Routes based on task type** — Application code → Software Engineer, E2E tests → E2E Engineer, infrastructure → DevOps Engineer, LLM prompts → Prompt Engineer.
-- **Packages context automatically** — Each delegation includes structured context from the implementation plan.
-- **Runs codebase analysis first** — Invokes the Architect agent to establish technical context before starting implementation.
-- **Auto-triggers Code Reviewer** — Automatically runs the Code Reviewer at the end of implementation if no review phase is defined in the plan.
-- **Tracks progress** — Updates plan checkboxes after each completed task.
-- **Asks before deviating** — Requests user confirmation before deviating from the implementation plan.
-- **Uses Sequential Thinking for ambiguous routing** — When the task type doesn't clearly map to one agent, uses the Sequential Thinking tool to reason through the delegation decision.
+- **Atlassian** - only when you give a Jira key or a Confluence page.
+- **Sequential Thinking** - when the delegate choice or the sequencing is not obvious.
+- The manager edits only the plan (checkboxes, Changelog). Everything else goes through subagents.
 
-## Handoffs
+## Suggested next steps
 
-The Engineering Manager receives work from:
-- **Architect** — Provides the implementation plan that the Engineering Manager executes against.
-
-After completing all tasks, the Engineering Manager can hand off to:
-- **Code Reviewer** — For a final quality review of the full implementation (triggered automatically if not already planned).
-- **UI Reviewer** — For Figma verification of UI changes.
+After the review, the manager offers `/tsh-review` for a repeat review, `/tsh-commit` to commit the work and `/tsh-audit-codebase` for a wider quality audit.

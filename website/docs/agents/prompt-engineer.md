@@ -5,11 +5,12 @@ title: Prompt Engineer
 
 # Prompt Engineer Agent
 
-**File:** `.cursor/skills/agents/tsh-prompt-engineer/SKILL.md`
+**Source:** `src/agents/tsh-prompt-engineer.md`  
+**Kind:** subagent, model tier `deep`, read-write access
 
 The Prompt Engineer agent designs, writes, optimizes, and secures LLM application prompts — system prompts, user prompt templates, RAG context injection templates, agent tool-calling instructions, and classification/extraction prompts.
 
-This agent handles **LLM application prompts** (prompts consumed by LLM APIs at runtime). It does NOT handle Copilot customization files (`/SKILL.md`, `SKILL.md`, `SKILL.md`) — that is `tsh-cursor-engineer`.
+This agent handles **LLM application prompts** (prompts consumed by LLM APIs at runtime). It does NOT handle AI customization files (skills, commands, agents, rules). Use the `/tsh-create-custom-*` commands for those.
 
 ## Responsibilities
 
@@ -26,25 +27,21 @@ This agent handles **LLM application prompts** (prompts consumed by LLM APIs at 
 - **Technology-agnostic** — Patterns apply to any LLM provider (OpenAI, Anthropic, etc.).
 - **Strictly follows the plan** — Does not deviate unless explicitly instructed.
 
-## Tool Access
+## Tool access
 
-| Tool | Usage |
-|---|---|
-| **Context7** | Search LLM provider API docs, framework-specific prompt template syntax |
-| **Sequential Thinking** | Design complex prompt chains, analyze injection vectors, evaluate trade-offs |
-| **File Read/Edit/Search** | Read and modify workspace files containing prompts |
-| **Ask Questions** | Clarify ambiguous prompt requirements, domain-specific terminology |
-| **Todo** | Track prompt engineering progress |
+- **Read-write.**
+- **No shell.** Shell access is denied on Claude Code.
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Context7, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-engineering-prompts` — Primary skill: prompt structure, optimization, security, templates, evaluation, anti-patterns.
-- `tsh-technical-context-discovering` — Project conventions and existing prompt patterns.
-- `tsh-code-reviewing` — When reviewing prompt code quality as part of broader review.
+- `tsh-engineering-prompts` (preloaded) - LLM prompt patterns: structure, security, evaluation
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-reviewing-code` - Structured code review: correctness, security, quality
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 
-## Delegation Model
+## Invocation and modes
 
-The Prompt Engineer is invoked in two ways:
-
-- **Direct:** User invokes `@tsh-prompt-engineer` for standalone prompt tasks.
-- **Orchestrated:** The Engineering Manager delegates LLM prompt tasks directly to the Prompt Engineer during feature implementation. After completing prompt work, control returns to the manager for the next task in the plan.
+- **Delegated by:** the `tsh-engineering-manager` (LLM prompt tasks). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).

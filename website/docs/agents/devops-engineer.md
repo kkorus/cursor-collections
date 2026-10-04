@@ -5,7 +5,8 @@ title: DevOps Engineer
 
 # DevOps Engineer Agent
 
-**File:** `.cursor/skills/agents/tsh-devops-engineer/SKILL.md`
+**Source:** `src/agents/tsh-devops-engineer.md`  
+**Kind:** subagent, model tier `balanced`, read-write access
 
 The DevOps Engineer agent is a Senior DevOps Engineer and Consultant that propagates DevOps culture, builds "Golden Path" templates, and manages cloud infrastructure, CI/CD pipelines, observability, and cost optimization.
 
@@ -20,51 +21,49 @@ The DevOps Engineer agent is a Senior DevOps Engineer and Consultant that propag
 
 ## Key Behaviors
 
-- **Non-interactive** — Makes reasonable decisions autonomously and documents assumptions.
-- **Delegates architecture decisions** — Spawns `tsh-architect` as a sub-agent for infrastructure design, multi-region topology, or new feature architecture.
-- **Safety-first** — Prefers `--dry-run`, `plan`, or `validate` before destructive operations. Never runs `apply`, `delete`, or `destroy` without explicit user authorization.
-- **IaC-only** — Never makes manual cloud console changes or ad-hoc CLI mutations outside of code.
-- **Cost-aware** — Every infrastructure proposal includes cost impact. Flags proposals exceeding 10% spend increase.
-
-## Tool Access
-
-| Tool                      | Usage                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| **Context7**              | Search cloud provider documentation, Terraform registry, Kubernetes API docs |
-| **Sequential Thinking**   | Analyze complex infrastructure decisions, debug deployment issues            |
-| **AWS API**               | Query live AWS infrastructure, validate resources, check configurations      |
-| **AWS Documentation**     | Reference AWS service documentation and best practices                       |
-| **GCP Gcloud**            | Google Cloud operations and resource management                              |
-| **GCP Observability**     | Google Cloud monitoring and observability integration                        |
-| **GCP Storage**           | Google Cloud Storage resource management                                     |
-| **Terminal**              | Run Terraform, kubectl, Helm, and other CLI tools                            |
-| **File Read/Edit/Search** | Read, modify, and search workspace files                                     |
-| **Sub-agents**            | Delegate to `tsh-architect` for architectural decisions                      |
-
-## Skills Loaded
-
-- `tsh-technical-context-discovering` — Project conventions and infrastructure patterns.
-- `tsh-codebase-analysing` — Understand existing Terraform, Helm, K8s manifests, and infrastructure codebase.
-- `tsh-implementing-ci-cd` — CI/CD pipeline design patterns and deployment strategies.
-- `tsh-implementing-kubernetes` — Kubernetes deployment patterns, Helm charts, cluster management.
-- `tsh-implementing-terraform-modules` — Reusable Terraform modules for AWS, Azure, and GCP.
-- `tsh-implementing-observability` — Observability patterns for logging, monitoring, alerting, tracing.
-- `tsh-managing-secrets` — Secrets management for cloud and Kubernetes environments.
-- `tsh-optimizing-cloud-cost` — Cloud cost optimization through rightsizing and tagging.
-- `tsh-designing-multi-cloud-architecture` — Multi-cloud architecture design across providers.
+- **Decides on its own in small matters** - In delegated mode it picks sensible defaults and notes them as assumptions. In interactive mode it asks you when a choice is yours (cloud provider, workload type, scale, trade-offs).
+- **Leaves architecture decisions to the Architect** - It does not delegate. When a task needs an architecture decision (new infrastructure features, multi-region or multi-cloud topology, greenfield stack), it returns `NEEDS_ARCHITECT_DECISION` and the caller routes it to the Architect.
+- **Safety-first** - Prefers `--dry-run`, `plan`, or `validate`. Never runs `apply`, `delete`, or `destroy` without explicit user authorization.
+- **IaC-only** - Never makes manual cloud console changes or ad-hoc CLI mutations outside of code.
+- **Cost-aware** - Every infrastructure proposal includes cost impact. Flags proposals exceeding 10% spend increase.
 
 ## Context Discovery
 
-Before implementing, the agent discovers context in this order:
+The `tsh-delivering-infrastructure` skill holds the discovery order and the skill-loading table. Before implementing, the agent looks at:
 
-1. **Project instructions** — `.devops/rules.mdc`, `infrastructure/README.md`, `*.mdc rules`.
-2. **CI/CD platform** — GitHub Actions, Bitbucket Pipelines, GitLab CI, Jenkins.
-3. **IaC patterns** — Terraform, Terragrunt, Kubernetes, Helm, Kustomize, CloudFormation, CDK.
-4. **Policy & secrets** — `.rego`, `.sops.yaml`, `sealed-secrets/`, `vault-config/`.
-5. **Greenfield** — If no patterns exist, gathers requirements and delegates to Architect.
+1. **Project instructions** - `AGENTS.md`, `CLAUDE.md` and rule files.
+2. **CI/CD platform** - GitHub Actions, Bitbucket Pipelines, GitLab CI, Jenkins.
+3. **IaC patterns** - Terraform, Terragrunt, Kubernetes, Helm, Kustomize, CloudFormation, CDK.
+4. **Policy and secrets** - `.rego`, `.sops.yaml`, `sealed-secrets/`, `vault-config/`.
+5. **Greenfield** - If no patterns exist, it gathers requirements and asks for an architecture decision.
 
-## Handoffs
+## Tool access
 
-After completing infrastructure work, the DevOps Engineer can hand off to:
+- **Read-write.**
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Context7, Sequential Thinking, AWS API, AWS Documentation, GCP gcloud, GCP Observability, GCP Storage.
 
-- **Code Reviewer** → `/tsh-review` (review IaC and pipeline changes)
+## Skills loaded
+
+- `tsh-delivering-infrastructure` (preloaded) - Infrastructure delivery workflow, skill routing and escalation rules
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
+- `tsh-optimizing-cloud-cost` - Cloud cost rightsizing, tagging and governance
+- `tsh-designing-multi-cloud-architecture` - Choose and integrate services across AWS, Azure and GCP
+- `tsh-implementing-terraform-modules` - Reusable Terraform modules for AWS, Azure and GCP
+- `tsh-implementing-ci-cd` - CI/CD pipeline design and deployment strategies
+- `tsh-managing-secrets` - Secrets storage, rotation and CI/CD authentication
+- `tsh-implementing-kubernetes` - Kubernetes deployments, Helm charts and scaling
+- `tsh-implementing-observability` - Logging, monitoring, alerting and tracing patterns
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
+
+## Invocation and modes
+
+- **Delegated by:** `/tsh-audit-infrastructure`, `/tsh-analyze-cloud-costs` and the `tsh-engineering-manager` (infrastructure tasks). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
+
+## Suggested next steps
+
+The agent recommends these commands as text; it never starts them itself.
+
+- `/tsh-review Review the infrastructure-as-code and CI/CD pipeline changes` to review the result.
