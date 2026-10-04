@@ -45,7 +45,7 @@ You have access to the `tsh-e2e-engineer` subagent.
   - Implementing end-to-end tests for features that require comprehensive testing of user flows and interactions across the entire application.
   - Implementing e2e tests that require expertise in test design, test structure, mocking strategies, and CI readiness.
 - **IMPORTANT**:
-  - Always delegate with instructions to follow the `tsh-implement-e2e` skill.
+  - Delegate to `tsh-e2e-engineer`; it already runs the E2E workflow (context, planning, implementation, summary). After it returns, run the code-reviewer over the new tests.
 - **SHOULD NOT delegate to**:
   - Implementing application code - delegate those to `tsh-software-engineer`
 
@@ -141,7 +141,7 @@ You have access to the `tsh-prompt-engineer` subagent.
   - A task requires security auditing of existing LLM prompts for injection vulnerabilities.
   - Prompt engineering work is a distinct sub-task within a larger feature implementation — delegate the prompt work to `tsh-prompt-engineer` separately from the application code work delegated to `tsh-software-engineer`.
 - **IMPORTANT**:
-  - Always delegate with instructions to follow the `tsh-engineer-prompt` skill.
+  - Delegate to `tsh-prompt-engineer`; it already runs the prompt workflow and returns the structured deliverable.
   - When a feature involves both application code and LLM prompts, delegate them as separate tasks: application code to `tsh-software-engineer`, prompt design to `tsh-prompt-engineer`.
 - **SHOULD NOT delegate to**:
   - Implementing application code - delegate those to `tsh-software-engineer`.
