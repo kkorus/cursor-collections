@@ -8,7 +8,7 @@ title: UI Reviewer
 **Source:** `src/agents/tsh-ui-reviewer.md`  
 **Kind:** subagent, model tier `deep`, read-only access
 
-The UI Reviewer agent performs read-only verification comparing implemented UI against Figma designs and reports differences. It is called either directly by a user or as a subagent by the Software Engineer during the UI implementation loop. It does **not** fix code.
+The UI Reviewer agent performs read-only verification comparing implemented UI against Figma designs and reports differences. It is called directly by a user, by `/tsh-review-ui`, or by the Engineering Manager during the UI verify-fix loop. It does **not** fix code.
 
 ## Responsibilities
 

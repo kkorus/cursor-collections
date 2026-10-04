@@ -18,7 +18,7 @@ const HTTP_KEYS = ['transport', 'url'];
 export function validateModel(model) {
   const errors = [];
   const add = (file, key, message) => errors.push({ file, key, message });
-  const servers = model.mcp ? model.mcp.servers : {};
+  const servers = isObject(model.mcp?.servers) ? model.mcp.servers : {};
   const skillTypes = new Map(model.skills.map((s) => [s.name, s.data.type]));
   const agentNames = new Set(model.agents.map((a) => a.name));
 

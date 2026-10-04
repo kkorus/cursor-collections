@@ -76,7 +76,7 @@ That's it — no extra commands or manual wiring needed.
 
 To confirm all MCP servers are running correctly:
 
-1. **Cursor:** open **Cursor Settings → MCP**. **Claude Code:** run `/mcp`. **Codex:** run `codex mcp list`.
+1. **Cursor:** open **Cursor Settings → MCP**. **Claude Code:** run `/mcp`. **Codex:** run `codex mcp list` (not yet verified).
 2. Confirm each configured server appears in the list with a **connected** or **running** status. You should see all 11 servers from [MCP Server Reference](#mcp-server-reference) above (Atlassian, Figma, Context7, Playwright, Sequential Thinking, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage, PDF Reader).
 3. Send a test message in Agent chat that uses an MCP tool (for example, ask the agent to look up a Jira issue or search Context7 documentation) and confirm the tool call succeeds.
 

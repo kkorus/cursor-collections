@@ -103,7 +103,14 @@ function treesEqual(ctx, a, b) {
 function readManifest(ctx, dir) {
   const f = path.join(dir, MANIFEST);
   if (!lstat(ctx, f)) return null;
-  try { return JSON.parse(ctx.fs.readFileSync(f, 'utf8')); } catch { return null; }
+  let m;
+  try { m = JSON.parse(ctx.fs.readFileSync(f, 'utf8')); } catch { return null; }
+  if (!m || typeof m !== 'object') return null;
+  // Only plain tsh-* entry names are trusted as path components (a tampered manifest must not reach other paths)
+  const names = Array.isArray(m.names) ? m.names : [];
+  const good = names.filter((n) => typeof n === 'string' && n.startsWith('tsh-') && n === path.basename(n) && !n.includes('\\'));
+  if (good.length !== names.length) ctx.log(`ignored ${names.length - good.length} invalid name(s) in ${f}`);
+  return { ...m, names: good, tools: Array.isArray(m.tools) ? m.tools.filter((t) => TOOLS.includes(t)) : [] };
 }
 
 /** Copy a file or directory tree, replacing every symlink with the content it points to.
@@ -279,8 +286,10 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
     for (const n of oldNames) {
       if (names.includes(n)) continue;
       const p = path.join(targetDir, n);
-      if (lstat(ctx, p)) retire(ctx, p, 'pruned: no longer in source');
-      result.pruned.push(n);
+      if (lstat(ctx, p)) {
+        retire(ctx, p, 'pruned: no longer in source');
+        result.pruned.push(n);
+      }
     }
   }
 
@@ -351,6 +360,12 @@ export function run(argv, opts = {}) {
   if (o.help) { (opts.quiet ? () => {} : (opts.stdout || console.log))(HELP); return { code: 0, lines: [HELP] }; }
   const ctx = makeCtx(opts, o);
   if (ctx.scope === 'project' && !ctx.projectDir) throw new UsageError('--scope project needs a project dir');
+  const realOf = (p) => { try { return ctx.fs.realpathSync(p); } catch { return path.resolve(p); } };
+  const srcReal = realOf(ctx.source);
+  const rootReal = realOf(targetRoot(ctx));
+  if (rootReal === srcReal || rootReal.startsWith(srcReal + path.sep)) {
+    throw new UsageError(`The install target (${targetRoot(ctx)}) is inside the source checkout (${ctx.source}); installing there would overwrite the generated tree. Use a different ${ctx.scope === 'project' ? '--project-dir' : 'home'}.`);
+  }
   if (ctx.dry) ctx.log('[dry-run] no changes will be made');
 
   cleanupLegacy(ctx);

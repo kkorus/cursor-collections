@@ -92,7 +92,7 @@ What is installed where:
 | Claude Code | `.claude/skills/` | `.claude/agents/` |
 | Codex | `.agents/skills/` | `.codex/agents/` |
 
-Cursor also reads `.claude/skills`. When both trees are installed, Cursor dedupes by name and a same-name skill resolves to `.claude/skills`. If skills show up twice, turn off **Settings > Include Third-Party Plugins, Skills, and Other Configs**; Cursor then reads `.agents/skills` and `.cursor/agents` natively.
+Which skill tree is written depends on the tool combination: with `--tools cursor,claude` only `.claude/skills` is written (Cursor reads it), and both trees are written only for claude+codex or all three (see [Installation](website/docs/getting-started/installation.md) for the full table). Cursor also reads `.claude/skills`. When both trees are installed, Cursor dedupes by name and a same-name skill resolves to `.claude/skills`. If skills show up twice, turn off **Settings > Include Third-Party Plugins, Skills, and Other Configs**; Cursor then reads `.agents/skills` and `.cursor/agents` natively.
 
 Importing the repository as a Remote Rule (GitHub) in Cursor is **not verified** for the new layout, so it is not a supported install path.
 
@@ -136,9 +136,9 @@ These target paths are the ones the installer prints. The user-scope paths for C
 
 | | Cursor | Claude Code | Codex |
 |---|--------|-------------|-------|
-| Run a command | `/tsh-implement PROJ-123` in Agent chat | `/tsh-implement PROJ-123` | not yet verified |
+| Run a command | `/tsh-implement PROJ-123` in Agent chat (tested in cursor-agent CLI; IDE not yet verified) | `/tsh-implement PROJ-123` | not yet verified |
 | Pass arguments | text after the command name | text after the command name (appended as `ARGUMENTS:`) | not yet verified |
-| Use a subagent directly | not yet verified (subagents are started by name from commands and orchestrators) | `@agent-tsh-architect`, or start a session with `claude --agent tsh-architect` | not yet verified |
+| Use a subagent directly | "Use the tsh-architect subagent" (tested in cursor-agent CLI; IDE not yet verified) | `@agent-tsh-architect`, or start a session with `claude --agent tsh-architect` | not yet verified |
 | Knowledge skills, orchestrators, internal steps | loaded by name by the agent; not meant for manual use | same; hidden from the `/` menu | not yet verified |
 
 Commands are thin entry points. Each routes to a subagent or an orchestrator, which loads knowledge skills by name. Subagents are leaf workers: they never start other subagents. Hand-offs between commands are text suggestions ("Suggested next steps"), never automatic.

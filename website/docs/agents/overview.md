@@ -33,9 +33,9 @@ Each subagent declares a model tier and an access level. The tiers map to models
 
 | Tier | Claude Code | Codex | Cursor |
 | --- | --- | --- | --- |
-| `deep` | opus | gpt-5.4, high reasoning effort | inherits the model you selected |
-| `balanced` | sonnet | gpt-5.4, medium reasoning effort | inherits |
-| `fast` | haiku | gpt-5.4-mini | inherits |
+| `deep` | opus | gpt-5.4, high reasoning effort (not yet verified) | inherits the model you selected |
+| `balanced` | sonnet | gpt-5.4, medium reasoning effort (not yet verified) | inherits |
+| `fast` | haiku | gpt-5.4-mini (not yet verified) | inherits |
 
 Read-only agents cannot edit files, so they return results in the reply. Agents marked "no shell" cannot run shell commands on Claude Code. Every agent is a leaf: it cannot start other agents.
 
@@ -83,7 +83,7 @@ At most one delegation level exists. Commands and orchestrators run in the main 
 Some commands route straight to one agent: `/tsh-ask` and `/tsh-audit-codebase` to the Architect, `/tsh-debug` to the Software Engineer, `/tsh-review` to the Code Reviewer, `/tsh-review-ui` to the UI Reviewer, and `/tsh-audit-infrastructure` and `/tsh-analyze-cloud-costs` to the DevOps Engineer. See the [commands overview](../commands/overview).
 
 :::note Known limitation
-Cursor and Codex show and may auto-invoke internal and orchestrator skills, which other tools hide. The descriptions of these skills start with "Internal step of ..." to discourage that. See [Supported tools](../getting-started/supported-tools).
+Per the documentation, Cursor and Codex may list and auto-invoke internal and orchestrator skills, which Claude Code hides (Cursor IDE menu and Codex not yet verified). The descriptions of these skills start with "Internal step of ..." to discourage that. See [Supported tools](../getting-started/supported-tools).
 :::
 
 ## Agent summary

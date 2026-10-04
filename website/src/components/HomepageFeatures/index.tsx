@@ -25,9 +25,9 @@ const cards: CardItem[] = [
   },
   {
     icon: <AgentsIcon className={styles.cardIcon} />,
-    title: '12 Specialized AI Agents',
+    title: '17 Subagents and 3 Orchestrators',
     description:
-      'Business Analyst, Architect, Software Engineer, Prompt Engineer, Code Reviewer, UI Reviewer, E2E Engineer, DevOps Engineer, Engineering Manager, Context Engineer, Copilot Engineer, and Copilot Orchestrator — each focused on its phase, working together in a structured sequence.',
+      'Architect, Software Engineer, Code Reviewer, UI Reviewer, E2E Engineer, DevOps Engineer, Context Engineer, Prompt Engineer and more, led by the Engineering Manager, Business Analyst and AI Customization orchestrators — each focused on its phase, generated for Cursor, Claude Code and Codex.',
   },
   {
     icon: <WorkflowIcon className={styles.cardIcon} />,

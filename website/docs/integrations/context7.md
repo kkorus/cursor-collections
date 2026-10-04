@@ -27,6 +27,10 @@ Provides real-time access to library and framework documentation for accurate AP
 | **Code Reviewer** | Verifying framework API usage, checking for known vulnerabilities |
 | **UI Reviewer** | Design system documentation and UI library guidelines |
 | **E2E Engineer** | Playwright API docs (library ID: `/microsoft/playwright.dev`) |
+| **Plan Reviewer** | Checking that libraries and APIs named in a plan exist and behave as assumed |
+| **Prompt Engineer** | Tool and framework documentation while authoring AI customizations |
+| **AI Customization Researcher** | Looking up tool documentation for customization research |
+| **DevOps Engineer** | Terraform, Kubernetes and CI tooling documentation |
 
 ## Configuration
 

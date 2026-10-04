@@ -42,6 +42,40 @@ function env() {
   return { home, project, source, go };
 }
 
+test('--force with the target inside the source checkout raises a UsageError and moves nothing', () => {
+  const { source, go } = env();
+  assert.throws(() => go(['--scope', 'project', '--project-dir', source, '--tools', 'claude', '--force']), UsageError);
+  assert.ok(exists(path.join(source, '.claude/skills/tsh-alpha/SKILL.md')));
+});
+
+test('--update ignores manifest names with path separators or without the tsh- prefix', () => {
+  const { home, go } = env();
+  const victim = path.join(path.dirname(home), `victim-${path.basename(home)}`);
+  put(victim, 'keep.txt');
+  put(home, '.claude/skills/other/SKILL.md');
+  go(['--tools', 'claude']);
+  const mf = path.join(home, '.claude/skills', MANIFEST);
+  const m = JSON.parse(fs.readFileSync(mf, 'utf8'));
+  m.names.push(`../../${path.basename(victim)}`, 'other', 'tsh-a/b');
+  fs.writeFileSync(mf, JSON.stringify(m));
+  const r = go(['--update']);
+  assert.equal(r.code, 0);
+  assert.ok(exists(path.join(victim, 'keep.txt')));
+  assert.ok(exists(path.join(home, '.claude/skills/other/SKILL.md')));
+  fs.rmSync(victim, { recursive: true, force: true });
+});
+
+test('--update reports only entries it actually pruned', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude']);
+  const mf = path.join(home, '.claude/skills', MANIFEST);
+  const m = JSON.parse(fs.readFileSync(mf, 'utf8'));
+  m.names.push('tsh-never-there');
+  fs.writeFileSync(mf, JSON.stringify(m));
+  const r = go(['--update']);
+  assert.ok(!r.lines.some((l) => l.includes('tsh-never-there')));
+});
+
 test('tree selection table: all 7 rows', () => {
   const rows = [
     [['cursor'], ['.agents/skills']],

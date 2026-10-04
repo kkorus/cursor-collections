@@ -47,7 +47,7 @@ For UI-heavy tasks with Figma designs, use the specialized frontend workflow. Th
 ## What `tsh-orchestrate-ui-verification` Does
 
 :::info Internal step
-`tsh-orchestrate-ui-verification` is an internal step, not a command. The Engineering Manager loads it automatically when `/tsh-implement` reaches UI tasks with Figma references. Cursor and Codex may show it in their menus; you do not need to run it. See [Supported Tools](../getting-started/supported-tools).
+`tsh-orchestrate-ui-verification` is an internal step, not a command. The Engineering Manager loads it automatically when `/tsh-implement` reaches UI tasks with Figma references. Cursor and Codex may list it (menu behavior not yet verified); you do not need to run it. See [Supported Tools](../getting-started/supported-tools).
 :::
 
 - Run by the **Engineering Manager** in your main conversation, which delegates to the Software Engineer and UI Reviewer.
@@ -63,7 +63,7 @@ The frontend flow loads these specialized skills:
 
 - **tsh-implementing-frontend** — Component patterns, design system usage, composition, and performance guidelines.
 - **tsh-verifying-ui** — Verification criteria, tolerances, severity definitions, and what constitutes PASS/FAIL.
-- **tsh-ensuring-accessibility** — WCAG 2.1 AA compliance, semantic HTML, ARIA, keyboard navigation.
+- **tsh-ensuring-accessibility** — WCAG 2.2 AA compliance, semantic HTML, ARIA, keyboard navigation.
 - **tsh-discovering-technical-context** — Project conventions and coding standards.
 
 :::warning Important
