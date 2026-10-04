@@ -1,6 +1,6 @@
 ---
 name: tsh-implementing-kubernetes
-description: Kubernetes deployment patterns, Helm charts, and cluster management. Use when deploying applications to Kubernetes, designing Deployment, StatefulSet, or Job configurations, implementing auto-scaling (HPA, VPA, KEDA), creating or modifying Helm charts, setting up ingress, networking, and service mesh, or configuring resource requests, limits, and QoS.
+description: Kubernetes deployment patterns, Helm charts, GitOps and cluster management. Use when deploying applications to Kubernetes, designing Deployment, StatefulSet, or Job configurations, implementing auto-scaling (HPA, VPA, KEDA), creating or modifying Helm charts, setting up Gateway API routing and GitOps, or configuring resource requests, limits, and QoS.
 type: skill
 metadata:
   short-description: Kubernetes deployments, Helm charts and scaling
@@ -32,125 +32,42 @@ Use `context7` to look up Kubernetes API versions and syntax.
 
 ## Deployment Configuration
 
+Manifest examples for everything below are in `references/manifests.md`.
+
 ### Resource Management
 
-```yaml
-resources:
-  requests:    # Scheduler uses for placement
-    memory: "256Mi"
-    cpu: "100m"
-  limits:      # Kubelet enforces these
-    memory: "512Mi"
-    cpu: "500m"
-```
-
 **Rules:**
-- Always set requests (required for scheduling)
-- Set memory limits to prevent OOM impact on node
-- CPU limits optional (can cause throttling)
-- Request:Limit ratio of 1:2 is good starting point
+- Always set requests (required for scheduling).
+- Set the memory request equal to the memory limit. Memory is not compressible, and a container over its limit is killed.
+- CPU limits are optional. They throttle the container even when the node has idle CPU. Always set a CPU request.
+- Start from profiling or load tests. Use a VPA in recommendation mode to tune the numbers.
 
 ### QoS Classes
 
 | Class | Condition | Eviction Priority |
 |-------|-----------|-------------------|
-| **Guaranteed** | requests == limits (all containers) | Last to evict |
+| **Guaranteed** | requests == limits for CPU and memory (all containers) | Last to evict |
 | **Burstable** | requests < limits | Medium |
 | **BestEffort** | No requests or limits | First to evict |
 
 **Rule:** Production workloads should be Guaranteed or Burstable, never BestEffort.
 
-### Probes Configuration
-
-```yaml
-livenessProbe:      # Restarts container if fails
-  httpGet:
-    path: /healthz
-    port: 8080
-  initialDelaySeconds: 15
-  periodSeconds: 10
-  failureThreshold: 3
-
-readinessProbe:     # Removes from Service if fails
-  httpGet:
-    path: /ready
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-  failureThreshold: 3
-
-startupProbe:       # Delays liveness until startup complete
-  httpGet:
-    path: /healthz
-    port: 8080
-  failureThreshold: 30
-  periodSeconds: 10
-```
+### Probes
 
 **Rules:**
-- Always configure readinessProbe (graceful traffic handling)
-- Use startupProbe for slow-starting apps (instead of long initialDelaySeconds)
-- livenessProbe should check app health, not dependencies
+- Always configure a readinessProbe (graceful traffic handling).
+- Use a startupProbe for slow-starting apps (instead of a long initialDelaySeconds).
+- The livenessProbe should check app health, not dependencies.
 
 ### Pod Disruption Budget
 
-```yaml
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: api-pdb
-spec:
-  minAvailable: 2        # OR maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: api
-```
+**Rule:** Always create a PDB for production workloads to ensure availability during node drains.
 
-**Rule:** Always create PDB for production workloads to ensure availability during node drains.
+### Spreading replicas
 
-### Pod Anti-Affinity
-
-```yaml
-affinity:
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchLabels:
-              app: api
-          topologyKey: kubernetes.io/hostname
-```
-
-**Rule:** Spread replicas across nodes/zones for high availability.
+**Rule:** Spread replicas across zones and nodes with `topologySpreadConstraints` (example in `references/manifests.md`). Use pod anti-affinity only to keep specific workloads apart.
 
 ## Scaling Strategies
-
-### Horizontal Pod Autoscaler (HPA)
-
-```yaml
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: api-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: api
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
-  behavior:
-    scaleDown:
-      stabilizationWindowSeconds: 300  # Prevent flapping
-```
 
 ### Scaling Decision Matrix
 
@@ -158,119 +75,42 @@ spec:
 |--------------|----------|------|
 | CPU-based | General compute workloads | HPA |
 | Memory-based | Memory-intensive apps | HPA |
-| Custom metrics | Queue depth, request rate | HPA + Prometheus Adapter |
+| Custom metrics | Queue depth, request rate | HPA + a metrics adapter (for example Prometheus Adapter) |
 | Event-driven | Message queues, scheduled jobs | KEDA |
 | Vertical | Right-sizing requests/limits | VPA |
 
+**HPA and VPA conflict:** do not let an HPA and a VPA act on the same resource metric (CPU or memory) of the same workload. Both would react to the same signal and fight each other. Run the VPA in recommendation mode (`updateMode: "Off"`), or scale horizontally on CPU or custom metrics and vertically only on memory.
+
+Set `behavior.scaleDown.stabilizationWindowSeconds` on the HPA to prevent flapping.
+
 ## Helm Chart Structure
 
-```
-mychart/
-├── Chart.yaml          # Chart metadata
-├── values.yaml         # Default values
-├── values-dev.yaml     # Environment overrides
-├── values-prod.yaml
-├── templates/
-│   ├── _helpers.tpl    # Template helpers
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   ├── ingress.yaml
-│   ├── hpa.yaml
-│   ├── pdb.yaml
-│   └── configmap.yaml
-└── charts/             # Dependencies
-```
-
-### Helm Best Practices
-
-```yaml
-# values.yaml - use structured defaults
-replicaCount: 2
-
-image:
-  repository: myapp
-  tag: ""  # Override in CI, not here
-  pullPolicy: IfNotPresent
-
-resources:
-  requests:
-    memory: "256Mi"
-    cpu: "100m"
-  limits:
-    memory: "512Mi"
-
-# Enable/disable optional components
-autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 10
-```
+Chart layout and a values example are in `references/manifests.md`.
 
 **Rules:**
-- Don't hardcode image tags in values.yaml (set in CI)
-- Use `{{ include "mychart.fullname" . }}` for resource names
-- Provide sensible defaults, override per environment
+- Don't hardcode image tags in values.yaml (set them in CI).
+- Use `{{ include "mychart.fullname" . }}` for resource names.
+- Provide sensible defaults, override per environment (`values-dev.yaml`, `values-prod.yaml`).
 
-## Ingress Configuration
+## GitOps
 
-### Ingress Class Decision
+This skill is the canonical owner of GitOps delivery (Argo CD, Flux). Keep desired state in Git, let the controller reconcile drift and enable automated sync with pruning only after the user agrees. Pipelines build and publish images and update the Git state. They do not run `kubectl apply` against production (see `tsh-implementing-ci-cd`).
 
-| Ingress Controller | Use When |
-|-------------------|----------|
-| **nginx-ingress** | General purpose, widely supported |
-| **AWS ALB** | AWS-native, integrated with WAF/ACM |
-| **Traefik** | Simple setup, automatic HTTPS |
-| **Istio Gateway** | Service mesh already in use |
+## Traffic Routing
 
-### Ingress Example (nginx)
+Use **Gateway API** (`Gateway` and `HTTPRoute`) for new routing. The community NGINX ingress controller is retired upstream, so do not choose it for new work. For existing Ingress resources, plan a migration to Gateway API. Pick a maintained controller that implements Gateway API.
 
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: api-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - api.example.com
-      secretName: api-tls
-  rules:
-    - host: api.example.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: api
-                port:
-                  number: 80
-```
+| Controller type | Use When |
+|-----------------|----------|
+| **Cloud provider gateway** (managed load balancer integration) | Cloud-native, integrated with the provider's WAF and certificates |
+| **Envoy-based gateway** | General purpose, self-managed, portable |
+| **Service mesh gateway** (Istio, Cilium) | A service mesh is already in use |
+
+Keep TLS certificates in cert-manager. An `HTTPRoute` example is in `references/manifests.md`. Adopting a service mesh is an architect decision.
 
 ## Security Context
 
-```yaml
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
-  seccompProfile:
-    type: RuntimeDefault
-
-containers:
-  - name: app
-    securityContext:
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-```
+Example in `references/manifests.md`.
 
 **Rule:** Always run as non-root with minimal capabilities in production.
 
@@ -287,15 +127,16 @@ containers:
 
 ## Checklist
 
-- [ ] Resource requests and limits defined
+- [ ] Resource requests defined, memory limit equal to the memory request
 - [ ] Readiness and liveness probes configured
 - [ ] PodDisruptionBudget created for production
 - [ ] Pod anti-affinity or topology spread configured
-- [ ] HPA configured for variable workloads
+- [ ] HPA configured for variable workloads (no HPA and VPA on the same metric)
 - [ ] Security context with non-root user
 - [ ] Image pull policy appropriate (Never use `latest` in prod)
 - [ ] Labels consistent (`app`, `version`, `environment`)
 - [ ] Namespace isolation per environment
+- [ ] Routing uses Gateway API, not a retired ingress controller
 
 ## Anti-Patterns
 
@@ -306,7 +147,8 @@ containers:
 | Single replica in production | Minimum 2 replicas with PDB |
 | Run as root | Use non-root user with minimal caps |
 | Missing readiness probe | Configure probes for graceful traffic |
-| `kubectl apply` in production | GitOps with ArgoCD/Flux |
+| `kubectl apply` in production | GitOps with Argo CD/Flux |
+| New routing on the retired NGINX ingress controller | Gateway API with a maintained controller |
 | Hardcode values in manifests | Use Helm values or Kustomize overlays |
 | Ignore pod eviction | Set PDB to maintain availability |
 
