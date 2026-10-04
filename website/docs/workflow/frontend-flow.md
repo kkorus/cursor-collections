@@ -21,7 +21,7 @@ For UI-heavy tasks with Figma designs, use the specialized frontend workflow. Th
    ↳ 💻 Engineering Manager delegates UI tasks to Software Engineer
    ↳ 📖 Review code changes and UI Verification Summary
    ↳ ✅ Manually verify critical UI elements in browser
-   ↳ 🔄 Engineering Manager calls /tsh-review-ui in a loop until PASS or escalation
+   ↳ 🔄 Engineering Manager runs the UI verify-fix loop (tsh-ui-reviewer) until PASS or escalation
 
 2️⃣ /tsh-review       <JIRA_ID or task description>
    ↳ 📖 Review findings – code quality, a11y, performance
@@ -30,10 +30,10 @@ For UI-heavy tasks with Figma designs, use the specialized frontend workflow. Th
 
 ## How the Verification Loop Works
 
-1. The Engineering Manager delegates a UI component implementation to the Software Engineer via the internal `/tsh-implement-ui` prompt.
-2. After the Software Engineer completes, the Engineering Manager calls `/tsh-review-ui` to perform **single-pass verification** (read-only).
-3. `/tsh-review-ui` uses **Figma MCP** (EXPECTED) + **Playwright MCP** (ACTUAL) → returns PASS or FAIL with diff table.
-4. If FAIL → the Engineering Manager delegates the fix to the Software Engineer and calls `/tsh-review-ui` again.
+1. The Engineering Manager loads the internal `tsh-orchestrate-ui-verification` step, which owns the whole loop, and delegates a UI component implementation to the Software Engineer.
+2. After the Software Engineer completes, the Engineering Manager delegates **single-pass verification** (read-only) to the `tsh-ui-reviewer` subagent.
+3. The UI Reviewer uses **Figma MCP** (EXPECTED) + **Playwright MCP** (ACTUAL) → returns PASS or FAIL with diff table. You can run the same single-pass check yourself with `/tsh-review-ui`.
+4. If FAIL → the Engineering Manager delegates the fix to the Software Engineer and verifies again.
 5. Repeats until PASS or max **5 iterations** (then escalates to the developer).
 
 ## What `/tsh-review-ui` Does
@@ -44,15 +44,15 @@ For UI-heavy tasks with Figma designs, use the specialized frontend workflow. Th
 - Returns a structured report: **PASS/FAIL** + difference table with exact values.
 - Covers: structure (containers, nesting), dimensions (width, height, spacing), visual (typography, colors, radii), and components (variants, tokens, states).
 
-## What `/tsh-implement-ui` Does
+## What `tsh-orchestrate-ui-verification` Does
 
-:::info Internal Prompt
-`/tsh-implement-ui` is an internal prompt — not invoked directly by users. It is triggered automatically by `/tsh-implement` when the plan contains UI tasks with Figma references.
+:::info Internal step
+`tsh-orchestrate-ui-verification` is an internal step, not a command. The Engineering Manager loads it automatically when `/tsh-implement` reaches UI tasks with Figma references. Cursor and Codex may show it in their menus; you do not need to run it. See [Supported Tools](../getting-started/supported-tools).
 :::
 
-- Orchestrated by the **Engineering Manager** agent, which delegates to the Software Engineer and UI Reviewer.
+- Run by the **Engineering Manager** in your main conversation, which delegates to the Software Engineer and UI Reviewer.
 - Implements UI components following the plan.
-- Runs **iterative verification loop** delegating to the `tsh-ui-reviewer` subagent after each component.
+- Runs an **iterative verification loop**, delegating to the `tsh-ui-reviewer` subagent after each component.
 - **Fixes mismatches** by delegating fixes back to the Software Engineer based on subagent reports.
 - Escalates after 5 failed iterations with a detailed report.
 - Produces a **UI Verification Summary** before handing off to code review.
@@ -62,9 +62,9 @@ For UI-heavy tasks with Figma designs, use the specialized frontend workflow. Th
 The frontend flow loads these specialized skills:
 
 - **tsh-implementing-frontend** — Component patterns, design system usage, composition, and performance guidelines.
-- **tsh-ui-verifying** — Verification criteria, tolerances, severity definitions, and what constitutes PASS/FAIL.
+- **tsh-verifying-ui** — Verification criteria, tolerances, severity definitions, and what constitutes PASS/FAIL.
 - **tsh-ensuring-accessibility** — WCAG 2.1 AA compliance, semantic HTML, ARIA, keyboard navigation.
-- **tsh-technical-context-discovering** — Project conventions and coding standards.
+- **tsh-discovering-technical-context** — Project conventions and coding standards.
 
 :::warning Important
 The automated Figma verification loop helps catch visual mismatches, but it does not replace manual review. Always visually inspect the implemented UI in the browser, test interactions, and verify responsive behavior yourself.

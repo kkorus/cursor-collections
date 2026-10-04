@@ -21,10 +21,11 @@ For features that need end-to-end test coverage, use the E2E testing workflow. T
    ↳ 📖 Implements Page Objects, test files, and fixtures
    ↳ ✅ Run tests locally, verify they pass
    ↳ 🔄 Iterate on flaky or failing tests
+   ↳ 🔎 Engineering Manager continues with code review
 ```
 
 :::tip
-E2E test implementation is handled by the Engineering Manager as part of the standard `/tsh-implement` workflow. When the plan contains E2E test tasks, the Engineering Manager automatically delegates them to the E2E Engineer agent using the internal `tsh-implement-e2e` prompt.
+E2E test implementation is handled by the Engineering Manager as part of the standard `/tsh-implement` workflow. When the plan contains E2E test tasks, the Engineering Manager automatically delegates them to the `tsh-e2e-engineer` subagent. When the E2E work is done, the Engineering Manager continues with code review.
 :::
 
 ## What the E2E Engineer Does
@@ -46,7 +47,7 @@ When delegated to by the Engineering Manager, the E2E Engineer:
 
 ## Testing Standards
 
-The E2E Engineer agent enforces these standards:
+The E2E Engineer subagent enforces these standards:
 
 | Standard | Approach |
 |---|---|
@@ -57,5 +58,5 @@ The E2E Engineer agent enforces these standards:
 | **Naming** | `should [behavior] when [condition]` pattern. |
 
 :::warning Important
-The E2E Engineer agent generates tests using Playwright MCP for real-time browser interaction. Always run the generated tests locally, review test scenarios for completeness, and verify they cover the critical user journeys identified during research.
+The E2E Engineer subagent generates tests using Playwright MCP for real-time browser interaction. Always run the generated tests locally, review test scenarios for completeness, and verify they cover the critical user journeys identified during research.
 :::

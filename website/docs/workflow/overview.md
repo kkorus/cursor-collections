@@ -5,11 +5,11 @@ title: Workflow Overview
 
 # Workflow Overview
 
-Cursor Collections is an AI product engineering framework that covers the **full product lifecycle** through a structured workflow:
+TSH AI Collections is an AI product engineering framework (for Cursor, Claude Code and Codex) that covers the **full product lifecycle** through a structured workflow:
 
 > **Ideate → Implement → Review**
 
-The Implement phase internally handles research and planning automatically. Each phase is executed by a specialized agent and produces documented artifacts. This ensures consistent, high-quality outputs across teams — from workshop materials all the way to production-ready, reviewed code.
+The Implement phase internally handles research and planning automatically. Each phase is run by an orchestrator in your main conversation or by a specialized subagent, and produces documented artifacts. This ensures consistent, high-quality outputs across teams — from workshop materials all the way to production-ready, reviewed code.
 
 :::tip The Relay Race Metaphor
 Think of this workflow as a **relay race**. Each phase produces a deliverable — the "baton" — that is reviewed by the human and then passed to the next phase. Workshop materials feed the backlog, the Engineering Manager orchestrates research, planning, and implementation as a single flow, and the implementation feeds the review. Nothing is lost between steps, and every handoff is a documented artifact.
@@ -19,7 +19,7 @@ Think of this workflow as a **relay race**. Each phase produces a deliverable �
 
 ### 1. Ideate
 
-- **Agent:** Business Analyst
+- **Orchestrator:** Business Analyst (runs in the main conversation and delegates to internal BA workers)
 - **Commands:** `/tsh-explore-materials <workshop materials>` or `/tsh-analyze-materials <workshop materials>`
 - Can start with exploration-only business/context synthesis before backlog extraction.
 - Processes workshop materials through intent brief, extraction, quality review, Jira formatting, and verified Jira sync.
@@ -28,21 +28,32 @@ Think of this workflow as a **relay race**. Each phase produces a deliverable �
 
 ### 2. Implement
 
-- **Agent:** Engineering Manager (orchestrates specialized agents)
+- **Orchestrator:** Engineering Manager (runs in the main conversation and delegates to specialized subagents)
 - **Command:** `/tsh-implement <JIRA_ID or description>`
 - Automatically handles the full development cycle:
   1. **Research** — Delegates to Context Engineer to gather context from Jira, Figma, and codebase. Asks for user confirmation before proceeding.
-  2. **Plan** — Delegates to Architect to create a structured implementation plan. Asks for user confirmation before proceeding.
+  2. **Plan** — Delegates to Architect to create a structured implementation plan, then to Plan Reviewer to validate it. Asks for user confirmation before proceeding.
   3. **Implement** — Delegates to Software Engineer, Prompt Engineer, DevOps Engineer, or E2E Engineer based on task type.
 - Tracks progress, runs quality checks after each task, and auto-triggers code review.
 - **Produces:** Research document, implementation plan, and concrete code modifications.
 
 ### 3. Review
 
-- **Agent:** Code Reviewer
+- **Subagent:** Code Reviewer
 - **Command:** `/tsh-review <JIRA_ID or description>`
 - Performs a structured code review against acceptance criteria, security, reliability, and maintainability.
 - **Produces:** Structured review with clear pass/blockers/suggestions.
+
+## How Delegation Works
+
+The same model applies in Cursor, Claude Code and Codex:
+
+- **Commands** (`/tsh-implement`, `/tsh-review`, ...) are the entry points you type. A command either loads an orchestrator or starts one subagent.
+- **Orchestrators** (Engineering Manager, Business Analyst, AI Customization Orchestrator) run in your main conversation. They can ask you questions, keep the human gates and own every loop.
+- **Subagents** are leaves. They run in delegated mode, never ask you anything and never delegate further. When they need input, they return a `STATUS` block (`DONE`, `NEEDS_INPUT`, `NEEDS_ARCHITECT_DECISION` or `BLOCKED`), and the orchestrator asks you or delegates to the Architect, then re-delegates. An orchestrator re-delegates at most 3 times per agent per task before it escalates to you.
+- **Knowledge skills** (`tsh-implementing-frontend`, `tsh-reviewing-code`, ...) are loaded by name by whichever agent needs them.
+
+See [Supported Tools](../getting-started/supported-tools) for the invocation syntax in each tool and the known limits.
 
 ## Workflow Diagram
 
@@ -62,5 +73,5 @@ The full lifecycle has specialized variants for different task types:
 
 - **[Workshop Analysis Flow](./workshop-flow)** — Explore workshop context with `/tsh-explore-materials` or convert materials into Jira-ready epics and stories with `/tsh-analyze-materials`.
 - **[Standard Flow](./standard-flow)** — Backend/fullstack tasks using `/tsh-implement` → `/tsh-review` (research and planning happen internally).
-- **[Frontend Flow](./frontend-flow)** — UI tasks with Figma verification using `/tsh-implement` (which internally uses `/tsh-implement-ui`) and `/tsh-review-ui`.
+- **[Frontend Flow](./frontend-flow)** — UI tasks with Figma verification using `/tsh-implement` (which internally runs the `tsh-orchestrate-ui-verification` step) and `/tsh-review-ui`.
 - **[E2E Testing Flow](./e2e-flow)** — End-to-end test creation delegated by the Engineering Manager to the E2E Engineer via `/tsh-implement`.

@@ -2,7 +2,7 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Copilot Collections',
+  title: 'TSH AI Collections',
   tagline: 'AI-powered product engineering framework - from ideation to delivery',
   favicon: 'img/favicon.ico',
 
@@ -88,17 +88,17 @@ const config: Config = {
       },
       {
         property: 'og:image:alt',
-        content: 'Copilot Collections social preview with the headline Meet copilot collections and a GitHub mobile mockup.',
+        content: 'TSH AI Collections social preview',
       },
       {
         name: 'twitter:image:alt',
-        content: 'Copilot Collections by The Software House',
+        content: 'TSH AI Collections by The Software House',
       },
     ],
     navbar: {
-      title: 'Copilot Collections',
+      title: 'TSH AI Collections',
       logo: {
-        alt: 'Copilot Collections',
+        alt: 'TSH AI Collections',
         src: 'img/logo-white.svg',
       },
       items: [
@@ -123,8 +123,8 @@ const config: Config = {
               label: 'Agents',
             },
             {
-              to: '/docs/prompts/overview',
-              label: 'Prompts',
+              to: '/docs/commands/overview',
+              label: 'Commands',
             },
             {
               to: '/docs/skills/overview',
@@ -173,7 +173,7 @@ const config: Config = {
     },
     footer: {
       style: 'light',
-      copyright: `copilot-collections · Built by <a href="https://tsh.io" target="_blank" rel="noopener noreferrer">The Software House</a> · MIT licence · Free`,
+      copyright: `TSH AI Collections · Built by <a href="https://tsh.io" target="_blank" rel="noopener noreferrer">The Software House</a> · MIT licence · Free`,
       links: [
         {
           title: ' ',

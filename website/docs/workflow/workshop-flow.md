@@ -7,6 +7,8 @@ title: Workshop Analysis Flow
 
 For converting discovery workshop materials into structured, Jira-ready epics and user stories, use the Workshop Analysis workflow. This flow can start with exploration when the source material is still ambiguous, then moves through intent brief approval, extraction, quality review, Jira formatting, and verified Jira sync.
 
+The Business Analyst is an orchestrator that runs in your main conversation. It delegates transcript cleanup, analysis, extraction, quality review and Jira formatting to internal BA worker subagents. The workers never talk to you and never write to Jira; the Business Analyst keeps every gate and performs the Jira sync.
+
 ## Command Sequence
 
 ```text
@@ -146,7 +148,7 @@ After workshop analysis, individual tasks can flow into the standard delivery wo
 /tsh-analyze-materials  →  /tsh-implement PROJ-123  →  /tsh-review
 ```
 
-Use the **Start Implementation** handoff to transition the current task to the Engineering Manager for research, planning, and implementation.
+The Business Analyst ends with a **Suggested next steps** list. Run `/tsh-implement PROJ-123` to hand the task to the Engineering Manager for research, planning, and implementation.
 
 :::warning Important
 Each gate requires your review and approval. The Business Analyst produces business-oriented outputs — validate that the extracted tasks accurately reflect workshop discussions and that no critical topics were missed. AI assistance does not replace stakeholder judgment.

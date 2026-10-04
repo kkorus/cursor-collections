@@ -5,7 +5,7 @@ title: Standard Flow
 
 # Standard Flow
 
-The standard workflow is used for backend and fullstack tasks. The Engineering Manager orchestrates the full cycle: research → plan → plan validation → implement → review.
+The standard workflow is used for backend and fullstack tasks. The Engineering Manager (an orchestrator that runs in your main conversation) coordinates the full cycle: research → plan → plan validation → implement → review. It delegates each step to a subagent, and the subagents report back with a status block instead of asking you questions directly.
 
 ## Step-by-Step Command Sequence
 
@@ -22,20 +22,20 @@ The Engineering Manager automatically handles the full development cycle:
 - **Delegated to:** Context Engineer
 - **What it does:** Gathers all available information about the task from the codebase, Jira, Confluence, Figma, and other sources.
 - **What it produces:** A `.research.md` file with task summary, assumptions, open questions, and suggested next steps.
-- **Your action:** Review the generated research document. Verify accuracy. The Engineering Manager asks for confirmation before proceeding.
+- **Your action:** Review the generated research document. Verify accuracy. The Engineering Manager asks for confirmation before proceeding. If the Context Engineer needs more information, you are asked in the main conversation.
 
 #### Planning Phase (internal)
 
 - **Delegated to:** Architect
 - **What it does:** Creates a multi-step implementation plan grouped into phases and tasks aligned with your repo structure.
 - **What it produces:** A `.plan.md` file with checklist-style phases that can be executed by specialized agents.
-- **Your action:** Wait for the plan validation phase to complete before reviewing.
+- **Your action:** Wait for the plan validation phase to complete before reviewing. If the plan reviewer asks for revisions, the Engineering Manager sends the review back to the Architect.
 
 #### Plan Validation Phase (internal)
 
 - **Delegated to:** Plan Reviewer
 - **What it does:** Stress-tests the plan against the research file, codebase assumptions, feasibility, sequencing traps, and execution risks before implementation begins.
-- **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings.
+- **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings. The review and revision loop runs at most 3 iterations; after that, or with unresolved blockers, the Engineering Manager stops and lets you decide.
 - **Your action:** Review the implementation plan and review report together. Confirm scope, phases, and acceptance criteria.
 
 #### Implementation Phase
@@ -55,7 +55,7 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
 /tsh-review <JIRA_ID or task description>
 ```
 
-- **Agent:** Code Reviewer
+- **Subagent:** Code Reviewer
 - **What it does:** Reviews the final implementation against the plan and requirements. Highlights security, reliability, performance, and maintainability concerns.
 - **What it produces:** Structured review with clear pass/blockers/suggestions.
 - **Your action:** Review findings and recommendations. Address all blockers before merging.
