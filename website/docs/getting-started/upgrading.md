@@ -3,9 +3,9 @@ sidebar_position: 3
 title: Upgrading
 ---
 
-# Upgrading from Cursor Collections
+# Upgrading from an Earlier Version
 
-This release renames the product to **TSH AI Collections**, adds Claude Code and Codex, and changes the layout of the files that are installed on your machine. If you installed the earlier version, follow this page once.
+This release renames the product (formerly Cursor Collections) to **TSH AI Collections**, adds Claude Code and Codex, and changes the layout of the files that are installed on your machine. If you installed the earlier version, follow this page once.
 
 ## What changed for an existing install
 
@@ -82,6 +82,13 @@ node ~/cursor-collections/scripts/install.mjs --update
 
 ## After upgrading
 
-- Command names changed. For example, `/tsh-review-codebase` is now `/tsh-audit-codebase`, and `/tsh-analyze-aws-costs` and `/tsh-analyze-gcp-costs` are now `/tsh-analyze-cloud-costs`. Check the table in the [Changelog](/changelog).
+- Command names changed. The most common ones are below; the full table is in the [Changelog](/changelog).
+
+<!-- migration-table -->
+| Old command | New command |
+|---|---|
+| `/tsh-review-codebase` | `/tsh-audit-codebase` |
+| `/tsh-analyze-aws-costs`, `/tsh-analyze-gcp-costs` | `/tsh-analyze-cloud-costs` (takes `aws` or `gcp` as the first argument) |
+
 - The MCP file fixed a wrong key for Cursor (`servers` is now `mcpServers`). Re-merge the generated MCP file, see [MCP Setup](./mcp-setup).
 - Restart your tool so it rediscovers skills and agents.

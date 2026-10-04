@@ -7,7 +7,7 @@ title: Installation
 
 TSH AI Collections is installed with a small Node script that copies the generated skills and agents into the folders your tools read. It works for **Cursor**, **Claude Code** and **Codex**, in your user profile (all projects) or in a single project.
 
-:::info Upgrading from Cursor Collections?
+:::info Upgrading from an earlier version?
 The installer cleans up the old `~/.cursor/skills/` layout for you. Read [Upgrading](./upgrading) first and run a dry run.
 :::
 

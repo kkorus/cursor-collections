@@ -42,7 +42,7 @@ You can talk to a persona such as the Architect without a command.
 
 | Tool | Syntax | Status |
 |---|---|---|
-| Cursor | "Use the `tsh-architect` subagent to ..." | Named spawn tested. Typing `/tsh-architect` or `@tsh-architect` is not yet verified. |
+| Cursor | "Use the `tsh-architect` subagent to ..." | Named spawn tested. Typing the agent name as a slash command or an @-mention is not yet verified. |
 | Claude Code | `claude --agent tsh-architect` runs the agent as the main conversation (multi-turn). | tested |
 | Claude Code | `@agent-tsh-architect` inside a session runs the agent once as a subagent. | docs |
 | Codex | Ask Codex to spawn the custom agent `tsh-architect`. | not yet verified |
@@ -69,7 +69,7 @@ If you want to discuss a design and your tool does not keep a subagent conversat
 - **Internal steps and orchestrators are visible in Cursor and Codex.** Neither tool can hide a skill from its `/` or `$` menu and still let the model load it. Entries such as `tsh-engineering-manager` or `tsh-implement-task` therefore show up in the menu and could be started by the model. Their descriptions begin with "Internal step of `/tsh-...`: load only when a tsh command or orchestrator instructs it." to discourage that. Claude Code hides them from the `/` menu (`user-invocable: false`) while the model can still load them.
 - **Cursor may list skills twice** when you install for Cursor, Claude Code and Codex together. See [Installation](./installation#cursor-shows-skills-twice).
 - **Read-only agents and Claude Code personas.** Agents with read-only access (for example the UI Reviewer, the AI customization reviewer and the BA workers) have `Write` and `Edit` disabled. With `claude --agent <name>` this also applies to the main conversation, so a read-only persona cannot write files there. These agents return their result in the reply instead of saving a file.
-- **Read-only is strongest in Claude Code.** Cursor `readonly` and Codex `sandbox_mode` are not documented to block MCP write tools. The agent instructions, and the rule that only the Engineering Manager writes to Jira, remain the main control. The AI customization reviewer also has shell access in Claude Code, so it could write through the shell.
+- **Read-only is strongest in Claude Code.** Cursor `readonly` and Codex `sandbox_mode` are not documented to block MCP write tools. The agent instructions, and the rule that only orchestrators write to Jira, remain the main control. The AI customization reviewer also has shell access in Claude Code, so it could write through the shell.
 - **Jira writes by BA workers.** On Claude Code, the BA workers are denied the MCP server named `atlassian`. This does not match an Atlassian connector added through claude.ai, see [MCP Setup](./mcp-setup).
 - **Codex is not yet verified.** The Codex output (`.agents/skills`, `.codex/agents/*.toml`, `.codex/config.toml`) follows the Codex documentation, but it has not been run in a real Codex session. Open questions: whether hyphenated agent names load, how the skill listing is truncated, and how `MODE: delegated` arrives in a spawned agent. Project-level `.codex/config.toml` and `.codex/agents` load only in trusted projects.
 - **Status blocks may be one line.** In Cursor, a subagent's `STATUS:` block can arrive on a single line. The callers do not depend on line breaks.
