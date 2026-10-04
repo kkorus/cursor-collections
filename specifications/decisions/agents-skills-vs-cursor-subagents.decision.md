@@ -1,5 +1,7 @@
 # Decision: Lokalizacja i jakość agentów w `.cursor/skills/agents/`
 
+> **Superseded (2026-09-27)** by specifications/unified-agent-structure/unified-agent-structure.plan.md (D1/D5/D6)
+
 > **Note (2026-06-04):** `tsh-architect-reviewer` was renamed to `tsh-plan-reviewer` (Plan Reviewer). References below to the old name are historical.
 
 **Status:** ACCEPTED  

@@ -1,5 +1,7 @@
 # Decision: Folder and file structure compliance with Cursor Agent Skills spec
 
+> **Superseded (2026-09-27)** by specifications/unified-agent-structure/unified-agent-structure.plan.md (D1/D5/D6)
+
 **Status:** ACCEPTED  
 **Date:** 2026-05-21
 
