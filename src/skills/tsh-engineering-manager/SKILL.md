@@ -126,7 +126,7 @@ Before moving between research, planning and implementation, ask the user to con
 
 ## Refactor Mode
 
-Entered from `/tsh-refactor`. The plan is a standard `<specs>/<topic>/<topic>.plan.md` with `Behavior-preserving: yes` in Task Details. Before any change, the software engineer establishes characterization tests that pin the current behavior, and the code review additionally verifies that behavior is unchanged. Use the Full flow for cross-cutting refactors, otherwise the Quick flow. Details are in [implementation-flows.md](references/implementation-flows.md).
+Entered from `/tsh-refactor`. The plan is a standard `<specs>/<topic>/<topic>.plan.md` with `Behavior-preserving: yes` in Task Details. Tell the software engineer to follow the `tsh-refactoring` skill: it establishes characterization tests that pin the current behavior before any change, and the code review additionally verifies that behavior is unchanged. Use the Full flow for cross-cutting refactors, otherwise the Quick flow. Details are in [implementation-flows.md](references/implementation-flows.md).
 
 ## Tool Usage Guidelines
 
