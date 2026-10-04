@@ -1,28 +1,48 @@
 ---
-name: tsh-<command-name>
-description: "<What the command does. Use when the user types /tsh-<command-name> or ..."
-disable-model-invocation: true
+name: tsh-<verb>[-<object>]
+description: >-
+  <What the command does, third person>. Use when the user types /tsh-<verb>[-<object>] or <other triggers>.
+type: command
+routes-to: tsh-<agent-or-orchestrator>
+argument-hint: "<expected input>"
+# requires-mcp: [atlassian]
+metadata:
+  short-description: "<at most 120 characters>"
 ---
 
-# /tsh-<command-name>
+# /tsh-<verb>[-<object>]
 
-Load and follow the <agent-name> agent skill. <One-sentence goal for this workflow entry point.>
+<One sentence: what the command accomplishes.>
+
+## Route
+
+Delegate to the `tsh-<agent>` subagent.
+For an orchestrator, write instead: Load and follow the `tsh-<orchestrator>` skill.
+
+## Inputs
+
+- <Input taken from the user's input after the command>
+- <What to ask the user when it is missing>
 
 ## Required Skills
 
-Before starting, load and follow these skills:
-- `<workflow-skill-1>` — <why needed>
-- `<workflow-skill-2>` — <why needed>
+Before starting, load these skills:
 
-## Workflow
+- `tsh-<knowledge-skill>` - <why this workflow needs it>
 
-1. **<step-title>**: <actionable step>
-2. **<step-title>**: <actionable step>
+## Steps
 
-## Constraints
+1. **<Step title>**: <hand-over instruction>
+2. **<Step title>**: <hand-over instruction>
+3. **<Step title>**: <hand-over instruction>
 
-- <workflow-specific limits; no coding standards here — use `.cursor/rules/`>
+## Output
 
-## Connected Skills
+- <Deliverable, its location and naming>
+- <How to tell the work is complete>
 
-- `<workflow-skill-1>` — <brief rationale>
+## Guardrails
+
+- <Workflow-specific limit or scope boundary; no coding standards here>
+
+<!-- Template note: a command routed to an agent ends with the line "include: caller-status-handling" written as an include comment. Delete this note. -->

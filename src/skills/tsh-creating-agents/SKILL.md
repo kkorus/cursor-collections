@@ -1,188 +1,185 @@
 ---
 name: tsh-creating-agents
-description: Create custom agent skills (SKILL.md in .cursor/skills/agents/) for Cursor. Provides templates, guidelines, and a structured process for building agent definitions that describe behavior, personality, responsibilities, and problem-solving approaches. Use when creating, reviewing, or updating agent skill files.
+description: Guides creating and reviewing custom agents (subagents) for Cursor, Claude Code and Codex, from the neutral source schema in `src/agents/` or as native agent files. Covers the agent schema, per-tool output, separation of concerns, dual-mode behavior, the no-delegation rule and the orchestrator-versus-subagent decision. Use when creating, reviewing or updating an agent, or when deciding whether a role should be an agent, an orchestrator or a skill.
 type: skill
 metadata:
-  short-description: Guidelines and templates for writing agent definitions
+  short-description: Schema, mapping and rules for writing agents
 ---
 
 # Creating Agents
 
-Creates well-structured custom agent skills for Cursor. Enforces a consistent pattern across all agents and ensures clear separation between agent definitions, workflow skills, and commands.
+Creates well-structured custom agents that run as subagents in Cursor, Claude Code and Codex. An agent defines WHO does the work; the workflows it follows live in skills.
 
 ## Core Design Principles
 
 <principles>
+
 <separation-of-concerns>
-An agent skill (SKILL.md in `.cursor/skills/agents/`) defines WHO the agent is. It must NOT define HOW specific workflows are executed.
+Each customization type has one job. When content crosses a boundary, move it.
 
-- **Agent** = behavior, personality, responsibilities, and problem-solving approach
-- **Workflow skills** = reusable workflows, domain knowledge, step-by-step processes (SKILL.md in `.cursor/skills/workflows/`)
-- **Commands** = entry-point workflow triggers with `disable-model-invocation: true` (SKILL.md in `.cursor/skills/commands/`)
+| Type | Defines | Lives in |
+|---|---|---|
+| **Agent** | WHO: role, responsibilities, behavior, access level, which skills to load | `src/agents/<name>.md` |
+| **Knowledge skill** | HOW: workflows, domain knowledge, step-by-step processes, templates | `src/skills/<name>/SKILL.md` (`type: skill`) |
+| **Command** | WHAT: the user's entry point (`/tsh-<verb>`), routes to an agent or orchestrator | `src/skills/<name>/SKILL.md` (`type: command`) |
+| **Orchestrator** | Main-thread workflow that delegates to agents and owns the loop | `src/skills/<name>/SKILL.md` (`type: orchestrator`) |
+| **Project instructions** | RULES: coding standards, conventions, always-applied guidance | `AGENTS.md`, rule files |
 
-Every agent is designed to be extendable with workflow skills and commands. The agent itself provides the foundation; skills and commands layer on top for specific workflows.
+Consequences:
+
+- Agents **load workflows** by name; they never embed workflow steps. An agent that needs a procedure names the skill and says when to load it.
+- An agent carries no coding standards. Those belong in project instructions.
+- A command carries no domain knowledge, and project instructions never trigger workflows.
+- A skill never defines a persona.
 </separation-of-concerns>
 
-<xml-syntax>
-All structured content inside the agent body MUST use XML-like tags for explicit structure. This ensures reliable parsing across all LLM model tiers.
-
-Use Markdown only for inline formatting (bold, code blocks, tables, lists) within XML sections.
-</xml-syntax>
+<leaf-agents>
+Agents are leaves: **they never delegate**. The delegation depth is one level everywhere (command or orchestrator in the main thread, then agent), which is the lowest common denominator of the three tools. If an agent needs a decision from another role, it returns a status (see Dual Mode) and the caller routes it.
+</leaf-agents>
 
 <minimal-scope>
-An agent should only describe what is necessary for its specific role. Avoid duplicating instructions that belong in workflow skills or project-level rule files (`.cursor/rules/*.mdc`).
+Describe only what the role needs. Do not duplicate skill content or project rules in the agent body.
 </minimal-scope>
+
 </principles>
 
-## Creation Process
+## Where Agents Live
 
-Use the checklist below and track your progress:
+- **The repository has `src/agents/` and `scripts/generate.mjs`:** write `src/agents/<name>.md` with the neutral frontmatter below, then run `npm run generate` and `npm run check`. Never edit the generated agent files by hand.
+- **No neutral source:** write the native files for each tool the project uses (see the matrix).
+
+## Agent Source Schema
+
+Exact frontmatter of `src/agents/<name>.md`. Unknown keys fail `npm run check`.
+
+```yaml
+---
+name: tsh-code-reviewer        # REQUIRED. == file name without .md. Same charset rule.
+description: >-                # REQUIRED. When to delegate to this agent. <= 1024 chars.
+  Reviews a change or implementation plan ... Use when ...
+type: agent                    # REQUIRED
+model-tier: balanced           # REQUIRED. deep | balanced | fast | inherit (mapped via src/config/targets.json)
+access: read-write             # REQUIRED. read-only | read-write
+shell: true                    # optional, default true
+requires-mcp: [atlassian, context7, figma, sequential-thinking]   # optional, must exist in servers.json
+preload-skills: [tsh-reviewing-code]   # optional, <= 2 entries. Claude `skills:` preload. Must also be named in the body.
+targets:                       # optional escape hatch, merged LAST
+  cursor: {}                   # e.g. { model: "...", is_background: true }
+  claude: {}                   # e.g. { color: blue, disallowedTools: [...] }
+  codex: {}                    # e.g. { model_reasoning_effort: "high" }
+---
+<body: the agent prompt. MUST include <!-- include: agent-modes -->.>
+```
+
+| Field | Choose by |
+|---|---|
+| `model-tier` | `deep` for design, analysis and hard reasoning; `balanced` for most reviewing and implementing; `fast` for mechanical or high-volume work; `inherit` to follow the caller |
+| `access` | `read-only` if the agent must never change files; `read-write` otherwise (also when it writes only a report) |
+| `shell` | `false` when the role needs no command execution |
+| `requires-mcp` | Only servers the role really uses; each must be defined in `src/mcp/servers.json` |
+| `preload-skills` | The one or two skills that define the agent's main workflow; never a command. Name them in the body too |
+
+## Native Output per Tool
+
+| Tool | File | Generated content |
+|---|---|---|
+| Cursor | `.cursor/agents/<name>.md` | `name`, `description`, `model` (only if the tier maps to one), `readonly` for `read-only`; the body starts with a generated "Required skills" line from `preload-skills` |
+| Claude Code | `.claude/agents/<name>.md` | `name`, `description`, `model`, `disallowedTools` (always includes `Agent`; adds `Write`, `Edit`, `NotebookEdit` for `read-only` and `Bash` for `shell: false`), `skills` from `preload-skills` |
+| Codex | `.codex/agents/<name>.toml` | `name`, `description`, `developer_instructions` (body plus the "Required skills" line), `model`, `model_reasoning_effort`, `sandbox_mode = "read-only"` for `read-only` |
+
+- Claude uses a deny-list so that MCP tools stay inherited. Cursor and Codex have no shell switch, so `shell: false` is also stated in the body there.
+- Cursor `readonly` and Codex `sandbox_mode` are not documented to block MCP write tools. State the restriction in the body as well.
+- Cursor and Codex have no preload field. The generated "Required skills" line asks the agent to load the skills by name, so keep them named in the body.
+- Without a generator, write the equivalent native file by hand for each tool, using the fields above. Keep the body identical across tools.
+
+## Dual Mode and Callers
+
+Every agent runs in two modes. Interactive mode is the default (a user talks to the agent directly). Delegated mode starts only when the first line of the task is exactly `MODE: delegated`; the agent then never asks the user and ends with a `STATUS:` block.
+
+- The agent body MUST include the `agent-modes` partial: `<!-- include: agent-modes -->`. It defines both modes and the status block.
+- Inside the body, write instructions as for an interactive conversation ("ask the user", "present the plan"). The partial overrides them in delegated mode. Do not write mode-specific branches of your own.
+- An agent with no ask-user tool ends an interactive reply with a numbered "Questions for you" list. The partial covers this.
+- Interactive mode ends with a `## Suggested next steps` list naming commands (for example "run `/tsh-review`"). Handoffs are text, never automatic invocations of other agents.
+- **Callers** (orchestrators and commands whose `routes-to` is an agent) MUST include the `caller-status-handling` partial: `<!-- include: caller-status-handling -->`. It defines the delegation prompt, the handling of each status and the re-delegation cap.
+- A command or orchestrator delegates by naming the agent ("delegate to the `tsh-code-reviewer` subagent") and passing explicit artifact paths.
+
+## Orchestrator, Subagent or Skill
+
+| Need | Choose | Why |
+|---|---|---|
+| A role with its own context, access level or model tier that does a bounded task | **Agent** (subagent) | Clean context, least-privilege access, parallelizable |
+| A multi-step workflow that must delegate to several agents, ask the user between steps or own a loop | **Orchestrator** (skill, `type: orchestrator`) | Only the main thread can delegate and ask |
+| Procedure or domain knowledge shared by several roles | **Knowledge skill** | Loaded by name; no duplication |
+| A single small change that needs no isolation | Do it in the main thread; no new artifact | A subagent costs a cold start |
+
+If the role needs to delegate, it is not an agent: make it an orchestrator and let the roles it coordinates be agents.
+
+## Creation Process
 
 ```
 Creation progress:
 - [ ] Step 1: Define the agent's purpose
-- [ ] Step 2: Write the agent role and responsibilities
-- [ ] Step 3: Determine tools and write tool usage guidelines
-- [ ] Step 4: Determine skills and write skills usage guidelines
-- [ ] Step 5: Configure handoffs (if applicable)
-- [ ] Step 6: Add domain standards (if applicable)
-- [ ] Step 7: Add constraints (if applicable)
-- [ ] Step 8: Assemble the agent file using the template
-- [ ] Step 9: Validate the agent file
+- [ ] Step 2: Decide agent, orchestrator or skill
+- [ ] Step 3: Write the role and responsibilities
+- [ ] Step 4: Choose access, model tier, shell and MCP servers
+- [ ] Step 5: Choose the skills to load
+- [ ] Step 6: Add constraints and output format (if needed)
+- [ ] Step 7: Assemble from the template
+- [ ] Step 8: Generate and validate
 ```
 
-**Step 1: Define the agent's purpose**
+**Step 1: Define the agent's purpose.** Clarify: the role, the problems it solves, its focus area, which existing agents it works with, and what makes it distinct from them. Skip questions the conversation already answers.
 
-Answer these questions before writing anything:
-- What specific role does this agent fulfill? (e.g., architect, reviewer, engineer)
-- What problems does it solve?
-- What is the agent's primary focus area?
-- Which other agents does it collaborate with?
-- What makes this agent distinct from existing agents?
+**Step 2: Decide agent, orchestrator or skill.** Use the table above. Stop here if the answer is not an agent.
 
-**Step 2: Write the agent role and responsibilities**
+**Step 3: Write the role and responsibilities.** A role statement ("Role: You are a ... responsible for ..."), the responsibilities, and how the agent approaches work. No workflow steps; those belong in skills.
 
-Write the `<agent-role>` section. This is the core of the agent. It must describe:
-- A clear role statement starting with "Role: You are..."
-- The agent's primary responsibilities and focus areas
-- The agent's behavioral guidelines (how it approaches work)
-- Skip-level instructions for skill and tool usage (always check skills first, always use tools to gather context)
+**Step 4: Choose access, model tier, shell and MCP servers.** Apply least privilege: `read-only` for reviewers and researchers, `shell: false` without a need for commands, only the MCP servers the role uses. In the body, add one short guideline per MCP server (when to use it, when not), and say when the agent should ask the user.
 
-Follow the pattern from existing agents. Keep the role focused. Do not include workflow-specific steps — those belong in skills.
+**Step 5: Choose the skills to load.** List them under "Skills Usage Guidelines" as `` `tsh-<name>` - when to load it ``. Put the one or two defining skills in `preload-skills`. Confirm every named skill exists.
 
-**Step 3: Determine tools and write tool usage guidelines**
+**Step 6: Add constraints and output format.** Only when the role has limits or a fixed deliverable: what it must not produce, scope boundaries, and the escalation path ("return `NEEDS_ARCHITECT_DECISION`" rather than "ask the architect").
 
-Review available tools and select only those relevant to the agent's role:
-- List each tool in the YAML frontmatter `tools` array
-- For each tool, write a `<tool>` entry in the `<tool-usage>` section describing:
-  - **MUST use when**: Specific conditions requiring tool use
-  - **IMPORTANT**: Configuration notes, prerequisites, or behavioral constraints
-  - **SHOULD NOT use for**: Anti-patterns and out-of-scope usage
+**Step 7: Assemble from the template.** Use `assets/agent.template.md`. Write `src/agents/<name>.md`, or the native files.
 
-Match tool selection to the agent's responsibilities. Read-only agents should not get edit tools. Implementation agents need execution tools.
+**Step 8: Generate and validate.** With a neutral source run `npm run generate && npm run check` and fix every error without adding baseline entries. Then walk through the checklist.
 
-**Step 4: Determine skills and write skills usage guidelines**
+```
+Validation:
+- [ ] Frontmatter has name (== file name), description ("Use when ..."), type: agent, model-tier and access
+- [ ] requires-mcp names only servers in src/mcp/servers.json
+- [ ] preload-skills has at most 2 existing non-command skills, each named in the body
+- [ ] Body includes <!-- include: agent-modes -->
+- [ ] Body uses Markdown headings only; no tool-specific syntax (no @mentions, tool-call names or model names)
+- [ ] No delegation: the body never tells the agent to delegate, spawn or hand over to another agent
+- [ ] No workflow steps and no coding standards embedded
+- [ ] Every skill referenced in the body exists; references are by name, never by path
+- [ ] Follow-ups are a "Suggested next steps" list of commands
+- [ ] Role is distinct from existing agents
+- [ ] Connected Skills section present at the end
+```
 
-Review available skills and select those the agent should load:
-- For each skill, write a short entry explaining WHEN to use it
-- Use the format: `skill-name` - brief description of when to use it
+## Body Structure
 
-Do not duplicate skill content in the agent file. The agent only references skills.
-
-**Step 5: Configure handoffs (if applicable)**
-
-If the agent participates in multi-step workflows:
-- Define handoff entries in the YAML frontmatter
-- Each handoff needs: `label`, `agent`, `prompt`, and `send` (typically `false` for user approval)
-- Optionally specify `model` for the target agent
-
-**Step 6: Add domain standards (if applicable)**
-
-If the agent's role requires enforcing domain-specific standards (e.g., testing conventions, security rules, UI patterns), add a `<domain-standards>` section. This section is optional and should only appear when the agent genuinely needs domain-specific rules that are NOT covered by skills.
-
-**Step 7: Add constraints (if applicable)**
-
-If the agent has specific limitations or anti-patterns to avoid, add a `<constraints>` section. Common constraints include:
-- What the agent must NOT produce (e.g., "don't create implementation plans")
-- Scope boundaries (e.g., "don't provide deployment instructions")
-- Delegation rules (e.g., "escalate architectural decisions to the architect")
-
-**Step 8: Assemble the agent file using the template**
-
-Use the `assets/agent.template.md` template to assemble the final `SKILL.md` file. Place the file in `.cursor/skills/agents/<agent-name>/SKILL.md`.
-
-**Step 9: Validate the agent file**
-
-Verify the agent file against this checklist:
-- [ ] YAML frontmatter is valid and parseable
-- [ ] `description` is present and concise
-- [ ] `tools` array includes only relevant tools
-- [ ] All tools listed in frontmatter have corresponding `<tool>` entries in `<tool-usage>`
-- [ ] All skills referenced in `<skills-usage>` are existing skills in the project
-- [ ] XML-like tags are properly opened and closed
-- [ ] No workflow-specific instructions are embedded (those belong in skills)
-- [ ] No coding standards are embedded (those belong in `.cursor/rules/*.mdc` rule files)
-- [ ] Agent role is focused and distinct from existing agents
-- [ ] Handoffs (if present) target valid agent names
-- [ ] Connected Skills section present at end of file (outside XML tags)
-
-## Agent File Structure Reference
-
-### Frontmatter Fields
-
-| Field | Required | Description |
-|---|---|---|
-| `description` | **Yes** | Brief description of the agent, shown as placeholder text in chat input. |
-| `tools` | **Yes** | Array of tool/tool-set names available to the agent. Use `<server>/*` for all MCP server tools. |
-| `handoffs` | No | Array of handoff configurations for multi-step workflows. |
-| `agents` | No | Array of agent names available as subagents. Use `*` for all, `[]` for none. |
-| `name` | No | Override display name (defaults to filename). |
-| `argument-hint` | No | Hint text shown in chat input to guide user interaction. |
-| `model` | No | Preferred AI model (string or prioritized array). |
-| `user-invokable` | No | Boolean, controls visibility in agents dropdown (default: `true`). |
-| `disable-model-invocation` | No | Boolean, prevents auto-invocation as subagent (default: `false`). |
-
-### Body Sections
+Use Markdown headings for every section. One body format for all agents.
 
 | Section | Required | Purpose |
 |---|---|---|
-| `<agent-role>` | **Yes** | Role definition, responsibilities, behavioral guidelines. |
-| `<skills-usage>` | **Yes** | List of skills the agent uses with guidance for each. |
-| `<tool-usage>` | **Yes** | Tool access rules and usage guidelines per tool. |
-| `<domain-standards>` | No | Domain-specific standards and rules the agent enforces. |
-| `<collaboration>` | No | Interaction patterns with other agents or team members. |
-| `<constraints>` | No | Explicit limitations and anti-patterns for the agent. |
-| `<output-format>` | No | Expected structure or format of the agent's deliverables. |
-| Connected Skills | **Yes** | Links to related skills with brief rationale for each. Placed after all XML sections (outside XML tags, at end of file). |
-
-## XML Syntax Guidelines
-
-All body content in the agent file must use XML-like tags for structure. Rules:
-
-1. Every section uses a matching opening and closing tag: `<section-name>` ... `</section-name>`
-2. Tags use lowercase-kebab-case naming
-3. Nesting is allowed for sub-sections: `<tool>` inside `<tool-usage>`
-4. Markdown formatting (bold, lists, tables, code blocks) is used inside XML tags for content
-5. Avoid XML attributes for structural content — use nested tags or Markdown content instead. Exception: identifier attributes (e.g., `<tool name="...">`) are acceptable when they improve readability.
-
-Example structure:
-```xml
-<agent-role>
-Role: You are a...
-</agent-role>
-
-<tool-usage>
-<tool name="context7">
-- **MUST use when**: ...
-- **SHOULD NOT use for**: ...
-</tool>
-</tool-usage>
-```
+| `# <Role Title>` | Yes | Title |
+| `## Agent Role and Responsibilities` | Yes | Role statement, responsibilities, behavior |
+| `<!-- include: agent-modes -->` | Yes | Dual-mode contract |
+| `## Skills Usage Guidelines` | Yes | Skills to load and when |
+| `## Tool Usage Guidelines` | Yes | Per MCP server and for asking the user: when to use, when not |
+| `## Domain Standards` | No | Role-specific rules not covered by skills |
+| `## Constraints` | No | Limits and anti-patterns |
+| `## Output Format` | No | Shape of the deliverable |
+| `## Suggested next steps` | No | Commands to show the user at the end of interactive mode |
+| `## Connected Skills` | Yes | Related skills by name with the reason to load each |
 
 ## Connected Skills
 
-- `tsh-creating-commands` - to understand how prompts reference agents and ensure agents don't overlap with prompt responsibilities
-- `tsh-creating-skills` - to ensure this skill's own structure follows the canonical skill creation requirements
-- `tsh-discovering-technical-context` - to understand existing agent patterns in the project before creating a new one
-- `tsh-analyzing-codebase` - to analyze existing agents and identify patterns to follow
-- `tsh-creating-rules` - to understand when coding standards and project conventions belong in instruction files rather than agent definitions
+- `tsh-creating-skills` - to write the skills the agent loads and to apply the shared naming and layout rules
+- `tsh-creating-commands` - to write the command that routes to the agent
+- `tsh-creating-rules` - to decide whether a standard belongs in project instructions instead of the agent
+- `tsh-discovering-technical-context` - to discover existing agent patterns in the project before creating one
+- `tsh-analyzing-codebase` - to analyze existing agents and the conventions to follow

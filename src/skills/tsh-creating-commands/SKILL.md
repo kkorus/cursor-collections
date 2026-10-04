@@ -1,166 +1,142 @@
 ---
 name: tsh-creating-commands
-description: "Create Cursor entry-point command skills (.cursor/skills/commands/<name>/SKILL.md) with disable-model-invocation: true. These act as slash-command workflow triggers that route work to the right context and agents. Use when creating, reviewing, or updating command entry-point skills."
+description: >-
+  Guides creating and reviewing slash commands for Cursor, Claude Code and Codex, from the neutral source (`type: command` skills with `routes-to` and `argument-hint`) or as native command skills. Covers the command schema, per-tool rendering, naming, the thin-router rule and the command template. Use when creating, reviewing or updating a user-invoked command, or when deciding whether a workflow belongs in a command.
 type: skill
 metadata:
-  short-description: Guidelines and templates for writing command skills
+  short-description: Schema, mapping and template for writing commands
 ---
 
 # Creating Commands
 
-Creates well-structured command skills for Cursor. Commands are SKILL.md files placed in `.cursor/skills/commands/` with `disable-model-invocation: true`, which prevents auto-invocation and makes them available as explicit slash-command entry points.
+Creates thin, user-invoked slash commands that work in Cursor, Claude Code and Codex. A command names WHAT the user wants and hands the work to an agent or orchestrator. It carries no domain knowledge.
 
 ## Core Design Principles
 
 <principles>
 
+<what-is-a-command>
+A command is a skill with `type: command` (a `SKILL.md` that only the user can invoke by typing `/<name>`). Tools never load it on their own.
+
+| Aspect | Command | Knowledge skill |
+|---|---|---|
+| `type` | `command` | `skill` |
+| Invocation | User types `/<name>` | The agent recognizes the task, or loads it by name |
+| Purpose | Entry point that routes work | Reusable domain knowledge and procedures |
+| Body | Route, inputs, skills to load, short steps, output, guardrails | The actual procedure |
+| Naming | `tsh-<verb>[-<object>]`, imperative | `tsh-<gerund>-<object>` |
+</what-is-a-command>
+
 <separation-of-concerns>
-A command skill (SKILL.md with `disable-model-invocation: true`) defines WHAT workflow to execute. It must NOT define WHO the agent is.
+- **Command** = WHAT: the trigger, the route, the inputs and the expected outcome.
+- **Agent** or **orchestrator** = WHO: the role that does the work. See the `tsh-creating-agents` skill.
+- **Knowledge skill** = HOW: the procedure and domain knowledge, loaded by name. See the `tsh-creating-skills` skill.
+- **Project instructions** = RULES: coding standards and conventions. See the `tsh-creating-rules` skill.
 
-- **Command** = workflow trigger, workflow steps, tool configuration, expected outcome
-- **Agent skills** = behavior, personality, responsibilities, and problem-solving approach (SKILL.md files in `.cursor/skills/agents/`)
-- **Workflow skills** = reusable domain knowledge, step-by-step processes, templates (SKILL.md files in `.cursor/skills/workflows/`)
-
-A command routes work to a context and configures the workflow. It must never embed domain knowledge that belongs in workflow skills or coding standards that belong in rules.
+A command never embeds domain knowledge or coding standards. If a procedure is needed by a command and by agents, move it into a knowledge skill and load it by name. If it is used by exactly one command and must not appear in the `/` menu, put it in the command's own `references/` folder.
 </separation-of-concerns>
 
-<command-vs-workflow>
-The key difference between a command and a workflow skill:
-
-| Aspect | Command (`.cursor/skills/commands/`) | Workflow Skill (`.cursor/skills/workflows/`) |
-|---|---|---|
-| `disable-model-invocation:` | `true` — must be explicit slash command | `false` (or omitted) — auto-invoked based on context |
-| Purpose | Entry point, user-triggered workflow start | Reusable process loaded by agents on demand |
-| Trigger | User types `/command-name` | Agent recognizes the task context |
-| Body | Workflow steps + skill references | Domain knowledge + patterns + procedures |
-
-Use a command when the workflow is user-initiated and should not trigger automatically. Use a workflow skill when the agent should auto-detect when to apply it.
-
-<slash-menu-clutter>
-When a command has a **1:1 backing** process used only by that command, never auto-loaded elsewhere, and must not appear in `/`, put it in `commands/<name>/references/<topic>.md`.
-
-When the process is domain knowledge loaded by a command or agents (e.g. `tsh-committing`, `tsh-reviewing-code`, `tsh-verifying-ui`), keep it as a **workflow skill** and reference it by name. Users invoke `/tsh-commit`, `/tsh-review`, or `/tsh-review-ui` — not the workflow directly. See `specifications/decisions/slash-menu-visibility-policy.decision.md`.
-</slash-menu-clutter>
-
-<workflow-focus>
-A command skill must:
-
-- Have `disable-model-invocation: true` in frontmatter
-- Describe the **workflow steps** for the specific task
-- Reference **workflow skills** the agent should load, or **`references/*.md`** under the command when the content must not appear as a separate slash entry
-- Define the **expected outcome** of the workflow
-- Optionally configure which agent context or tools apply
-
-A command must NOT:
-
-- Embed domain knowledge (that belongs in workflow skills)
-- Duplicate coding standards (that belongs in `.cursor/rules/*.mdc`)
-- Contain generic instructions not specific to the workflow
-</workflow-focus>
+<thin-router>
+Keep a command short (about 40 lines). Its steps say what to hand over and what to return, not how to think. A command without `routes-to` must be `standalone: true`, which is reserved for commands that run in the main thread by design (for example a commit command).
+</thin-router>
 
 </principles>
 
-## Creation Process
+## Where Commands Live
 
-Use the checklist below and track your progress:
+- **The repository has `src/skills/` and `scripts/generate.mjs`:** write `src/skills/<name>/SKILL.md` with `type: command`, then run `npm run generate && npm run check`. Never edit the generated trees by hand.
+- **No neutral source:** write a native command skill for each tool (see the matrix).
+
+## Command Source Schema
+
+A command uses the skill schema of the `tsh-creating-skills` skill, with these command-only keys. Unknown keys fail `npm run check`.
+
+```yaml
+---
+name: tsh-review               # REQUIRED. == folder name. Imperative verb form.
+description: >-                # REQUIRED. Third person, with "Use when ...".
+  Reviews a change set or an implemented plan ... Use when the user types /tsh-review or ...
+type: command                  # REQUIRED
+routes-to: tsh-code-reviewer   # REQUIRED unless standalone: true. An existing agent or orchestrator.
+standalone: false              # true = runs in the main thread without routing (tsh-commit only).
+argument-hint: "[task-id | plan path | free-text scope]"   # optional. Hint shown after the command name.
+requires-mcp: [atlassian]      # optional. Servers from src/mcp/servers.json.
+metadata:
+  short-description: "Review an implementation against the plan"   # REQUIRED by lint, <= 120 chars
+---
+<body>
+```
+
+- `routes-to` names an agent (the command delegates to that subagent) or an orchestrator (the command loads that skill in the main thread). It must resolve.
+- A command routed to an agent includes `<!-- include: caller-status-handling -->` so it can read the agent's status block. An orchestrator includes it itself, so a command routed to an orchestrator does not.
+- The body refers to arguments as "the user's input after the command". It never uses `$ARGUMENTS`.
+- Commands must not be preloaded into agents.
+
+## Native Output per Tool
+
+| Tool | Where | Rendered as |
+|---|---|---|
+| Cursor | `.agents/skills/<name>/SKILL.md` | Skill with `disable-model-invocation: true`; listed in the `/` menu |
+| Claude Code | `.claude/skills/<name>/SKILL.md` | Skill with `disable-model-invocation: true` and `argument-hint` |
+| Codex | `.agents/skills/<name>/SKILL.md` and `agents/openai.yaml` | Skill plus `policy.allow_implicit_invocation: false`. Custom prompts are deprecated in Codex, so a skill is the command form |
+
+`routes-to`, `standalone`, `type` and `requires-mcp` are build-time keys and do not appear in the output; `requires-mcp` becomes a `compatibility` line. Without a generator, write the flag and the hint by hand for each tool and state the route in the body ("Delegate to the `tsh-code-reviewer` subagent", or "Load and follow the `tsh-engineering-manager` skill").
+
+## Creation Process
 
 ```
 Creation progress:
 - [ ] Step 1: Define the command's purpose
-- [ ] Step 2: Identify required workflow skills
-- [ ] Step 3: Design the workflow steps
-- [ ] Step 4: Define output expectations
-- [ ] Step 5: Assemble the command skill using the template
-- [ ] Step 6: Validate the command skill
+- [ ] Step 2: Choose the route
+- [ ] Step 3: Identify the skills to load
+- [ ] Step 4: Define inputs, steps and output
+- [ ] Step 5: Assemble from the template
+- [ ] Step 6: Generate and validate
 ```
 
-**Step 1: Define the command's purpose**
+**Step 1: Define the command's purpose.** Clarify what the command triggers, the expected outcome, the inputs (task ID, plan file, description), whether it depends on another command's output, and what makes it distinct from existing commands.
 
-Answer these questions before writing anything:
-- What specific workflow does this command trigger? (e.g., research a task, implement a feature, run e2e tests)
-- What is the expected outcome? (e.g., a research document, implemented code, test suite)
-- What inputs does the workflow require? (e.g., Jira ID, plan file, feature description)
-- Does this command depend on output from another command?
-- What makes this workflow distinct from existing commands?
+**Step 2: Choose the route.** Pick the agent or orchestrator that does the work. Use an orchestrator if the work needs several agents or user confirmations between steps; an agent otherwise. If none fits, create one first (`tsh-creating-agents`). Do not create a command for a job no role owns.
 
-**Step 2: Identify required workflow skills**
+**Step 3: Identify the skills to load.** List only the knowledge skills the route needs for THIS workflow, each with a reason. Reference them by name. Confirm they exist.
 
-Determine which workflow skills the command depends on:
-- Review existing skills in `.cursor/skills/workflows/` to find relevant ones
-- Each referenced skill will provide domain knowledge for the workflow
-- List skills with a brief explanation of why they are needed for THIS workflow
-- Do not reference skills that are not directly used in the workflow steps
+**Step 4: Define inputs, steps and output.** Inputs: what to collect from the user's message and what to ask for if missing. Steps: three to six numbered hand-over instructions. Output: file names and locations, document structure, and how to know the work is done. Omit the output section if the outcome is self-evident.
 
-**Step 3: Design the workflow steps**
+**Step 5: Assemble from the template.** Use `assets/command.template.md`. Name the command `tsh-<verb>[-<object>]` with an imperative verb (`tsh-review`, `tsh-create-custom-skill`). Do not use an `-ing` form; those names are for knowledge skills.
 
-Outline the workflow as a numbered sequence:
-- Each step should be a clear, actionable instruction
-- Steps should reference workflow skills where appropriate
-- Include decision points and branching logic if the workflow is not purely linear
-- Keep steps focused on WHAT to do, not HOW to think about it
+**Step 6: Generate and validate.** With a neutral source run `npm run generate && npm run check`, fix every error and add no baseline entries. Then walk through the checklist.
 
-**Step 4: Define output expectations**
-
-Specify the expected deliverables of the workflow:
-- File name conventions and output locations
-- Document structure or template to follow (reference skill templates where applicable)
-- Summary format if the workflow produces a report
-- Success criteria — how to know the workflow is complete
-- This step is optional if the workflow outcome is self-evident (e.g., implemented code)
-
-**Step 5: Assemble the command skill using the template**
-
-Create a new directory in `.cursor/skills/commands/` with the command name (gerund form, kebab-case), and create a `SKILL.md` file inside it. Use [`assets/command.template.md`](assets/command.template.md) as the starting point (not the deprecated `assets/prompt.template.md`).
-
-The command skill MUST include `disable-model-invocation: true` in the frontmatter:
-
-```yaml
----
-name: tsh-my-command
-description: "Brief description shown in slash command menu. Use when..."
-disable-model-invocation: true
----
+```
+Validation:
+- [ ] Frontmatter: name == folder name, imperative verb name, type: command
+- [ ] routes-to resolves to an agent or orchestrator (or standalone: true)
+- [ ] description says what it does and "Use when ..." in third person
+- [ ] argument-hint describes the expected input (if the command takes input)
+- [ ] metadata.short-description is set (120 characters or fewer)
+- [ ] An agent-routed command includes the caller-status-handling partial
+- [ ] Every skill it names exists and is referenced by name, not by path
+- [ ] No domain knowledge and no coding standards embedded
+- [ ] Body has Route, Inputs, Required Skills, Steps, Output and Guardrails
+- [ ] Command is distinct from existing commands
+- [ ] No tool-specific syntax in the body
 ```
 
-**Step 6: Validate the command skill**
-
-Verify the command skill against this checklist:
-- [ ] YAML frontmatter is valid and parseable
-- [ ] `name` matches the directory name
-- [ ] `description` is present and concise — shown in the slash command menu
-- [ ] `disable-model-invocation: true` is present
-- [ ] All workflow skills referenced exist in `.cursor/skills/workflows/`
-- [ ] No domain knowledge embedded (reference workflow skills instead)
-- [ ] No coding standards embedded (reference `.cursor/rules/*.mdc` instead)
-- [ ] Workflow steps are clear, sequential, and actionable
-- [ ] The command is distinct from existing commands and does not duplicate their workflows
-- [ ] Connected Skills section present and references existing skills
-
-## Command Skill Structure Reference
-
-### Frontmatter Fields
-
-| Field | Required | Description |
-|---|---|---|
-| `name` | **Yes** | Slash command identifier. Must match the directory name. |
-| `description` | **Yes** | Short description shown in the slash command menu. Include "Use when..." trigger language. |
-| `disable-model-invocation:` | **Yes** | Must be `true` for command skills. Prevents auto-invocation. |
-
-### Body Sections
+## Body Structure
 
 | Section | Required | Purpose |
 |---|---|---|
-| Goal statement | **Yes** | 1-2 sentences describing what the command accomplishes. |
-| Required Skills | **Yes** | Workflow skills to load, with brief rationale for each. |
-| Workflow | **Yes** | Numbered steps defining the workflow sequence. |
-| Output expectations | No | File naming, document structure, success criteria. |
-| Constraints | No | Workflow-specific limitations, anti-patterns, or scope boundaries. |
-| Connected Skills | **Yes** | Links to related skills with brief rationale for each. |
+| Goal line under the title | Yes | One sentence on what the command accomplishes |
+| Route | Yes | The agent or orchestrator that does the work |
+| Inputs | Yes | What to collect from the user's input and when to ask |
+| Required Skills | Yes | Knowledge skills to load, with the reason for each |
+| Steps | Yes | Numbered hand-over steps |
+| Output | No | Deliverables, locations, completion criteria |
+| Guardrails | Yes | Workflow-specific limits and scope boundaries |
 
 ## Connected Skills
 
-- `tsh-creating-agents` - to understand agent skill patterns and ensure commands don't overlap with agent responsibilities
-- `tsh-creating-skills` - to ensure command skill structure follows the canonical skill creation requirements
-- `tsh-discovering-technical-context` - to understand existing command patterns and project conventions before creating a new one
-- `tsh-analyzing-codebase` - to analyze existing commands and identify patterns to follow
-- `tsh-creating-rules` - to understand when coding standards belong in rule files rather than command definitions
+- `tsh-creating-agents` - to create the agent a command routes to and keep roles out of commands
+- `tsh-creating-skills` - to apply the shared skill schema, naming and layout rules
+- `tsh-creating-rules` - to decide whether a standard belongs in project instructions instead of a command
+- `tsh-discovering-technical-context` - to discover existing command patterns before creating one
+- `tsh-analyzing-codebase` - to analyze existing commands and the conventions to follow

@@ -1,6 +1,9 @@
 ---
-name: reviewing-code
+name: tsh-reviewing-code
 description: "Evaluate code changes for quality, correctness, and adherence to project standards. Use when reviewing pull requests, verifying implementations against acceptance criteria, or auditing code for best practices."
+type: skill
+metadata:
+  short-description: Review code changes for correctness and quality
 ---
 
 # Reviewing Code

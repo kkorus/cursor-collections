@@ -1,50 +1,40 @@
 ---
 name: tsh-create-custom-rules
-description: Create custom Cursor rules (`.cursor/rules/*.mdc` or `AGENTS.md`). Analyzes existing project conventions, determines appropriate rule type and scope, creates the rules file, and validates against best practices. Use when the user types /tsh-create-custom-rules or asks to create coding rules or instructions for Cursor.
+description: Create project instructions and scoped rules for Cursor, Claude Code and Codex - AGENTS.md with the CLAUDE.md import, Cursor scoped rule files, Claude rule files and nested AGENTS.md. Use when the user types /tsh-create-custom-rules or asks to create coding rules or project instructions.
 type: command
 routes-to: tsh-ai-customization-orchestrator
+argument-hint: "<conventions to encode or description>"
 metadata:
   short-description: Create custom project rules or instructions
 ---
 # /tsh-create-custom-rules
 
-Load and follow the `tsh-ai-customization-orchestrator` skill. Create custom rules for Cursor. There are two types: repository-level rules (`AGENTS.md`) that apply to all Cursor interactions, and file-scoped rules (`.mdc` files with `globs` patterns in `.cursor/rules/`) that target specific files or directories. The user's message following this skill may contain specific requirements or conventions to encode.
+## Route
+
+Load and follow the `tsh-ai-customization-orchestrator` skill. Artifact type: project instructions and rules. Governing skill: `tsh-creating-rules`.
+
+## Inputs
+
+- The conventions, standards or behaviors to encode, from the user's input after the command
+- The tools in use (Cursor, Claude Code, Codex) and whether the rule is project-wide or scoped; ask if unclear
 
 ## Required Skills
 
-Before starting, load and follow these skills:
-- `tsh-creating-rules` - for rules file creation workflow, type selection, scope decisions, and validation checklist
-- `tsh-discovering-technical-context` - for discovering project conventions and workspace patterns before creating
-- `tsh-analyzing-codebase` - for analyzing workspace for existing coding conventions and patterns
+- `tsh-creating-rules` - per-tool placement, fields, templates and validation checklist
+- `tsh-discovering-technical-context` - project conventions and existing instruction files
+- `tsh-analyzing-codebase` - stack, structure and existing coding patterns
 
-## Workflow
+## Steps
 
-1. **Research workspace conventions**: Analyze the workspace for existing coding standards and conventions:
-   - Project structure and technology stack
-   - Existing coding patterns and standards
-   - Any existing rule files (`.cursor/rules/*.mdc` or `AGENTS.md`)
-   - Note: this repository currently has NO rule files of either type
-2. **Determine rule type**: Help the user choose the appropriate rule type:
-   - **Repo-level** (`AGENTS.md`): applies to all Cursor interactions in the workspace
-   - **File-scoped** (`.mdc` files in `.cursor/rules/` with `globs` patterns): applies only when matching files are in context
-   - Guide the decision based on the user's needs and scope
-3. **Clarify requirements**: Determine what conventions, standards, or behaviors to encode:
-   - Coding standards and style preferences
-   - Framework-specific patterns and conventions
-   - Behavioral guidelines for Cursor in this workspace
-   - If the user's message already contains requirements, confirm understanding before proceeding
-4. **Create the rules file**: Create the rules file with appropriate type, scope, and content. Apply the `tsh-creating-rules` skill workflow for structure and validation.
-5. **Review and validate**: Review the created rules against best practices:
-   - Verify scope is appropriate for the rule type
-   - Confirm guidelines are clear and actionable for Cursor
-   - Check that file-scoped `globs` patterns match intended files (if applicable)
+1. Research the project: stack, structure, conventions and which instruction and rule files exist.
+2. Decide with the user between project-wide instructions and scoped rules, per tool in use.
+3. Create the files with the placement and fields `tsh-creating-rules` defines.
+4. Review them against its checklist, including that no rule is written in two places.
 
-## Guidelines
+## Output
 
-- **Repo-level rules** (`AGENTS.md`): Place in `AGENTS.md`. Apply to all Cursor interactions — use for project-wide coding standards, naming conventions, architecture decisions.
-- **File-scoped rules** (`.mdc` files with `globs`): Place in `.cursor/rules/` directory. Use `globs` glob patterns (relative to workspace root) to target specific files or directories.
-- This repository currently has NO rule files — the user is starting from scratch. Communicate this context during the research step.
+- The new or updated instruction and rule files, with a short summary of what was created
 
-If the user attaches files or provides a description, use them as input for rule design.
+## Guardrails
 
-When in doubt about the rule type or scope, ask the user for clarification rather than guessing.
+- Ask the user when the rule type or scope is unclear. Procedures belong in a skill, not in rules.
