@@ -63,7 +63,8 @@ These are the flags printed by `node scripts/install.mjs --help`.
 | `--mode copy\|link` | `copy` (default), or symlink to the clone so `git pull` updates it. On Windows symlinks need Developer Mode or admin rights, so prefer `copy`. |
 | `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Pruned entries are backed up, not deleted. |
 | `--migrate-legacy` | Run only the legacy cleanup (old `.cursor/skills` layout), then exit. |
-| `--dry-run` | Print every action and change nothing. |
+| `--dry-run` | Print what would happen and change nothing. The output is grouped by folder; add `--verbose` for one line per entry. |
+| `--verbose`, `-v` | One line per entry instead of grouped summaries. |
 | `--force` | Replace an unmanaged `tsh-*` entry. It is moved to the backup first. |
 | `--help` | Show the help text. |
 

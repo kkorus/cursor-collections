@@ -81,7 +81,8 @@ Pick only the tools you use with `--tools` (comma list of `cursor`, `claude`, `c
 | `--scope project [--project-dir <dir>]` | Install into one project |
 | `--mode copy` (default) / `--mode link` | Copy files, or symlink to the clone so `git pull` updates it (Windows: symlinks need Developer Mode or admin rights; prefer copy) |
 | `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist (backed up, not deleted) |
-| `--dry-run` | Print every action and change nothing |
+| `--dry-run` | Print what would happen and change nothing (grouped by folder) |
+| `--verbose`, `-v` | One line per entry instead of grouped summaries |
 | `--force` | Replace an unmanaged `tsh-*` entry (moved to the backup first) |
 
 What is installed where:

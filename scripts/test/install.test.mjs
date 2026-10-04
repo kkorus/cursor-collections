@@ -125,11 +125,25 @@ test('all three tools: both trees, Cursor duplicate guidance; project scope uses
 test('--dry-run prints actions and changes nothing (also for legacy cleanup)', () => {
   const { home, go } = env();
   put(home, '.cursor/skills/tsh-architect/SKILL.md', 'old');
-  const r = go(['--tools', 'claude', '--dry-run']);
+  const r = go(['--tools', 'claude', '--dry-run', '--verbose']);
   assert.ok(r.lines.some((l) => /would copy/.test(l)));
   assert.ok(r.lines.some((l) => /would move .*tsh-architect/.test(l)));
   assert.deepEqual(fs.readdirSync(home).sort(), ['.cursor']);
   assert.ok(exists(path.join(home, '.cursor/skills/tsh-architect/SKILL.md')));
+});
+
+test('default dry-run output is grouped: one line per folder, shortened paths, backup location once', () => {
+  const { home, go } = env();
+  for (const n of ['a', 'b', 'c', 'd', 'e']) put(home, `.cursor/skills/agents/tsh-old-${n}/SKILL.md`, 'old');
+  fs.mkdirSync(path.join(home, '.cursor/skills'), { recursive: true });
+  const r = go(['--tools', 'claude', '--dry-run']);
+  const text = r.lines.join('\n');
+  assert.ok(!r.lines.some((l) => /^would (move|copy|remove)/.test(l)), 'no per-entry lines');
+  assert.ok(r.lines.some((l) => /^ {4}~\/\.cursor\/skills\/agents\/ {2}\(5\): tsh-old-a, tsh-old-b, tsh-old-c, \+2 more/.test(l)), text);
+  assert.ok(r.lines.some((l) => /Would move to the backup \(real directories\): 5/.test(l)), text);
+  assert.equal(r.lines.filter((l) => /\.tsh-ai-collections-backup/.test(l)).length, 1, 'backup location printed once');
+  assert.ok(r.lines.some((l) => /Would install \d+ (skills|agents) \(copy\) -> ~\/\.claude/.test(l)), text);
+  assert.ok(exists(path.join(home, '.cursor/skills/agents/tsh-old-a/SKILL.md')), 'dry-run changed nothing');
 });
 
 test('does not overwrite an unmanaged tsh-* entry without --force; --force backs it up', () => {

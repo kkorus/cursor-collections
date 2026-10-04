@@ -30,7 +30,8 @@ Installs the generated tsh-* skills and subagents into a user or project tree.
   --update             reinstall the tools recorded in the manifests and prune tsh-*
                        entries that no longer exist in the source (backed up, not deleted)
   --migrate-legacy     only run the legacy cleanup (old .cursor/skills layout), then exit
-  --dry-run            print every action and change nothing
+  --dry-run            print what would happen and change nothing
+  --verbose, -v        one line per entry instead of grouped summaries
   --force              replace an unmanaged tsh-* entry (it is moved to the backup first)
   --help               show this text
 
@@ -42,11 +43,11 @@ installer prints which generated file to merge for each tool.
 
 export function parseArgs(argv) {
   const o = { tools: null, scope: 'user', projectDir: null, source: null, mode: 'copy',
-    update: false, migrateLegacy: false, dryRun: false, force: false, help: false };
+    update: false, migrateLegacy: false, dryRun: false, force: false, help: false, verbose: false };
   const valued = { '--tools': 'tools', '--scope': 'scope', '--project-dir': 'projectDir',
     '--source': 'source', '--mode': 'mode' };
   const flags = { '--update': 'update', '--migrate-legacy': 'migrateLegacy',
-    '--dry-run': 'dryRun', '--force': 'force', '--help': 'help', '-h': 'help' };
+    '--dry-run': 'dryRun', '--force': 'force', '--verbose': 'verbose', '-v': 'verbose', '--help': 'help', '-h': 'help' };
   for (let i = 0; i < argv.length; i++) {
     let [k, v] = argv[i].startsWith('--') && argv[i].includes('=')
       ? [argv[i].slice(0, argv[i].indexOf('=')), argv[i].slice(argv[i].indexOf('=') + 1)]
@@ -145,19 +146,60 @@ function backupDir(ctx) {
   return ctx.backupRoot;
 }
 
+/** Display form of a path: relative to the project dir, or with ~ for the home dir. */
+function short(ctx, p) {
+  const under = (base) => base && (p === base || p.startsWith(base + path.sep));
+  if (under(ctx.projectDir)) return '.' + p.slice(ctx.projectDir.length) || '.';
+  if (under(ctx.home)) return '~' + p.slice(ctx.home.length);
+  return p;
+}
+
 /** N3: symlinks are unlinked, real entries are moved to the backup, never deleted. */
 function retire(ctx, p, why) {
   const st = lstat(ctx, p);
   if (!st) return;
   if (st.isSymbolicLink()) {
-    ctx.log(`${ctx.dry ? 'would remove' : 'removed'} symlink ${p} (${why})`);
+    ctx.pending.push({ kind: 'symlink', p, why });
+    if (ctx.verbose) ctx.log(`${ctx.dry ? 'would remove' : 'removed'} symlink ${p} (${why})`);
     if (!ctx.dry) ctx.fs.unlinkSync(p);
     return;
   }
   const dest = path.join(backupDir(ctx), p.replace(/^[A-Za-z]:/, '').replace(/^[\\/]+/, ''));
-  ctx.log(`${ctx.dry ? 'would move' : 'moved'} ${p} -> ${dest} (${why})`);
+  ctx.pending.push({ kind: 'move', p, why });
+  if (ctx.verbose) ctx.log(`${ctx.dry ? 'would move' : 'moved'} ${p} -> ${dest} (${why})`);
   if (!ctx.dry) moveEntry(ctx.fs, p, dest);
 }
+
+/** Grouped summary of the retire() calls since the last flush (verbose mode logged them one by one). */
+function flushRetired(ctx) {
+  const items = ctx.pending.splice(0);
+  if (ctx.verbose || !items.length) return;
+  const groups = new Map();
+  for (const it of items) {
+    const key = `${it.kind}\0${path.dirname(it.p)}`;
+    if (!groups.has(key)) groups.set(key, { kind: it.kind, dir: path.dirname(it.p), names: [], whys: new Set() });
+    const g = groups.get(key);
+    g.names.push(path.basename(it.p));
+    if (!it.why.startsWith('legacy')) g.whys.add(it.why);
+  }
+  const dry = ctx.dry;
+  const sections = [
+    ['move', `${dry ? 'Would move' : 'Moved'} to the backup (real directories)`],
+    ['symlink', `${dry ? 'Would remove' : 'Removed'} symlinks`],
+  ];
+  for (const [kind, title] of sections) {
+    const gs = [...groups.values()].filter((g) => g.kind === kind);
+    if (!gs.length) continue;
+    ctx.log(`  ${title}: ${gs.reduce((n, g) => n + g.names.length, 0)}`);
+    for (const g of gs) {
+      const shown = g.names.slice(0, 3).join(', ');
+      const more = g.names.length > 3 ? `, +${g.names.length - 3} more` : '';
+      const why = g.whys.size ? `  [${[...g.whys].join('; ')}]` : '';
+      ctx.log(`    ${short(ctx, g.dir)}/  (${g.names.length}): ${shown}${more}${why}`);
+    }
+  }
+}
+
 
 // ---------- legacy cleanup (D3, B1, N1) ----------
 
@@ -230,6 +272,7 @@ export function cleanupLegacy(ctx) {
   }
   if (count === 0) ctx.log('Legacy cleanup: nothing to do.');
   else ctx.log(`Legacy cleanup: ${count} entr${count === 1 ? 'y' : 'ies'} ${ctx.dry ? 'would be ' : ''}handled.`);
+  flushRetired(ctx);
   return count;
 }
 
@@ -254,7 +297,8 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
   const old = readManifest(ctx, targetDir);
   const oldNames = new Set(old?.names || []);
   const result = { installed: [], skipped: [], pruned: [] };
-  ctx.log(`${targetDir}: ${names.length} entries from ${srcRel} (${ctx.mode})`);
+  if (ctx.verbose) ctx.log(`${targetDir}: ${names.length} entries from ${srcRel} (${ctx.mode})`);
+  else ctx.log(`${ctx.dry ? 'Would install' : 'Installing'} ${names.length} ${kind === 'dir' ? 'skills' : 'agents'} (${ctx.mode}) -> ${short(ctx, targetDir)}`);
   if (!ctx.dry) ctx.fs.mkdirSync(targetDir, { recursive: true });
 
   for (const n of names) {
@@ -263,7 +307,7 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
     const st = lstat(ctx, dest);
     if (st) {
       if (!st.isSymbolicLink() && !oldNames.has(n) && !ctx.force) {
-        ctx.log(`skipped ${dest}: exists and is not managed by this installer (use --force to replace; it will be backed up)`);
+        ctx.log(`skipped ${short(ctx, dest)}: exists and is not managed by this installer (use --force to replace; it will be backed up)`);
         result.skipped.push(n);
         continue;
       }
@@ -273,10 +317,10 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
       } else retire(ctx, dest, ctx.force && !oldNames.has(n) ? 'force overwrite' : 'managed entry changed locally');
     }
     if (ctx.mode === 'link') {
-      ctx.log(`${ctx.dry ? 'would link' : 'linked'} ${dest} -> ${src}`);
+      if (ctx.verbose) ctx.log(`${ctx.dry ? 'would link' : 'linked'} ${dest} -> ${src}`);
       if (!ctx.dry) ctx.fs.symlinkSync(src, dest, kind === 'dir' ? 'dir' : 'file');
     } else {
-      ctx.log(`${ctx.dry ? 'would copy' : 'copied'} ${src} -> ${dest}`);
+      if (ctx.verbose) ctx.log(`${ctx.dry ? 'would copy' : 'copied'} ${src} -> ${dest}`);
       if (!ctx.dry) copyDereferenced(ctx.fs, src, dest);
     }
     result.installed.push(n);
@@ -292,6 +336,8 @@ function installTree(ctx, { targetDir, srcRel, kind, tools }) {
       }
     }
   }
+
+  flushRetired(ctx);
 
   // Names kept in the manifest: everything installed now, plus earlier ones still on disk (unless pruned)
   const keep = new Set([...result.installed]);
@@ -347,6 +393,7 @@ export function makeCtx(opts, o) {
   const lines = opts.lines || [];
   return {
     fs: fsx, home, projectDir, scope, mode: o.mode, dry: o.dryRun, force: o.force, update: o.update,
+    verbose: o.verbose, pending: [],
     source: path.resolve(cwd, o.source || opts.source || SCRIPT_ROOT),
     now: opts.now || (() => new Date()),
     log: (m) => { lines.push(m); if (!opts.quiet) (opts.stdout || console.log)(m); },
@@ -388,7 +435,8 @@ export function run(argv, opts = {}) {
     skipped += installTree(ctx, { targetDir: path.join(root, AGENT_DIRS[t]), srcRel: AGENT_DIRS[t], kind: 'file', tools: [t] }).skipped.length;
   }
   for (const l of mcpGuidance(ctx, tools)) ctx.log(l);
-  if (ctx.backupRoot && !ctx.dry) ctx.log(`Backups: ${ctx.backupRoot}`);
+  if (ctx.backupRoot) ctx.log(`${ctx.dry ? 'Backups would go to' : 'Backups'}: ${short(ctx, ctx.backupRoot)}/ (originals are kept under their absolute path)`);
+  if (!ctx.verbose && ctx.dry) ctx.log('Use --verbose to see every entry.');
   return { code: skipped ? 1 : 0, lines: ctx.lines, ctx };
 }
 
