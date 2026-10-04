@@ -27,6 +27,11 @@ Provides structured reasoning capabilities for tackling complex problems that be
 | **Software Engineer** | Implementing complex algorithms, debugging issues, planning refactoring |
 | **Code Reviewer** | Analyzing security vulnerabilities, performance bottlenecks, race conditions |
 | **E2E Engineer** | Analyzing complex test scenarios, debugging flaky tests, planning mocking strategies |
+| **UI Reviewer** | Reasoning through multi-state visual differences |
+| **Context Engineer** | Structuring context gathered from multiple sources |
+| **Plan Reviewer** | Stress-testing plan assumptions and dependencies |
+| **Prompt Engineer** | Structuring complex customization changes |
+| **DevOps Engineer** | Planning infrastructure changes and reasoning about failure modes |
 
 ## Configuration
 

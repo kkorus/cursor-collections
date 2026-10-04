@@ -6,13 +6,13 @@ import styles from './styles.module.css';
 const steps = [
   {
     num: 1,
-    title: 'Import via Cursor Settings',
+    title: 'Clone and install',
     description: (
       <>
-        Open <strong>Cursor Settings</strong> → <strong>Rules</strong> → Add
-        Rule → <strong>Remote Rule (GitHub)</strong> → enter{' '}
-        <code>kkorus/cursor-collections</code>. Skills are available
-        globally across every workspace immediately.
+        Clone <code>kkorus/cursor-collections</code>, then run{' '}
+        <code>node scripts/install.mjs --tools cursor,claude,codex</code>{' '}
+        (pick the tools you use). Skills and subagents are installed for
+        every workspace.
       </>
     ),
   },
@@ -21,20 +21,21 @@ const steps = [
     title: 'Configure MCP servers',
     description: (
       <>
-        Open <strong>Cursor Settings → MCP</strong> → Add MCP Server → copy
-        the contents of <code>.cursor/mcp.json</code> into your user MCP
-        config. Connects Jira, Figma, Playwright, and Context7.
+        The installer prints the generated file to merge for each tool:{' '}
+        <code>.cursor/mcp.json</code>, <code>.mcp.json</code> or{' '}
+        <code>.codex/config.toml</code>. Connects Jira, Figma, Playwright,
+        and Context7.
       </>
     ),
   },
   {
     num: 3,
-    title: 'Open Agent chat',
+    title: 'Open your tool',
     description: (
       <>
-        Press <code>Cmd/Ctrl + Shift + I</code>, switch to{' '}
-        <strong>Agent mode</strong>, then type <code>/</code> to see all
-        available slash commands.
+        Start Cursor Agent chat or Claude Code, then type <code>/</code> to
+        see the slash commands. In Codex, commands start with <code>$</code>{' '}
+        (not yet verified).
       </>
     ),
   },
@@ -64,8 +65,8 @@ export default function GettingStartedSection(): React.JSX.Element {
             every project.
           </h2>
           <p className={styles.sub}>
-            Import once via Cursor Settings, configure MCP servers, and start
-            using <code>/tsh-implement</code> in any workspace immediately.
+            Install once with the installer, configure MCP servers, and start
+            using <code>/tsh-implement</code> in any workspace.
           </p>
           <div className={styles.gsActions}>
             <Link

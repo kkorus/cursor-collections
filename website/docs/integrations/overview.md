@@ -5,21 +5,21 @@ title: Integrations Overview
 
 # Integrations Overview
 
-TSH AI Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Cursor Agent sessions — enabling the end-to-end product engineering workflow.
+TSH AI Collections integrates with **11 external services** via the **Model Context Protocol (MCP)**. These integrations bring Jira, Figma, documentation, browser automation, structured reasoning, document reading, and cloud provider APIs directly into your Cursor, Claude Code and Codex sessions — enabling the end-to-end product engineering workflow.
 
 ## What is MCP?
 
-The Model Context Protocol allows Cursor agents to call external tools as part of their workflow. Each MCP server exposes specific capabilities (search, navigate, execute) that agents can use to gather information or perform actions.
+The Model Context Protocol allows AI agents to call external tools as part of their workflow. Each MCP server exposes specific capabilities (search, navigate, execute) that agents can use to gather information or perform actions.
 
 ## Configured Servers
 
 | Server | Type | Purpose | Used By |
 |---|---|---|---|
-| [Atlassian](./atlassian) | HTTP | Jira & Confluence integration | BA, Architect, CR, CE, E2E, SE |
+| [Atlassian](./atlassian) | HTTP | Jira & Confluence integration | BA, Architect, CR, CE |
 | [Figma](./figma) | HTTP | Design extraction and verification | BA, Architect, SE, UI Reviewer, CR, E2E |
-| [Context7](./context7) | stdio | Library documentation search | Architect, SE, CR, UI Reviewer, E2E, Cursor Engineer, DevOps |
+| [Context7](./context7) | stdio | Library documentation search | Architect, SE, CR, UI Reviewer, E2E, Plan Reviewer, Prompt Engineer, Researcher, DevOps |
 | [Playwright](./playwright) | stdio | Browser automation and UI testing | SE, UI Reviewer, E2E |
-| [Sequential Thinking](./sequential-thinking) | stdio | Structured reasoning for complex problems | BA, Architect, SE, CR, E2E, UI Reviewer, Cursor Engineer, Cursor Orchestrator, DevOps |
+| [Sequential Thinking](./sequential-thinking) | stdio | Structured reasoning for complex problems | BA, Architect, SE, CR, E2E, UI Reviewer, CE, Plan Reviewer, Prompt Engineer, DevOps |
 | [PDF Reader](./pdf-reader) | stdio | PDF document extraction | BA, CE, Architect |
 | [AWS API](./aws-api) | stdio | AWS infrastructure automation and resource management | DevOps |
 | [AWS Documentation](./aws-documentation) | stdio | AWS service documentation and reference | DevOps |
@@ -29,66 +29,15 @@ The Model Context Protocol allows Cursor agents to call external tools as part o
 
 ## Configuration
 
-All servers are configured in `.cursor/mcp.json`:
+All servers are defined once in `src/mcp/servers.json` and generated for each tool:
 
-```json
-{
-  "servers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"],
-      "type": "stdio"
-    },
-    "context7": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "type": "stdio"
-    },
-    "figma": {
-      "url": "https://mcp.figma.com/mcp",
-      "type": "http"
-    },
-    "atlassian": {
-      "url": "https://mcp.atlassian.com/v1/mcp",
-      "type": "http"
-    },
-    "pdf-reader": {
-      "command": "npx",
-      "args": ["@sylphx/pdf-reader-mcp"],
-      "type": "stdio"
-    },
-    "awslabs.aws-api-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-api-mcp-server@latest"]
-    },
-    "awslabs.aws-documentation-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-documentation-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_DOCUMENTATION_PARTITION": "aws"
-      }
-    },
-    "gcp-gcloud": {
-      "command": "npx",
-      "args": ["-y", "@google-cloud/gcloud-mcp"]
-    },
-    "gcp-observability": {
-      "command": "npx",
-      "args": ["-y", "@google-cloud/observability-mcp"]
-    },
-    "gcp-storage": {
-      "command": "npx",
-      "args": ["-y", "@google-cloud/storage-mcp"]
-    }
-  }
-}
-```
+| Tool | Generated file | Top-level key |
+|---|---|---|
+| Cursor | `.cursor/mcp.json` | `mcpServers` |
+| Claude Code | `.mcp.json` | `mcpServers` |
+| Codex | `.codex/config.toml` | `[mcp_servers.<name>]` |
+
+The installer does not write MCP configuration. See [MCP Setup](../getting-started/mcp-setup) for how to merge the generated file into your own config (note that Cursor expects `mcpServers`, not `servers`).
 
 ## Server Types
 

@@ -15,12 +15,11 @@ Status legend: **tested** means it was observed in a real run during development
 |---|---|---|---|
 | Skills (knowledge skills, commands, orchestrators, internal steps) | `.agents/skills/` | `.claude/skills/` | `.agents/skills/` |
 | Subagents (17) | `.cursor/agents/*.md` | `.claude/agents/*.md` | `.codex/agents/*.toml` |
-| Always-on instructions | `AGENTS.md` | `CLAUDE.md` (imports `AGENTS.md`) | `AGENTS.md` |
 | MCP servers (11) | `.cursor/mcp.json` | `.mcp.json` | `.codex/config.toml` |
 
 The collection has 41 knowledge skills, 16 commands, 3 orchestrators and 2 internal steps (62 skills in total), plus 17 subagents. See [Installation](./installation) for which folders the installer fills for each tool combination.
 
-Subagent models are chosen by tier. Claude Code gets `opus`, `sonnet` or `haiku`, and Codex gets `gpt-5.4` (high or medium reasoning) or `gpt-5.4-mini`. Cursor subagents inherit your selected model.
+Subagent models are chosen by tier. Claude Code gets `opus`, `sonnet` or `haiku`, and Codex gets `gpt-5.4` (high or medium reasoning) or `gpt-5.4-mini` (Codex models: not yet verified). Cursor subagents inherit your selected model.
 
 ## How things are invoked
 
@@ -30,7 +29,7 @@ Commands are user-only entry points such as `/tsh-implement`, `/tsh-review` or `
 
 | Tool | Syntax |
 |---|---|
-| Cursor | `/tsh-implement PROJ-123` (tested) |
+| Cursor | `/tsh-implement PROJ-123` (tested in cursor-agent CLI; IDE not yet verified) |
 | Claude Code | `/tsh-implement PROJ-123` (tested) |
 | Codex | `$tsh-implement PROJ-123` (docs; not yet verified) |
 
@@ -42,7 +41,7 @@ You can talk to a persona such as the Architect without a command.
 
 | Tool | Syntax | Status |
 |---|---|---|
-| Cursor | "Use the `tsh-architect` subagent to ..." | Named spawn tested. Typing the agent name as a slash command or an @-mention is not yet verified. |
+| Cursor | "Use the `tsh-architect` subagent to ..." | Named spawn tested in cursor-agent CLI (IDE not yet verified). |
 | Claude Code | `claude --agent tsh-architect` runs the agent as the main conversation (multi-turn). | tested |
 | Claude Code | `@agent-tsh-architect` inside a session runs the agent once as a subagent. | docs |
 | Codex | Ask Codex to spawn the custom agent `tsh-architect`. | not yet verified |
@@ -66,7 +65,7 @@ If you want to discuss a design and your tool does not keep a subagent conversat
 
 ## Known limitations
 
-- **Internal steps and orchestrators are visible in Cursor and Codex.** Neither tool can hide a skill from its `/` or `$` menu and still let the model load it. Entries such as `tsh-engineering-manager` or `tsh-implement-task` therefore show up in the menu and could be started by the model. Their descriptions begin with "Internal step of `/tsh-...`: load only when a tsh command or orchestrator instructs it." to discourage that. Claude Code hides them from the `/` menu (`user-invocable: false`) while the model can still load them.
+- **Internal steps and orchestrators are visible in Cursor and Codex.** Per the documentation, neither tool can hide a skill from its `/` or `$` menu and still let the model load it (docs; Codex not yet verified). Entries such as `tsh-engineering-manager` or `tsh-implement-task` are in the model's skill list in Cursor (tested in cursor-agent) and could be started by the model; whether the Cursor IDE `/` menu shows them is not yet verified. Their descriptions begin with "Internal step of `/tsh-...`: load only when a tsh command or orchestrator instructs it." to discourage that. Claude Code hides them from the `/` menu (`user-invocable: false`) while the model can still load them.
 - **Cursor may list skills twice** when you install for Cursor, Claude Code and Codex together. See [Installation](./installation#cursor-shows-skills-twice).
 - **Read-only agents and Claude Code personas.** Agents with read-only access (for example the UI Reviewer, the AI customization reviewer and the BA workers) have `Write` and `Edit` disabled. With `claude --agent <name>` this also applies to the main conversation, so a read-only persona cannot write files there. These agents return their result in the reply instead of saving a file.
 - **Read-only is strongest in Claude Code.** Cursor `readonly` and Codex `sandbox_mode` are not documented to block MCP write tools. The agent instructions, and the rule that only orchestrators write to Jira, remain the main control. The AI customization reviewer also has shell access in Claude Code, so it could write through the shell.

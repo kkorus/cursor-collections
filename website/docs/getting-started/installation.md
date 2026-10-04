@@ -59,7 +59,7 @@ These are the flags printed by `node scripts/install.mjs --help`.
 | `--tools <list>` | Comma list of `cursor`, `claude`, `codex`. Required for an install. |
 | `--scope user\|project` | Where to install. Default `user` (home directory). |
 | `--project-dir <dir>` | Project root for `--scope project`. Default: the current directory. |
-| `--source <dir>` | Repository root that holds the generated trees. Default: the clone the script lives in. |
+| `--source <dir>` | Repository root that holds the generated trees and `scripts/legacy-names.json`. Default: the clone the script lives in. The install target must not be inside it. |
 | `--mode copy\|link` | `copy` (default), or symlink to the clone so `git pull` updates it. On Windows symlinks need Developer Mode or admin rights, so prefer `copy`. |
 | `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Pruned entries are backed up, not deleted. |
 | `--migrate-legacy` | Run only the legacy cleanup (old `.cursor/skills` layout), then exit. |

@@ -8,7 +8,7 @@ const HeroSection = () => {
       <AnimationCanvas />
       <div className={styles.heroContent}>
         <h1 className={styles.heroTitle}>
-          Copilot
+          TSH AI
           <br />
           Collections
         </h1>
