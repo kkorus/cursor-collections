@@ -1,105 +1,67 @@
 ---
 name: tsh-orchestrate-ui-verification
-description: Implement a UI feature orchestrating iterative Figma verification until the implementation matches within agreed tolerances.
+description: Internal step of /tsh-implement. Load only when a tsh command or orchestrator instructs it. The single verify-fix loop for UI tasks with Figma designs, run by the engineering manager until the implementation matches within agreed tolerances.
 type: internal
 metadata:
   short-description: Run the UI implement and Figma verify loop
 ---
 # tsh-orchestrate-ui-verification
 
-> **Orchestration:** The Engineering Manager and `/tsh-implement` delegate UI implementation and verification to this internal skill. Use this file as the source of truth for UI-specific steps; do not duplicate its verify-fix loop in other orchestration skills.
+This skill is the only place that defines the UI verify-fix loop. The `tsh-engineering-manager` loads it for every UI task that has a Figma reference. Other skills and commands point here and must not restate the loop.
 
-Your goal is to implement the UI feature according to the provided implementation plan and feature context, orchestrating iterative verification against Figma designs until the implementation matches within agreed tolerances.
+The loop runs in the main thread. You implement nothing yourself: you delegate implementation and fixes to `tsh-software-engineer` and verification to `tsh-ui-reviewer`, using the delegation template of the status-handling section you already follow. You do not need Figma or browser tools yourself; the reviewer has its own.
 
-## Design References from Research & Plan
+## Design references
 
-Before delegating tasks, open the research file (`*.research.md`) and plan file (`*.plan.md`) to find all Figma URLs:
+Find every Figma URL before delegating anything:
 
-- In the **research file**, look for:
-  - Figma URLs in the `Relevant Links` section.
-  - Specific component/node links mentioned in `Gathered Information`.
-- In the **plan file**, look for:
-  - Figma URLs and design references in `Task details`.
-  - A structured "Design References" subsection mapping views/components to Figma URLs or node IDs.
+- In the research file (`*.research.md`): the Relevant Links section and the component or node links in Gathered Information.
+- In the plan file (`*.plan.md`): Task Details and, if present, a Design References subsection mapping views and components to URLs or node IDs.
 
-Use these URLs when delegating to both `tsh-software-engineer` (implementation context) and `tsh-ui-reviewer` (verification target).
+Pass the relevant URLs to both the engineer (implementation context) and the reviewer (verification target).
 
-### When Figma link is missing
+### Missing Figma link
 
-If you cannot find a Figma URL for a component/section that needs verification:
+If a component that needs verification has no Figma URL, stop for that component. Do not delegate its implementation or verification. Ask the user for the link, wait for it and add it to the plan (Task Details or Design References). If the engineer returned `NEEDS_INPUT` because of a missing link, this is the same case. Never skip verification and never continue without a reference.
 
-1. **Stop** — do not delegate implementation or verification for that component
-2. **Ask the user** to provide the Figma link for the specific section
-3. **Wait for the link** before proceeding
-4. **Add the link** to the plan file once provided (in `Task details` or `Design References`)
+## Setup once per session
 
-Do NOT skip verification or delegate without a Figma reference.
+1. List all UI tasks and all Figma references from the plan and research. This inventory is your checklist for the gate below.
+2. Ask the user for the dev server URL (for example "What URL is the frontend app running at?") before any verification can start. Do not guess it from running processes or port scans, because several services may run on different ports. Reuse the confirmed URL for the whole session.
 
-## Workflow
+## The loop, per UI component
 
-1. **Review the plan** — Review the implementation plan and feature context thoroughly. Identify which tasks are UI implementation tasks (need Figma verification) and which are non-visual tasks. Extract all Figma URLs from the research/plan files.
+1. **Implement**: delegate the UI task to `tsh-software-engineer`, telling it to follow the "UI tasks (Figma)" section of the `tsh-implement-task` skill. Pass the Figma URLs, the component context and the plan section.
+2. **Verify**: delegate `tsh-ui-reviewer` with the Figma URL, the confirmed dev server URL and the component or section name. It follows the `tsh-verifying-ui` skill and returns a structured report.
+3. **Check the report** against the verification gate below before acting on it.
+4. **Act on the result**:
+   - **PASS**: check the task and its verification step in the plan, record the result, go to the next component.
+   - **FAIL**: delegate the fix to `tsh-software-engineer` with the complete report, and require it to fix all listed differences, not only the first. Then verify again (step 2).
+5. **Iteration cap**: at most 5 verify-fix iterations per component. After that, escalate: list the remaining mismatches with the Figma URL, describe what each iteration tried, state the suspected root cause, record it in the plan's Changelog and ask the user for guidance.
 
-2. **Delegate codebase analysis (if needed)** — Check if the plan file (`*.plan.md`) contains a populated **"Technical Context"** section. If it does, skip this step — the context was already captured during planning. If the section is missing or empty, use the `tsh-architect` subagent to perform codebase analysis and technical context discovery to establish project conventions, coding standards, architecture patterns, and existing codebase patterns before implementing.
+### Confidence levels
 
-3. **Confirm dev server URL** — Ask the user for the dev server URL (e.g., "What URL is the frontend app running at? Is it http://localhost:3000?"). Do not defer this to later — you need the confirmed URL before any verification can start. Do not guess from running processes or port scans — multiple services may run on different ports. Use the confirmed URL for all subsequent verifications in this session.
+- **HIGH**: fix exactly as reported.
+- **MEDIUM**: fix the obvious differences and ask the user about unclear ones.
+- **LOW**: ask the user before changing anything, because the tool data may be incomplete.
 
-4. **Delegate UI implementation** — For each UI implementation task, delegate to the `tsh-software-engineer` subagent, instructing it to follow the "UI tasks (Figma)" section of the `tsh-implement-task` skill. Pass the relevant Figma URLs, component context, and plan section.
+### Rules
 
-5. **Delegate UI verification** — After each UI implementation task completes, delegate to the `tsh-ui-reviewer` subagent, instructing it to follow the `tsh-review-ui` skill. Pass: the Figma URL, the user-confirmed dev server URL from step 3, and the component/section name. The ui-reviewer will compare the Figma design against the running implementation and return a structured report. **Note:** You do NOT need `figma` or `playwright` tools yourself — the `tsh-ui-reviewer` subagent has them. Just invoke the agent skill to delegate. Never skip verification because these tools aren't in your own tool list.
+- Every UI component is verified at least once, with no exceptions.
+- Fix every reported difference and never rationalize one away.
+- Verify again after every fix. Never assume a fix worked.
 
-6. **Handle verification results**:
-   - If **PASS** → mark the task and its verification step as complete in the plan. Move to the next task.
-   - If **FAIL** → delegate fix to `tsh-software-engineer` — pass the **complete** verification report and explicitly instruct the engineer to fix **ALL** listed differences, not just the first one. After the fix, re-delegate verification to `tsh-ui-reviewer`. Repeat up to **5 iterations per component**.
-   - After 5 failed iterations → **escalate**: list remaining mismatches with the Figma URL, describe what was tried in each iteration, state the suspected root cause, document in the plan's Changelog, and ask the user for guidance.
+## Verification gate
 
-7. **Handle confidence levels** from verification reports:
-   - **HIGH** confidence: fix exactly as reported
-   - **MEDIUM** confidence: fix obvious issues, ask user about unclear ones
-   - **LOW** confidence: ask user before making any changes — tool data may be incomplete
+A report is valid only if it contains data extracted from Figma, data captured from the running app (screenshots, computed styles, accessibility snapshot) and a structured EXPECTED versus ACTUAL comparison. If either side is missing, for example because the reviewer only read source code or skipped the browser after a blocker, the verification is invalid:
 
-8. **Update the plan** — After completing each task step, update the plan to reflect progress (check the box). Note the verification result (PASS, number of iterations, or escalation).
+1. Find out why it failed (wrong URL, authentication, tool error).
+2. Ask the user to resolve the blocker (correct URL, credentials or manual verification).
+3. Delegate the reviewer again once the blocker is resolved.
+4. Accept only a valid report, or an explicit instruction from the user to skip.
 
-9. **Run quality checks after each phase** — Run static code analysis, build the project, run unit and integration tests to verify nothing is broken.
+**Gate before code review**: compare the inventory from the setup with the processed components. Every UI verification task must have passed, or have been escalated with the user's explicit approval to skip. If one was not processed, process it now. If verification cannot be completed for a component, record that in the plan's Changelog and get the user's explicit approval before moving on. Then give the manager a short UI verification summary: the components verified, the iterations per component, the design gaps found and any deviations with their rationale.
 
-10. **Before code review — UI Verification Summary** — Before delegating code review, compile:
+## Fallback when the reviewer keeps failing
 
-- Components/sections verified by `tsh-ui-reviewer`
-- Number of verification iterations per component
-- Design gaps discovered and how they were handled
-- Any deviations from design with rationale
-
-11. **Delegate code review** — delegate to the `tsh-code-reviewer` subagent, instructing it to follow the `tsh-review` skill. Include E2E test execution as part of the review. The code reviewer runs all quality gates (unit, integration, E2E tests, linting, build).
-
-## Verification Rules
-
-1. Every UI component must be verified by `tsh-ui-reviewer` — minimum once per component, no exceptions
-2. Fix all reported differences — do not skip or rationalize
-3. Re-delegate verification after every fix — never assume a fix worked
-4. Maximum 5 iterations per component — escalate if still failing
-5. Check confidence level — LOW confidence means tool data may be incomplete
-
-## Verification Gate — Do Not Proceed Without Real Verification
-
-Before proceeding from a UI verification step to the next task or to code review, confirm that the `tsh-ui-reviewer` actually performed a **real Figma+Playwright comparison**. A valid verification report must contain:
-
-- Data extracted from Figma via `figma` (design specifications)
-- Data captured from the running app via `playwright` (screenshots, computed styles, accessibility snapshot)
-- A structured comparison with EXPECTED vs ACTUAL values
-
-**If the report is missing either side of the comparison** (e.g., the reviewer only read source code files, or skipped Playwright because of a blocker), the verification is **INVALID**. Do not accept it. Instead:
-
-1. Identify why verification failed (wrong URL? auth blocker? tool error?)
-2. Ask the user to resolve the blocker (provide correct URL, credentials, or manual verification)
-3. Re-delegate to `tsh-ui-reviewer` once the blocker is resolved
-4. Only proceed when you have a valid verification report or the user explicitly instructs you to skip
-
-**Never proceed to code review with unverified UI components.** If verification cannot be completed for a component, document it in the plan's Changelog and get explicit user approval before moving to code review.
-
-## Fallback: When `tsh-ui-reviewer` Returns Errors
-
-If `tsh-ui-reviewer` consistently returns LOW confidence or tool errors:
-
-1. Do not continue the loop blindly
-2. Ask the user if they can verify manually (open Figma + app side-by-side)
-3. Document the issue in the plan's Changelog
-4. Continue with next component or escalate
+If the reviewer repeatedly returns LOW confidence, `BLOCKED` or tool errors, do not loop blindly. Ask the user whether they can verify manually (Figma and app side by side), record the issue in the plan's Changelog and continue with the next component or escalate.
