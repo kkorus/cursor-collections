@@ -94,6 +94,11 @@ for (const [title, change] of passing) {
   });
 }
 
+test('a servers.json without a servers key gives a schema error, not a TypeError', () => {
+  const errors = errorsFor((f) => ({ ...f, 'src/mcp/servers.json': {} }));
+  assert.ok(errors.some((e) => e.file === 'src/mcp/servers.json' && e.key === 'servers'), JSON.stringify(errors));
+});
+
 test('error messages include the file path and the key name', () => {
   const root = makeRoot(edit(COMMAND, { 'routes-to': 'tsh-nobody' })(sourceFiles()));
   const { code, lines } = generate(root);
