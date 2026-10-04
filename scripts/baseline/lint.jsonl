@@ -11,7 +11,6 @@
 {"rule":"no-path-refs","file":"src/skills/tsh-create-custom-agent/SKILL.md","key":".cursor/skills/","count":3}
 {"rule":"no-path-refs","file":"src/skills/tsh-create-custom-command/SKILL.md","key":".cursor/skills/","count":6}
 {"rule":"no-path-refs","file":"src/skills/tsh-create-custom-skill/SKILL.md","key":".cursor/skills/","count":3}
-{"rule":"no-path-refs","file":"src/skills/tsh-creating-agents/SKILL.md","key":".cursor/skills/","count":5}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-commands/SKILL.md","key":".cursor/skills/","count":9}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-commands/assets/prompt.template.md","key":".cursor/skills/","count":1}
 {"rule":"max-lines","file":"src/skills/tsh-designing-databases/SKILL.md","key":"SKILL.md","count":1}
