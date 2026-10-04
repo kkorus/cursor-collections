@@ -1,49 +1,40 @@
 ---
 name: tsh-create-custom-skill
-description: Create a new Cursor workflow skill (SKILL.md) in .cursor/skills/workflows/. Analyzes existing skills for patterns, guides through design decisions, creates the skill file with supporting resources, and validates against best practices. Use when the user types /tsh-create-custom-skill or asks to create a new workflow skill.
+description: Create a new skill (knowledge skill, internal step or orchestrator) for Cursor, Claude Code and Codex, in the neutral source when the project has one and as native Agent Skills files otherwise. Use when the user types /tsh-create-custom-skill or asks to create a new skill.
 type: command
 routes-to: tsh-ai-customization-orchestrator
+argument-hint: "<skill purpose or description>"
 metadata:
   short-description: Create a new custom skill
 ---
 # /tsh-create-custom-skill
 
-Load and follow the `tsh-ai-customization-orchestrator` skill. Create a new custom workflow skill for Cursor. The orchestrator handles research of existing skills, design decisions, skill file creation with supporting resources, and review against best practices. The user's message following this skill may contain specific skill requirements or a description of the desired skill.
+## Route
+
+Load and follow the `tsh-ai-customization-orchestrator` skill. Artifact type: skill. Governing skill: `tsh-creating-skills`.
+
+## Inputs
+
+- The skill's purpose, triggers and expected output, from the user's input after the command
+- A proposed name, for example `tsh-reviewing-<topic>` (knowledge skill) or `tsh-run-<task>` (command or internal step); ask if the purpose or the type is unclear
 
 ## Required Skills
 
-Before starting, load and follow these skills:
-- `tsh-creating-skills` - for skill file creation workflow, naming conventions, progressive disclosure, and validation checklist
-- `tsh-discovering-technical-context` - for discovering project conventions and workspace patterns before creating
-- `tsh-analyzing-codebase` - for analyzing existing skills for structural patterns and naming conventions
+- `tsh-creating-skills` - schema, naming, layout and validation checklist
+- `tsh-discovering-technical-context` - project conventions and existing skills
+- `tsh-analyzing-codebase` - structural patterns of existing skills
 
-## Workflow
+## Steps
 
-1. **Research existing skills**: Analyze skills in `.cursor/skills/workflows/` for patterns and conventions:
-   - Naming conventions (gerund form: `creating-agents`, not `agent-creation`)
-   - Folder structure and file organization (SKILL.md, templates, examples, references)
-   - Progressive disclosure patterns and content structure
-   - Frontmatter fields and description conventions
-2. **Clarify requirements**: Determine the skill's design parameters with the user:
-   - Domain, purpose, and trigger conditions
-   - Target workflows and step-by-step processes
-   - Supporting resources needed (templates, examples, references)
-   - If the user's message already contains requirements, confirm understanding before proceeding
-3. **Design the skill**: Make design decisions based on research findings and user input:
-   - Skill name in gerund form (e.g., `creating-agents`, `analyzing-performance`)
-   - Folder structure and supporting resource types
-   - Progressive disclosure tiers (discovery, activation, resource)
-   - How the skill fits within the existing skill ecosystem
-4. **Create the skill files**: Create `SKILL.md` and any supporting files in `.cursor/skills/workflows/<skill-name>/` following established conventions. Apply the `tsh-creating-skills` skill workflow for structure and validation.
-5. **Review and validate**: Review the created skill against best practices:
-   - Verify gerund naming convention is followed
-   - Confirm structural consistency with existing skills
-   - Check supporting resources are complete and properly organized
+1. Research existing skills: naming, layout, frontmatter, size, and whether the project has a neutral source.
+2. Clarify requirements with the user and choose the `type` and the name.
+3. Create the skill with its support files (`references/`, `assets/`) in the right place for the project.
+4. Review it against the `tsh-creating-skills` checklist and fix the findings.
 
-Skill names MUST use gerund form (e.g., `creating-agents`, `analyzing-performance`, not `agent-creation`).
+## Output
 
-Skills may require supporting files beyond SKILL.md — templates, examples, and references directories. Ensure all are created.
+- The new skill, created and validated, with a short summary of what was created
 
-If the user attaches files or provides a description, use them as input for skill design.
+## Guardrails
 
-When in doubt about design decisions, ask the user for clarification rather than guessing.
+- Ask the user when a design decision is unclear instead of guessing.
