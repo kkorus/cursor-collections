@@ -11,6 +11,6 @@ metadata:
 
 Delegate to the `tsh-code-reviewer` subagent and tell it to follow the `tsh-reviewing-code` skill. Pass the plan and research paths if the user gave them or they exist for the task. Without a plan, pass the task description and tell the agent that there is no plan, so it reviews the current diff.
 
-The agent returns its findings in the format of the skill. Show them to the user and end with the agent's suggested next steps.
+The agent returns its findings in the format of the skill. Show them to the user and end with the next step: run `/tsh-implement Implement changes requested after code review` to fix the findings, or `/tsh-commit` when there are none.
 
 <!-- include: caller-status-handling -->
