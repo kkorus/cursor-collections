@@ -33,7 +33,7 @@ Determine the format of the raw transcript:
 - Plain text notes without speaker labels
 - Timestamped transcript (e.g., `[00:12:34] text`)
 - Mixed format
-- PDF document (transcript or meeting notes exported/provided as PDF — use `pdf-reader` tool to extract text content first)
+- PDF document (transcript or meeting notes provided as PDF): extract the text first with a PDF-capable tool (the `pdf-reader` MCP server when available). If no tool can read it, ask for a text export
 
 Extract meeting metadata where available:
 - Date and time of the workshop
@@ -122,7 +122,7 @@ When you run as a delegated worker (the task starts with `MODE: delegated`), the
 
 - **Step 1 (ask for missing metadata):** skipped. Leave the field as "not stated" and list the missing metadata in `QUESTIONS`.
 - **Step 8 (save):** skipped. Do not write files. Return the complete cleaned transcript in the reply body, in the structure of `assets/cleaned-transcript.template.md`. The orchestrator saves it as `cleaned-transcript.md`.
-- **Input:** read only the files listed in `INPUT_ARTIFACTS`. Extract PDF text with the PDF reader first.
+- **Input:** read only the files listed in `INPUT_ARTIFACTS`. Extract PDF text first (Step 1).
 - **Everything else:** Steps 2-7 run unchanged.
 
 ## Connected Skills
