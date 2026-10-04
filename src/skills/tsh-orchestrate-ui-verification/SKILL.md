@@ -43,7 +43,7 @@ Do NOT skip verification or delegate without a Figma reference.
 
 3. **Confirm dev server URL** — Ask the user for the dev server URL (e.g., "What URL is the frontend app running at? Is it http://localhost:3000?"). Do not defer this to later — you need the confirmed URL before any verification can start. Do not guess from running processes or port scans — multiple services may run on different ports. Use the confirmed URL for all subsequent verifications in this session.
 
-4. **Delegate UI implementation** — For each UI implementation task, delegate to the `tsh-software-engineer` subagent, instructing it to follow the `tsh-implement-ui-common-task` skill. Pass the relevant Figma URLs, component context, and plan section. For non-Figma frontend and backend tasks, use the `tsh-implement-task` skill.
+4. **Delegate UI implementation** — For each UI implementation task, delegate to the `tsh-software-engineer` subagent, instructing it to follow the "UI tasks (Figma)" section of the `tsh-implement-task` skill. Pass the relevant Figma URLs, component context, and plan section.
 
 5. **Delegate UI verification** — After each UI implementation task completes, delegate to the `tsh-ui-reviewer` subagent, instructing it to follow the `tsh-review-ui` skill. Pass: the Figma URL, the user-confirmed dev server URL from step 3, and the component/section name. The ui-reviewer will compare the Figma design against the running implementation and return a structured report. **Note:** You do NOT need `figma` or `playwright` tools yourself — the `tsh-ui-reviewer` subagent has them. Just invoke the agent skill to delegate. Never skip verification because these tools aren't in your own tool list.
 
