@@ -5,7 +5,8 @@ title: UI Reviewer
 
 # UI Reviewer Agent
 
-**File:** `.cursor/skills/agents/tsh-ui-reviewer/SKILL.md`
+**Source:** `src/agents/tsh-ui-reviewer.md`  
+**Kind:** subagent, model tier `deep`, read-only access
 
 The UI Reviewer agent performs read-only verification comparing implemented UI against Figma designs and reports differences. It is called either directly by a user or as a subagent by the Software Engineer during the UI implementation loop. It does **not** fix code.
 
@@ -37,28 +38,19 @@ The UI Reviewer agent performs read-only verification comparing implemented UI a
 The UI Reviewer never modifies code. It only reports differences so the Software Engineer (via `/tsh-implement`) can fix them. When called in a loop, each call is an independent verification pass.
 :::
 
-## Tool Access
+## Tool access
 
-| Tool                      | Usage                                                                |
-| ------------------------- | -------------------------------------------------------------------- |
-| **Context7**              | Look up design system documentation and UI library guidelines        |
-| **Figma**                 | Get EXPECTED design state — spacing, typography, colors, dimensions  |
-| **Playwright**            | Get ACTUAL implementation state — accessibility tree and screenshots |
-| **Sequential Thinking**   | Analyze complex layout discrepancies, evaluate tolerance decisions   |
-| **Terminal**              | Run commands to verify application state                             |
-| **File Read/Edit/Search** | Read, modify, and search workspace files                             |
-| **Terminal commands**      | Execute VS Code commands and preview in browser                      |
-| **Sub-agents**            | Delegate subtasks to specialized agents                              |
-| **Todo**                  | Track verification progress with structured checklists               |
+- **Read-only.** The agent cannot edit or create files, so it returns its results in the reply.
+- **No shell.** Shell access is denied on Claude Code.
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Context7, Figma, Playwright, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-ui-verifying` — Verification criteria, structure checklist, severity definitions, and tolerances.
+- `tsh-verifying-ui` (preloaded) - UI verification criteria and report format against Figma
 
-## Handoffs
+## Invocation and modes
 
-After verification, the UI Reviewer can hand off to:
-
-- **Software Engineer** → `/tsh-implement` (start UI implementation according to the plan)
-- **Software Engineer** → `/tsh-implement` (implement UI fixes based on the verification report)
-- **Code Reviewer** → `/tsh-review` (proceed to code review if PASS)
+- **Delegated by:** `/tsh-review-ui` and the `tsh-orchestrate-ui-verification` step of the `tsh-engineering-manager`. In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
+- **Read-only persona:** when run as a main-thread persona on Claude Code (`claude --agent`), the agent keeps its restrictions and cannot write files there either.

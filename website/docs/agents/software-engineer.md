@@ -5,7 +5,8 @@ title: Software Engineer
 
 # Software Engineer Agent
 
-**File:** `.cursor/skills/agents/tsh-software-engineer/SKILL.md`
+**Source:** `src/agents/tsh-software-engineer.md`  
+**Kind:** subagent, model tier `deep`, read-write access
 
 The Software Engineer agent implements software solutions based on provided requirements and technical designs. It executes against implementation plans created by the Architect.
 
@@ -25,38 +26,35 @@ The Software Engineer agent implements software solutions based on provided requ
 - **No unnecessary files** — Focus on delivering required changes efficiently.
 - **Well-documented** — Includes comments and documentation for future maintainability.
 
-## Tool Access
+## Tool access
 
-| Tool                      | Usage                                                                       |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Atlassian**             | Search for task requirements and related context (search only)              |
-| **Context7**              | Search API documentation, find solutions to errors, research best practices |
-| **Figma**                 | Extract design specifications for frontend tasks                            |
-| **Playwright**            | Verify UI implementation by interacting with the running application        |
-| **Sequential Thinking**   | Implement complex algorithms, debug issues, plan refactoring                |
-| **Terminal**              | Run build tools, tests, linters, and scripts                                |
-| **File Read/Edit/Search** | Read, modify, and search workspace files                                    |
-| **Terminal commands**      | Execute VS Code commands and preview in browser                             |
-| **Sub-agents**            | Delegate subtasks to specialized agents                                     |
-| **Todo**                  | Track implementation progress with structured checklists                    |
+- **Read-write.**
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Context7, Figma, Playwright, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-technical-context-discovering` — Establish project conventions and patterns before implementing.
-- `tsh-implementation-gap-analysing` — Verify what exists vs what needs to be built.
-- `tsh-codebase-analysing` — Understand existing architecture for complex features.
-- `tsh-implementing-frontend` — Component patterns, composition, design tokens, Figma-to-code workflow.
-- `tsh-implementing-forms` — Schema validation, field composition, error handling, multi-step form flows.
-- `tsh-writing-hooks` — Custom hooks: naming, composition, stable returns, effect cleanup, testing.
-- `tsh-ensuring-accessibility` — WCAG 2.1 AA compliance: semantic HTML, ARIA, keyboard navigation, focus management.
-- `tsh-optimizing-frontend` — Code splitting, memoization, bundle size, rendering optimization, memory management.
-- `tsh-ui-verifying` — Tolerances and structure checklist for Figma verification.
-- `tsh-sql-and-database-understanding` — SQL queries, database schemas, migrations, ORM patterns.
-- `tsh-engineering-prompts` — LLM prompt design: structure patterns, optimization, security, templates.
+- `tsh-implement-task` (preloaded) - Implement a feature from a plan or a task description
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-analyzing-implementation-gaps` - Compare a plan with the current state to find implementation gaps
+- `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
+- `tsh-designing-databases` - SQL and database design: schemas, indexing, queries, ORMs
+- `tsh-implementing-frontend` - Frontend components, design tokens and Figma-to-code
+- `tsh-implementing-forms` - Form architecture, validation and accessible patterns
+- `tsh-writing-hooks` - Custom React hook patterns
+- `tsh-ensuring-accessibility` - WCAG accessibility: semantic HTML, ARIA, keyboard, contrast
+- `tsh-optimizing-frontend` - Frontend rendering, bundle and memory optimization
+- `tsh-verifying-ui` - UI verification criteria and report format against Figma
+- `tsh-implementing-backend` - Backend patterns: APIs, auth, testing, integrations
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 
-## Handoffs
+## Invocation and modes
 
-After completing implementation, the Software Engineer can hand off to:
+- **Delegated by:** `/tsh-debug` (the fix) and the `tsh-engineering-manager` (implementation tasks and fixes). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
 
-- **Code Reviewer** → `/tsh-review` (review implementation against the plan)
-- **E2E Engineer** → delegated by the Engineering Manager for E2E test creation
+## Suggested next steps
+
+The agent recommends these commands as text; it never starts them itself.
+
+- `/tsh-review Review the implementation against the plan and feature context` after the implementation.

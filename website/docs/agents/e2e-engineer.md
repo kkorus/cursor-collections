@@ -5,7 +5,8 @@ title: E2E Engineer
 
 # E2E Engineer Agent
 
-**File:** `.cursor/skills/agents/tsh-e2e-engineer/SKILL.md`
+**Source:** `src/agents/tsh-e2e-engineer.md`  
+**Kind:** subagent, model tier `fast`, read-write access
 
 The E2E Engineer agent creates, maintains, and debugs end-to-end tests using Playwright. It produces reliable, maintainable, and meaningful test suites.
 
@@ -36,29 +37,26 @@ The E2E Engineer agent creates, maintains, and debugs end-to-end tests using Pla
 - **No dead code** — Does not create unused test helpers or future-only tests.
 - **3+ consecutive passes** — Required before tests are considered stable.
 
-## Tool Access
+## Tool access
 
-| Tool | Usage |
-|---|---|
-| **Atlassian** | Search for related test requirements and context (search only) |
-| **Context7** | Search Playwright API docs (library ID: `/microsoft/playwright.dev`) |
-| **Figma** | Understand expected UI behavior, extract labels for locator strategies |
-| **Playwright MCP** | Inspect actual page state, discover locators, understand UI structure |
-| **Sequential Thinking** | Analyze complex test scenarios, debug flaky tests, plan mocking strategies |
-| **Terminal** | Run Playwright tests, install dependencies, execute scripts |
-| **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **Terminal commands** | Execute VS Code commands and preview in browser |
-| **Sub-agents** | Delegate subtasks to specialized agents |
-| **Todo** | Track testing progress with structured checklists |
+- **Read-write.**
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Context7, Figma, Playwright, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-task-analysing` — Determine context sources and gather requirements.
-- `tsh-e2e-testing` — Test structure patterns, Page Object conventions, mocking strategies, verification loop.
-- `tsh-technical-context-discovering` — Project conventions and test patterns.
+- `tsh-writing-e2e-tests` (preloaded) - Playwright E2E testing patterns and CI readiness
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-analyzing-requirements` - Analyze a task and build its context and research document
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 
-## Handoffs
+## Invocation and modes
 
-After discovering critical bugs, the E2E Engineer can hand off to:
+- **Delegated by:** the `tsh-engineering-manager` (E2E test tasks). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
 
-- **Software Engineer** → `/tsh-implement` (fix the bug discovered during E2E testing)
+## Suggested next steps
+
+The agent recommends these commands as text; it never starts them itself.
+
+- `/tsh-implement Fix the bug discovered during E2E testing` when testing uncovered a bug.
