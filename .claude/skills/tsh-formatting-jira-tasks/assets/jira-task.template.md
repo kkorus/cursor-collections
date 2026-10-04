@@ -1,6 +1,6 @@
 # Jira Task Benchmark Template
 
-This document defines the expected structure and fields for Jira epics and stories created by the business analyst agent.
+This document defines the expected structure and fields for Jira epics and stories created by the BA workflow. The local `jira-tasks.md` uses standard Markdown, exactly as shown in the code blocks below. The conversion to Jira markup happens only when the issues are pushed (see the `tsh-formatting-jira-tasks` skill).
 
 ---
 
@@ -26,31 +26,31 @@ _Template navigation only: omit this section from the generated document._
 | Priority | Yes | Highest / High / Medium / Low |
 | Labels | No | Domain or feature area labels relevant to the project |
 | Jira Key | No | Jira issue key (e.g., PROJ-123). Populated after issue creation or import. |
-| Status | No | Current Jira workflow status (e.g., To Do, In Progress, Done). Populated from Jira during import or after push. Used to enforce the Protected Status Policy — tasks with a protected status are read-only. |
+| Status | No | Current Jira workflow status (e.g., To Do, In Progress, Done). Populated from Jira during import or after push. Used to enforce the protected status rules (`tsh-guarding-jira-statuses` skill). |
 
 ### Description Format
 
 ```
-h2. Overview
+## Overview
 
 <2-3 sentence description of what this epic delivers and why it matters>
 
-h2. Business Value
+## Business Value
 
 <What business problem does this solve? What value does it create for users or the organisation?>
 
-h2. Success Metrics
+## Success Metrics
 
-* <Measurable outcome 1>
-* <Measurable outcome 2>
+- <Measurable outcome 1>
+- <Measurable outcome 2>
 ```
 
 ### Acceptance Criteria Format
 
 ```
-(/) <Verifiable business condition 1>
-(/) <Verifiable business condition 2>
-(/) <Verifiable business condition 3>
+- [ ] <Verifiable business condition 1>
+- [ ] <Verifiable business condition 2>
+- [ ] <Verifiable business condition 3>
 ```
 
 ---
@@ -70,30 +70,30 @@ h2. Success Metrics
 | Labels | No | Inherited from epic + story-specific labels |
 | Story Points | No | Team estimates during refinement. Agent provides sizing guidance: Small (1-3), Medium (5-8), Large (13+) |
 | Jira Key | No | Jira issue key (e.g., PROJ-123). Populated after issue creation or import. |
-| Status | No | Current Jira workflow status (e.g., To Do, In Progress, Done). Populated from Jira during import or after push. Used to enforce the Protected Status Policy — tasks with a protected status are read-only. |
+| Status | No | Current Jira workflow status (e.g., To Do, In Progress, Done). Populated from Jira during import or after push. Used to enforce the protected status rules (`tsh-guarding-jira-statuses` skill). |
 
 ### Description Format
 
 ```
-h2. Context
+## Context
 
 This story is part of the [<Epic Title>] epic. <1 sentence connecting this story to the epic's goal.>
 
-h2. Source Context
+## Source Context
 
 <Short traceability note pointing back to the workshop material, intent brief, or baseline entry that produced this story.>
 
-h2. User Story
+## User Story
 
 As a <role>, I want <capability> so that <benefit>.
 
-h2. Requirements
+## Requirements
 
-# <Specific requirement 1>
-# <Specific requirement 2>
-# <Specific requirement 3>
+1. <Specific requirement 1>
+1. <Specific requirement 2>
+1. <Specific requirement 3>
 
-h2. Technical Notes
+## Technical Notes
 
 <High-level technical considerations discussed during the workshop. Write "No specific technical considerations discussed." if none were mentioned.>
 ```
@@ -101,12 +101,12 @@ h2. Technical Notes
 ### Acceptance Criteria Format
 
 ```
-(/) <Verifiable condition 1>
-(/) <Verifiable condition 2>
-(/) <Verifiable condition 3>
+- [ ] <Verifiable condition 1>
+- [ ] <Verifiable condition 2>
+- [ ] <Verifiable condition 3>
 ```
 
-Scenario-style criteria are also valid when written as `(/) GIVEN ... WHEN ... THEN ...`.
+Scenario-style criteria are also valid when written as `- [ ] GIVEN ... WHEN ... THEN ...`.
 
 ---
 
@@ -134,7 +134,7 @@ Scenario-style criteria are also valid when written as `(/) GIVEN ... WHEN ... T
 Labels are project-specific. Suggest labels based on the epic's domain area, but do not hardcode values. Common patterns:
 - Feature area: `auth`, `payments`, `dashboard`, `reporting`
 - Type: `infrastructure`, `integration`, `ui`, `backend`
-- Source: `workshop-<date>` to track which workshop produced the task
+- Source: a label naming the workshop that produced the task
 
 ### Handling Optional Fields
 
@@ -152,12 +152,12 @@ The `Jira Key` field is empty (`—`) when the task has not yet been pushed to J
 
 ### Status Field
 
-The `Status` field reflects the current Jira workflow status of the task (e.g., `To Do`, `In Progress`, `Done`, `Cancelled`, `PO APPROVE`). It is empty (`—`) for tasks that have not been pushed to or imported from Jira.
+The `Status` field reflects the current Jira workflow status of the task (e.g., `To Do`, `In Progress`, `Done`). It is empty (`—`) for tasks that have not been pushed to or imported from Jira.
 
 - Do not manually fill this field — it is managed by the agent
 - After a successful import, the agent populates the Status from the fetched Jira issue
 - After a successful push (create or update), the agent records the current status returned by Jira
-- Tasks whose status is **Done**, **Cancelled**, or **PO APPROVE** are considered **protected** and are treated as read-only. The agent will not modify their content locally or push updates to Jira for them. See the Protected Status Policy in the agent file for full details.
+- Tasks with a protected status are read-only. The agent will not modify their content locally or push updates to Jira for them. The `tsh-guarding-jira-statuses` skill defines the protected statuses.
 
 ---
 
@@ -171,31 +171,31 @@ The `Status` field reflects the current Jira workflow status of the task (e.g., 
 
 **Description**:
 ```
-h2. Overview
+## Overview
 
 Enable users to securely log in, manage their accounts, and recover access if credentials are lost. This is the foundational epic that gates access to all application features.
 
-h2. Business Value
+## Business Value
 
 Without authentication, the application cannot distinguish between users, enforce permissions, or protect user data. This epic enables personalised experiences and regulatory compliance (GDPR, SOC2).
 
-h2. Success Metrics
+## Success Metrics
 
-* Users can register, log in, and access their personalised dashboard
-* Password recovery flow resolves 95% of access issues without support intervention
-* All authentication flows complete in under 3 seconds
+- Users can register, log in, and access their personalised dashboard
+- Password recovery flow resolves 95% of access issues without support intervention
+- All authentication flows complete in under 3 seconds
 ```
 
 **Acceptance Criteria**:
 ```
-(/) Users can create an account with email and password
-(/) Users can log in with valid credentials
-(/) Users receive an error message for invalid credentials
-(/) Users can reset their password via email
-(/) Session timeout redirects users to the login page
+- [ ] Users can create an account with email and password
+- [ ] Users can log in with valid credentials
+- [ ] Users receive an error message for invalid credentials
+- [ ] Users can reset their password via email
+- [ ] Session timeout redirects users to the login page
 ```
 
-**Labels**: `auth`, `workshop-2026-02-19`
+**Labels**: `auth`
 
 ---
 
@@ -209,37 +209,37 @@ h2. Success Metrics
 
 **Description**:
 ```
-h2. Context
+## Context
 
 This story is part of the [User Authentication: Secure Login and Account Access] epic. It enables new users to create an account and gain access to the application.
 
-h2. User Story
+## User Story
 
 As a new user, I want to register an account with my email and password so that I can access the application's features.
 
-h2. Requirements
+## Requirements
 
-# Registration form collects email address and password
-# Email address must be unique across all accounts
-# Password must meet minimum security requirements (discussed: at least 8 characters)
-# User receives a confirmation email after registration
-# User is redirected to the dashboard after successful registration
+1. Registration form collects email address and password
+1. Email address must be unique across all accounts
+1. Password must meet minimum security requirements (discussed: at least 8 characters)
+1. User receives a confirmation email after registration
+1. User is redirected to the dashboard after successful registration
 
-h2. Technical Notes
+## Technical Notes
 
 Discussed during workshop: SSO integration may be added later as a separate story. For now, email/password registration only.
 ```
 
 **Acceptance Criteria**:
 ```
-(/) Registration form is accessible from the landing page
-(/) Duplicate email addresses are rejected with a clear error message
-(/) Passwords shorter than 8 characters are rejected with guidance
-(/) Confirmation email is sent within 1 minute of registration
-(/) Successful registration redirects to user dashboard
+- [ ] Registration form is accessible from the landing page
+- [ ] Duplicate email addresses are rejected with a clear error message
+- [ ] Passwords shorter than 8 characters are rejected with guidance
+- [ ] Confirmation email is sent within 1 minute of registration
+- [ ] Successful registration redirects to user dashboard
 ```
 
-**Labels**: `auth`, `workshop-2026-02-19`
+**Labels**: `auth`
 
 ---
 
@@ -253,35 +253,35 @@ Discussed during workshop: SSO integration may be added later as a separate stor
 
 **Description**:
 ```
-h2. Context
+## Context
 
 This story is part of the [User Authentication: Secure Login and Account Access] epic. It allows returning users to access their account.
 
-h2. User Story
+## User Story
 
 As a returning user, I want to log in with my email and password so that I can access my account and data.
 
-h2. Requirements
+## Requirements
 
-# Login form collects email and password
-# Valid credentials grant access to the user dashboard
-# Invalid credentials display a clear error message without revealing which field is wrong
-# Session is created with appropriate timeout
+1. Login form collects email and password
+1. Valid credentials grant access to the user dashboard
+1. Invalid credentials display a clear error message without revealing which field is wrong
+1. Session is created with appropriate timeout
 
-h2. Technical Notes
+## Technical Notes
 
 No specific technical considerations discussed.
 ```
 
 **Acceptance Criteria**:
 ```
-(/) Login form is accessible from the landing page
-(/) Valid credentials redirect to the user dashboard
-(/) Invalid credentials show a generic error message
-(/) Three consecutive failed attempts trigger a temporary lockout
+- [ ] Login form is accessible from the landing page
+- [ ] Valid credentials redirect to the user dashboard
+- [ ] Invalid credentials show a generic error message
+- [ ] Three consecutive failed attempts trigger a temporary lockout
 ```
 
-**Labels**: `auth`, `workshop-2026-02-19`
+**Labels**: `auth`
 
 ---
 
@@ -295,34 +295,34 @@ No specific technical considerations discussed.
 
 **Description**:
 ```
-h2. Context
+## Context
 
 This story is part of the [User Authentication: Secure Login and Account Access] epic. It provides a self-service recovery path for users who forget their password.
 
-h2. User Story
+## User Story
 
 As a user who forgot my password, I want to reset it via email so that I can regain access to my account without contacting support.
 
-h2. Requirements
+## Requirements
 
-# "Forgot password" link is visible on the login page
-# User enters their email to request a password reset
-# Reset link is sent to the registered email
-# Reset link expires after a defined period
-# User can set a new password via the reset link
+1. "Forgot password" link is visible on the login page
+1. User enters their email to request a password reset
+1. Reset link is sent to the registered email
+1. Reset link expires after a defined period
+1. User can set a new password via the reset link
 
-h2. Technical Notes
+## Technical Notes
 
 Discussed during workshop: Reset link should expire after 24 hours. Team to confirm exact duration during refinement.
 ```
 
 **Acceptance Criteria**:
 ```
-(/) "Forgot password" link is visible and accessible on the login page
-(/) Password reset email is sent within 1 minute of request
-(/) Reset link expires after the configured period
-(/) Expired links show a clear message and option to request a new one
-(/) New password must meet the same requirements as registration
+- [ ] "Forgot password" link is visible and accessible on the login page
+- [ ] Password reset email is sent within 1 minute of request
+- [ ] Reset link expires after the configured period
+- [ ] Expired links show a clear message and option to request a new one
+- [ ] New password must meet the same requirements as registration
 ```
 
-**Labels**: `auth`, `workshop-2026-02-19`
+**Labels**: `auth`

@@ -16,7 +16,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 - [AI & Machine Learning](#ai--machine-learning)
 - [Analytics & Big Data](#analytics--big-data)
 - [Monitoring & Observability](#monitoring--observability)
-- [Pricing Models Comparison](#pricing-models-comparison)
+- [Pricing](#pricing)
 - [Related References](#related-references)
 
 ## Compute
@@ -27,7 +27,7 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 | Managed Kubernetes | EKS | AKS | GKE |
 | Managed Containers (serverless) | Fargate | Container Apps | Cloud Run |
 | Container Registry | ECR | Container Registry | Artifact Registry |
-| Serverless Functions | Lambda | Azure Functions | Cloud Functions |
+| Serverless Functions | Lambda | Azure Functions | Cloud Run functions |
 | Batch Processing | AWS Batch | Azure Batch | Cloud Batch |
 | HPC | ParallelCluster | CycleCloud | HPC Toolkit |
 | VM Image Building | EC2 Image Builder | Azure Image Builder | Packer (open source) |
@@ -52,7 +52,8 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 | Category | AWS | Azure | GCP |
 |---|---|---|---|
 | Managed Relational (MySQL / PostgreSQL) | RDS | Azure Database for MySQL / PostgreSQL | Cloud SQL |
-| High-performance Relational | Aurora | Hyperscale (Citus) | Cloud Spanner |
+| Cloud-native MySQL / PostgreSQL | Aurora | Azure SQL Database Hyperscale / PostgreSQL Flexible Server | AlloyDB |
+| Globally distributed relational | Aurora DSQL | (no direct equivalent) | Cloud Spanner |
 | NoSQL Document | DynamoDB | Cosmos DB (Core) | Firestore |
 | Wide-column NoSQL | DynamoDB | Cosmos DB (Cassandra API) | Bigtable |
 | In-memory Cache | ElastiCache (Redis / Memcached) | Azure Cache for Redis | Memorystore |
@@ -164,17 +165,9 @@ Complete mapping of equivalent services across AWS, Azure, and GCP.
 
 ---
 
-## Pricing Models Comparison
+## Pricing
 
-| Pricing Model | AWS | Azure | GCP |
-|---|---|---|---|
-| On-demand / Pay-as-you-go | ✓ | ✓ | ✓ |
-| 1-year reserved / committed | Reserved Instances (1yr) | Reserved VM Instances (1yr) | Committed Use Discounts (1yr) |
-| 3-year reserved / committed | Reserved Instances (3yr) | Reserved VM Instances (3yr) | Committed Use Discounts (3yr) |
-| Spot / Preemptible | Spot Instances | Spot VMs | Spot VMs (Preemptible) |
-| Flexible savings plan | Compute Savings Plans | — | — |
-| Sustained use discount | — | — | Automatic (up to 30%) |
-| Free tier | AWS Free Tier | Azure Free Account | Google Cloud Free Tier |
+Pricing models, discounts and the per-provider comparison live in `tsh-optimizing-cloud-cost`. They are not repeated here.
 
 ---
 

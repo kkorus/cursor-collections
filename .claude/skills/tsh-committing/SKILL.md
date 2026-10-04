@@ -28,11 +28,11 @@ Procedural rules for drafting commit messages per [Conventional Commits 1.0.0](h
 
 | Type | Use when |
 | ---- | -------- |
-| `feat` | New user-facing capability, new command/skill, new workflow behavior |
-| `fix` | Bug fix in code or incorrect skill behavior |
+| `feat` | New user-facing capability or behavior |
+| `fix` | Bug fix |
 | `docs` | Documentation only (README, website, comments, ADRs, plans) |
 | `style` | Formatting, whitespace, no logic change |
-| `refactor` | Code/skill restructure without behavior change |
+| `refactor` | Code restructure without behavior change |
 | `perf` | Performance improvement |
 | `test` | Tests only |
 | `build` | Build system, dependencies, bundler |
@@ -44,27 +44,29 @@ Procedural rules for drafting commit messages per [Conventional Commits 1.0.0](h
 
 | Diff signal | Default type | Scope hint |
 | ----------- | ------------ | ---------- |
-| Only `*.md` under `website/`, `README`, `docs/` | `docs` | `docs` or filename |
-| Only `specifications/**/*.plan.md` or `*.decision.md` | `docs` | `specs` |
-| New or updated `.cursor/skills/commands/` | `feat` | command name without `tsh-` |
-| New or updated `.cursor/skills/workflows/` | `feat` or `chore` | `feat` if new capability; `chore` if typo/format fix |
-| New or updated `.cursor/skills/agents/` | `feat` | agent name |
-| `.cursor/rules/`, `.mdc` | `chore` or `feat` | `rules` |
-| Config, lockfiles, CI yaml | `chore`, `ci`, or `build` | match path |
-| Test files only | `test` | module or area |
+| Only documentation (`*.md`, `docs/`, README, comments) | `docs` | `docs` or the filename |
+| Only plans, specifications or decision records | `docs` | `specs` |
+| New capability, command, endpoint or user-visible behavior | `feat` | module or feature name |
 | Bug fix in application code | `fix` | module or package |
+| Code restructure with no behavior change | `refactor` | module or package |
+| Formatting or typo fixes with no logic change | `style` or `chore` | match path |
+| Config, lockfiles, tooling | `chore` or `build` | match path |
+| CI/CD configuration | `ci` | pipeline name |
+| Test files only | `test` | module or area |
 
 When the user provides a hint (e.g. `docs: README cleanup`), honor it over inference.
+
+If the project instructions (for example `AGENTS.md` or `CLAUDE.md`) define commit types, scopes or a scope list, follow them over these defaults.
 
 ## Scope
 
 - Optional noun in parentheses: `feat(auth):`, `docs(readme):`
-- Use when it aids changelog grouping; omit when unclear or change is repo-wide.
-- For this repository, common scopes: `skills`, `commands`, `docs`, `readme`, `specs`, `website`.
+- Use when it aids changelog grouping; omit when unclear or the change is repo-wide.
+- Derive scopes from the top-level module, package or area the diff touches, and reuse the scopes already present in the recent commit history.
 
 ## Breaking Changes
 
-Indicate when the change breaks consumers or skill contracts:
+Indicate when the change breaks consumers or public contracts:
 
 - Subject: `feat(api)!: remove legacy endpoint`
 - Or footer: `BREAKING CHANGE: environment variables now take precedence over config files`
@@ -107,22 +109,25 @@ Present separate proposed messages and file lists. Do not silently combine.
 
 If present in the diff: **BLOCK** the proposal and list the paths. User must remove them from the changeset or explicitly override with quoted confirmation.
 
-## Examples (this repository)
+## Examples
 
 ```
-docs(readme): remove company branding from header and license
+docs(readme): remove outdated installation section
 
-chore(skills): add tsh-commit command with confirmation gate
+feat(auth): add refresh token rotation
 
-feat(commands): add conventional commit workflow for /tsh-commit
+fix(cart): correct total when a coupon expires
 
-fix(tsh-implement): correct plan validation skip condition
+refactor(api)!: rename the orders endpoint
+
+BREAKING CHANGE: clients must call /v2/orders
 ```
 
 ## Specification
 
-- Full spec: [conventionalcommits.org/en/v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
+Full spec: [conventionalcommits.org/en/v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 
 ## Connected Skills
 
 - `tsh-discovering-technical-context` — for project-specific commit scopes and conventions in the project instructions
+- `tsh-reviewing-code` — for checking the changes before they are committed

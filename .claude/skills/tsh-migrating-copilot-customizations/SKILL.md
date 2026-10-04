@@ -1,108 +1,107 @@
 ---
 name: tsh-migrating-copilot-customizations
-description: Convert GitHub Copilot customization artifacts (agents, skills, prompts, instructions) to their Cursor AI IDE equivalents (SKILL.md files, .mdc rules). Use when porting a PR or branch from a Copilot-based repo to this Cursor setup, adding a new Copilot-originated agent or skill, or verifying that a converted artifact follows the correct Cursor structure.
+description: Converts GitHub Copilot customization artifacts (agents, skills, prompts, instructions) into the neutral source in `src/` when the repository has one, or into native Cursor, Claude Code and Codex files otherwise. Maps file types, frontmatter fields, paths and terminology, and keeps model, tools and handoffs as structured fields. Use when porting a PR or branch from a Copilot-based repository, adding a Copilot-originated agent, skill or prompt, or verifying a converted artifact.
 metadata:
-  short-description: Convert Copilot customizations to native agent files
+  short-description: Convert Copilot customizations to the neutral source or native files
 ---
 <!-- Generated from src/skills/tsh-migrating-copilot-customizations/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
-# Migrating Copilot to Cursor
+# Migrating Copilot Customizations
 
-Converts GitHub Copilot customization artifacts to Cursor equivalents by applying a deterministic mapping of file types, frontmatter fields, path references, and terminology.
+Converts GitHub Copilot customization artifacts by applying a deterministic mapping of file types, frontmatter fields, path references and terminology. The target is the neutral source (`src/`) when the repository has `src/skills/`, `src/agents/` and a generator, and native files for the chosen tools otherwise.
+
+## Choose the Target
+
+- **Neutral source present:** write only to `src/`. Then run `npm run generate && npm run check` and fix every finding. Never edit the generated native files by hand and never add baseline entries.
+- **No neutral source:** write native files for each tool the project uses (Cursor, Claude Code, Codex). The `tsh-creating-skills`, `tsh-creating-agents`, `tsh-creating-commands` and `tsh-creating-rules` skills give the exact fields and paths.
 
 ## Artifact Type Mapping
 
-| Copilot source | Cursor target | Notes |
-|---|---|---|
-| `.github/agents/*.agent.md` | `.cursor/skills/agents/<name>/SKILL.md` | No `disable-model-invocation` — agents are invoked via `@name` |
-| `.github/skills/*.skill.md` | `.cursor/skills/workflows/<name>/SKILL.md` | Workflow knowledge, loaded by agents on demand |
-| `.github/prompts/*.prompt.md` | `.cursor/skills/commands/<name>/SKILL.md` | Add `disable-model-invocation: true` — these are slash commands |
-| `.github/internal-prompts/*.prompt.md` | `.cursor/skills/internal/<name>/SKILL.md` | Add `disable-model-invocation: true` |
-| `.github/instructions/*.instructions.md` | `.cursor/rules/*.mdc` | Use `alwaysApply: false` + `globs` for scoped rules |
+| Copilot source | `src/` target | Native Cursor | Native Claude Code | Native Codex |
+|---|---|---|---|---|
+| `.github/agents/*.agent.md` (leaf role) | `src/agents/<name>.md`, `type: agent` | `.cursor/agents/<name>.md` | `.claude/agents/<name>.md` | `.codex/agents/<name>.toml` |
+| `.github/agents/*.agent.md` that delegates to other agents (has `agents:`) | `src/skills/<name>/SKILL.md`, `type: orchestrator` | `.agents/skills/<name>/SKILL.md` | `.claude/skills/<name>/SKILL.md` with `user-invocable: false` | `.agents/skills/<name>/SKILL.md` |
+| `.github/skills/*.skill.md` | `src/skills/<name>/SKILL.md`, `type: skill` | `.agents/skills/<name>/SKILL.md` | `.claude/skills/<name>/SKILL.md` | `.agents/skills/<name>/SKILL.md` |
+| `.github/prompts/*.prompt.md` | `src/skills/<name>/SKILL.md`, `type: command` with `routes-to` | skill with `disable-model-invocation: true` | same, plus `argument-hint` | skill plus `agents/openai.yaml` with `policy.allow_implicit_invocation: false` |
+| `.github/internal-prompts/*.prompt.md` | `src/skills/<name>/SKILL.md`, `type: internal` | plain skill | skill with `user-invocable: false` | plain skill |
+| `.github/copilot-instructions.md` | `AGENTS.md` (hand-written, not generated) | `AGENTS.md` | `CLAUDE.md` containing `@AGENTS.md` | `AGENTS.md` |
+| `.github/instructions/*.instructions.md` | scoped rule (hand-written) or a section of `AGENTS.md` | `.cursor/rules/<topic>.mdc` (`description`, `globs`, `alwaysApply`) | `.claude/rules/<topic>.md` (`paths`) | nested `AGENTS.md` |
+
+Agents never delegate (one delegation level). A Copilot agent that hands work to other agents becomes an orchestrator skill that the commands load by name; the agents it coordinated stay agents.
 
 ## Frontmatter Conversion
 
-| Copilot frontmatter | Cursor equivalent | Action |
+Preserve each structured field as a structured field. Do not turn it into prose.
+
+| Copilot field | Neutral field | Action |
 |---|---|---|
-| `model: "GPT-5.4"` | `> Recommended model: GPT-5.4` | Move to first line of body — Cursor doesn't bind models in frontmatter |
-| `tools: [tool1, tool2]` | `> Recommended tools: tool1, tool2` | Move to second line of body; see tool stripping rules below |
-| `user-invocable: false` | `disable-model-invocation: true` | Direct frontmatter replacement |
-| `handoffs:` list | `## Handoffs` section in body | Convert list items to Markdown bullet prose |
-| `agents:` list | `## Delegation` section in body | Convert list items to Markdown bullet prose |
-| `description:` | Keep as-is | Already compatible |
-| `name:` | Keep as-is | Must match the directory name |
+| `name` | `name` | Keep; must equal the folder or file name and start with `tsh-` |
+| `description` | `description` | Keep; make it third person with "Use when ..." |
+| `model: "GPT-5.4"` or `"Gemini 3.1 Pro (Preview)"` | `model-tier: deep` | `GPT-5.4 mini` maps to `fast`, `Claude Sonnet 4.6` to `balanced`; omit when unknown |
+| `tools: [...]` | `access`, `shell`, `requires-mcp` | `access: read-only` if the list has no edit tools, else `read-write`; `shell: false` if it has no execute tool; each `<server>/*` entry becomes a `requires-mcp` server (it must exist in `src/mcp/servers.json`); drop the rest |
+| `handoffs:` list | `## Suggested next steps` section | Text naming the follow-up **commands**, never automatic invocations |
+| `agents:` list | orchestrator body | The listed agents become its delegates; a leaf agent drops the field |
+| `agent:` (prompt field) | `routes-to` | The agent or orchestrator the command routes to |
+| `argument-hint` (prompt) | `argument-hint` | Keep |
+| `user-invocable: false` | `type: internal` | For prompts and skills; the generator renders the hiding per tool |
 
-### Tool stripping rules
+Without a neutral source, map the same fields to each tool's native frontmatter (see the creating skills). Do not carry model names, tool-id blockquotes (`> Recommended model:`, `> Recommended tools:`) or tool lists into the body.
 
-Remove these tools entirely (Cursor doesn't have them):
-- `vscode/runCommand`
-- `vscode/openFile`
+### Tool handling
 
-Replace these tools with plain prose in the skill body:
-- `vscode/askQuestions` → "ask questions to the user" (wherever it appears in instructions)
+- `vscode/runCommand`, `vscode/openFile`: remove; they have no equivalent.
+- `vscode/askQuestions`: remove from the tool list and write "ask the user" in the body. Agents inherit the `NEEDS_INPUT` contract from the operating-modes partial (in delegated mode the question goes into `QUESTIONS` and the agent returns `NEEDS_INPUT`); orchestrators ask the user directly.
+- Delegation tools (`agent`, `runSubagent`): remove; delegation is written as "delegate to the `tsh-<name>` subagent" in an orchestrator or command.
 
 ## Path and Terminology Replacements
 
-Apply these replacements throughout the skill body:
+Apply throughout each body. Reference other skills and agents by name, never by path.
 
 | From | To |
 |---|---|
-| `.github/agents/` | `.cursor/skills/agents/` |
-| `.github/skills/` | `.cursor/skills/workflows/` |
-| `.github/prompts/` | `.cursor/skills/commands/` |
-| `.github/internal-prompts/` | `.cursor/skills/internal/` |
-| `.github/instructions/` | `.cursor/rules/` |
-| `*.instructions.md` | `*.mdc rules` |
-| `copilot-instructions.md` | `cursor-instructions.md` |
-| `tsh-copilot-*` (agent/skill names) | `tsh-cursor-*` |
-| `Copilot` (when referring to the IDE or customization context) | `Cursor` |
-| `GitHub Copilot` | `Cursor AI IDE` |
+| `.github/agents/`, `.github/skills/`, `.github/prompts/`, `.github/internal-prompts/` (as links or paths) | "the `tsh-<name>` subagent" or "the `tsh-<name>` skill" |
+| `.github/instructions/`, `*.instructions.md` | "project instructions (`AGENTS.md`, `CLAUDE.md`, scoped rules)" |
+| `copilot-instructions.md` | `AGENTS.md` |
+| `tsh-copilot-*` names | a tool-neutral `tsh-` name that follows the naming rules of the artifact type |
+| `GitHub Copilot`, `Copilot` (as the tool) | neutral wording ("the assistant"), or the specific tool when the sentence is about one |
+| Copilot tool names and chat syntax (`@agent`, `#file`) | generic verbs ("search the codebase", "read the file") and "the `tsh-<name>` subagent" |
 
-Do NOT replace `Copilot` when it appears inside a code example, a historical reference, or a comparison context (e.g., "migrating from Copilot").
+Do NOT replace `Copilot` inside code examples, historical references or comparisons such as "migrating from Copilot".
 
 ## Decision Rules
 
-**When to add `disable-model-invocation: true`:**
-- Always for commands (`.github/prompts/`) and internal prompts (`.github/internal-prompts/`)
-- Never for agents (`.github/agents/`) or workflow skills (`.github/skills/`)
-
-**When to add `> Recommended model:`:**
-- Always, for every converted agent and internal skill — carry over from `model:` frontmatter
-- If no `model:` existed, omit the line (don't guess)
-
-**When to add `> Recommended tools:`:**
-- Always, for agents — carry over from `tools:` frontmatter after stripping removed tools
-- For workflow skills and commands, omit (they don't have tool access)
+- **Type of a prompt:** a prompt with an `agent:` field becomes a `command` routed to that agent. A prompt without one that is only loaded by other prompts becomes `internal`. A prompt that holds reusable domain knowledge becomes a `skill`, and the command stays thin.
+- **Naming:** commands and internal steps `tsh-<verb>[-<object>]`; knowledge skills `tsh-<gerund>-<object>`; agents and orchestrators `tsh-<role>`. Use American spelling.
+- **Visibility:** never set invocation flags by hand in a neutral source. The `type` decides them.
+- **Model:** the tier belongs to the agent. A prompt's `model:` is dropped.
 
 ## Conversion Process
 
 ```
 Conversion progress:
-- [ ] Step 1: Identify artifact type and determine target directory + filename
-- [ ] Step 2: Convert frontmatter fields
-- [ ] Step 3: Add Recommended model / tools lines at top of body (if applicable)
-- [ ] Step 4: Apply path and terminology replacements throughout body
-- [ ] Step 5: Strip or replace removed tools (vscode/*)
-- [ ] Step 6: Convert handoffs/agents frontmatter to body sections (if applicable)
-- [ ] Step 7: Verify the directory name matches the `name` field in frontmatter
-- [ ] Step 8: Check that no `.github/` paths remain in the body
-- [ ] Step 9: Check that no Copilot IDE terminology remains (in non-comparison contexts)
-- [ ] Step 10: Update any cross-references in other skills that may point to the old path
+- [ ] Step 1: Choose the target (neutral source or native files) and the artifact type
+- [ ] Step 2: Create the file at the mapped location with a valid name
+- [ ] Step 3: Convert the frontmatter fields using the table above
+- [ ] Step 4: Apply path and terminology replacements in the body
+- [ ] Step 5: Replace tool handling (ask, delegation) as described
+- [ ] Step 6: Convert handoffs to "Suggested next steps" and agents to delegates
+- [ ] Step 7: Check that no `.github/` paths or Copilot tool syntax remain
+- [ ] Step 8: Run the generator and checks, or validate against the creating skills
+- [ ] Step 9: Update cross-references in other artifacts
 ```
 
 ## Post-Conversion Checks
 
-After converting, verify:
-
-1. **Cross-references** — search for the old filename in all `.cursor/skills/**` files; update any that reference the old path
-2. **Agent delegation blocks** — if the converted artifact is an agent, check whether the `tsh-engineering-manager` skill or other orchestrators need a new delegation block
-3. **Documentation** — if `website/docs/` exists, create or update the corresponding docs page following the same naming and structure as existing pages
-4. **Naming conventions** — verify the `tsh-` prefix is present and the directory name matches `name` in frontmatter
+1. **Names resolve:** every skill, agent and command named in the converted body exists; `routes-to` resolves.
+2. **Cross-references:** search the project for the old names and update them, by name and not by path.
+3. **Delegation:** an agent that used to delegate is now an orchestrator; check whether the orchestrators or commands that call it need updating.
+4. **Documentation:** if `website/docs/` exists, create or update the corresponding page in the same style as the existing ones.
+5. **Validation:** with a neutral source `npm run check` passes with no new baseline entries; otherwise walk through the checklist of the matching creating skill.
 
 ## Connected Skills
 
-- `tsh-creating-agents` — when the converted artifact is a new agent, follow agent creation conventions
-- `tsh-creating-skills` — when the converted artifact is a new workflow skill, follow skill creation conventions
-- `tsh-creating-commands` — when the converted artifact is a new slash command
-- `tsh-creating-rules` — when converting `.instructions.md` files to `.mdc` rules
-- `tsh-analyzing-codebase` — to understand the existing skill structure before placing new files
+- `tsh-creating-agents` - when the converted artifact is an agent or orchestrator, for the schema and per-tool mapping
+- `tsh-creating-skills` - when the converted artifact is a skill, for the schema, naming and layout
+- `tsh-creating-commands` - when the converted artifact is a slash command
+- `tsh-creating-rules` - when converting instruction files to `AGENTS.md` or scoped rules
+- `tsh-analyzing-codebase` - to understand the existing structure before placing new files

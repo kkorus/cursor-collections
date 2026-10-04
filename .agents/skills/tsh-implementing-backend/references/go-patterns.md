@@ -17,7 +17,7 @@ Go-specific patterns for the `tsh-implementing-backend` skill. Load this referen
 | Approach | When to Use |
 |---|---|
 | Manual constructor injection | Simple projects, few dependencies |
-| Wire (Google) | Compile-time DI with code generation |
+| Wire (Google) | Compile-time DI with code generation. Verify the repository is still maintained before adopting it for new projects. |
 | Fx (Uber) | Runtime DI with lifecycle management |
 
 ### Manual Constructor Injection
@@ -228,7 +228,7 @@ func (h *UsersHandler) Create(c *gin.Context) {
 
 ```dockerfile
 # Build stage
-FROM golang:1.22-alpine AS builder
+FROM golang:<current-stable>-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
@@ -236,7 +236,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /out/server ./cmd/server
 
 # Production stage
-FROM alpine:3.19
+FROM alpine:<current-stable>
 WORKDIR /app
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /out/server .

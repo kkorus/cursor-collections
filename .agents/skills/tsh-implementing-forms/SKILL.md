@@ -58,7 +58,7 @@ Create composable field wrapper components that connect the form library's state
   - `aria-describedby` pointing to the error message element's `id`.
   - `aria-required="true"` for required fields.
 - Supports all relevant input types: text, select, checkbox, radio, textarea, date, file upload.
-- For file inputs: hide the native `<input type="file">` visually and use a styled trigger button with `aria-label`. Display selected file name(s), size, and a remove action. Validate file type and size in the schema — reject invalid files before upload begins.
+- For file inputs: keep the native `<input type="file">` in the DOM and focusable, but visually hidden with a visually-hidden utility (clip/1px size, not `display: none`, `visibility: hidden` or `hidden`, which remove it from the tab order and the accessibility tree). Associate a visible `<label for="...">` with it and style that label as the trigger button, so clicking, keyboard activation (Enter/Space on the focused input) and screen readers all work. Show a visible focus indicator on the label when the input has focus (`:focus-visible` on the input with a sibling selector, or `:focus-within`). Display selected file name(s), size, and a remove action. Validate file type and size in the schema and reject invalid files before upload begins; do not rely on the `accept` attribute alone.
 - Keeps the wrapper generic — the same field component works for different forms by accepting the field name as a parameter.
 
 **Step 3: Compose the form**
@@ -148,7 +148,8 @@ Form:
 
 ## Connected Skills
 
-- `tsh-implementing-frontend` — for component composition patterns and framework-specific references (form library integration, validation library choice)
+- `tsh-implementing-frontend` — for component composition patterns
+- `tsh-implementing-react` — for React hooks and effect patterns when building form components
 - `tsh-ensuring-accessibility` — for WCAG compliance in form fields, labels, and error announcements
 - `tsh-writing-hooks` — for custom form-related hooks/composables (useFormField, useMultiStepForm)
 - `tsh-reviewing-frontend` — for form-specific review criteria during code review

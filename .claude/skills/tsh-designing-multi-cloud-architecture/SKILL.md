@@ -21,10 +21,10 @@ Design cloud-agnostic architectures and make informed decisions about service se
 | AWS     | Azure               | GCP             | Use Case           |
 | ------- | ------------------- | --------------- | ------------------ |
 | EC2     | Virtual Machines    | Compute Engine  | IaaS VMs           |
-| ECS     | Container Instances | Cloud Run       | Containers         |
+| ECS     | Container Apps      | Cloud Run       | Managed containers |
 | EKS     | AKS                 | GKE             | Kubernetes         |
-| Lambda  | Functions           | Cloud Functions | Serverless         |
-| Fargate | Container Apps      | Cloud Run       | Managed containers |
+| Lambda  | Functions           | Cloud Run functions | Serverless     |
+| Fargate | Container Instances | Cloud Run       | Serverless containers |
 
 ### Storage Services
 
@@ -41,7 +41,8 @@ Design cloud-agnostic architectures and make informed decisions about service se
 | ----------- | ---------------- | ------------- | --------------- |
 | RDS         | SQL Database     | Cloud SQL     | Managed SQL     |
 | DynamoDB    | Cosmos DB        | Firestore     | NoSQL           |
-| Aurora      | PostgreSQL/MySQL | Cloud Spanner | Distributed SQL |
+| Aurora      | Hyperscale / PostgreSQL Flexible Server | AlloyDB | Cloud-native MySQL/PostgreSQL |
+| Aurora DSQL | (no direct equivalent) | Cloud Spanner | Distributed SQL |
 | ElastiCache | Cache for Redis  | Memorystore   | Caching         |
 
 **Reference:** See `references/service-comparison.md` for complete comparison
@@ -100,24 +101,9 @@ Cloud Provider APIs
 AWS / Azure / GCP
 ```
 
-## Cost Comparison
+## Cost
 
-### Compute Pricing Factors
-
-- **AWS:** On-demand, Reserved, Spot, Savings Plans
-- **Azure:** Pay-as-you-go, Reserved, Spot
-- **GCP:** On-demand, Committed use, Preemptible
-
-### Cost Optimization Strategies
-
-1. Use reserved/committed capacity (30-70% savings)
-2. Leverage spot/preemptible instances
-3. Right-size resources
-4. Use serverless for variable workloads
-5. Optimize data transfer costs
-6. Implement lifecycle policies
-7. Use cost allocation tags
-8. Monitor with cloud cost tools
+Pricing models, discounts, storage tiering and cost governance are owned by `tsh-optimizing-cloud-cost`. Use it for the cost side of a service choice. From the multi-cloud view, the levers are to minimize cross-cloud data transfer, use Spot VMs for fault-tolerant work and keep tagging consistent across clouds.
 
 **Reference:** See `references/multi-cloud-patterns.md`
 

@@ -6,7 +6,7 @@
 
 ## Analysis
 
-### To Be Implemented
+### To Be Created
 Items that need to be fully created from scratch:
 
 | # | Component/Feature | Description | Complexity |
@@ -31,7 +31,7 @@ Items that already exist and can be used as-is:
 
 | Category | Count |
 |---|---|
-| To Be Implemented | <count> |
+| To Be Created | <count> |
 | To Be Modified | <count> |
 | To Be Reused | <count> |
 | **Total Scope** | <total> |

@@ -81,7 +81,7 @@ Use exactly one `STATUS` value and only the fields that apply. Keep the field na
 - `tsh-discovering-technical-context` - to understand project conventions, coding standards, and established patterns to review against.
 - `tsh-designing-databases` - when reviewing database-related code: validating SQL quality, index coverage, query performance, schema design, migration safety, ORM usage patterns, and transaction/locking strategies.
 - `tsh-reviewing-frontend` - for frontend-specific review criteria: component quality, hooks correctness, rendering issues, accessibility and performance spot-checks.
-- `tsh-engineering-prompts` - when reviewing LLM prompt code: verify prompt injection defenses, proper delimiter separation, output format specification, no hardcoded role/persona in user prompts. To detect: search for prompt/template files (e.g., `prompts/` directory, `*.prompt.txt`) and LLM client usage in code (`openai`, `anthropic`, `bedrock`, `converse`, `langchain`).
+- `tsh-engineering-prompts` - when the change contains LLM-integrated code (see the "LLM-integrated code" section of `tsh-reviewing-code` for how to detect it): verify prompt injection defenses, delimiter separation, output format specification and that no role or persona is hardcoded in user prompts.
 
 ## Tool Usage Guidelines
 

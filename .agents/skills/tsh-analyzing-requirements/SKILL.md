@@ -1,73 +1,72 @@
 ---
 name: tsh-analyzing-requirements
-description: Analyzes a task description, expands its context, inspects the current state of the system in the context of the task, and gathers information from different sources to build a PRD or research document. Use when a task is missing requirements or context, or before planning a feature.
+description: Analyzes a task and builds its requirements context into a structured research document (.research.md), gathering information from Jira, Confluence, Figma, PDFs and the codebase and surfacing ambiguities as questions. Use when a task is missing requirements or context, before planning a feature, or when asked to research a task.
 metadata:
   short-description: Analyze a task and build its context and research document
 ---
 <!-- Generated from src/skills/tsh-analyzing-requirements/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
-# Task Analysis
+# Analyzing Requirements
 
-This skill helps you gather and expand context about a specific task to be developed, looks for gaps in the task description and helps to understand the current state of the system.
+Gather and expand the context of a task to be developed, find the gaps in its description, and record the current state of the system in the context of the task. The result is the research document that planning starts from. Do not provide implementation details: focus on requirements, user stories, acceptance criteria and key flows.
 
-## Task analysis process
+## Analysis process
 
 Use the checklist below and track your progress:
 
 ```
 Analysis progress:
-- [ ] Step 0: Determine input source
-- [ ] Step 1: Look for available external sources of information
-- [ ] Step 2: Gather information from all sources
-- [ ] Step 3: Identify gaps and ask clarification questions
-- [ ] Step 4: Based on the answers and gathered information finalize the research report
+- [ ] Step 1: Determine the input source
+- [ ] Step 2: Look for available external sources of information
+- [ ] Step 3: Gather information from all sources
+- [ ] Step 4: Identify gaps and ask clarification questions
+- [ ] Step 5: Finalize the research document
 ```
 
-**Step 0: Determine input source**
+**Step 1: Determine the input source**
 
 Before gathering information, determine how the task context was provided:
 
-- **Research & plan files exist** (`*.research.md`, `*.plan.md`): Read them as the primary source of requirements, acceptance criteria, scope, and definition of done.
-- **Jira ID / task ID provided**: Use it to fetch task details from external tools (Step 1).
-- **Context provided directly in the prompt**: When neither files nor a task ID are referenced, extract requirements, acceptance criteria, and scope from the user's message. Treat the prompt as the single source of truth. If critical information is missing, ask for clarification before proceeding.
-- **PDF files attached or referenced**: Use the `pdf-reader` tool to extract content from PDF documents before analyzing them. Treat the extracted content as a primary source alongside research files and Jira tasks.
+- **Research and plan files exist** (`*.research.md`, `*.plan.md`): read them as the primary source of requirements, acceptance criteria, scope and definition of done.
+- **Jira ID or task ID provided**: use it to fetch task details from external tools (Step 2).
+- **Context provided directly in the prompt**: when neither files nor a task ID are referenced, extract requirements, acceptance criteria and scope from the user's message and treat the prompt as the single source of truth. If critical information is missing, go to Step 4.
+- **PDF files attached or referenced**: extract their content with a PDF reading tool before analyzing them, and treat it as a primary source.
 
-This determination affects how much of Steps 1–2 you need to execute — if the context is already fully provided inline or in files, skip redundant external lookups.
+This determines how much of Steps 2 and 3 you need: if the context is already fully provided inline or in files, skip redundant external lookups.
 
-**Step 1: Look for available external sources of information**
+**Step 2: Look for available external sources of information**
 
-Check what tools are available. Look for common task and knowledge management tools like:
-- Atlassian Jira
-- Atlassian Confluence
-- Notion
-- Linear
-- Trello
+Check which tools are available, such as Atlassian Jira and Confluence, Notion, Linear and Trello. If GitHub tools are available, look for issues and discussions that match the task and the project.
 
-Check if GitHub tools is available and look for Spaces matching task and project.
+**Step 3: Gather information**
 
-**Step 2: Gather information**
+- For each available tool, look for task-related information, by ID if one was provided and otherwise by task domain and jobs to be done. Look at the connected tasks, subtasks and the epic, not only at the current task. Include parents and subtasks to get the full picture of the requirements.
+- Check all external links in the task, including the Confluence pages, knowledge base articles and designs. Read every attached or referenced PDF (requirements documents, client briefs, process descriptions, compliance documents) with a PDF reading tool and include the relevant findings.
+- Unless you were asked to research only non-frontend aspects, review every linked Figma design with the Figma tool and include the relevant information. This matters a lot for UI work.
+- Analyze the tech stack, industry and domain of the project to understand the best practices that apply.
+- Analyze the codebase against the task requirements: look for areas related to the task and record what exists for the Current Implementation Status section.
 
-For each available tool look for task related information on it. Make sure to look for by ID if provided and in case it being absent look by task domain and jobs to be done. When having access to task management tools make sure to focus not only on a current task but also connected tasks, subtasks and epic.
+**Step 4: Identify gaps and ask clarification questions**
 
-In case of any external links, knowledge base link or designs, make sure to thoroughly check them through.
+From the gathered information and the task description, find ambiguities and missing information. Ask the questions and do not proceed until they are answered or you are told to continue.
 
-Analyse the code base based on task requirements. Look for areas that will be related to given task.
+**Step 5: Finalize the research document**
 
-In case of any attached or referenced PDF files (requirements documents, client briefs, process descriptions, compliance documents), use the `pdf-reader` tool to extract their content and include relevant findings in the research report.
+Write the document following [assets/research.template.md](assets/research.template.md). Include all gathered information, findings and answered questions. Do not add or remove sections. Keep the file clear, concise and tailored to the development team.
 
-Find relevant information on knowledge base tools.
+Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>.research.md`, where `<task>` is the Jira ID or a short kebab-case task name and `<specs>` is resolved by the "Project output locations" step of the `tsh-discovering-technical-context` skill (default `specifications/`). Update the file whenever new information arrives.
 
-**Step 3: Identify gaps and ask clarification questions**
+## Delegated mode
 
-Based on the gathered information and task description, look for ambiguities or missing information. Create the questions and ask them to the user. Don't proceed until all questions are answered or you are directly told to continue.
+When your task starts with `MODE: delegated` (for example when the context engineer or a BA analysis worker runs this skill), the caller owns every question, every file write and, for the BA orchestrator, every Atlassian call. There is nobody to answer you:
 
-**Step 4: Based on the answers and gathered information finalize the research report**
-
-Generate a report following the `assets/research.template.md` structure. Make sure to provide all necessary information that you gathered, all findings and all answered questions.
-
-Don't add or remove any sections from the template. Follow the structure and naming conventions strictly to ensure clarity and consistency.
+- **Clarification questions:** do not ask the user. Put each question in `QUESTIONS` and mark the affected findings as open. If the missing answers block the document, return `NEEDS_INPUT`; otherwise continue with what you have and return `DONE` with the questions listed. When the caller re-delegates with `PRIOR_OUTPUT` and `USER_ANSWERS`, continue from the saved or returned document and treat the answers as authoritative.
+- **External sources (Jira, Confluence and other task tools):** use only the sources you were given and the tools your role lists. A role without an Atlassian tool (such as the BA analysis worker) works from the files and text in the task, or from the payload in `INPUT_ARTIFACTS`, and does not look up Jira or Confluence. Record anything you could not look up as a question.
+- **Saving the document:** write it only at the path the task names and only when you have write access. Otherwise return the complete document in the reply body, in the structure of `assets/research.template.md`, with `ARTIFACTS: none`, and let the caller save it.
+- **Everything else:** keep the steps and the document structure unchanged.
 
 ## Connected Skills
 
-- `tsh-analyzing-codebase` - for analyzing the existing codebase in the context of task requirements
-- `tsh-analyzing-implementation-gaps` - for understanding what already exists vs what needs to be built
+- `tsh-analyzing-codebase` - for analyzing the existing codebase in the context of the task requirements
+- `tsh-analyzing-implementation-gaps` - for the detailed comparison of what already exists against what must be built
+- `tsh-discovering-technical-context` - for the project conventions and the output locations

@@ -49,7 +49,7 @@ Before optimizing anything, establish baselines:
 - Check Core Web Vitals:
   - **LCP** (Largest Contentful Paint) — how fast the main content appears.
   - **CLS** (Cumulative Layout Shift) — how much the layout moves unexpectedly.
-  - **INP** (Interaction to Next Paint) — how fast the UI responds to user input.
+  - **INP** (Interaction to Next Paint) — how fast the UI responds to user input. INP is a field metric: read it from real-user data (CrUX, the `web-vitals` library, your RUM tool) or record real interactions in the DevTools Performance panel. Lab tools such as Lighthouse navigation runs do not report INP; use **TBT** (Total Blocking Time) as the lab proxy for responsiveness.
 - Use `performance.mark()` / `performance.measure()` for custom timing of specific operations.
 - Document baseline metrics — without baselines, you cannot prove improvement.
 
@@ -59,7 +59,7 @@ Reduce what ships to the user:
 
 - **Code split at route level**: Lazy-load routes so users download only the code they need. Use the framework's lazy-loading mechanism (dynamic imports) with loading boundaries at each route entry point.
 - **Split heavy components**: Large modals, charts, rich text editors, and data visualization components should load on demand when the user triggers them, not at initial page load.
-- **Named imports only**: Always use `import { Button } from 'lib'` — never `import * as Lib from 'lib'`. Wildcard imports defeat tree shaking and pull in the entire module.
+- **Named imports preferred**: Use `import { Button } from 'lib'`. Namespace imports (`import * as Lib from 'lib'`) are tree-shaken by modern bundlers (webpack, Rollup, esbuild, Vite) when the library ships ES modules, has `sideEffects` set correctly, and you access members statically (`Lib.Button`). They defeat tree shaking with CommonJS packages, dynamic member access (`Lib[name]`), or passing the namespace object around; use named imports in those cases. Confirm with the bundle analyzer.
 - **Barrel file awareness**: Barrel files (`index.ts`) that re-export everything from a folder can prevent tree shaking. For large libraries, prefer direct file imports (e.g., `import { Button } from 'lib/components/Button'`) over barrel imports.
 - **Audit dependencies**: Run dependency audit tools (`depcheck` or equivalent) regularly. Remove unused packages. Before adding a new dependency, check its bundle impact — a small utility should not cost 50KB.
 - **Analyze duplicate dependencies**: Multiple versions of the same library inflate the bundle. Check the bundle analyzer output for duplicates and resolve version conflicts.
@@ -69,9 +69,10 @@ Reduce what ships to the user:
 
 Reduce unnecessary re-render work:
 
-- **Component memoization**: Mark pure presentational components for memoization when they receive complex props and their parent re-renders frequently. Use a custom comparison function when props include objects that are structurally equal but referentially different. See the framework reference for the specific memoization API.
-- **Callback memoization**: Stabilize event handler references when passed as props to memoized children. Skip stabilization for handlers that are not passed down — the overhead provides no benefit. See the framework reference for the specific API.
-- **Computed value memoization**: Cache expensive computations — sorting or filtering large lists (1000+ items), complex data transformations, derived state calculations. Skip caching for trivial computations like simple arithmetic or string concatenation. See the framework reference for the specific API.
+- **Component memoization**: Mark pure presentational components for memoization when they receive complex props and their parent re-renders frequently. Use a custom comparison function when props include objects that are structurally equal but referentially different. See the framework skill (for React, `tsh-implementing-react`) for the specific memoization API.
+- **Callback memoization**: Stabilize event handler references when passed as props to memoized children. Skip stabilization for handlers that are not passed down — the overhead provides no benefit. See the framework skill (for React, `tsh-implementing-react`) for the specific API.
+- **React Compiler**: If the project uses the React Compiler, it memoizes automatically; measure before adding manual `React.memo`/`useMemo`/`useCallback`, and see the `tsh-implementing-react` skill for the caveats.
+- **Computed value memoization**: Cache expensive computations — sorting or filtering large lists (1000+ items), complex data transformations, derived state calculations. Skip caching for trivial computations like simple arithmetic or string concatenation. See the framework skill (for React, `tsh-implementing-react`) for the specific API.
 - **Avoid object/array literals in the render path**: Inline object/array expressions in the render path create a new reference every render cycle, defeating memoization on child components. Lift static values to module scope or cache dynamic ones.
 - **State granularity**: Keep state as close to where it is consumed as possible. Broad state at the top of the tree causes cascading re-renders. If your state management solution supports selective subscriptions or slices, use them to minimize re-render scope.
 - **Key stability**: Use stable, unique keys for list items (database IDs, UUIDs). Never use array indices as keys — index keys cause unnecessary unmount/remount when items are reordered, added, or removed.
@@ -87,7 +88,7 @@ Reduce unnecessary re-render work:
 
 **Step 5: Manage memory**
 
-Prevent leaks that degrade performance over time:
+Prevent leaks that degrade performance over time. For the cleanup contract of custom hooks, see the `tsh-writing-hooks` skill:
 
 - **Event listeners**: Every `addEventListener` must have a corresponding `removeEventListener` in the component's cleanup phase. Forgetting cleanup causes listeners to accumulate on long-lived pages.
 - **Timers**: Every `setTimeout` needs `clearTimeout` and every `setInterval` needs `clearInterval` in cleanup. Leaked intervals continue executing after the component is gone.
@@ -102,7 +103,7 @@ After applying optimizations, close the loop:
 - **Bundle size**: Run the project's build command and bundle analyzer. Compare chunk sizes against the baselines from Step 1. Flag any chunk still over 200KB gzipped.
 - **Lighthouse audit**: Run a Lighthouse audit against the application. Ask the user to provide two inputs:
   1. **URL to audit** — local dev server, staging/preview deployment, or production URL.
-  2. **Expected thresholds** (optional) — custom performance score or Core Web Vitals targets. If the user has no preference, use the defaults below.
+  2. **Expected thresholds** (optional) — custom performance score or Core Web Vitals targets. If the user has no preference, use the defaults below. Lighthouse is a lab tool: it reports TBT, not INP.
 
   Default thresholds (based on web.dev/Google recommendations):
 
@@ -110,14 +111,14 @@ After applying optimizations, close the loop:
   | ------------------------------- | ------- | ----------------- | ------- |
   | Lighthouse Performance Score    | ≥ 90    | 50–89             | < 50    |
   | LCP (Largest Contentful Paint)  | ≤ 2.5s  | 2.5s–4.0s         | > 4.0s  |
-  | INP (Interaction to Next Paint) | ≤ 200ms | 200ms–500ms       | > 500ms |
+  | TBT (Total Blocking Time, lab)  | ≤ 200ms | 200ms–600ms       | > 600ms |
   | CLS (Cumulative Layout Shift)   | ≤ 0.1   | 0.1–0.25          | > 0.25  |
 
   Execution steps:
   1. If the URL is local, verify the server is running (or start it using the project's dev/preview command from `package.json`).
   2. Run `npx lighthouse <URL> --output=json --output-path=./lighthouse-report.json --chrome-flags="--headless"`.
-  3. Parse the JSON report — extract performance score, LCP, INP, CLS values.
-  4. Compare each metric against the user's custom thresholds or the defaults above. Flag any metric in the "Needs Improvement" or "Poor" range.
+  3. Parse the JSON report — extract performance score, LCP, TBT, CLS values.
+  4. For INP, compare field data (CrUX or RUM: good ≤ 200ms, needs improvement 200ms–500ms, poor > 500ms) when it is available; otherwise report that INP could not be measured in the lab run. Compare each metric against the user's custom thresholds or the defaults above. Flag any metric in the "Needs Improvement" or "Poor" range.
   5. If a local server was started in step 1, stop it after the audit completes.
 
 - **Quantify the delta**: Every claimed improvement needs a number — e.g., "main chunk reduced from 280KB to 140KB gzipped", "LCP improved from 3.2s to 1.8s". If no measurable improvement, the optimization was either targeting the wrong bottleneck or introduced regression elsewhere — revert and re-profile.
@@ -140,7 +141,7 @@ After applying optimizations, close the loop:
 | --------------------------------------- | ---------------------------------------------------------- |
 | Single chunk over 200KB (gzipped)       | Code split — lazy-load routes or heavy features            |
 | Heavy date library (e.g., `moment.js`)  | Replace with lightweight alternative (`date-fns`, `dayjs`) |
-| Wildcard import (`import * as`)         | Switch to named imports for tree shaking                   |
+| Namespace import of a CJS or dynamically accessed module | Switch to named imports for tree shaking   |
 | Barrel re-exports pulling unused code   | Import directly from source file                           |
 | Unused dependencies in `package.json`   | Run audit tool and remove unused                           |
 | CSS framework loaded fully (not purged) | Enable CSS purging in build configuration                  |
@@ -154,7 +155,7 @@ Performance:
 - [ ] Routes lazy-loaded with loading boundaries/fallbacks
 - [ ] Heavy components (modals, charts) loaded on demand
 - [ ] Rendering strategy evaluated (SSR/SSG where applicable)
-- [ ] Named imports only — no wildcard imports
+- [ ] Named imports where namespace imports defeat tree shaking (CJS packages, dynamic access)
 - [ ] Memoization/caching applied where measured benefit exists
 - [ ] No object/array literals created in render path
 - [ ] State subscriptions are selective (not full-store)
@@ -186,7 +187,7 @@ Performance:
 
 The patterns above are framework-agnostic. For framework-specific optimization APIs, load the appropriate reference:
 
-- **React**: See the React patterns reference of the `tsh-implementing-frontend` skill — `React.memo`, `useMemo`, `useCallback`, `React.lazy`, `Suspense`.
+- **React**: Use the `tsh-implementing-react` skill — `React.memo`, `useMemo`, `useCallback`, `React.lazy`, `Suspense`, and the React Compiler.
 
 ## Connected Skills
 

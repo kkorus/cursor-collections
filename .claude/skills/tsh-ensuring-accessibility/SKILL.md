@@ -1,6 +1,6 @@
 ---
 name: tsh-ensuring-accessibility
-description: WCAG 2.1 AA compliance, semantic HTML, ARIA patterns, keyboard navigation, focus management, screen reader support, and color contrast requirements. Use when implementing accessible components, auditing UI for accessibility issues, reviewing frontend code for a11y compliance, or building inclusive forms and interactive widgets.
+description: WCAG 2.2 AA compliance, semantic HTML, ARIA patterns, keyboard navigation, focus management, screen reader support, and color contrast requirements. Use when implementing accessible components, auditing UI for accessibility issues, reviewing frontend code for a11y compliance, or building inclusive forms and interactive widgets.
 metadata:
   short-description: "WCAG accessibility: semantic HTML, ARIA, keyboard, contrast"
 ---
@@ -8,7 +8,7 @@ metadata:
 
 # Ensuring Accessibility
 
-Provides WCAG 2.1 AA compliance patterns for building inclusive frontend interfaces with proper semantic markup, keyboard navigation, focus management, and screen reader support.
+Provides WCAG 2.2 AA compliance patterns for building inclusive frontend interfaces with proper semantic markup, keyboard navigation, focus management, and screen reader support.
 
 <principles>
 
@@ -57,10 +57,10 @@ Select the correct HTML element for each piece of UI:
   - `<article>` — self-contained composition
   - `<section>` — thematic grouping (must have a heading)
   - `<details>` / `<summary>` — native expand/collapse
-- **Heading hierarchy**:
+- **Heading hierarchy** (best practice; WCAG requires headings that describe their sections, SC 1.3.1 and 2.4.6, but not one `<h1>` or unbroken levels):
   - One `<h1>` per page
   - Logical nesting: `h2` → `h3` → `h4`
-  - Never skip levels (e.g., `h2` → `h4`)
+  - Avoid skipping levels (e.g., `h2` → `h4`)
 - **Lists**:
   - `<ul>` / `<ol>` for collections of items
   - `<dl>` for key-value pairs (definition lists)
@@ -84,6 +84,8 @@ All interactive elements must be focusable. Native interactive elements (`<butto
   | Combobox       | Arrow keys to navigate options, Enter to select, Escape to close |
 
 - **Focus visibility** — never remove the focus outline (`outline: none`) without providing a visible replacement. Custom focus styles must have at least 3:1 contrast against adjacent colors.
+- **Focus not obscured (SC 2.4.11, AA)** — a focused element must not be entirely hidden by author-created content such as sticky headers, cookie banners or chat widgets. Use `scroll-padding-top`/`scroll-margin` for sticky headers and test tabbing through the page with them visible.
+- **Dragging alternatives (SC 2.5.7, AA)** — any action that uses dragging (sortable lists, sliders, drag-and-drop uploads, map panning) must also work with a single pointer without dragging, for example up/down buttons, a text input or click-to-place.
 - **Programmatic focus management** — move focus when context changes:
   - Modal opens → focus the first focusable element inside
   - Modal closes → return focus to the element that triggered it
@@ -130,6 +132,15 @@ Additional rules:
 - Test both light and dark themes if the application supports them.
 - Verify disabled states are visually distinguishable but don't need to meet contrast minimums (WCAG exempts disabled controls).
 
+**Target size (SC 2.5.8 Target Size (Minimum), AA, new in WCAG 2.2):** pointer targets must be at least 24×24 CSS pixels, unless an exception applies: enough spacing (a 24px-diameter circle centered on the target does not intersect another target), an equivalent control elsewhere, an inline target within a sentence, a user-agent-controlled control, or an essential presentation. 44×44 CSS pixels (SC 2.5.5 Target Size (Enhanced), AAA) and platform guidelines are recommended for primary touch targets but are not AA requirements.
+
+**Other WCAG 2.2 AA criteria to check in forms and flows:**
+
+- **SC 3.3.8 Accessible Authentication (Minimum):** do not require a cognitive function test (remembering a password, solving a puzzle, transcribing characters) without an alternative. Allow paste and password managers (no `autocomplete="off"` or paste blocking on login fields), and offer passkeys, email links or similar.
+- **SC 3.3.7 Redundant Entry (Level A):** do not make users re-enter information already provided in the same process; auto-populate or let them select it.
+- **SC 3.2.6 Consistent Help (Level A):** keep help mechanisms (contact, chat, FAQ link) in the same relative place across pages.
+- SC 4.1.1 Parsing was removed in WCAG 2.2; do not report it.
+
 **Step 5: Test with assistive technology**
 
 Run through these verification steps:
@@ -149,7 +160,7 @@ Run through these verification steps:
 3. **Zoom and reflow**:
    - At 200% zoom, is text resizable without loss of content or functionality? (SC 1.4.4)
    - At 400% zoom (320px viewport width), does content reflow without horizontal scrolling? (SC 1.4.10)
-   - Are touch targets generously sized? (44×44 CSS pixels recommended as best practice — not a WCAG 2.1 AA requirement)
+   - Are pointer targets at least 24×24 CSS pixels (SC 2.5.8, AA)? 44×44 is recommended for primary touch targets but is a best practice, not an AA requirement.
 
 4. **Accessibility tree inspection**:
    - Open browser devtools → Accessibility tab.
@@ -179,21 +190,12 @@ Run through these verification steps:
 | Current page      | —                         | `aria-current="page"` on nav link               |
 | Progress          | `<progress>`              | `role="progressbar"` + `aria-valuenow`          |
 
-## Contrast Requirements
-
-| Element                                           | Minimum ratio | Example                        |
-| ------------------------------------------------- | ------------- | ------------------------------ |
-| Normal text (< 24px)                              | 4.5:1         | Body text, labels, captions    |
-| Large text (≥ 24px / 18pt, or ≥ 19px / 14pt bold) | 3:1           | Headings, large labels         |
-| Interactive component boundaries                  | 3:1           | Button borders, input outlines |
-| Non-text (icons conveying info)                   | 3:1           | Status icons, chart segments   |
-
 ## Accessibility Checklist
 
 ```
 Accessibility:
 - [ ] Semantic HTML elements used (button, nav, main, etc.)
-- [ ] One h1 per page, logical heading hierarchy (no skipped levels)
+- [ ] Headings describe their sections; one h1 per page and no skipped levels (best practice)
 - [ ] All interactive elements keyboard-navigable
 - [ ] Focus visible on every interactive element
 - [ ] Tab order follows visual/logical layout
@@ -206,6 +208,10 @@ Accessibility:
 - [ ] ARIA landmarks present (header, main, nav, footer)
 - [ ] Text resizable to 200% without loss of content (SC 1.4.4)
 - [ ] Content reflows at 400% zoom / 320px width without horizontal scroll (SC 1.4.10)
+- [ ] Focused elements are not hidden by sticky or overlay content (SC 2.4.11)
+- [ ] Drag interactions have a single-pointer alternative (SC 2.5.7)
+- [ ] Pointer targets are at least 24×24 CSS px or meet an exception (SC 2.5.8)
+- [ ] Authentication does not depend on a cognitive function test without an alternative (SC 3.3.8)
 ```
 
 ## RTL / Bidirectional Text Support

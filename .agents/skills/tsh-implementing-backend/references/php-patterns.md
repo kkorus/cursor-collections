@@ -196,7 +196,7 @@ class User extends Model
 
 ```dockerfile
 # Build stage
-FROM php:8.3-fpm-alpine AS builder
+FROM php:<current-supported>-fpm-alpine AS builder
 WORKDIR /app
 RUN apk add --no-cache $PHPIZE_DEPS \
     && docker-php-ext-install pdo pdo_pgsql opcache
@@ -206,7 +206,7 @@ COPY . .
 RUN composer dump-autoload --optimize
 
 # Production stage
-FROM php:8.3-fpm-alpine
+FROM php:<current-supported>-fpm-alpine
 WORKDIR /app
 RUN apk add --no-cache \
     && docker-php-ext-install pdo pdo_pgsql opcache

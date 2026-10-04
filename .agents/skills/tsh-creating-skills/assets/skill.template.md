@@ -1,159 +1,78 @@
----
-# ============================================================
-# REQUIRED FIELDS
-# ============================================================
-# name:
-#   - Gerund form: {verb-ing}-{object} (e.g., tsh-creating-agents, reviewing-code)
-#   - Lowercase letters, numbers, and hyphens only
-#   - 1–64 characters (aim for under 20 — used as /slash-commands)
-#   - Must NOT start/end with hyphen or contain consecutive hyphens (--)
-#   - Must match the parent directory name exactly
-#   - Must NOT contain "anthropic" or "claude"
-name: <skill-name>
+# Skill Template
 
-# description:
-#   - 1–1024 characters, non-empty
-#   - Third person only (never "I", "you", "we")
-#   - Must describe WHAT the skill does AND WHEN to use it
-#   - Include specific keywords for agent discovery
-#   - Formula: {capabilities}. {triggers and contexts}.
-description: "<What the skill does — core capabilities>. <When to use it — triggers, contexts, and keywords>."
-
-# ============================================================
-# OPTIONAL FIELDS
-# ============================================================
-# paths:
-#   Glob patterns that scope this skill to specific files.
-#   When set, the skill is only surfaced when the agent works with matching files.
-#   Examples:
-#     paths: "**/*.tsx"
-#     paths:
-#       - "**/*.tsx"
-#       - "packages/ui/**/*.ts"
-#   Leave unset for skills available regardless of which files are open.
-#
-# disable-model-invocation: true
-#   When true, this skill is only included when explicitly invoked via /skill-name.
-#   The agent will not automatically apply it based on context.
-#   Use for entry-point commands that should never auto-trigger.
-#
-# metadata:
-#   author: your-org
-#   version: "1.0"
----
-
-<!-- GUARD: This file defines HOW to perform a specific task. Do NOT define
-     agent personality or behavior here (those belong in .cursor/skills/agents/).
-     Do NOT define workflow entry points here (those belong in .cursor/skills/commands/).
-     Keep instructions concise — only add context the LLM doesn't already have. -->
-
-<!-- Skill Title -->
-
-# <Skill Title>
-
-<!-- REQUIRED: Introduction (1-2 sentences, third person) -->
-
-<What the skill does in one sentence — third person, no "you" or "I">.
-
-<!-- OPTIONAL: Core Principles -->
-
-<!--
-<principles>
-
-<principle-name>
-Description of this principle and why it matters for this skill.
-</principle-name>
-
-<another-principle>
-Description of another foundational rule.
-</another-principle>
-
-</principles>
--->
-
-<!-- REQUIRED: Process / Workflow -->
+Fill-in template for `src/skills/<name>/SKILL.md`. Copy the block under "Template", replace every `<placeholder>`, delete the optional parts you do not need. Omit this header and the `## Contents` section from the finished skill.
 
 ## Contents
 
-_Template navigation only: omit this section from the generated document._
+- [Template](#template)
+- [Notes](#notes)
 
-- [<Skill Process Name> Process](#skill-process-name-process)
-- [Quick Reference](#quick-reference)
-- [Examples](#examples)
-- [Validation Checklist](#validation-checklist)
-- [Connected Skills](#connected-skills)
+## Template
 
-## <Skill Process Name> Process
+```markdown
+---
+name: tsh-<name>                 # == folder name; gerund first for type skill, imperative verb for command/internal
+description: >-
+  <What the skill does, core capabilities>. Use when <triggers, contexts and keywords>.
+type: skill                      # skill | command | internal | orchestrator
+# paths: ["**/*.tsx"]            # optional, type skill only: activate for matching files
+# requires-mcp: [context7]       # optional: servers defined in src/mcp/servers.json
+# license: MIT                   # optional
+metadata:
+  short-description: "<at most 120 characters>"
+---
+
+# <Skill Title>
+
+<What the skill does in one sentence, third person, no "you" or "I".>
+
+<!-- Optional: foundational rules -->
+<principles>
+
+<principle-name>
+<Why this principle matters for the skill.>
+</principle-name>
+
+</principles>
+
+## <Process Name> Process
 
 Use the checklist below and track your progress:
 
-```
-Progress:
-- [ ] Step 1: <step title>
-- [ ] Step 2: <step title>
-- [ ] Step 3: <step title>
-- [ ] Step 4: <step title>
-```
+    Progress:
+    - [ ] Step 1: <step title>
+    - [ ] Step 2: <step title>
+    - [ ] Step 3: <step title>
 
 **Step 1: <Step title>**
 
-<Detailed instructions for this step. Be specific about what to do, what tools to use, and what to produce.>
+<What to do, what to use and what to produce.>
 
 **Step 2: <Step title>**
 
-<Detailed instructions for this step.>
+<Instructions.>
 
 **Step 3: <Step title>**
 
-<Detailed instructions for this step.>
+<Instructions.>
 
-**Step 4: <Step title>**
+<!-- Optional: quick-reference table, examples, validation checklist -->
 
-<Detailed instructions for this step.>
-
-<!-- OPTIONAL: Reference Tables -->
-
-<!--
 ## Quick Reference
 
 | Rule | Description |
-|------|-------------|
-| <rule-1> | <description> |
-| <rule-2> | <description> |
--->
-
-<!-- OPTIONAL: Common Patterns / Examples -->
-
-<!--
-## Examples
-
-**Example 1: <scenario>**
-
-Input: <what the agent receives>
-Output: <what the agent should produce>
-
-**Example 2: <scenario>**
-
-Input: <what the agent receives>
-Output: <what the agent should produce>
--->
-
-<!-- OPTIONAL: Validation Checklist -->
-
-<!--
-## Validation Checklist
-
-```
-Validation:
-- [ ] <check-1>
-- [ ] <check-2>
-- [ ] <check-3>
-```
--->
-
-<!-- REQUIRED: Connected Skills -->
+|---|---|
+| <rule> | <description> |
 
 ## Connected Skills
 
-- `<skill-name-1>` - <when/why to use this related skill>
-- `<skill-name-2>` - <when/why to use this related skill>
+- `tsh-<other-skill>` - <when and why to load it>
+```
+
+## Notes
+
+- Instructions stay neutral: no tool-specific syntax, no path references to other skills, no `../` links. Link only to this skill's own `references/` and `assets/` files.
+- Do not define an agent persona here (that belongs in `src/agents/`) and do not define workflow entry points here (those are `type: command` skills).
+- Add shared text with `<!-- include: <partial-name> -->` instead of copying it.
+- A `command` additionally needs `routes-to` and optionally `argument-hint`; use the command template of the `tsh-creating-commands` skill.
+- Keep instructions concise: add only context the model does not already have.

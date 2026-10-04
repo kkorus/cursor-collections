@@ -1,6 +1,7 @@
 ---
 name: tsh-review-ui
 description: Single-pass UI verification comparing implementation against Figma design. Use when the user types /tsh-review-ui, asks to verify a UI component, or wants to compare the running app against Figma. Routes to the tsh-ui-reviewer agent.
+argument-hint: <figma-url> <dev-url> [component]
 disable-model-invocation: true
 metadata:
   short-description: Verify a UI implementation against its Figma design
@@ -11,17 +12,11 @@ metadata:
 
 Delegate to the `tsh-ui-reviewer` subagent. Perform a single verification pass comparing the current implementation against the Figma design. Report all differences found — do not fix code.
 
-This skill can be used standalone (user invokes directly) or the same verification is performed when `tsh-ui-reviewer` is called as a subagent from `/tsh-implement`.
-
-## Required Skills
-
-Before starting, load and follow these skills:
-
-- `tsh-verifying-ui` — verification process, criteria, tolerances, severity definitions, report format
+Arguments: the Figma URL, the running dev server URL and optionally the component or section name. Pass them to the subagent. If one is missing, ask the user before delegating.
 
 ## Workflow
 
-Follow the 5-step verification process in `tsh-verifying-ui`. The skill contains the complete workflow including:
+The subagent loads the `tsh-verifying-ui` skill (process, criteria, tolerances, severity definitions, report format) and follows its 5-step verification process:
 
 1. Validate inputs (Figma URL + running dev server)
 2. Get EXPECTED from Figma via `figma`

@@ -148,10 +148,19 @@ dotnet ef database update
 
 | Tool | Integration |
 |---|---|
-| Swashbuckle | Auto-generates OpenAPI from controllers and XML docs |
+| `Microsoft.AspNetCore.OpenApi` | Built-in OpenAPI document generation (`AddOpenApi()` / `MapOpenApi()`), the default from .NET 9 |
+| Swashbuckle | Auto-generates OpenAPI and Swagger UI from controllers and XML docs; use when the project is on it already or needs its UI |
 | NSwag | Alternative with client generation support |
 
-### Setup
+### Setup (built-in OpenAPI, .NET 9 or later)
+
+```csharp
+builder.Services.AddOpenApi();
+// ...
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
+```
+
+### Setup (Swashbuckle)
 
 ```csharp
 builder.Services.AddEndpointsApiExplorer();
@@ -175,7 +184,7 @@ builder.Services.AddSwaggerGen(c =>
 
 ```dockerfile
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:<current-lts> AS builder
 WORKDIR /app
 COPY *.csproj ./
 RUN dotnet restore
@@ -183,7 +192,7 @@ COPY . .
 RUN dotnet publish -c Release -o /out
 
 # Production stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:<current-lts>
 WORKDIR /app
 COPY --from=builder /out .
 RUN addgroup --gid 1001 appgroup && adduser --uid 1001 --gid 1001 --disabled-password appuser

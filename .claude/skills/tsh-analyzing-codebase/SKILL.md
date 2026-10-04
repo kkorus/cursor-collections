@@ -1,6 +1,6 @@
 ---
 name: tsh-analyzing-codebase
-description: "Analyzes the codebase of a system: its dependencies, how the business logic is implemented, and where code is duplicated. Use when onboarding to an unfamiliar repository, mapping a system before a change, or producing a codebase analysis document."
+description: "Analyzes the whole codebase of a system: its structure, dependencies, architecture, business logic, dead code and duplications, and runs code quality audits with a report. Use when onboarding to an unfamiliar repository, mapping a system before a change, producing a codebase analysis document, or auditing code quality. NOT for per-task conventions (use tsh-discovering-technical-context)."
 metadata:
   short-description: "Analyze a codebase: dependencies, business logic, duplications"
 ---
@@ -121,13 +121,19 @@ Look for code that is only used in their own test files and can be moved there o
 
 ## Large codebase
 
-The process might take a while and because of that create a document containing a section for each step.
+The process might take a while and because of that create a document containing a section for each step. Save it as `specifications/codebase-analysis/codebase-analysis.md` (or the path the caller gives you).
 
 During the processing make sure to update the document over the time.
 
+## Code Quality Audit
+
+For a code quality audit (dead code, duplications, improvement opportunities, architecture review), use the checklists in [references/audit-checklists.md](references/audit-checklists.md) for each layer or app, and write the result with [assets/code-quality-report.template.md](assets/code-quality-report.template.md). The audit report is saved as `specifications/code-quality/code-quality-report.md`. In a monorepo, each app, package and shared library is audited and reported separately.
+
+The `/tsh-audit-codebase` command runs this audit: it fans out one architect subagent per layer and compiles the report in the main thread.
+
 ## Report
 
-When using this skill standalone (or when the user explicitly requests a separate codebase-analysis report), save the analysis results as a standalone document following the `assets/codebase-analysis.template.md` template.
+When using this skill standalone for an analysis (or when the user explicitly requests a separate codebase-analysis report), save the analysis results as a standalone document following the `assets/codebase-analysis.template.md` template.
 When this skill is invoked by another prompt or workflow that defines its own required output file/template, embed the relevant findings into that caller's required output instead of creating a separate codebase-analysis report, unless the user explicitly asks for one.
 
 For standalone reports following `assets/codebase-analysis.template.md`, don't add or remove any sections from the template. Follow the structure and naming conventions strictly to ensure clarity and consistency.
@@ -136,5 +142,6 @@ For monorepo repositories, duplicate the relevant sections (Backend Analysis, Fr
 ## Connected Skills
 
 - `tsh-discovering-technical-context` — for the project conventions and patterns the analysis should respect
+- `tsh-reviewing-code` — for the code quality standards applied during an audit
 - `tsh-analyzing-implementation-gaps` — for comparing a plan with the analyzed current state
 - `tsh-designing-architecture` — for turning analysis findings into a technical design

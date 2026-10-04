@@ -1,105 +1,32 @@
 ---
 name: tsh-audit-infrastructure
-description: Audit infrastructure for security gaps, cost waste, and best practices violations. Use when the user types /tsh-audit-infrastructure or asks to audit cloud infrastructure. Routes to the tsh-devops-engineer agent.
+description: Audit infrastructure for security gaps, operational best-practice violations and configuration drift across IaC, CI/CD pipelines, Kubernetes and cloud resources. Use when the user types /tsh-audit-infrastructure or asks to audit cloud infrastructure. For a dedicated cost and tagging audit use /tsh-analyze-cloud-costs. Routes to the tsh-devops-engineer agent.
+argument-hint: "[aws|azure|gcp|kubernetes|ci-cd] [security|cost|best-practices|all]"
 disable-model-invocation: true
 metadata:
-  short-description: Audit infrastructure for security, cost and best practices
+  short-description: Audit infrastructure for security and best practices
 ---
 <!-- Generated from src/skills/tsh-audit-infrastructure/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # /tsh-audit-infrastructure
 
-Delegate to the `tsh-devops-engineer` subagent. Perform a comprehensive infrastructure audit to identify security vulnerabilities, cost optimization opportunities, and best practices violations across your cloud environment. Systematically examine IaC configurations, CI/CD pipelines, and cloud resources to produce an actionable audit report with prioritized findings.
-
-The audit covers three key dimensions: security (IAM, encryption, network exposure, secrets), cost (unused resources, rightsizing, reservations), and operational excellence (tagging, IaC coverage, documentation). Findings are classified by severity and linked to remediation skills for immediate action.
+Audit the project's infrastructure for security gaps, cost waste indicators and best-practices violations, and produce a prioritized report. The scope is broad and shallow: IaC configuration, CI/CD pipelines, Kubernetes and cloud resources. A full cost and tagging audit of an AWS account or GCP project is a different, deeper job and belongs to `/tsh-analyze-cloud-costs`.
 
 ## Required Skills
-Before starting, load and follow these skills:
-- `tsh-optimizing-cloud-cost` - for cost analysis patterns, rightsizing, and reservation recommendations
-- `tsh-managing-secrets` - for secrets management audit criteria and exposure risk assessment
-- `tsh-analyzing-codebase` - to review IaC files, CI/CD configurations, and documentation coverage
 
----
+- `tsh-discovering-technical-context` - project conventions, IaC dialect and existing infrastructure
+- `tsh-delivering-infrastructure` - the audit report template (`assets/infrastructure-audit-report.template.md`) and the severity scale
+- `tsh-analyzing-codebase` - reviewing IaC files, CI/CD configuration and documentation coverage
+- `tsh-optimizing-cloud-cost` - unused resources, rightsizing and reservation findings
+- `tsh-managing-secrets` - secrets audit criteria and exposure risk
 
-## 1. Context
+## Workflow
 
-Determine audit scope (if not provided):
-- **What to audit?** AWS, Azure, GCP, Kubernetes, CI/CD
-- **Focus areas?** Security, cost, best practices, or all
-- **Compliance requirements?** SOC2, HIPAA, PCI-DSS, or none
-
-Additionally, always:
-- Check project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) → project-specific conventions
-- Analyze existing IaC files and CI/CD configurations
-- Discover existing infrastructure patterns in the codebase
-
----
-
-## 2. Assessment
-
-Follow the relevant skills to audit each focus area:
-- **Security**: IAM, encryption, network exposure, compliance
-- **Cost**: Follow `tsh-optimizing-cloud-cost` skill for unused resources, rightsizing, reservations
-- **Secrets**: Follow `tsh-managing-secrets` skill for exposure risks
-- **Best practices**: Tagging, IaC coverage, documentation
-
-Classify findings by severity:
-- **Critical**: Immediate security risk or compliance violation
-- **High**: Significant cost waste or security gap
-- **Medium**: Best practice deviation with moderate impact
-- **Low**: Minor improvements or nice-to-haves
-
----
-
-## 3. Architect Consultation
-
-Spawn `tsh-architect` sub-agent when findings require architectural changes:
-- Security findings requiring network redesign
-- Cost findings requiring infrastructure re-architecture
-- Compliance gaps requiring structural changes
-
-Skip for: adding tags, updating configurations, simple fixes.
-
----
-
-## 4. Summary (required output)
-
-```markdown
-## Infrastructure Audit Summary
-
-### Executive Summary
-- Overall health: Critical / Warning / Good
-- Findings: X Critical, Y High, Z Medium, W Low
-- Top 3 priorities
-
-### Security Findings
-| Severity | Finding | Resource | Recommendation |
-|----------|---------|----------|----------------|
-
-### Cost Findings
-| Severity | Finding | Monthly Impact | Recommendation |
-|----------|---------|----------------|----------------|
-
-### Best Practices Findings
-| Severity | Finding | Area | Recommendation |
-|----------|---------|------|----------------|
-
-### Quick Wins
-- [list immediate actions with high impact and low effort]
-
-### Remediation Roadmap
-1. [Critical] Description → the `tsh-implement-terraform` skill
-2. [High] Description → the `tsh-deploy-kubernetes` skill
-3. [Medium] Description → the `tsh-implement-observability` skill
-```
-
----
-
-## Scope
-
-**Does NOT handle** (redirect to):
-- Implementing fixes → delegate to the `tsh-devops-engineer` subagent and load the matching internal skill: `tsh-implement-terraform`, `tsh-deploy-kubernetes`, `tsh-implement-pipeline`, or `tsh-implement-observability` (`.cursor/skills/internal/<name>/SKILL.md`)
-- Application code security → coordinate with software engineer
+1. **Scope**: from the arguments, or by asking the user when they are missing, establish what to audit (AWS, Azure, GCP, Kubernetes, CI/CD), the focus (security, cost, best practices or all) and any compliance requirement (SOC2, HIPAA, PCI-DSS or none).
+2. **Delegate the audit** to the `tsh-devops-engineer` subagent with the template below. Name the scope, the focus areas, the skills above and the report template in `TASK`, and ask for the report to be saved to `specifications/infrastructure-audit-<yyyy-mm-dd>.md`. The report must not contain paths that belong to the AI toolkit itself. The audit is read-only and the agent's Zero-Deletion Policy applies.
+3. **Handle the status** as described below. For `NEEDS_ARCHITECT_DECISION` (findings that need network redesign, re-architecture or structural compliance changes), delegate the decision to the `tsh-architect` subagent, then delegate to `tsh-devops-engineer` again with the previous status block followed by the architect's answer in `PRIOR_OUTPUT`.
+4. **Present the result**: show the report path, the executive summary and the top priorities.
+5. **Next step**: suggest `/tsh-implement` with the finding numbers to fix. Do not implement the fixes in this command. Application code security is a job for the software engineer, so suggest `/tsh-review` for it.
 
 ## Delegating and Handling Agent Status
 

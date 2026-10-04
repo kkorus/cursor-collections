@@ -1,3 +1,0 @@
-# Generated from src/skills/tsh-analyze-gcp-costs/SKILL.md by scripts/generate.mjs. Do not edit.
-policy:
-  allow_implicit_invocation: false

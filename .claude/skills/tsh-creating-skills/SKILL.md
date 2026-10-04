@@ -1,347 +1,292 @@
 ---
 name: tsh-creating-skills
-description: Create new skills (SKILL.md) for Cursor. Provides naming conventions (gerund form), description guidelines, body structure, progressive disclosure patterns, templates, and validation checklists. Use when creating, reviewing, or updating SKILL.md files, or when discussing skill design and organization.
+description: Guides creating and reviewing skills (SKILL.md) for Cursor, Claude Code and Codex, from the neutral source schema in `src/skills/` or as native Agent Skills files. Covers skill types, naming, descriptions, body structure, support-file layout, per-tool output and validation. Use when creating, reviewing or updating a skill, command, orchestrator or internal step, or when discussing skill design and organization.
 metadata:
-  short-description: Guidelines and templates for writing skills
+  short-description: Schema, naming, layout and templates for writing skills
 ---
 <!-- Generated from src/skills/tsh-creating-skills/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # Creating Skills
 
-Creates well-structured, reusable skills for Cursor. Enforces naming conventions, content structure, and progressive disclosure patterns based on the Agent Skills specification and best practices.
+Creates well-structured, reusable skills that work in Cursor, Claude Code and Codex. All three tools read the Agent Skills format (a folder with `SKILL.md`), so one well-written skill serves every tool.
 
 ## Core Design Principles
 
 <principles>
 
 <what-is-a-skill>
-A skill is a folder containing a `SKILL.md` file with YAML frontmatter and Markdown instructions. Skills provide **procedural knowledge** — step-by-step workflows, domain-specific context, templates, and reference materials that an agent loads on demand to perform specialized tasks.
+A skill is a folder containing a `SKILL.md` file with YAML frontmatter and Markdown instructions. Skills provide **procedural knowledge** (workflows, domain context, templates, reference material) that an agent loads on demand.
 
-- **Skills** = reusable workflows, domain knowledge, step-by-step processes, templates (SKILL.md files)
-- **Agents** = behavior, personality, responsibilities, problem-solving approach (SKILL.md in `.cursor/skills/agents/`)
-- **Commands** = workflow entry-point triggers with `disable-model-invocation: true` (SKILL.md in `.cursor/skills/commands/`); command-only backing docs may live in `commands/<name>/references/` when the content must not appear as a separate `/` entry. Shared processes used by multiple agents/commands stay as workflow skills (e.g. `tsh-reviewing-code`, `tsh-verifying-ui`).
-
-A skill must NOT define who the agent is — that belongs in the agent file. A skill defines HOW to perform a specific task or workflow.
+- **Skills** define HOW to perform a task. They never define who the agent is.
+- **Agents** (subagents) define WHO: role, responsibilities, access. They load skills by name. See the `tsh-creating-agents` skill.
+- **Commands** are skills with `type: command`: thin user entry points that route to an agent or orchestrator. See the `tsh-creating-commands` skill.
+- **Project instructions** (`AGENTS.md`, rule files) define RULES that always apply. See the `tsh-creating-rules` skill.
 </what-is-a-skill>
 
 <conciseness>
-The context window is a shared resource. Every token in your skill competes with conversation history, other skills, and the user's actual request.
-
-**Default assumption**: The LLM is already very smart. Only add context it doesn't already have.
-
-Before adding any content, ask:
-
-- "Does the LLM really need this explanation?"
-- "Can I assume it already knows this?"
-- "Does this paragraph justify its token cost?"
-
-Write the minimum necessary to guide the agent effectively. Trim explanations of concepts the LLM already understands.
+The context window is shared with the conversation, other skills and the user's request. Assume the model is already smart: add only context it does not have. For each paragraph ask whether it justifies its token cost.
 </conciseness>
 
-<xml-syntax>
-Use XML-like tags for structured content that requires explicit boundaries — principles, rules, specifications, or multi-part sections where nesting adds clarity. This ensures reliable parsing across all LLM model tiers.
-
-Use plain Markdown for sequential content like step-by-step processes, guidelines, and reference tables where structure is already clear from headings and formatting.
-
-**When to use XML tags**: Principles, rules, specifications, structured templates, sections with explicit open/close boundaries.
-**When to use Markdown**: Steps, checklists, tables, guidelines, reference lists, code examples.
-</xml-syntax>
-
 <progressive-disclosure>
-Skills use a three-tier loading model:
+1. **Discovery** (~100 tokens): only `name` and `description` are loaded for every skill. This is how the agent decides what to activate.
+2. **Activation** (under 5000 tokens recommended): the `SKILL.md` body loads when the skill triggers.
+3. **Resources** (on demand): `references/`, `assets/` and `scripts/` load only when the workflow needs them.
 
-1. **Discovery** (~100 tokens): Only `name` and `description` are loaded at startup for all skills — this is how the agent decides which skills to activate.
-2. **Activation** (< 5000 tokens recommended): The full `SKILL.md` body is loaded when the skill is triggered.
-3. **Resources** (as needed): Files in `scripts/`, `references/`, and `assets/` are loaded only when required during execution.
-
-Keep SKILL.md body **under 500 lines**. Move detailed reference material, examples, and templates to separate files. Reference those files from the SKILL.md body.
+Keep the `SKILL.md` body at or under **500 lines**. Move detail into support files.
 </progressive-disclosure>
+
+<reference-by-name>
+Refer to other skills by name ("load the `tsh-reviewing-code` skill"). Never by path, never with a `SKILL.md` link, never with a `../` link. The tools resolve names; paths differ per tool and break when a skill is installed elsewhere.
+</reference-by-name>
 
 </principles>
 
-## Skill Directory Structure
+## Where Skills Live
 
-A skill is a directory containing at minimum a `SKILL.md` file:
+### Source of truth
+
+- **The repository has a `src/skills/` directory and `scripts/generate.mjs`:** `src/` is the only source. Create `src/skills/<name>/SKILL.md` with the neutral frontmatter below, then run `npm run generate` and `npm run check`. Never edit the generated trees by hand (`.agents/skills/tsh-*`, `.claude/skills/tsh-*`); the next generation overwrites them and `npm run check` fails on drift.
+- **No neutral source:** write native Agent Skills files directly (see the matrix below).
+
+### Source layout
 
 ```
-skill-name/
-├── SKILL.md              # Required: instructions + metadata
-├── scripts/              # Optional: executable code
-├── references/           # Optional: additional documentation
-└── assets/               # Optional: templates, static resources
+src/skills/<name>/
+├── SKILL.md              # Required: frontmatter + instructions
+├── references/           # Optional: reading material, worked examples (*.example.md)
+├── assets/               # Optional: fill-in output templates (*.template.md)
+└── scripts/              # Optional: executable code
 ```
 
-- The directory name MUST match the `name` field in the SKILL.md frontmatter.
-- Keep file references one level deep from SKILL.md — avoid deeply nested reference chains.
-- Name files descriptively: `form-validation-rules.md`, not `doc2.md`.
+- A skill directory contains only `SKILL.md`, `references/`, `assets/` and `scripts/`. Any other entry fails `npm run check`.
+- Fill-in templates go to `assets/<name>.template.md`. Worked examples go to `references/<name>.example.md`.
+- Link only to the skill's own support files, one level deep (`references/x.md`, not `references/sub/x.md`).
+- A file in `references/` or `assets/` longer than 100 lines starts with a `## Contents` section.
+- No cross-skill file references. Load the other skill by name instead.
+- Name files descriptively (`form-validation-rules.md`, not `doc2.md`) and use forward slashes.
+
+### Native output per tool
+
+The generator renders every source skill into two byte-identical trees, so each tool finds it natively.
+
+| Tool | Skill location | Notes |
+|---|---|---|
+| Cursor | `.agents/skills/<name>/` (also reads `.claude/skills/`) | Dedupes by name; a same-name skill resolves to `.claude/skills` |
+| Claude Code | `.claude/skills/<name>/` | Reads only this tree |
+| Codex | `.agents/skills/<name>/` | Reads only this tree; per-skill policy in `agents/openai.yaml` |
+
+How the neutral `type` is rendered:
+
+| `type` | Cursor | Claude Code | Codex |
+|---|---|---|---|
+| `skill` | auto-invocable | auto-invocable | implicit invocation allowed |
+| `command` | `disable-model-invocation: true` | `disable-model-invocation: true` | `agents/openai.yaml` with `policy.allow_implicit_invocation: false` |
+| `internal`, `orchestrator` | plain skill (cannot be hidden from the `/` menu) | `user-invocable: false` (hidden, still loadable by name) | plain skill |
+
+Without a generator, write the native frontmatter yourself: the Agent Skills fields (`name`, `description`, `license`, `compatibility`, `metadata`, experimental `allowed-tools`) work everywhere. Tool-specific keys are additive: `disable-model-invocation` and `paths` (Cursor and Claude), `user-invocable`, `argument-hint`, `model`, `effort` (Claude). For Codex, invocation policy and UI metadata go into `agents/openai.yaml`. Unknown keys are ignored by tools that do not support them, but verify against the tool's documentation before relying on one.
+
+## Skill Source Schema
+
+Exact frontmatter of `src/skills/<name>/SKILL.md`. Unknown keys fail `npm run check`.
+
+```yaml
+---
+name: tsh-implement            # REQUIRED. == folder name. ^tsh-[a-z0-9]+(-[a-z0-9]+)*$, <= 64 chars
+description: >-                # REQUIRED. <= 1024 chars (lint warns > 500). Third person: what it does + "Use when ...".
+  Implements a task end to end from a Jira ID or description ... Use when ...
+type: command                  # REQUIRED. skill | command | internal | orchestrator
+routes-to: tsh-engineering-manager   # command only. REQUIRED unless standalone: true. Must name an existing agent or orchestrator.
+standalone: false              # command only. true = runs in the main thread without routing (tsh-commit only).
+argument-hint: "<task-id | description>"   # optional, command only
+paths: ["**/*.tf"]             # optional, type skill only. File-glob activation (Cursor + Claude).
+requires-mcp: [atlassian, figma]     # optional. Each must exist in src/mcp/servers.json.
+license: MIT                   # optional (Agent Skills standard)
+metadata:                      # optional, string -> string (Agent Skills standard)
+  short-description: "Implement a task end to end"   # REQUIRED by lint, <= 120 chars; Codex skill listing
+targets:                       # optional escape hatch, merged LAST into the rendered output
+  cursor: {}                   # extra SKILL.md keys (e.g. icon, color)
+  claude: {}                   # extra SKILL.md keys (e.g. allowed-tools, model, effort)
+  codex: {}                    # extra agents/openai.yaml keys (commands only, e.g. interface.*)
+---
+<body: Markdown. May contain <!-- include: <partial-name> --> lines. Skills are referenced by name only.>
+```
+
+- `type`, `routes-to`, `standalone`, `requires-mcp` and `targets` never appear in the generated output. `requires-mcp` becomes `compatibility: "Requires MCP servers: a, b"`.
+- `<!-- include: <partial> -->` pulls in shared text from `src/partials/<partial>.md` at build time. Use it instead of copying shared blocks.
+- Bodies never use `$ARGUMENTS`. Say "the user's input after the command".
+
+### Choosing the type
+
+| Type | Use for | Who invokes it |
+|---|---|---|
+| `skill` | Knowledge or a reusable procedure | Any agent, by name, or auto-matched by `description` |
+| `command` | A `/tsh-<verb>` entry point: thin, no domain knowledge, `routes-to` an agent or orchestrator | The user only |
+| `orchestrator` | A main-thread workflow that delegates to subagents; loaded by name from a command | A command |
+| `internal` | A step loaded by an orchestrator or agent by name | An orchestrator or agent |
+
+For `internal` and `orchestrator`, start the description with "Internal step of `/tsh-...`: load only when a tsh command or orchestrator instructs it." Cursor and Codex cannot hide these skills, and this prefix limits accidental auto-invocation.
+
+Layering: commands (thin) route to orchestrators (main thread) or subagents (one delegation level), and both load knowledge skills by name. If a command and an agent both need the same procedure, move the procedure into a knowledge skill.
 
 ## Skill Creation Process
 
-Use the checklist below and track your progress:
-
 ```
 Creation progress:
-- [ ] Step 1: Define the skill's purpose
-- [ ] Step 2: Create the skill name
-- [ ] Step 3: Write the skill description
-- [ ] Step 4: Write the skill body
+- [ ] Step 1: Define the skill's purpose and type
+- [ ] Step 2: Choose the name
+- [ ] Step 3: Write the description
+- [ ] Step 4: Write the body
 - [ ] Step 5: Create supporting files (if needed)
-- [ ] Step 6: Assemble and validate the skill
+- [ ] Step 6: Assemble, generate and validate
 ```
 
-**Step 1: Define the skill's purpose**
+**Step 1: Define the skill's purpose and type**
 
-Before writing anything, clarify the skill's purpose with the user. Ask the user to provide answers to these questions in a single batch:
+Clarify with the user, in a single batch, only what is missing:
 
-1. **What task does this skill perform?** — The core activity (e.g., "analyze test coverage", "generate API documentation").
-2. **What triggers activation?** — When should the agent load this skill? What user requests or contexts should match?
-3. **What does it produce?** — Expected output: a document, code changes, a report, analysis, etc.
-4. **What makes it distinct?** — How is this different from existing skills? (List current skills for the user to compare against.)
+1. **What task does the skill perform?** The core activity.
+2. **What triggers it?** Which requests or contexts should match.
+3. **What does it produce?** A document, code changes, a report.
+4. **What makes it distinct?** Compare against the existing skills (list them).
+5. **Which type?** Use the table above.
 
-If the user provided enough context in the conversation to answer these questions confidently, skip the clarification and proceed. Only ask about genuinely ambiguous or missing information.
+If the conversation already answers these, proceed without asking.
 
-**Step 2: Create the skill name**
+**Step 2: Choose the name**
 
 <naming-conventions>
 
-### Naming Formula
-
-Use **gerund form** (verb + -ing) followed by the object:
-
-```
-{gerund-verb}-{object}
-```
-
-This format clearly describes the activity or capability the skill provides. It reads naturally as "this skill is about [doing something]."
-
-### Rules
+| Type | Formula | Examples |
+|---|---|---|
+| `skill` | `tsh-<gerund>-<object>`, gerund first; a single gerund is fine | `tsh-reviewing-code`, `tsh-analyzing-codebase`, `tsh-committing` |
+| `command`, `internal` | `tsh-<verb>[-<object>]`, imperative | `tsh-implement`, `tsh-implement-task`, `tsh-create-custom-skill` |
+| `orchestrator` | `tsh-<role>`, noun | `tsh-engineering-manager`, `tsh-business-analyst` |
 
 | Rule | Requirement |
 |---|---|
-| Format | Gerund form: `{verb-ing}-{object}` |
-| Characters | Lowercase letters, numbers, and hyphens only (`a-z`, `0-9`, `-`) |
-| Length | 1–64 characters. Aim for **under 20 characters** (used as `/slash-commands`) |
-| Start/end | Must NOT start or end with a hyphen |
-| Consecutive hyphens | Must NOT contain `--` |
-| Directory match | Must match the parent directory name exactly |
+| Prefix | Starts with `tsh-` (project prefix; use your own project prefix in other repositories) |
+| Characters | Lowercase letters, digits and single hyphens; no leading, trailing or double hyphens |
+| Length | At most 64 characters; shorter names are easier to type as `/<name>` |
+| Spelling | American (`analyzing`, `optimizing`) |
+| Directory | Equals the folder name exactly |
+| Collisions | No skill name may equal an agent name |
 
-### Naming Examples
-
-Good names (gerund form — preferred):
-
-| Name | Chars | Slash command |
-|---|---|---|
-| `creating-agents` | 15 | `/creating-agents` |
-| `reviewing-code` | 14 | `/reviewing-code` |
-| `testing-e2e` | 11 | `/testing-e2e` |
-| `analyzing-tasks` | 15 | `/analyzing-tasks` |
-| `designing-architecture` | 24 | `/designing-architecture` |
-| `gathering-context` | 17 | `/gathering-context` |
-| `finding-gaps` | 12 | `/finding-gaps` |
-
-Avoid:
-
-| Pattern | Example | Why |
-|---|---|---|
-| Noun phrases | `task-analysis` | Passive — doesn't convey action |
-| Vague names | `helper`, `utils`, `tools` | Indiscoverable — agent can't match them to tasks |
-| Overly generic | `documents`, `data`, `files` | Too broad — will trigger on irrelevant tasks |
-| Inconsistent form | Mix of `code-review` and `creating-agents` | Breaks convention — confuses pattern recognition |
-
-### Shortening Long Names
-
-When the gerund form gets too long (over ~20 chars), simplify the object — let the `description` field carry the specificity.
-
-| Verbose | Shortened | Strategy |
-|---|---|---|
-| `analyzing-implementation-gaps` (30) | `finding-gaps` (12) | Simpler verb + shorter object |
-| `discovering-technical-context` (30) | `gathering-context` (17) | Broader verb + drop qualifier |
-
-### Confirming the Name
-
-When multiple valid names exist, ask the user to choose. Present 2-3 candidates with character counts and `/slash-command` previews. Mark the shortest gerund-form option as recommended.
+Avoid vague names (`helper`, `utils` after the prefix), overly generic ones (`data`, `files`), and noun phrases for knowledge skills (`task-analysis` instead of `analyzing-requirements`). Keep one form across the collection. When several valid names exist, offer two or three to the user and mark the clearest.
 
 </naming-conventions>
 
-**Step 3: Write the skill description**
+**Step 3: Write the description**
 
 <description-guidelines>
 
-### Purpose
-
-The `description` field is the **primary discovery mechanism**. The agent reads all skill descriptions at startup to decide which skill to activate for a given task. Your description must provide enough detail for the agent to match it accurately from potentially 100+ available skills.
-
-### Rules
+The `description` is the primary discovery mechanism: the agent reads every description to choose a skill.
 
 | Rule | Requirement |
 |---|---|
-| Length | 1–1024 characters. Non-empty. |
-| Point of view | Always third person. Never use "I", "you", or "we". |
-| Content | Must describe both WHAT the skill does AND WHEN to use it. |
-| Keywords | Include specific trigger terms that help the agent identify relevant tasks. |
+| Length | 1-1024 characters, non-empty; aim for 500 or fewer |
+| Point of view | Third person; never "I", "you" or "we" |
+| Content | What the skill does AND when to use it; `skill` and `command` types contain "Use when" |
+| Keywords | Specific trigger terms that distinguish it from neighbors |
 
-### Formula
-
-```
-{What the skill does — core capabilities}. {When to use it — triggers and contexts}.
-```
-
-### Good Examples
+Formula: `{What it does, core capabilities}. Use when {triggers and contexts}.`
 
 ```yaml
-description: "Create custom agent skills (SKILL.md in .cursor/skills/agents/) for Cursor. Provides templates, guidelines, and a structured process for building agent definitions. Use when creating, reviewing, or updating agent skill files."
+# Good
+description: Extracts text and tables from PDF files, fills PDF forms, and merges PDFs. Use when working with PDF documents or when the user mentions forms or document extraction.
+
+# Too vague: the agent cannot tell when to activate it
+description: Helps with documents.
+
+# Wrong point of view
+description: I can help you process Excel files.
 ```
 
-```yaml
-description: "Extracts text and tables from PDF files, fills PDF forms, and merges multiple PDFs. Use when working with PDF documents or when the user mentions PDFs, forms, or document extraction."
-```
-
-### Bad Examples
-
-```yaml
-# Too vague — agent can't determine when to activate:
-description: "Helps with documents."
-
-# Wrong point of view — causes discovery problems:
-description: "I can help you process Excel files."
-
-# Missing trigger context — agent doesn't know WHEN to use it:
-description: "Processes data from various sources."
-```
+Also set `metadata.short-description` (120 characters or fewer). Codex shows it in the skill listing.
 
 </description-guidelines>
 
-**Step 4: Write the skill body**
+**Step 4: Write the body**
 
-The Markdown body after the frontmatter contains the skill instructions. There are no strict format restrictions — write whatever helps the agent perform the task effectively.
-
-### Optional Frontmatter Fields
-
-| Field | When to use |
-|---|---|
-| `paths` | Scope the skill to specific file types (e.g. `"**/*.tsx"`). Only surfaced when the agent works with matching files. Leave unset for globally available skills. |
-| `disable-model-invocation` | Set to `true` for entry-point commands that should only trigger on explicit `/skill-name` invocation. See `tsh-creating-commands` for the full command pattern. |
-| `metadata` | Arbitrary key-value metadata (author, version). Informational only. |
-
-### Content Guidelines
-
-<body-guidelines>
-
-**Line limit**: Keep the SKILL.md body **under 500 lines**. If approaching this limit, split content into referenced files using progressive disclosure patterns.
-
-**Structure the body with these sections** (see template at `assets/skill.template.md`):
+Use the `assets/skill.template.md` template.
 
 | Section | Required | Purpose |
 |---|---|---|
-| Introduction | **Yes** | 1-2 sentences describing what the skill does. |
-| Principles | No | Core design principles using `<principles>` XML tags — when the skill has foundational rules that constrain all decisions. |
-| Process / Workflow | **Yes** | Step-by-step checklist and detailed instructions. The core of the skill. |
-| Reference tables | No | Quick-reference tables for rules, patterns, or conventions. |
-| Connected Skills | **Yes** | Links to related skills with brief rationale for each. |
+| Introduction | Yes | One or two sentences on what the skill does |
+| Principles | No | Foundational rules, in `<principles>` tags |
+| Process / Workflow | Yes | Trackable checklist plus detailed steps |
+| Reference tables | No | Quick-reference rules or conventions |
+| Connected Skills | Yes | Related skills by name, with the reason to load each |
 
-**Conciseness rules**:
+Guidelines:
 
-- Only add context the LLM doesn't already have.
-- Use examples instead of explanations — they convey style and expectations more efficiently.
-- See [references/reviewing-code.skill.md](references/reviewing-code.skill.md) for a complete example demonstrating conciseness.
-- Provide a default approach, not multiple options. Add alternatives only when a specific condition requires them.
-- Don't explain concepts the LLM already knows (e.g., what PDFs are, how REST APIs work).
+- Use examples rather than explanations; see `references/reviewing-code.example.md` for a complete, concise skill.
+- Provide a default approach, not a menu of options. Add alternatives only when a condition requires them.
+- Choose one term per concept and keep it.
+- No dates or version-dependent guidance; put deprecated approaches in an "Old patterns" section.
+- For complex tasks give a numbered checklist; for quality-critical tasks add a validate, fix, repeat loop.
+- Use XML-like tags for principles, rules and specifications; use Markdown for steps, tables and lists.
+- Use no tool-specific syntax in the body of a neutral source skill: no `@agent` mentions, tool-call names or model names. Say "ask the user", "search the codebase", "the `tsh-<name>` subagent".
+- Match specificity to fragility:
 
-**Consistent terminology**: Choose one term for each concept and use it throughout the skill. Don't alternate between "API endpoint", "URL", "route", and "path" if they mean the same thing.
-
-**No time-sensitive information**: Don't include dates or version-dependent guidance. If you must reference a deprecated approach, use an "Old patterns" section.
-
-**Use workflows for complex tasks**: Break operations into clear, sequential steps. Provide a checklist the agent can copy and track progress against.
-
-**Implement feedback loops**: For quality-critical tasks, include validation steps: run validator → fix errors → repeat.
-
-</body-guidelines>
-
-### Degrees of Freedom
-
-Match specificity to the task's fragility and variability:
-
-| Freedom Level | When to use | Example |
+| Freedom | Use when | Example |
 |---|---|---|
-| **High** (text instructions) | Multiple valid approaches; decisions depend on context | Code review guidelines |
-| **Medium** (pseudocode / templates) | A preferred pattern exists but variation is acceptable | Report generation with customizable sections |
-| **Low** (exact scripts, no params) | Operations are fragile; consistency is critical | Database migrations, file format validation |
+| High (text instructions) | Several approaches are valid | Code review guidelines |
+| Medium (templates, pseudocode) | A preferred pattern exists | Report with customizable sections |
+| Low (exact scripts) | The operation is fragile | Database migrations |
 
-**Step 5: Create supporting files (if needed)**
+**Step 5: Create supporting files**
 
-When the SKILL.md body approaches 500 lines, or when the skill includes resources that should be loaded on demand:
+| File type | Location | Purpose |
+|---|---|---|
+| Fill-in template | `assets/<name>.template.md` | Output format the agent fills in |
+| Worked example | `references/<name>.example.md` | Input/output example |
+| Reading material | `references/<topic>.md` | Specs, domain knowledge, loaded when needed |
+| Script | `scripts/<name>` | Executed, not read into context |
 
-<supporting-files>
+Say whether the agent should **run** a script or **read** a file. For patterns of workflows, checklists and feedback loops, see [common-patterns](references/common-patterns.md).
 
-| File type | Location | Purpose | Load behavior |
-|---|---|---|---|
-| Templates | Skill root or `assets/` | Output format templates the agent fills in | Loaded when agent needs to produce output |
-| Reference docs | `references/` | Detailed specs, API docs, domain knowledge | Loaded when agent needs specific details |
-| Scripts | `scripts/` | Executable utility scripts | Executed (not read into context) — saves tokens |
-| Examples | Skill root or `references/` | Input/output examples, sample files | Loaded when agent needs to understand expected format |
+**Step 6: Assemble, generate and validate**
 
-**File reference rules**:
-
-- Use relative paths from the skill root: `./references/REFERENCE.md`
-- Keep references **one level deep** from SKILL.md — avoid nested reference chains
-- Make clear whether the agent should **execute** a script ("Run `analyze.py`") or **read** it as reference ("See `analyze.py` for the algorithm")
-- Include a table of contents in reference files longer than 100 lines
-
-</supporting-files>
-
-**Step 6: Assemble and validate the skill**
-
-Use the `assets/skill.template.md` template to build the SKILL.md file.
-See [references/reviewing-code.skill.md](references/reviewing-code.skill.md) for a complete filled-in example.
-
-After assembling the skill, run a final review with the user. Present the proposed `name`, `description`, and a summary of the skill's workflow steps. Ask the user to confirm or request changes before finalizing.
-
-Then validate against this checklist:
-
-### Validation Checklist
+1. Present the proposed `name`, `description`, `type` and workflow summary to the user and ask to confirm.
+2. Write the file (`src/skills/<name>/SKILL.md`, or the native path for the chosen tools).
+3. With a neutral source: run `npm run generate && npm run check`, then fix every error. Do not add baseline entries.
+4. Walk through the checklist.
 
 ```
 Validation:
-- [ ] Frontmatter: `name` is valid (gerund form, lowercase, hyphens, ≤64 chars)
-- [ ] Frontmatter: `name` matches the parent directory name
-- [ ] Frontmatter: `description` describes WHAT the skill does and WHEN to use it
-- [ ] Frontmatter: `description` is in third person (no "I", "you", "we")
-- [ ] Frontmatter: `description` includes specific trigger keywords
-- [ ] Frontmatter: `paths` set if skill should be scoped to specific file types (omitted otherwise)
-- [ ] Body: Under 500 lines total
-- [ ] Body: Introduction is 1-2 sentences
-- [ ] Body: Process/workflow has a trackable checklist
-- [ ] Body: Only adds context the LLM doesn't already have
-- [ ] Body: Uses consistent terminology throughout
-- [ ] Body: No time-sensitive information
-- [ ] Body: XML tags (if used) are properly opened and closed
-- [ ] Body: Connected Skills section references existing skills
-- [ ] Files: Supporting files are one level deep (no nested reference chains)
-- [ ] Files: Template files (if any) use XML tags for structured sections
-- [ ] Files: Reference files over 100 lines have a table of contents
-- [ ] Testing: Skill tested with real usage scenarios
+- [ ] `name` matches the folder and the naming rules of its type, and starts with the project prefix
+- [ ] `type` is set; a command has `routes-to` (or `standalone: true`)
+- [ ] `description` says what and when, in third person, with trigger keywords ("Use when")
+- [ ] `metadata.short-description` is set (120 characters or fewer)
+- [ ] `requires-mcp` lists only servers defined in `src/mcp/servers.json`
+- [ ] Body is at most 500 lines and starts with a one or two sentence introduction
+- [ ] Process has a trackable checklist
+- [ ] Only context the model lacks; consistent terminology; no dates
+- [ ] No tool syntax, no path references to other skills, no `../` links
+- [ ] Support files sit in `references/`, `assets/` or `scripts/`, one level deep; long ones start with `## Contents`
+- [ ] Connected Skills section names existing skills
+- [ ] `npm run check` passes (where a generator exists)
+- [ ] Tested with a realistic request
 ```
-
-## Common Patterns
-
-For standard workflow patterns (checklists, templates, conditional workflows, feedback loops), see [references/common-patterns.md](references/common-patterns.md).
 
 ## Anti-Patterns to Avoid
 
-| Anti-pattern | Why it's harmful | Fix |
+| Anti-pattern | Why it is harmful | Fix |
 |---|---|---|
-| Over-explaining known concepts | Wastes tokens; agent already knows what PDFs are | Remove. Only explain project/domain-specific knowledge |
-| Offering too many options | Confusing; agent may pick wrong one | Provide a default, with escape hatch for edge cases |
-| Deeply nested references | Agent may partially read files at depth > 1 | Keep all references one level deep from SKILL.md |
-| Vague file names | `doc2.md`, `helpers.md` | Use descriptive names: `form-validation-rules.md` |
-| Windows-style paths | Breaks on Unix systems | Always use forward slashes: `scripts/validate.py` |
-| Inconsistent naming within collection | Confuses pattern recognition; breaks discoverability | Use gerund form consistently for all skill names |
-| Magic numbers in scripts | Agent can't determine the right value | Document why: `TIMEOUT = 30  # HTTP requests typically complete within 30s` |
+| Over-explaining known concepts | Wastes tokens | Explain only project or domain knowledge |
+| Many options | The agent picks the wrong one | One default, escape hatch for edge cases |
+| Deeply nested references | Files at depth 2 or more get partially read | Keep links one level deep |
+| Loading another skill by path | Paths break per tool and per install | "Load the `tsh-<name>` skill" |
+| Editing generated trees | Overwritten; `npm run check` fails | Edit `src/`, run the generator |
+| Domain knowledge in a command | Commands become untestable and duplicated | Move it into a knowledge skill |
+| Persona in a skill | Blurs agent and skill roles | Put the role in the agent |
+| Vague file names | `doc2.md`, `helpers.md` | Descriptive names |
+| Magic numbers in scripts | The agent cannot pick the value | Document each: `TIMEOUT = 30  # requests finish within 30s` |
 
 ## Connected Skills
 
-- `tsh-creating-agents` - to understand how skills relate to agent definitions and avoid overlap
-- `tsh-creating-commands` - to understand how prompts reference and trigger skills
-- `tsh-discovering-technical-context` - to discover existing skill patterns in the project before creating a new one
-- `tsh-analyzing-codebase` - to analyze existing skills and identify conventions to follow
-- `tsh-creating-rules` - to understand when project rules belong in instruction files rather than skill content
+- `tsh-creating-agents` - to decide what belongs in an agent instead of a skill and to design agents that load this skill
+- `tsh-creating-commands` - to write the thin `type: command` entry point for a skill
+- `tsh-creating-rules` - to decide whether guidance belongs in project instructions instead of a skill
+- `tsh-discovering-technical-context` - to discover existing skill conventions in the project before creating one
+- `tsh-analyzing-codebase` - to analyze existing skills and the conventions to follow
