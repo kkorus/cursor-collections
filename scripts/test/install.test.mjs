@@ -608,3 +608,215 @@ test('install.mjs imports only node: built-ins', () => {
   assert.ok(specs.length >= 4);
   for (const s of specs) assert.match(s, /^node:/, `non-builtin import: ${s}`);
 });
+
+// ---------- --update-all and --forget-missing ----------
+
+/** Every entry below `root` as type + content (or link target) + mtime, to prove nothing was written. */
+function snapshot(root) {
+  const out = {};
+  const walk = (dir) => {
+    for (const n of fs.readdirSync(dir).sort()) {
+      const p = path.join(dir, n), st = fs.lstatSync(p);
+      if (st.isSymbolicLink()) out[p] = `l:${fs.readlinkSync(p)}`;
+      else if (st.isDirectory()) { out[p] = `d:${st.mtimeMs}`; walk(p); }
+      else out[p] = `f:${st.mtimeMs}:${fs.readFileSync(p, 'utf8')}`;
+    }
+  };
+  walk(root);
+  return out;
+}
+
+/** A git source, a home, and a helper that installs claude into a new temp project. */
+function bulkEnv() {
+  const { source, commit } = gitSource();
+  const home = tmp();
+  const go = (args, extra = {}) => run(args, { home, source, quiet: true, ...extra });
+  const project = (...args) => { const p = tmp(); go(['--tools', 'claude', '--scope', 'project', '--project-dir', p, ...args]); return p; };
+  return { source, commit, home, go, project };
+}
+
+/** current (installed after the change), stale (2 commits behind, tsh-beta edited), missing, stale user install. */
+function bulkScenario() {
+  const b = bulkEnv();
+  const stale = b.project();
+  const gone = b.project();
+  b.go(['--tools', 'claude']);
+  fs.writeFileSync(path.join(stale, '.claude/skills/tsh-beta/SKILL.md'), 'my edit');
+  changeSource(b.source, 'tsh-alpha');
+  changeSource(b.source, 'tsh-beta');
+  b.commit(); b.commit();
+  const current = b.project();
+  fs.rmSync(gone, { recursive: true });
+  return { ...b, stale, gone, current };
+}
+const rowOf = (r, p) => r.lines.find((l) => l.trimStart().startsWith(p + ' ')) || '';
+
+test('--update-all previews every install with counts and writes nothing', () => {
+  const { home, go, stale, gone, current } = bulkScenario();
+  const before = [home, stale, current].map(snapshot);
+  const reg = fs.readFileSync(registryPath(home), 'utf8');
+  for (const args of [['--update-all'], ['--update-all', '--dry-run'], ['--update-all', '--yes', '--dry-run']]) {
+    const r = go(args);
+    const text = r.lines.join('\n');
+    assert.equal(r.code, 0, text);
+    assert.match(rowOf(r, stale), /project\s+claude\s+2 commits behind\s+1 replaced \(unmodified\), 1 backed up \(edited\)$/, text);
+    assert.match(rowOf(r, current), /up to date\s+no changes$/, text);
+    assert.match(rowOf(r, gone), /missing\s+skipped: no longer on disk$/, text);
+    assert.match(rowOf(r, '~'), /user\s+claude\s+2 commits behind\s+2 replaced \(unmodified\)$/, text);
+    assert.ok(r.lines.includes('Totals: 2 to update, 1 without changes, 1 skipped; changes: 3 replaced (unmodified), 1 backed up (edited)'), text);
+    assert.ok(r.lines.some((l) => /--forget-missing/.test(l)), text);
+    assert.equal(r.lines.filter((l) => /^Backups would go to: ~\/\.tsh-ai-collections-backup\//.test(l)).length, 1, text);
+    assert.equal(r.lines.at(-1), 'Run again with --yes to apply.');
+    assert.deepEqual(r.stats, { installed: 6, added: 0, replaced: 3, unchanged: 2, backedUp: 1, pruned: 0, removed: 0, skipped: 0, legacy: 0 });
+  }
+  assert.deepEqual([home, stale, current].map(snapshot), before, 'no file changed in any install or the home');
+  assert.equal(fs.readFileSync(registryPath(home), 'utf8'), reg);
+});
+
+test('--update-all --yes updates stale installs (user scope too), backs up only the edited skill, refreshes records', () => {
+  const { home, go, source, stale, gone, current } = bulkScenario();
+  const untouched = snapshot(current);
+  const old = readReg(home);
+  const head = execFileSync('git', ['-C', source, 'rev-parse', 'HEAD']).toString().trim();
+  const r = go(['--update-all', '--yes'], at('2026-06-01T00:00:00Z'));
+  const text = r.lines.join('\n');
+  assert.equal(r.code, 0, text);
+  assert.match(rowOf(r, stale), /updated: 1 replaced \(unmodified\), 1 backed up \(edited\)$/, text);
+  assert.match(rowOf(r, '~'), /updated: 2 replaced \(unmodified\)$/, text);
+  assert.match(rowOf(r, current), /no changes$/, text);
+  assert.match(rowOf(r, gone), /skipped: no longer on disk$/, text);
+  assert.ok(r.lines.includes('Totals: 2 updated, 0 failed, 1 without changes, 1 skipped; changes: 3 replaced (unmodified), 1 backed up (edited)'), text);
+  for (const root of [stale, home]) {
+    assert.equal(fs.readFileSync(path.join(root, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'new version');
+    assert.equal(fs.readFileSync(path.join(root, '.claude/skills/tsh-beta/SKILL.md'), 'utf8'), 'new version');
+  }
+  const [stamp, ...more] = fs.readdirSync(backupRoot(home));
+  assert.equal(more.length, 0, 'one backup folder for the whole run');
+  assert.equal(fs.readFileSync(path.join(backupRoot(home), stamp, stale, '.claude/skills/tsh-beta/SKILL.md'), 'utf8'), 'my edit');
+  assert.ok(!exists(path.join(backupRoot(home), stamp, stale, '.claude/skills/tsh-alpha')), 'unmodified copy replaced without backup');
+  assert.ok(!exists(path.join(backupRoot(home), stamp, home, '.claude')), 'nothing of the user install backed up');
+  assert.equal(r.lines.filter((l) => /^Backups: /.test(l)).length, 1, text);
+  assert.deepEqual(snapshot(current), untouched, 'the current install is not touched');
+  for (const root of [stale, home]) {
+    const e = entryOf(home, root, root === home ? 'user' : 'project');
+    assert.equal(e.updatedAt, '2026-06-01T00:00:00.000Z');
+    assert.equal(e.sourceCommit, head);
+  }
+  const keep = (p, s) => old.installs.find((e) => e.path === p && e.scope === s);
+  assert.deepEqual(entryOf(home, current, 'project'), keep(current, 'project'));
+  assert.deepEqual(entryOf(home, gone, 'project'), keep(gone, 'project'), 'missing entry kept until --forget-missing');
+  const list = go(['--list']);
+  assert.match(rowOf(list, stale), /up to date$/, list.lines.join('\n'));
+  assert.match(rowOf(list, '~'), /up to date$/);
+});
+
+test('--update-all --yes: one failing install is reported and does not stop the others (exit 1)', () => {
+  const { go, source, commit, project } = bulkEnv();
+  const a = project(), b = project();
+  changeSource(source);
+  commit();
+  const fsx = { ...fs, copyFileSync(from, to) { if (String(to).startsWith(a + path.sep)) throw Object.assign(new Error('disk full'), { code: 'ENOSPC' }); return fs.copyFileSync(from, to); } };
+  const r = go(['--update-all', '--yes'], { fs: fsx });
+  const text = r.lines.join('\n');
+  assert.equal(r.code, 1, text);
+  assert.match(rowOf(r, a), /failed: disk full$/, text);
+  assert.match(rowOf(r, b), /updated: 1 replaced \(unmodified\)$/, text);
+  assert.equal(fs.readFileSync(path.join(b, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'new version');
+  assert.ok(r.lines.some((l) => /^Totals: 1 updated, 1 failed/.test(l)), text);
+});
+
+test('--update-all keeps the recorded link mode', () => {
+  const { home, go, commit, project } = bulkEnv();
+  const p = project('--mode', 'link');
+  commit();
+  const preview = go(['--update-all']);
+  assert.match(rowOf(preview, p), /1 commit behind\s+no file changes; records the current commit$/, preview.lines.join('\n'));
+  const r = go(['--update-all', '--yes']);
+  assert.equal(r.code, 0, r.lines.join('\n'));
+  assert.ok(fs.lstatSync(path.join(p, '.claude/skills/tsh-alpha')).isSymbolicLink());
+  assert.ok(fs.lstatSync(path.join(p, '.claude/agents/tsh-agent.md')).isSymbolicLink());
+  assert.equal(entryOf(home, p, 'project').mode, 'link');
+  assert.equal(manifestOf(p).mode, 'link');
+  assert.match(rowOf(go(['--list']), p), /link\s+[0-9a-f]{7}\s+up to date$/);
+});
+
+test('--update-all with an empty or corrupt registry explains and writes nothing', () => {
+  const { home, go } = bulkEnv();
+  for (const args of [['--update-all'], ['--update-all', '--yes'], ['--forget-missing']]) {
+    const r = go(args);
+    assert.equal(r.code, 0);
+    assert.ok(r.lines.some((l) => /No installs recorded yet/.test(l)), r.lines.join('\n'));
+    assert.ok(r.lines.some((l) => /recorded automatically/.test(l)));
+  }
+  assert.ok(!exists(path.dirname(registryPath(home))));
+  put(home, path.relative(home, registryPath(home)), 'garbage');
+  for (const args of [['--update-all'], ['--update-all', '--yes'], ['--forget-missing']]) {
+    const r = go(args);
+    assert.equal(r.code, 0);
+    assert.ok(r.lines.some((l) => /Warning: .*corrupt/.test(l)), r.lines.join('\n'));
+  }
+  assert.equal(fs.readFileSync(registryPath(home), 'utf8'), 'garbage');
+  assert.deepEqual(fs.readdirSync(path.dirname(registryPath(home))), ['installs.json']);
+});
+
+test('--forget-missing drops only missing entries, honors --dry-run and touches no project', () => {
+  const { home, go, commit, project } = bulkEnv();
+  const behind = project(), gone = project(), noManifest = project(), unknown = project();
+  const mf = path.join(unknown, '.claude/skills', MANIFEST);
+  fs.writeFileSync(mf, JSON.stringify({ ...JSON.parse(fs.readFileSync(mf, 'utf8')), sourceCommit: 'f'.repeat(40) }));
+  for (const d of ['.claude/skills', '.claude/agents']) fs.rmSync(path.join(noManifest, d, MANIFEST));
+  commit();
+  fs.rmSync(gone, { recursive: true });
+  const projects = [behind, noManifest, unknown];
+  const before = projects.map(snapshot);
+  const reg = fs.readFileSync(registryPath(home), 'utf8');
+  const dry = go(['--forget-missing', '--dry-run']);
+  assert.ok(dry.lines.includes('Would forget 2 missing installs:'), dry.lines.join('\n'));
+  assert.ok(dry.lines.some((l) => l.trim() === `${gone}  (project)`));
+  assert.ok(dry.lines.some((l) => l.trim() === `${noManifest}  (project)`));
+  assert.equal(fs.readFileSync(registryPath(home), 'utf8'), reg, '--dry-run writes nothing');
+  const r = go(['--forget-missing']);
+  assert.ok(r.lines.includes('Forgot 2 missing installs:'), r.lines.join('\n'));
+  assert.deepEqual(readReg(home).installs.map((e) => e.path).sort(), [behind, unknown].sort());
+  assert.deepEqual(projects.map(snapshot), before, 'no project changed');
+  assert.ok(go(['--forget-missing']).lines.includes('No recorded install is missing; nothing to forget.'));
+});
+
+test('--update-all, --yes and --forget-missing reject clashing flags with a UsageError', () => {
+  const { go } = bulkEnv();
+  const bad = [
+    [['--update-all', '--tools', 'claude'], /--update-all cannot be combined with --tools/],
+    [['--update-all', '--scope', 'project'], /--update-all cannot be combined with --scope/],
+    [['--update-all', '--project-dir', '/x'], /--update-all cannot be combined with --project-dir/],
+    [['--update-all', '--mode', 'link'], /--update-all cannot be combined with --mode/],
+    [['--update-all', '--update'], /--update-all cannot be combined with --update/],
+    [['--update-all', '--migrate-legacy'], /--update-all cannot be combined with --migrate-legacy/],
+    [['--update-all', '--force'], /--update-all cannot be combined with --force/],
+    [['--update-all', '--list'], /--list, --update-all cannot be combined/],
+    [['--list', '--forget-missing'], /--list, --forget-missing cannot be combined/],
+    [['--update-all', '--forget-missing'], /--update-all, --forget-missing cannot be combined/],
+    [['--forget-missing', '--yes'], /--forget-missing cannot be combined with --yes/],
+    [['--forget-missing', '--tools', 'claude'], /--forget-missing cannot be combined with --tools/],
+    [['--forget-missing', '--force'], /--forget-missing cannot be combined with --force/],
+    [['--forget-missing', '--update'], /--forget-missing cannot be combined with --update/],
+    [['--yes'], /--yes is only valid with --update-all/],
+    [['--update', '--yes'], /--yes is only valid with --update-all/],
+    [['--list', '--yes'], /--list cannot be combined with --yes/],
+  ];
+  for (const [args, re] of bad) assert.throws(() => go(args), (e) => e instanceof UsageError && re.test(e.message), args.join(' '));
+  for (const ok of [['--update-all', '--yes', '--verbose'], ['--update-all', '-v'], ['--forget-missing', '--dry-run', '--verbose']]) go(ok);
+  assert.match(go(['--update-all', '--help']).lines[0], /--update-all/);
+});
+
+test('--update-all --verbose shows the full output of each update', () => {
+  const { go, source, commit, project } = bulkEnv();
+  const p = project();
+  changeSource(source);
+  commit();
+  const r = go(['--update-all', '--verbose']);
+  const text = r.lines.join('\n');
+  assert.ok(r.lines.some((l) => l.startsWith('== ') && l.includes(p)), text);
+  assert.ok(r.lines.some((l) => /would replace unmodified .*tsh-alpha/.test(l)), text);
+  assert.ok(r.lines.includes(`-> ${p}: 1 replaced (unmodified)`), text);
+  assert.ok(!r.lines.some((l) => /^ {2}\S.*\s+project\s+claude\s/.test(l)), 'no compact table');
+});
