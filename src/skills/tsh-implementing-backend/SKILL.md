@@ -108,77 +108,7 @@ src/
 
 ## DataGrid: Filtering, Sorting & Pagination (TSH Standard)
 
-Every list endpoint returning paginated data **MUST** follow this schema.
-
-### Request Query Parameters
-
-| Parameter | Format | Description |
-|---|---|---|
-| `page` | `page=1` | Page number (starting from 1) |
-| `limit` | `limit=10` | Max results per page |
-| `sort[field]` | `sort[lastName]=ASC` | Sort by field, direction: `ASC` or `DESC` |
-| `filter[field]` | `filter[firstName]=John` | Filter by field value |
-| `search` | `search=john` | General text search (implementation-specific: LIKE, full-text, etc.) |
-
-**Example:** `GET /users?page=1&limit=10&sort[lastName]=ASC&filter[status]=active&search=john`
-
-### Filter Behavior
-
-- **Same field, multiple values** → interpreted as `OR`:
-  ```
-  ?filter[firstName]=Ewa&filter[firstName]=Adam
-  → WHERE (firstName = 'Ewa' OR firstName = 'Adam')
-  ```
-- **Different fields** → interpreted as `AND`:
-  ```
-  ?filter[firstName]=Ewa&filter[lastName]=Kowalska
-  → WHERE (firstName = 'Ewa' AND lastName = 'Kowalska')
-  ```
-- **LIKE search** → use URL-encoded `%25` suffix:
-  ```
-  ?filter[lastName]=Now%25
-  → WHERE lastName LIKE 'Now%'
-  ```
-
-### Advanced Filter Operators (when applicable)
-
-| Operator | SQL Equivalent | Example |
-|---|---|---|
-| `eq` | `=` | `filter[status][eq]=active` |
-| `neq` | `<>` | `filter[status][neq]=deleted` |
-| `lt`, `lte` | `<`, `<=` | `filter[age][lt]=30` |
-| `gt`, `gte` | `>`, `>=` | `filter[age][gte]=18` |
-| `include` | `LIKE %val%` | `filter[name][include]=john` |
-| `in` | `IN (...)` | `filter[status][in]=active,pending` |
-
-### Response Format (Mandatory)
-
-```json
-{
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 57,
-      "totalPages": 6
-    },
-    "filter": {
-      "status": "active"
-    },
-    "sort": {
-      "lastName": "ASC"
-    },
-    "search": "john"
-  },
-  "data": [{ "..." }]
-}
-```
-
-**Rules:**
-- `meta` always reflects the actual applied parameters back to the client.
-- Invalid filter/sort field names are **silently ignored** (no error thrown), but not applied.
-- Default `limit` should be defined in app configuration (e.g. 20 or 50).
-- Maximum `limit` should be capped to prevent abuse (e.g. 100 or 250).
+Every list endpoint returning paginated data follows the TSH DataGrid schema (a team convention): `page`, `limit`, `sort[field]=ASC|DESC`, `filter[field]=value` (same field repeated = OR, different fields = AND) and `search`. Responses are `{ "meta": { "pagination", "filter", "sort", "search" }, "data": [...] }`, `meta` echoes the applied parameters, unknown filter/sort fields are ignored, and `limit` has a configured default and maximum. For the full query syntax, operators and response format, see `./references/datagrid-standard.md`.
 
 ## Authentication & Authorization
 
@@ -230,7 +160,7 @@ See the technology-specific references below for recommended DI frameworks per l
 
 - **All** database schema changes go through migration files. Never modify the database manually.
 - Each migration must have both `up` (apply) and `down` (revert) methods.
-- Migrations run automatically on application startup (for containerized apps) or via a dedicated migration command/lambda (for serverless).
+- Run migrations as a separate deploy step or one-off job (a dedicated migration command, init container or lambda) before the new version takes traffic, not on application startup. Startup migrations race between replicas and give the app schema-change privileges.
 - Never modify an existing migration that has been deployed. Create a new migration instead.
 - Name migrations descriptively: `2025-02-08-add-status-column-to-orders`.
 
@@ -241,13 +171,7 @@ See the technology-specific references below for recommended DI frameworks per l
 - Seeds should be idempotent — running them multiple times produces the same result.
 - Separate seed files by domain (e.g. `seed-users.ts`, `seed-products.ts`).
 
-### Database Best Practices
-
-- Use `UUID` or `ULID` for primary keys where appropriate (better for distributed systems).
-- Define proper indexes for foreign keys, frequently queried columns, and unique constraints.
-- Use snake_case naming for tables and columns (e.g. `order_items`, `created_at`).
-- Always define `created_at` and `updated_at` timestamps.
-- Use soft deletes (`deleted_at`) when business rules require record retention.
+For schema design, naming, keys, indexes and query performance, follow the `tsh-designing-databases` skill.
 
 ## External Service Adapters (Third-Party Clients)
 
@@ -346,22 +270,10 @@ describe('POST /users', () => {
 
 See the technology-specific references below for recommended Swagger tooling per language.
 
-## Docker & Local Development
+## Local Development
 
-### Docker Setup
+Provide a Dockerfile and a Compose setup so the app runs with one `docker compose up`. Base images, Compose services, mail catcher and Dockerfile rules are in `./references/local-development.md`.
 
-- Every project **must** include a `Dockerfile` and `docker-compose.yml` for local development.
-- The `docker-compose.yml` should include all required services: app, database (PostgreSQL), cache (Redis), mail catcher (Mailhog), etc.
-- Use `docker-compose.override.yml` for developer-specific customizations (additional ports, volumes, debug settings).
-- Application should be fully runnable with a single `docker-compose up` command.
-
-### Dockerfile Best Practices
-
-- Use multi-stage builds to keep images small.
-- Pin base image versions (e.g. `node:20-alpine`, `php:8.3-fpm-alpine`, `mcr.microsoft.com/dotnet/aspnet:8.0`).
-- Install only production dependencies in the final stage.
-- Use `.dockerignore` to exclude build artifacts, test files, etc.
-- Run as a non-root user in the container.
 
 ## Health Check
 
@@ -380,33 +292,7 @@ For more thorough health checks, optionally verify database connectivity and cri
 
 ## Logging & Observability
 
-### Structured Logging
-
-- Use a **structured logger** — never `console.log` or `print` in production.
-- Log in **JSON format** for machine parseability.
-- Include contextual fields in every log entry: `timestamp`, `level`, `requestId`/`correlationId`, `userId` (if authenticated), `service`.
-
-See the technology-specific references below for recommended logging libraries per language.
-
-### Log Levels
-
-| Level | When to Use |
-|---|---|
-| `error` | Unexpected failures, unhandled exceptions, critical issues |
-| `warn` | Recoverable issues, deprecation notices, approaching limits |
-| `info` | Significant business events: user created, order placed, payment processed |
-| `debug` | Detailed diagnostic information (disabled in production) |
-
-### What to Log
-
-- **Always log**: incoming requests (method, path, status code, duration), authentication failures, authorization failures, external service calls (URL, status, duration), errors with stack traces.
-- **Never log**: passwords, tokens, API keys, credit card numbers, PII (personally identifiable information) unless encrypted or masked.
-
-### Request Logging
-
-- Log every HTTP request with: method, path, status code, response time, and correlation/request ID.
-- Use middleware (Morgan, express request logger, or framework equivalent) for automatic request logging.
-- Propagate a `correlationId` / `requestId` header through the entire request lifecycle for tracing.
+Use a structured JSON logger with a request/correlation ID on every entry, and never log secrets or PII. The log format, required fields, levels and retention rules are owned by the `tsh-implementing-observability` skill; follow it. See the technology-specific references below for recommended logging libraries per language. Always log incoming requests (method, path, status, duration), auth failures and external service calls, using middleware for request logging.
 
 ## Scalability & Security
 
@@ -493,9 +379,9 @@ The patterns above are language-agnostic. For technology-specific implementation
 
 - **Node.js**: See `./references/nodejs-patterns.md` — NestJS/Express DI, Jest/Supertest testing, Pino/Winston logging, TypeORM/Prisma ORM, Swagger integration.
 - **PHP**: See `./references/php-patterns.md` — Symfony/Laravel DI, PHPUnit testing, Monolog logging, Doctrine/Eloquent ORM, Swagger integration.
-- **dotNET**: See `./references/dotnet-patterns.md` — built-in DI, xUnit testing, Serilog logging, Entity Framework ORM, Swashbuckle Swagger.
+- **dotNET**: See `./references/dotnet-patterns.md` — built-in DI, xUnit testing, Serilog logging, Entity Framework ORM, built-in OpenAPI or Swashbuckle.
 - **Java**: See `./references/java-spring-boot-patterns.md` — Spring IoC, JUnit/REST Assured testing, SLF4J/Logback logging, Hibernate ORM, springdoc-openapi, Spring Cloud Stream async messaging.
-- **Go**: See `./references/go-patterns.md` — Wire/Fx DI, Go testing, Zap logging, GORM ORM, swaggo Swagger.
+- **Go**: See `./references/go-patterns.md` — Fx/manual DI (Wire if still maintained), Go testing, Zap logging, GORM ORM, swaggo Swagger.
 
 ## Connected Skills
 
@@ -507,10 +393,3 @@ The patterns above are language-agnostic. For technology-specific implementation
 - `tsh-implementing-observability` — for logging, monitoring, and distributed tracing
 - `tsh-managing-secrets` — for secure credential storage and rotation
 - `tsh-writing-e2e-tests` — for end-to-end testing with Playwright
-
-## Connected Skills
-
-- `technical-context-discovery` — for establishing project conventions before implementing
-- `architecture-design` — for designing complex feature architectures
-- `code-review` — for validating implemented code against these standards
-- `e2e-testing` — for E2E test patterns when full-stack testing is needed

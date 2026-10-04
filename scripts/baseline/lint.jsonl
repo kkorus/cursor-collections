@@ -17,5 +17,4 @@
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-skills/SKILL.md","key":".cursor/skills/","count":3}
 {"rule":"no-path-refs","file":"src/skills/tsh-creating-skills/assets/skill.template.md","key":".cursor/skills/","count":2}
 {"rule":"max-lines","file":"src/skills/tsh-designing-databases/SKILL.md","key":"SKILL.md","count":1}
-{"rule":"max-lines","file":"src/skills/tsh-implementing-backend/SKILL.md","key":"SKILL.md","count":1}
 {"rule":"no-path-refs","file":"src/skills/tsh-migrating-copilot-customizations/SKILL.md","key":".cursor/skills/","count":9}
