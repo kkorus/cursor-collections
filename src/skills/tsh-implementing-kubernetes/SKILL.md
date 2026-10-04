@@ -310,6 +310,10 @@ containers:
 | Hardcode values in manifests | Use Helm values or Kustomize overlays |
 | Ignore pod eviction | Set PDB to maintain availability |
 
+## Summary Output
+
+End an implementation with the summary in `assets/deployment-summary.template.md`. Service architecture or topology design, a service mesh (Istio, Linkerd) and multi-cluster or multi-region deployments are architect decisions (see `tsh-delivering-infrastructure`). HPA and PDB configuration, probes, resource limits and manifest fixes are not. If the project instructions name no Technical Context for Kubernetes, say so in the summary.
+
 ## Connected Skills
 
 - `tsh-implementing-observability` - For K8s monitoring and logging setup

@@ -235,6 +235,18 @@ infrastructure/
     └── ...
 ```
 
+## Guardrails
+
+- Always run `terraform plan` before any apply, and apply the saved plan.
+- Never suggest `terraform apply -auto-approve` for production.
+- Make sure remote state is configured before applying.
+- Flag resources with a significant cost impact (more than a 10% increase).
+- VPC or network topology, a choice between competing cloud services (ECS vs EKS, RDS vs Aurora), multi-region or disaster recovery design and decisions with a cost impact above 10% are architect decisions (see `tsh-delivering-infrastructure`). Adding resources to existing modules, version updates, bug fixes and tags are not.
+
+## Summary Output
+
+End an implementation with the summary in `assets/terraform-summary.template.md`.
+
 ## Connected Skills
 
 - `tsh-designing-multi-cloud-architecture` - For architectural decisions

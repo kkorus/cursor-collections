@@ -70,11 +70,7 @@ You have access to the `tsh-devops-engineer` subagent.
   - Implementing CI/CD pipelines to automate the build, test, and deployment processes.
   - Implementing monitoring and observability solutions to ensure the reliability and performance of the deployed applications.
 - **IMPORTANT**:
-  - Always delegate with instructions to follow the relevant internal skill (e.g.
-    the `tsh-implement-observability` skill,
-    the `tsh-implement-terraform` skill,
-    the `tsh-deploy-kubernetes` skill,
-    the `tsh-implement-pipeline` skill).
+  - Always delegate with instructions to follow the `tsh-delivering-infrastructure` skill, which routes to the matching domain skill (`tsh-implementing-terraform-modules`, `tsh-implementing-ci-cd`, `tsh-implementing-kubernetes`, `tsh-implementing-observability`).
 - **SHOULD NOT delegate to**:
   - Implementing application code - delegate those to `tsh-software-engineer`.
 

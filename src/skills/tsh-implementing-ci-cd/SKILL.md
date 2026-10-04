@@ -184,6 +184,10 @@ apply:
 
 ---
 
+## Summary Output
+
+End an implementation with the summary in `assets/pipeline-summary.template.md`. A blue-green or canary strategy that is new to the organization, multi-environment promotion pipelines and GitOps workflows are architect decisions (see `tsh-delivering-infrastructure`). Adding a strategy the organization already uses, test stages, caching, version updates and pipeline bug fixes are not.
+
 ## Connected Skills
 
 - `tsh-managing-secrets` - For credential configuration
