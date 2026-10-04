@@ -3,6 +3,7 @@ name: tsh-commit
 description: Draft a Conventional Commits message from current git changes and commit only after explicit user approval. Use when the user types /tsh-commit, wants to commit work in progress, or needs a structured commit message before git commit.
 type: command
 standalone: true
+argument-hint: "[type(scope): subject]"
 metadata:
   short-description: Draft a Conventional Commits message and commit after approval
 ---
@@ -13,7 +14,7 @@ Analyze the working tree, draft a [Conventional Commits 1.0.0](https://www.conve
 
 ## Required Skills
 
-- `tsh-committing` — type/scope inference, message format, secret-file rules, split recommendations
+- `tsh-committing` — type/scope inference, message format, secret and sensitive file rules, split recommendations
 
 ## Workflow
 
@@ -37,7 +38,7 @@ Load `tsh-committing` and analyze the combined diff (staged + unstaged unless th
 - Apply any user hint from the command invocation (type, scope, `Refs:`, subject override).
 - If unrelated change domains appear, present **Option A** (single commit) and **Option B** (split into N commits with separate messages and file lists).
 - Enumerate **exact paths** to stage — never use `git add .` or `git add -A` without listing each path.
-- Run secret-file checks from the reference; block or warn before proposing.
+- Run the checks from the "Secret and Sensitive Files" section of `tsh-committing`; block or warn before proposing.
 
 ### 3. Present proposal (mandatory format)
 
@@ -110,11 +111,15 @@ Hints influence drafting; they do not bypass the confirmation gate.
 - Never use `--no-verify`, `--no-gpg-sign`, or `--amend` unless the user explicitly requests it and user rules allow amend.
 - Never `git push`, force push, or destructive commands (`reset --hard`, etc.) unless explicitly requested.
 - Never commit secret or credential files (see `tsh-committing`).
+- Attribution lines (such as co-author trailers) are governed by the rules of the tool or project you run in. Do not add or strip them here; follow those rules when building the message.
 - Never commit unless the user asked to commit in this conversation (invoking `/tsh-commit` counts as intent to commit **after** approval).
 - Match the approved message byte-for-byte in `git commit` unless the user edited it in step 4.
 
 ## Connected Skills
 
 - `tsh-committing` — message drafting rules
-- `tsh-refactor` — when changes need structural work before committing
-- `tsh-debug` — when the diff includes a bug fix that should be verified first
+
+## Related commands
+
+- `/tsh-refactor` — when changes need structural work before committing
+- `/tsh-debug` — when the diff includes a bug fix that should be verified first
