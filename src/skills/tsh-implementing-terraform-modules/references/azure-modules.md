@@ -75,12 +75,12 @@
 
 ## Best Practices
 
-1. Use `azurerm` provider version `~> 4.0`
+1. Pin the current `azurerm` provider major from the registry
 2. Always enable resource locks on critical resources
 3. Use Managed Identities — avoid service principal passwords
 4. Enable diagnostic settings and route logs to Log Analytics
-5. Apply Azure Policy via Terraform (`azurerm_policy_assignment`)
-6. Tag resources consistently (environment, cost-centre, managed-by)
+5. Apply Azure Policy via Terraform (the scoped resources such as `azurerm_subscription_policy_assignment` or `azurerm_resource_group_policy_assignment`, not the removed `azurerm_policy_assignment`)
+6. Tag resources consistently using the required tag set and key formats from `tsh-optimizing-cloud-cost` (its tagging standards)
 7. Use `azurerm_resource_group` per environment / module boundary
 8. Enable soft-delete and purge protection on Key Vault
 9. Prefer private endpoints over public access

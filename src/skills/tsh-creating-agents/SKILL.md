@@ -87,7 +87,7 @@ targets:                       # optional escape hatch, merged LAST
 | Claude Code | `.claude/agents/<name>.md` | `name`, `description`, `model`, `disallowedTools` (always includes `Agent`; adds `Write`, `Edit`, `NotebookEdit` for `read-only` and `Bash` for `shell: false`), `skills` from `preload-skills` |
 | Codex | `.codex/agents/<name>.toml` | `name`, `description`, `developer_instructions` (body plus the "Required skills" line), `model`, `model_reasoning_effort`, `sandbox_mode = "read-only"` for `read-only` |
 
-- Claude uses a deny-list so that MCP tools stay inherited. Cursor and Codex have no shell switch, so `shell: false` is also stated in the body there.
+- Claude uses a deny-list so that MCP tools stay inherited. Cursor and Codex have no shell switch and the generator adds nothing for `shell: false` there, so state the restriction in the body yourself.
 - Cursor `readonly` and Codex `sandbox_mode` are not documented to block MCP write tools. State the restriction in the body as well.
 - Cursor and Codex have no preload field. The generated "Required skills" line asks the agent to load the skills by name, so keep them named in the body.
 - Without a generator, write the equivalent native file by hand for each tool, using the fields above. Keep the body identical across tools.
@@ -156,25 +156,25 @@ Validation:
 - [ ] Every skill referenced in the body exists; references are by name, never by path
 - [ ] Follow-ups are a "Suggested next steps" list of commands
 - [ ] Role is distinct from existing agents
-- [ ] Connected Skills section present at the end
+- [ ] Recommended sections present or their absence is deliberate (Role and Responsibilities, Skills Usage, Tool Usage)
 ```
 
 ## Body Structure
 
-Use Markdown headings for every section. One body format for all agents.
+Use Markdown headings for every section. One body format for all agents. Only the title and the modes include are required; the other sections are a recommended structure, and existing agents may omit some. Do not report a missing recommended section as a must-fix finding.
 
-| Section | Required | Purpose |
+| Section | Status | Purpose |
 |---|---|---|
-| `# <Role Title>` | Yes | Title |
-| `## Agent Role and Responsibilities` | Yes | Role statement, responsibilities, behavior |
-| `<!-- include: agent-modes -->` | Yes | Dual-mode contract |
-| `## Skills Usage Guidelines` | Yes | Skills to load and when |
-| `## Tool Usage Guidelines` | Yes | Per MCP server and for asking the user: when to use, when not |
+| `# <Role Title>` | Required | Title |
+| `## Agent Role and Responsibilities` | Recommended | Role statement, responsibilities, behavior |
+| `<!-- include: agent-modes -->` | Required | Dual-mode contract |
+| `## Skills Usage Guidelines` | Recommended | Skills to load and when |
+| `## Tool Usage Guidelines` | Recommended | Per MCP server and for asking the user: when to use, when not |
 | `## Domain Standards` | No | Role-specific rules not covered by skills |
 | `## Constraints` | No | Limits and anti-patterns |
 | `## Output Format` | No | Shape of the deliverable |
 | `## Suggested next steps` | No | Commands to show the user at the end of interactive mode |
-| `## Connected Skills` | Yes | Related skills by name with the reason to load each |
+| `## Connected Skills` | No | Related skills by name with the reason to load each |
 
 ## Connected Skills
 

@@ -14,7 +14,7 @@ Run an evidence-based cost optimization and tagging audit of one AWS account or 
 ## Required Skills
 
 - `tsh-discovering-technical-context` - IaC patterns, tagging conventions and project context
-- `tsh-optimizing-cloud-cost` - pricing and storage tables, tagging standards, the audit checklist for the provider (`references/aws-audit-checklist.md` or `references/gcp-audit-checklist.md`) and the report template (`assets/cost-audit-report.template.md`)
+- `tsh-optimizing-cloud-cost` - pricing and storage tables, tagging standards, the audit checklist for the provider (AWS or GCP) and its cost audit report template
 - `tsh-analyzing-codebase` - IaC structure, dependencies and dead code when IaC files exist
 - `tsh-implementing-terraform-modules` (conditional) - when Terraform files exist
 - `tsh-managing-secrets` (conditional) - when security findings are in scope

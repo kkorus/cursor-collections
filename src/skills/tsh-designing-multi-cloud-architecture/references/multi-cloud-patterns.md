@@ -132,7 +132,7 @@ Deploy application stacks in cloud regions that are closest to user populations.
          └──┬──────────────┬───┘
             │              │
   ┌─────────▼────┐  ┌───────▼───────────┐
-  │ AWS us-east-1│  │ Azure europewest  │
+  │ AWS us-east-1│  │ Azure westeurope  │
   │ App + DB     │  │ App + DB          │
   └──────────────┘  └───────────────────┘
             │              │

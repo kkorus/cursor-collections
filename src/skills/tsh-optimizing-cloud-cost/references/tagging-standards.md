@@ -26,13 +26,13 @@ A provider-neutral template. Replace every `[placeholder]` with the organization
 
 The required set is the same in `SKILL.md` and here. Every resource that supports tags carries all five.
 
-| Tag key | Example value | Description | FOCUS mapping |
-|---|---|---|---|
-| `CostCenter` | `[cc-102]` | Billing code for chargeback | Cost Center |
-| `Environment` | `dev`, `staging`, `prod` | Deployment stage | Environment |
-| `Service` | `[auth-api]` | Name of the specific workload | Service Name |
-| `Owner` | `[platform-team]` | Team responsible for the resource | Resource Owner |
-| `DataClass` | `public`, `confidential`, `pii` | Security classification level | none |
+| Tag key | Example value | Description |
+|---|---|---|
+| `CostCenter` | `[cc-102]` | Billing code for chargeback |
+| `Environment` | `dev`, `staging`, `prod` | Deployment stage |
+| `Service` | `[auth-api]` | Name of the specific workload |
+| `Owner` | `[platform-team]` | Team responsible for the resource |
+| `DataClass` | `public`, `confidential`, `pii` | Security classification level |
 
 Optional but recommended: `ManagedBy` (`terraform`, `manual`) to track IaC coverage.
 

@@ -88,7 +88,7 @@ Use `context7` to look up stack-specific configuration syntax.
 |--------|-------------|-------------|
 | **R**ate | Requests per second | `rate(http_requests_total[5m])` |
 | **E**rrors | Failed requests | `rate(http_requests_total{status=~"5.."}[5m])` |
-| **D**uration | Latency distribution | `histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))` |
+| **D**uration | Latency distribution | `histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))` |
 
 ### Key Metrics (USE Method for Resources)
 
@@ -164,6 +164,7 @@ This skill is the canonical owner of the logging format. Service skills such as 
   "level": "error",
   "message": "Payment processing failed",
   "service": "payment-api",
+  "request_id": "req-456",
   "trace_id": "abc123",
   "span_id": "def456",
   "user_id": "user-789",
