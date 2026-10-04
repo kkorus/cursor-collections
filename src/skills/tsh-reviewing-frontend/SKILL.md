@@ -17,7 +17,7 @@ This skill supplements, not replaces, general code review. Apply these checks af
 </frontend-lens>
 
 <severity-over-style>
-A missed keyboard trap in a modal matters more than a slightly non-standard prop name. Prioritize correctness and accessibility issues over style preferences. Use findings severity: critical (must fix), warning (should fix), suggestion (consider).
+A missed keyboard trap in a modal matters more than a slightly non-standard prop name. Prioritize correctness and accessibility issues over style preferences. Use the severities of the findings format in `tsh-reviewing-code`.
 </severity-over-style>
 
 </principles>
@@ -122,16 +122,16 @@ Quick checks — not a full audit. Defer to `tsh-optimizing-frontend` for deep a
 
 **Step 6: Produce findings report**
 
-Group findings by severity. Each finding must include: file + line range, issue description, and recommended fix.
+Report the findings in the "Findings format" of the `tsh-reviewing-code` skill (severities `critical`, `warning` and `suggestion`, location as `file#Lx-Ly`, and a fix). This skill defines no severities of its own; it only decides which frontend issues fall into which one:
 
-**Critical** — Must fix before merge:
+**critical**:
 
 - Accessibility blockers (keyboard traps, missing labels on critical flows, non-semantic interactive elements)
 - Rendering bugs (missing/index keys on dynamic lists, side effects in render phase)
 - Memory leaks (effects without cleanup)
 - Security issues (XSS vectors, unsafe raw HTML insertion without sanitization)
 
-**Warning** — Should fix, may defer with justification:
+**warning**:
 
 - Props design issues (sprawl, missing types, unclear naming)
 - Missing error, loading, or empty states
@@ -139,36 +139,12 @@ Group findings by severity. Each finding must include: file + line range, issue 
 - Placeholder-as-only-label, skipped heading levels
 - Derived state stored in reactive state instead of computed
 
-**Suggestion** — Consider for improvement:
+**suggestion**:
 
 - Style improvements (conditional rendering cleanup, naming tweaks)
 - Composition opportunities (extract sub-component, use children pattern)
 - Minor optimizations (memoize prop objects, add memo to list items)
 - Default export usage (convert to named export)
-
-Format each finding consistently:
-
-```
-[SEVERITY] file/path.tsx#L10-L25
-Issue: <description>
-Fix: <recommended action>
-```
-
-Example findings:
-
-```
-[CRITICAL] components/Modal.tsx#L45-L52
-Issue: <div onClick={onClose}> used as close button — no keyboard access, no role, no focus indicator.
-Fix: Replace with <button onClick={onClose} aria-label="Close modal">.
-
-[WARNING] hooks/useUserData.ts#L18
-Issue: Dependency tracking lint rule suppressed — potential stale closure.
-Fix: Restructure effect to include all dependencies, or extract a stable callback.
-
-[SUGGESTION] components/OrderList.tsx#L33
-Issue: Inline style object `style={{ padding: 16 }}` passed to memoized child — defeats memo.
-Fix: Lift to module-level constant or use styling solution.
-```
 
 ## Frontend Review Checklist
 
