@@ -2397,6 +2397,7 @@ Potential improvements identified during planning that are not part of the curre
 - **Installer re-runs:** a second run is idempotent but re-copies every entry and logs each line; make it skip identical entries.
 - **Website polish:** `for-ctos.md` still has an unverified price comparison; the skill pages are generated from `SKILL.md` and lost the old hand-written detail.
 - **Review leftovers (suggestions, not fixed):** Figma/Playwright usage blocks are still inline in 6 agents; 12 commands do not follow the Route/Inputs/Steps template; `tsh-business-analyst` lacks the "Internal step of" description prefix; `agents/openai.yaml` is emitted only for commands (no implicit-invocation block for the hidden orchestrator/internal skills, relevant once Codex is tested).
+- **Installer known limitations (reviewed, accepted):** the install registry has no file lock, so two installs at the same moment can lose one record (the next `--update` re-records it); registry paths are compared as exact strings (no realpath, no Windows case folding); a registry written by a future version loses unknown entries on rewrite; `--update-all` runs the home-directory legacy cleanup once per project entry; the checksum ignores file mode bits; a dangling symlink in the source tree still throws in `listSource`; a test that pins `lstat` for nested symlinks in `treesEqual` is missing.
 
 ## Changelog
 
@@ -2502,3 +2503,9 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
 - **Change:** every non-command skill type (`skill`, `internal`, `orchestrator`) now renders `user-invocable: false`. Before, knowledge skills were listed next to the commands in the Claude Code `/` menu, which made it unclear what a user should type (`/tsh-debug` vs `tsh-debugging`).
 - **Verified on Claude Code 2.1.285:** the `/` menu lists exactly the 16 `tsh-` commands; `tsh-debugging` is hidden but loads by name through the Skill tool and returns the right step. Cursor and Codex cannot hide skills, so their menus still show them (documented).
 - **Added:** `website/docs/getting-started/which-command.md` (situation to command table, what not to type), a README pointer, updated `AGENTS.md` type table.
+
+### 2026-10-05 - Installer: checksums, registry, --update-all
+
+- **Why:** `--update` made a backup of every skill that differed from the new source ("changed locally" even without an edit), and there was no way to see or refresh all installs.
+- **Built (Quick flow, reviewed):** f550d51 sha256 checksums in the manifest (version 2; backup only for really edited copies); 103c3e1 install registry in `<home>/.tsh-ai-collections/installs.json` and `--list`; f95f1c5 `--update-all` (preview, `--yes` applies, `--force` never in bulk) and `--forget-missing`; 9c6d932 fixes from the first review.
+- **Review:** iteration 1 found 0 critical, 3 warnings, 7 suggestions; iteration 2 found 0 critical and 0 warnings. 202 tests pass on Node 22 and 26; `npm run check` and the website build pass.
