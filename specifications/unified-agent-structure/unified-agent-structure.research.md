@@ -74,7 +74,7 @@ Doc URL notes:
 | Field | Cursor | Claude Code | Codex |
 |---|---|---|---|
 | `disable-model-invocation` | Yes (explicit `/name` only) | Yes | **Ignored.** The equivalent is `agents/openai.yaml` → `policy.allow_implicit_invocation: false` |
-| `user-invocable` | Not documented | Yes (hides the skill from the `/` menu) | No |
+| `user-invocable` | Not in the public docs. A Cursor developer confirmed (2026-10-05): supported in the Cursor CLI, not yet in the IDE | Yes (hides the skill from the `/` menu) | No |
 | `paths` | Yes (`globs` is legacy) | Yes | No |
 | `argument-hint`, `arguments`, `when_to_use`, `model`, `effort`, `context`, `agent`, `background`, `hooks`, `shell`, `disallowed-tools` | No | Claude only | No |
 | `icon`, `color` | Cursor only (Custom Mode badge) | No | No |

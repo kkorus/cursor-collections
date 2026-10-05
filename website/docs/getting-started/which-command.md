@@ -45,5 +45,5 @@ If you are unsure where to start with a task, use `/tsh-implement`. It asks whet
 | Tool | Slash menu |
 |---|---|
 | Claude Code | Exactly the 16 commands. Everything else is hidden from the menu but can still be loaded by name (tested). |
-| Cursor | The documentation does not allow hiding a skill from the menu, so knowledge skills, orchestrators and internal steps can show up next to the commands. Ignore them and use the table above. |
+| Cursor | The CLI hides them (`user-invocable: false`, supported there according to a Cursor developer; we have not checked the interactive menu). The IDE does not support the field yet, so knowledge skills, orchestrators and internal steps can show up next to the commands there. Ignore them and use the table above. |
 | Codex | Same limitation, and not yet verified in a real Codex session. |

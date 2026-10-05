@@ -83,7 +83,7 @@ At most one delegation level exists. Commands and orchestrators run in the main 
 Some commands route straight to one agent: `/tsh-ask` and `/tsh-audit-codebase` to the Architect, `/tsh-debug` to the Software Engineer, `/tsh-review` to the Code Reviewer, `/tsh-review-ui` to the UI Reviewer, and `/tsh-audit-infrastructure` and `/tsh-analyze-cloud-costs` to the DevOps Engineer. See the [commands overview](../commands/overview).
 
 :::note Known limitation
-Per the documentation, Cursor and Codex may list and auto-invoke internal and orchestrator skills, which Claude Code hides (Cursor IDE menu and Codex not yet verified). The descriptions of these skills start with "Internal step of ..." to discourage that. See [Supported tools](../getting-started/supported-tools).
+Claude Code hides internal and orchestrator skills from its `/` menu. Cursor hides them in the CLI but not yet in the IDE (according to a Cursor developer), and Codex is not yet verified. In every tool the model may still list them, so it could auto-invoke one. The descriptions of these skills start with "Internal step of ..." to discourage that. See [Supported tools](../getting-started/supported-tools).
 :::
 
 ## Agent summary

@@ -2509,3 +2509,9 @@ Source: `spikes/claude-code.spike.md` (Claude Code 2.1.274). No deviation from D
 - **Why:** `--update` made a backup of every skill that differed from the new source ("changed locally" even without an edit), and there was no way to see or refresh all installs.
 - **Built (Quick flow, reviewed):** f550d51 sha256 checksums in the manifest (version 2; backup only for really edited copies); 103c3e1 install registry in `<home>/.tsh-ai-collections/installs.json` and `--list`; f95f1c5 `--update-all` (preview, `--yes` applies, `--force` never in bulk) and `--forget-missing`; 9c6d932 fixes from the first review.
 - **Review:** iteration 1 found 0 critical, 3 warnings, 7 suggestions; iteration 2 found 0 critical and 0 warnings. 202 tests pass on Node 22 and 26; `npm run check` and the website build pass.
+
+### 2026-10-05 - `user-invocable` in Cursor
+
+- **Source:** a Cursor developer told the user that `user-invocable` is supported in the Cursor CLI and not yet in the IDE. The public Cursor docs (skills, plugin reference) do not list the field; we did not test the interactive CLI menu.
+- **Effect on the generator:** none. Every non-command skill already carries `user-invocable: false`, in both `.agents/skills` and `.claude/skills` (46 skills), and Cursor tolerates it in the IDE (no error), so the CLI benefits without any change.
+- **Docs:** README, `supported-tools.md`, `which-command.md`, `agents/overview.md` and `frontend-flow.md` no longer say that Cursor cannot hide skills; they describe CLI (per the Cursor developer), IDE (not yet) and Codex (not verified). The model's own skill list still includes the hidden skills in every tool (tested in the Cursor CLI).

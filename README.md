@@ -144,7 +144,7 @@ These target paths are the ones the installer prints. The user-scope paths for C
 | Run a command | `/tsh-implement PROJ-123` in Agent chat (tested in cursor-agent CLI; IDE not yet verified) | `/tsh-implement PROJ-123` | not yet verified |
 | Pass arguments | text after the command name | text after the command name (appended as `ARGUMENTS:`) | not yet verified |
 | Use a subagent directly | "Use the tsh-architect subagent" (tested in cursor-agent CLI; IDE not yet verified) | `@agent-tsh-architect`, or start a session with `claude --agent tsh-architect` | not yet verified |
-| Knowledge skills, orchestrators, internal steps | loaded by name by the agent; not meant for manual use (Cursor cannot hide them from its menu) | same; hidden from the `/` menu, so it lists exactly the 16 commands | not yet verified |
+| Knowledge skills, orchestrators, internal steps | loaded by name by the agent; not meant for manual use. Hidden from the `/` menu in the Cursor CLI (`user-invocable: false`, per a Cursor developer; not in the public docs, the IDE does not support it yet) | same; hidden from the `/` menu, so it lists exactly the 16 commands | not yet verified |
 
 Commands are thin entry points. Each routes to a subagent or an orchestrator, which loads knowledge skills by name. Subagents are leaf workers: they never start other subagents. Hand-offs between commands are text suggestions ("Suggested next steps"), never automatic.
 
