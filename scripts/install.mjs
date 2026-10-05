@@ -40,7 +40,7 @@ Installs the generated tsh-* skills and subagents into a user or project tree.
   --yes                with --update-all: apply the updates, one install after another
   --forget-missing     drop registry entries of installs that no longer exist on disk
                        (never touches a project); with --dry-run only prints them
-  --dry-run           print what would happen and change nothing
+  --dry-run            print what would happen and change nothing
   --verbose, -v        one line per entry instead of grouped summaries
   --force              replace an unmanaged tsh-* entry (it is moved to the backup first)
   --help               show this text
@@ -121,13 +121,17 @@ function listDir(ctx, p) {
   if (!st || !st.isDirectory()) return [];
   return ctx.fs.readdirSync(p);
 }
-function treesEqual(ctx, a, b) {
-  const sa = ctx.fs.statSync(a), sb = ctx.fs.statSync(b);
-  if (sa.isDirectory() !== sb.isDirectory()) return false;
-  if (!sa.isDirectory()) return ctx.fs.readFileSync(a).equals(ctx.fs.readFileSync(b));
-  const la = ctx.fs.readdirSync(a).sort(), lb = ctx.fs.readdirSync(b).sort();
-  if (la.join('\0') !== lb.join('\0')) return false;
-  return la.every((n) => treesEqual(ctx, path.join(a, n), path.join(b, n)));
+/** Whether an installed entry equals its source entry. The source side follows links (copies are
+ *  dereferenced); an installed link (dangling or not) or a missing entry is never equal, so it
+ *  takes the edited-copy path instead of throwing in the middle of an update. */
+function treesEqual(ctx, src, dest) {
+  let ss, sd;
+  try { ss = ctx.fs.statSync(src); sd = ctx.fs.lstatSync(dest); } catch { return false; }
+  if (sd.isSymbolicLink() || ss.isDirectory() !== sd.isDirectory()) return false;
+  if (!ss.isDirectory()) return ctx.fs.readFileSync(src).equals(ctx.fs.readFileSync(dest));
+  const ls = ctx.fs.readdirSync(src).sort(), ld = ctx.fs.readdirSync(dest).sort();
+  if (ls.join('\0') !== ld.join('\0')) return false;
+  return ls.every((n) => treesEqual(ctx, path.join(src, n), path.join(dest, n)));
 }
 function readManifest(ctx, dir) {
   const f = path.join(dir, MANIFEST);
@@ -203,6 +207,12 @@ function backupDir(ctx) {
   return ctx.backupRoot;
 }
 
+/** The backup dir as shown to the user. A dry run or preview creates no folder, so it shows the
+ *  literal <timestamp> placeholder instead of a timestamp that will never exist. */
+function backupLabel(ctx, dry) {
+  return short(ctx, dry ? path.join(path.dirname(backupDir(ctx)), '<timestamp>') : backupDir(ctx));
+}
+
 /** Display form of a path: relative to the project dir, or with ~ for the home dir. */
 function short(ctx, p) {
   const under = (base) => base && (p === base || p.startsWith(base + path.sep));
@@ -221,10 +231,11 @@ function retire(ctx, p, why) {
     if (!ctx.dry) ctx.fs.unlinkSync(p);
     return;
   }
-  const dest = path.join(backupDir(ctx), p.replace(/^[A-Za-z]:/, '').replace(/^[\\/]+/, ''));
+  const rel = p.replace(/^[A-Za-z]:/, '').replace(/^[\\/]+/, '');
+  const dest = path.join(backupDir(ctx), rel);
   ctx.pending.push({ kind: 'move', p, why });
   if (!why.startsWith('legacy')) ctx.stats.backedUp++; // legacy entries are counted by cleanupLegacy
-  if (ctx.verbose) ctx.log(`${ctx.dry ? 'would move' : 'moved'} ${p} -> ${dest} (${why})`);
+  if (ctx.verbose) ctx.log(`${ctx.dry ? 'would move' : 'moved'} ${p} -> ${ctx.dry ? path.join(backupLabel(ctx, true), rel) : dest} (${why})`);
   if (!ctx.dry) moveEntry(ctx.fs, p, dest);
 }
 
@@ -535,11 +546,11 @@ function writeRegistry(ctx, reg) {
   }
 }
 
-/** Add or refresh the entry for this install root, keyed by (path, scope). */
+/** Add or refresh the entry for this install root, keyed by (path, scope). Returns whether it did. */
 function registerInstall(ctx, tools) {
   try {
     const reg = loadRegistry(ctx);
-    if (reg.keep) return;
+    if (reg.keep) return false;
     const root = targetRoot(ctx);
     const now = ctx.now().toISOString();
     const prev = reg.installs.find((e) => e.path === root && e.scope === ctx.scope);
@@ -555,24 +566,35 @@ function registerInstall(ctx, tools) {
     };
     reg.installs = [...reg.installs.filter((e) => e !== prev), entry];
     writeRegistry(ctx, reg);
+    return true;
   } catch (e) {
     ctx.log(`Warning: could not update the install registry ${short(ctx, registryPath(ctx.home))} (${e.code || e.message}); the install itself is complete.`);
+    return false;
   }
 }
 
-/** Commits between `commit` and HEAD of the source clone, or null when that cannot be told. */
-function commitsBehind(ctx, commit) {
+/** Where `commit` stands against HEAD of the source clone: { behind: N } (0: it is HEAD),
+ *  { diverged: true } (not HEAD and not behind it: ahead of or diverged from HEAD), or null
+ *  when that cannot be told (no commit recorded, not a git clone, commit not in the clone). */
+function commitPosition(ctx, commit) {
   if (typeof commit !== 'string' || !/^[0-9a-f]{7,64}$/.test(commit)) return null;
-  const out = git(ctx, ['rev-list', '--count', `${commit}..HEAD`]);
-  return out && /^\d+$/.test(out) ? Number(out) : null;
+  const head = sourceCommit(ctx);
+  const full = head && git(ctx, ['rev-parse', '--verify', '--quiet', `${commit}^{commit}`]);
+  if (!full) return null;
+  if (full === head) return { behind: 0 };
+  const out = git(ctx, ['rev-list', '--count', `${full}..HEAD`]);
+  if (!out || !/^\d+$/.test(out)) return null;
+  return Number(out) > 0 ? { behind: Number(out) } : { diverged: true };
 }
 
-/** Manifests of the recorded tools under an entry's root, or null when the install is missing
- *  (the root is gone or none of those manifests exists). */
+/** Manifests of the recorded tools under an entry's root (every tool dir when the entry records
+ *  no valid tool), or null when the install is missing (the root is gone or none of those
+ *  manifests exists). */
 function entryManifests(ctx, e) {
   const st = lstat(ctx, e.path);
   if (!st || !st.isDirectory()) return null;
-  const dirs = [...selectSkillTrees(e.tools), ...e.tools.map((t) => AGENT_DIRS[t])];
+  const dirs = e.tools.length ? [...selectSkillTrees(e.tools), ...e.tools.map((t) => AGENT_DIRS[t])]
+    : [...SKILL_DIRS, ...Object.values(AGENT_DIRS)];
   const manifests = dirs.map((d) => readManifest(ctx, path.join(e.path, d))).filter(Boolean);
   return manifests.length ? manifests : null;
 }
@@ -584,13 +606,16 @@ function installStatus(ctx, e) {
   const commits = [...new Set(manifests.map((m) => m.sourceCommit || null))];
   if (commits.every((c) => c === null)) commits.splice(0, commits.length, e.sourceCommit || null);
   // Several manifests: report the oldest one; one that cannot be placed makes the whole install unknown
-  let worst = null;
+  let worst = null, diverged = null;
   for (const c of commits) {
-    const n = commitsBehind(ctx, c);
-    if (n === null) return { status: 'unknown', commit: c };
-    if (!worst || n > worst.behind) worst = { behind: n, commit: c };
+    const pos = commitPosition(ctx, c);
+    if (!pos) return { status: 'unknown', commit: c };
+    if (pos.diverged) diverged ||= { behind: 0, commit: c };
+    else if (!worst || pos.behind > worst.behind) worst = { behind: pos.behind, commit: c };
   }
-  return { status: worst.behind ? `${worst.behind} commit${worst.behind === 1 ? '' : 's'} behind` : 'up to date', ...worst };
+  if (worst?.behind) return { status: `${worst.behind} commit${worst.behind === 1 ? '' : 's'} behind`, ...worst };
+  if (diverged) return { status: 'ahead or diverged', ...diverged };
+  return { status: 'up to date', ...worst };
 }
 
 const quoteArg = (p) => (/[\s"'$]/.test(p) ? JSON.stringify(p) : p);
@@ -625,7 +650,8 @@ function listInstalls(ctx) {
   logTable(ctx, rows.map((r) => r.cells));
   ctx.log('');
   ctx.log(`Registry: ${where}`);
-  const stale = rows.find((r) => r.s.behind > 0) || rows.find((r) => r.s.status === 'unknown');
+  const stale = rows.find((r) => r.s.behind > 0) || rows.find((r) => r.s.status === 'unknown') ||
+    rows.find((r) => r.s.status === 'ahead or diverged');
   if (stale) ctx.log(`Refresh with: ${updateCommand(stale.e)}`);
   else if (rows.every((r) => r.s.status === 'up to date')) ctx.log('All installs are up to date.');
   else ctx.log('No install is behind; installs marked missing no longer exist on disk.');
@@ -666,6 +692,10 @@ function updateEntry(ctx, opts, e, { dry, show }) {
     stdout: (m) => ctx.log(m), backupRoot: backupDir(ctx) });
 }
 
+/** Inner lines that report a problem; the compact --update-all view prints them after its table. */
+const NOTE_RE = /^(Warning:|ignored |skipped )/;
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
 /** --update-all: preview (apply = false) or apply the update of every recorded install. */
 function updateAll(ctx, opts, apply) {
   const reg = loadRegistry(ctx, { readOnly: true });
@@ -677,7 +707,7 @@ function updateAll(ctx, opts, apply) {
   let backups = false;
   for (const e of reg.installs) {
     const s = installStatus(ctx, e);
-    const r = { path: e.path, scope: e.scope, tools: e.tools.join(',') || '-', status: s.status, outcome: 'skipped', detail: '', stats: null };
+    const r = { path: e.path, scope: e.scope, tools: e.tools.join(',') || '-', status: s.status, outcome: 'skipped', detail: '', stats: null, notes: [] };
     done.results.push(r);
     if (s.status === 'missing') r.detail = 'skipped: no longer on disk';
     else if (insideSource(ctx, e.path)) r.detail = 'skipped: inside the source clone';
@@ -687,22 +717,28 @@ function updateAll(ctx, opts, apply) {
       try {
         const res = updateEntry(ctx, opts, e, { dry: true, show: ctx.verbose && !apply });
         r.stats = res.stats;
-        // an install behind the clone gets its manifests and registry record moved to the current commit
-        const pending = hasFileChanges(res.stats) || s.behind > 0;
+        r.notes = res.lines.filter((l) => NOTE_RE.test(l));
+        const skips = res.stats.skipped;
+        // an install behind the clone gets its manifests and registry record moved to the current commit;
+        // one with unmanaged entries runs too, so it ends like a single --update would (exit 1)
+        const pending = hasFileChanges(res.stats) || s.behind > 0 || skips > 0;
         if (!pending) {
           r.outcome = 'unchanged';
-          r.detail = `no changes${res.stats.skipped ? `; ${describeStats({ ...emptyStats(), skipped: res.stats.skipped })}` : ''}`;
+          r.detail = 'no changes';
         } else if (!apply) {
-          r.outcome = 'pending';
-          r.detail = describeStats(res.stats) || 'no file changes; records the current commit';
+          r.outcome = skips ? 'pending-skips' : 'pending';
+          const what = describeStats({ ...res.stats, skipped: 0 }) || (skips ? 'no file changes' : 'no file changes; records the current commit');
+          r.detail = skips ? `${what}; will skip ${plural(skips, 'unmanaged entry', 'unmanaged entries')} (exit 1)` : what;
           backups ||= Boolean(res.ctx.backupRoot);
         } else {
           const real = updateEntry(ctx, opts, e, { dry: false, show: ctx.verbose });
           r.stats = real.stats;
+          r.notes = real.lines.filter((l) => NOTE_RE.test(l));
           backups ||= Boolean(real.ctx.backupRoot);
-          const what = describeStats(real.stats) || 'recorded the current commit';
-          r.outcome = real.code === 0 ? 'updated' : 'failed';
-          r.detail = real.code === 0 ? `updated: ${what}` : `failed (exit ${real.code}): ${what}`;
+          // a single --update exits 1 only when it skipped unmanaged entries; anything else throws
+          r.outcome = real.stats.skipped ? 'updated-skips' : 'updated';
+          const label = `${real.stats.skipped ? 'updated with skipped entries' : 'updated'}${real.registered === false ? ' (registry not refreshed)' : ''}`;
+          r.detail = `${label}: ${describeStats(real.stats) || 'recorded the current commit'}`;
         }
       } catch (err) {
         r.outcome = 'failed';
@@ -713,34 +749,66 @@ function updateAll(ctx, opts, apply) {
     if (ctx.verbose) ctx.log(`-> ${short(ctx, e.path)}: ${r.detail}`);
   }
   const by = (o) => done.results.filter((r) => r.outcome === o).length;
-  if (!ctx.verbose) logTable(ctx, done.results.map((r) => [short(ctx, r.path), r.scope, r.tools, r.status, r.detail]));
+  if (!ctx.verbose) {
+    logTable(ctx, done.results.map((r) => [short(ctx, r.path), r.scope, r.tools, r.status, r.detail]));
+    // the compact view runs the updates quietly: repeat what they reported as a problem (verbose showed it inline)
+    const noted = done.results.filter((r) => r.notes.length);
+    if (noted.length) {
+      ctx.log('');
+      ctx.log('Messages from the updates:');
+      for (const r of noted) { ctx.log(`  ${short(ctx, r.path)}`); for (const l of r.notes) ctx.log(`    ${l}`); }
+    }
+  }
   ctx.log('');
   const counts = apply
-    ? `${by('updated')} updated, ${by('failed')} failed, ${by('unchanged')} without changes, ${by('skipped')} skipped`
-    : `${by('pending')} to update, ${by('unchanged')} without changes, ${by('skipped')} skipped${by('failed') ? `, ${by('failed')} failed` : ''}`;
+    ? `${by('updated')} updated, ${by('updated-skips')} updated with skipped entries, ${by('failed')} failed, ${by('unchanged')} without changes, ${by('skipped')} skipped`
+    : `${by('pending')} to update${by('pending-skips') ? `, ${by('pending-skips')} to update with skipped entries` : ''}, ${by('unchanged')} without changes, ${by('skipped')} skipped${by('failed') ? `, ${by('failed')} failed` : ''}`;
   ctx.log(`Totals: ${counts}; changes: ${describeStats(total) || 'none'}`);
   if (done.results.some((r) => r.status === 'missing')) ctx.log('Missing installs are skipped; drop them from the registry with --forget-missing.');
-  if (backups) ctx.log(`${apply ? 'Backups' : 'Backups would go to'}: ${short(ctx, ctx.backupRoot)}/ (originals are kept under their absolute path)`);
-  if (!apply) ctx.log(by('pending') ? 'Run again with --yes to apply.' : 'Nothing to update.');
-  done.code = by('failed') ? 1 : 0;
+  if (backups) ctx.log(`${apply ? 'Backups' : 'Backups would go to'}: ${backupLabel(ctx, !apply)}/ (originals are kept under their absolute path)`);
+  if (!apply) ctx.log(by('pending') + by('pending-skips') ? 'Run again with --yes to apply.' : 'Nothing to update.');
+  const withSkips = done.results.filter((r) => r.outcome === (apply ? 'updated-skips' : 'pending-skips'));
+  const failed = by('failed');
+  if (withSkips.length || failed) {
+    done.code = 1;
+    const why = [];
+    if (withSkips.length) why.push(`${plural(withSkips.length, 'install', 'installs')} ${apply ? 'updated with skipped entries' : 'will skip unmanaged entries'}`);
+    if (failed) why.push(`${plural(failed, 'install', 'installs')} failed`);
+    ctx.log(`Exit code 1: ${why.join(', ')}.`);
+  }
+  if (withSkips.length) {
+    ctx.log('Unmanaged tsh-* entries are never replaced in bulk. To replace them, run a single update with --force');
+    ctx.log('in that install; it moves each such entry to the backup first:');
+    for (const r of withSkips) ctx.log(`  ${updateCommand(r)} --force`);
+  }
   return done;
 }
 
-/** --forget-missing: drop registry entries whose install is gone. Reads installs, writes only the registry. */
+/** --forget-missing: drop registry entries whose install is gone. Reads installs, writes only the
+ *  registry. Returns the exit code: 1 when the registry could not be rewritten (it is left as it was). */
 function forgetMissing(ctx) {
   const reg = loadRegistry(ctx, { readOnly: true });
-  if (!reg.installs.length) { noInstallsRecorded(ctx); return; }
+  if (!reg.installs.length) { noInstallsRecorded(ctx); return 0; }
   const gone = reg.installs.filter((e) => !entryManifests(ctx, e));
-  if (!gone.length) { ctx.log('No recorded install is missing; nothing to forget.'); return; }
+  if (!gone.length) { ctx.log('No recorded install is missing; nothing to forget.'); return 0; }
+  const f = registryPath(ctx.home);
+  if (!ctx.dry) {
+    // rewrite from the file as it is, so entries this version does not read are kept unchanged;
+    // writeRegistry replaces the file atomically, so a failure leaves it as it was
+    try {
+      const raw = JSON.parse(ctx.fs.readFileSync(f, 'utf8'));
+      if (!raw || !Array.isArray(raw.installs)) throw new Error('not a registry file');
+      const drop = new Set(gone.map((e) => `${e.scope}\0${e.path}`));
+      writeRegistry(ctx, { installs: raw.installs.filter((e) => !(validEntry(e) && drop.has(`${e.scope}\0${e.path}`))) });
+    } catch (e) {
+      ctx.log(`Warning: could not rewrite the install registry ${short(ctx, f)} (${e.code || e.message}); left it unchanged, nothing forgotten.`);
+      return 1;
+    }
+  }
   ctx.log(`${ctx.dry ? 'Would forget' : 'Forgot'} ${gone.length} missing install${gone.length === 1 ? '' : 's'}:`);
   for (const e of gone) ctx.log(`  ${e.path}  (${e.scope})`);
-  if (ctx.dry) return;
-  // rewrite from the file as it is, so entries this version does not read are kept unchanged
-  const f = registryPath(ctx.home);
-  const raw = JSON.parse(ctx.fs.readFileSync(f, 'utf8'));
-  const drop = new Set(gone.map((e) => `${e.scope}\0${e.path}`));
-  writeRegistry(ctx, { installs: raw.installs.filter((e) => !(validEntry(e) && drop.has(`${e.scope}\0${e.path}`))) });
-  ctx.log(`Registry: ${short(ctx, f)}`);
+  if (!ctx.dry) ctx.log(`Registry: ${short(ctx, f)}`);
+  return 0;
 }
 
 function mcpGuidance(ctx, tools) {
@@ -775,14 +843,15 @@ export function makeCtx(opts, o) {
   };
 }
 
-/** Programmatic entry point. Returns { code, lines, ctx, stats } (--update-all adds results).
+/** Programmatic entry point. Returns { code, lines, ctx, stats } (--update-all adds results; an
+ *  install or --update adds registered: whether the registry was refreshed, null in a dry run).
  *  Throws UsageError for bad input. */
 export function run(argv, opts = {}) {
   const o = parseArgs(argv);
   if (o.help) { (opts.quiet ? () => {} : (opts.stdout || console.log))(HELP); return { code: 0, lines: [HELP] }; }
   const ctx = makeCtx(opts, o);
   if (o.list) { listInstalls(ctx); return { code: 0, lines: ctx.lines, ctx, stats: ctx.stats }; }
-  if (o.forgetMissing) { forgetMissing(ctx); return { code: 0, lines: ctx.lines, ctx, stats: ctx.stats }; }
+  if (o.forgetMissing) return { code: forgetMissing(ctx), lines: ctx.lines, ctx, stats: ctx.stats };
   if (o.updateAll) return updateAll(ctx, opts, o.yes && !o.dryRun);
   if (ctx.scope === 'project' && !ctx.projectDir) throw new UsageError('--scope project needs a project dir');
   if (insideSource(ctx, targetRoot(ctx))) {
@@ -809,11 +878,11 @@ export function run(argv, opts = {}) {
   for (const t of tools) {
     skipped += installTree(ctx, { targetDir: path.join(root, AGENT_DIRS[t]), srcRel: AGENT_DIRS[t], kind: 'file', tools: [t] }).skipped.length;
   }
-  if (!ctx.dry) registerInstall(ctx, tools); // also after skipped entries: what was installed is recorded
+  const registered = ctx.dry ? null : registerInstall(ctx, tools); // also after skipped entries: what was installed is recorded
   for (const l of mcpGuidance(ctx, tools)) ctx.log(l);
-  if (ctx.backupRoot) ctx.log(`${ctx.dry ? 'Backups would go to' : 'Backups'}: ${short(ctx, ctx.backupRoot)}/ (originals are kept under their absolute path)`);
+  if (ctx.backupRoot) ctx.log(`${ctx.dry ? 'Backups would go to' : 'Backups'}: ${backupLabel(ctx, ctx.dry)}/ (originals are kept under their absolute path)`);
   if (!ctx.verbose && ctx.dry) ctx.log('Use --verbose to see every entry.');
-  return { code: skipped ? 1 : 0, lines: ctx.lines, ctx, stats: ctx.stats };
+  return { code: skipped ? 1 : 0, lines: ctx.lines, ctx, stats: ctx.stats, registered };
 }
 
 function main() {

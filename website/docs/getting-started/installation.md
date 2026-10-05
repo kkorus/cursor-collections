@@ -63,7 +63,7 @@ These are the flags printed by `node scripts/install.mjs --help`.
 | `--mode copy\|link` | `copy` (default), or symlink to the clone so `git pull` updates it. On Windows symlinks need Developer Mode or admin rights, so prefer `copy`. |
 | `--update` | Reinstall the tools recorded in the manifests and prune `tsh-*` entries that no longer exist in the source. Copies you did not edit are replaced or removed without a backup; edited copies are backed up first, never deleted. |
 | `--migrate-legacy` | Run only the legacy cleanup (old `.cursor/skills` layout), then exit. |
-| `--list` | List the recorded installs with path, scope, tools, mode, installed commit and status (`up to date`, `N commits behind`, `unknown` or `missing`). Takes only `--source`; writes nothing. |
+| `--list` | List the recorded installs with path, scope, tools, mode, installed commit and status (`up to date`, `N commits behind`, `ahead or diverged`, `unknown` or `missing`). Takes only `--source`; writes nothing. |
 | `--update-all` | Preview an `--update` of every recorded install and what it would change; writes nothing. Takes only `--yes`, `--dry-run`, `--verbose` and `--source`. See [Update everything](#update-everything). |
 | `--yes` | With `--update-all`: apply the updates. Valid only with `--update-all`. |
 | `--forget-missing` | Remove the registry entries of installs that are `missing`. Never touches a project; with `--dry-run` it only prints them. |
@@ -101,7 +101,7 @@ Every install and update that really runs (not `--dry-run`) is recorded in `~/.t
 node ~/cursor-collections/scripts/install.mjs --list
 ```
 
-`--list` prints one line per install with its status: `up to date`, `N commits behind` (compared with `HEAD` of the clone, or of `--source`), `unknown` (the installed commit is not recorded or not in the clone) or `missing` (the folder or its manifests are gone). It ends with the `--update` command for the first install that needs a refresh.
+`--list` prints one line per install with its status: `up to date`, `N commits behind` (compared with `HEAD` of the clone, or of `--source`), `ahead or diverged` (the installed commit is in the clone but not in the history of its `HEAD`, for example installed from another branch), `unknown` (the installed commit is not recorded or not in the clone) or `missing` (the folder or its manifests are gone). It ends with the `--update` command for the first install that needs a refresh (`N commits behind`, then `unknown`, then `ahead or diverged`).
 
 ### Update everything
 
@@ -111,9 +111,9 @@ node ~/cursor-collections/scripts/install.mjs --update-all
 node ~/cursor-collections/scripts/install.mjs --update-all --yes
 ```
 
-`--update-all` reads the registry and shows, for every recorded install, its status and what an `--update` would change: copies replaced because you did not edit them, edited copies that would be backed up first, pruned entries, new entries and legacy entries cleaned up. It writes nothing. Add `--yes` to apply: each install is updated one after another with its recorded scope, tools and mode (a link install stays a link install), exactly like a single `--update`. Unmodified copies are replaced without a backup; edited ones go to `~/.tsh-ai-collections-backup/<timestamp>/` first. A failing install is reported and does not stop the others; the exit code is then 1.
+`--update-all` reads the registry and shows, for every recorded install, its status and what an `--update` would change: copies replaced because you did not edit them, edited copies that would be backed up first, pruned entries, new entries and legacy entries cleaned up. It writes nothing. Add `--yes` to apply: each install is updated one after another with its recorded scope, tools and mode (a link install stays a link install), exactly like a single `--update`. Unmodified copies are replaced without a backup; edited ones go to `~/.tsh-ai-collections-backup/<timestamp>/` first. A failing install is reported and does not stop the others; the exit code is then 1. Installs marked `ahead or diverged` are updated only when their files differ from the clone.
 
-Installs marked `missing` are skipped; remove them from the registry with `--forget-missing`. Installs without changes are left alone. `--force` is never used in bulk: an unmanaged `tsh-*` entry is skipped and its install is reported as failed, so resolve it with a single `--update --force` in that install. Add `--verbose` to see the full output of each update.
+Installs marked `missing` are skipped; remove them from the registry with `--forget-missing`. Installs without changes are left alone. `--force` is never used in bulk: an unmanaged `tsh-*` entry is skipped. The preview marks such an install with `will skip N unmanaged entries (exit 1)` and ends with the command to resolve it; with `--yes` the install is updated apart from those entries and reported as `updated with skipped entries`, counted separately from failed installs, and the exit code is 1 (as for a single `--update` that skips an entry). Resolve it with a single `--update --force` in that install, which moves the entry to the backup first. Warnings of the individual updates are listed under the install's path after the table; an install whose registry entry could not be refreshed reads `updated (registry not refreshed)`. Add `--verbose` to see the full output of each update.
 
 ## Cursor shows skills twice
 

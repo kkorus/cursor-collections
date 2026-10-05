@@ -462,7 +462,7 @@ function gitSource() {
   let i = 0;
   const commit = () => { put(source, `c${i++}.txt`); g('add', '-A'); g('commit', '-q', '-m', `c${i}`); return g('rev-parse', 'HEAD'); };
   commit();
-  return { source, commit };
+  return { source, commit, git: g };
 }
 
 test('an install creates the registry with the expected fields and private modes', () => {
@@ -628,11 +628,11 @@ function snapshot(root) {
 
 /** A git source, a home, and a helper that installs claude into a new temp project. */
 function bulkEnv() {
-  const { source, commit } = gitSource();
+  const { source, commit, git } = gitSource();
   const home = tmp();
   const go = (args, extra = {}) => run(args, { home, source, quiet: true, ...extra });
   const project = (...args) => { const p = tmp(); go(['--tools', 'claude', '--scope', 'project', '--project-dir', p, ...args]); return p; };
-  return { source, commit, home, go, project };
+  return { source, commit, git, home, go, project };
 }
 
 /** current (installed after the change), stale (2 commits behind, tsh-beta edited), missing, stale user install. */
@@ -685,7 +685,7 @@ test('--update-all --yes updates stale installs (user scope too), backs up only 
   assert.match(rowOf(r, '~'), /updated: 2 replaced \(unmodified\)$/, text);
   assert.match(rowOf(r, current), /no changes$/, text);
   assert.match(rowOf(r, gone), /skipped: no longer on disk$/, text);
-  assert.ok(r.lines.includes('Totals: 2 updated, 0 failed, 1 without changes, 1 skipped; changes: 3 replaced (unmodified), 1 backed up (edited)'), text);
+  assert.ok(r.lines.includes('Totals: 2 updated, 0 updated with skipped entries, 0 failed, 1 without changes, 1 skipped; changes: 3 replaced (unmodified), 1 backed up (edited)'), text);
   for (const root of [stale, home]) {
     assert.equal(fs.readFileSync(path.join(root, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'new version');
     assert.equal(fs.readFileSync(path.join(root, '.claude/skills/tsh-beta/SKILL.md'), 'utf8'), 'new version');
@@ -722,7 +722,7 @@ test('--update-all --yes: one failing install is reported and does not stop the 
   assert.match(rowOf(r, a), /failed: disk full$/, text);
   assert.match(rowOf(r, b), /updated: 1 replaced \(unmodified\)$/, text);
   assert.equal(fs.readFileSync(path.join(b, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'new version');
-  assert.ok(r.lines.some((l) => /^Totals: 1 updated, 1 failed/.test(l)), text);
+  assert.ok(r.lines.some((l) => /^Totals: 1 updated, 0 updated with skipped entries, 1 failed/.test(l)), text);
 });
 
 test('--update-all keeps the recorded link mode', () => {
@@ -819,4 +819,173 @@ test('--update-all --verbose shows the full output of each update', () => {
   assert.ok(r.lines.some((l) => /would replace unmodified .*tsh-alpha/.test(l)), text);
   assert.ok(r.lines.includes(`-> ${p}: 1 replaced (unmodified)`), text);
   assert.ok(!r.lines.some((l) => /^ {2}\S.*\s+project\s+claude\s/.test(l)), 'no compact table');
+});
+
+// ---------- review fixes: hidden warnings, skipped entries, commit position, placeholders, robustness ----------
+
+const failRegistryRename = { ...fs, renameSync(a, b) { if (String(b).endsWith('installs.json')) throw Object.assign(new Error('x'), { code: 'EIO' }); return fs.renameSync(a, b); } };
+
+test('--update-all prints the warnings of its quiet updates under the install path and says when the registry was not refreshed', () => {
+  const { go, source, commit, project } = bulkEnv();
+  const p = project();
+  const mf = path.join(p, '.claude/skills', MANIFEST);
+  fs.writeFileSync(mf, JSON.stringify({ ...JSON.parse(fs.readFileSync(mf, 'utf8')), names: ['tsh-alpha', 'tsh-beta', '../bad'] }));
+  changeSource(source);
+  commit();
+  const preview = go(['--update-all']);
+  const pt = preview.lines.join('\n');
+  const at = preview.lines.indexOf('Messages from the updates:');
+  assert.ok(at > preview.lines.findIndex((l) => l === rowOf(preview, p)), pt);
+  assert.equal(preview.lines[at + 1], `  ${p}`, pt);
+  assert.match(preview.lines[at + 2], /^ {4}ignored 1 invalid name\(s\) in /, pt);
+  const r = go(['--update-all', '--yes'], { fs: failRegistryRename });
+  const text = r.lines.join('\n');
+  assert.equal(r.code, 0, text);
+  assert.match(rowOf(r, p), /updated \(registry not refreshed\): 1 replaced \(unmodified\)$/, text);
+  const m = r.lines.indexOf('Messages from the updates:');
+  assert.equal(r.lines[m + 1], `  ${p}`, text);
+  assert.ok(r.lines.slice(m + 2).some((l) => /^ {4}Warning: could not update the install registry/.test(l)), text);
+});
+
+/** Two projects one commit behind; `a` holds an unmanaged tsh-alpha the installer never replaces in bulk. */
+function skipScenario() {
+  const b = bulkEnv();
+  const a = tmp();
+  put(a, '.claude/skills/tsh-alpha/SKILL.md', 'mine');
+  assert.equal(b.go(['--tools', 'claude', '--scope', 'project', '--project-dir', a]).code, 1);
+  const ok = b.project();
+  changeSource(b.source, 'tsh-beta');
+  b.commit();
+  return { ...b, a, ok };
+}
+
+test('--update-all preview: an install with unmanaged entries says it will skip them (exit 1) and ends with how to resolve them', () => {
+  const { go, a, ok } = skipScenario();
+  const r = go(['--update-all']);
+  const text = r.lines.join('\n');
+  assert.equal(r.code, 1, text);
+  assert.match(rowOf(r, a), /1 commit behind\s+1 replaced \(unmodified\); will skip 1 unmanaged entry \(exit 1\)$/, text);
+  assert.match(rowOf(r, ok), /1 commit behind\s+1 replaced \(unmodified\)$/, text);
+  assert.ok(r.lines.includes('Totals: 1 to update, 1 to update with skipped entries, 0 without changes, 0 skipped; changes: 2 replaced (unmodified), 1 skipped (unmanaged)'), text);
+  assert.ok(r.lines.includes('Exit code 1: 1 install will skip unmanaged entries.'), text);
+  assert.ok(r.lines.includes('Run again with --yes to apply.'), text);
+  assert.equal(r.lines.at(-1), `  node scripts/install.mjs --update --scope project --project-dir ${a} --force`, text);
+  assert.ok(r.lines.some((l) => /^ {4}skipped \.\/\.claude\/skills\/tsh-alpha: exists and is not managed/.test(l)), text);
+});
+
+test('--update-all --yes: skipped unmanaged entries are not failures; their own outcome and exit 1', () => {
+  const { go, a, ok } = skipScenario();
+  const r = go(['--update-all', '--yes']);
+  const text = r.lines.join('\n');
+  assert.equal(r.code, 1, text);
+  assert.match(rowOf(r, a), /updated with skipped entries: 1 replaced \(unmodified\), 1 skipped \(unmanaged\)$/, text);
+  assert.match(rowOf(r, ok), /updated: 1 replaced \(unmodified\)$/, text);
+  assert.ok(r.lines.some((l) => l.startsWith('Totals: 1 updated, 1 updated with skipped entries, 0 failed, 0 without changes, 0 skipped;')), text);
+  assert.ok(r.lines.includes('Exit code 1: 1 install updated with skipped entries.'), text);
+  assert.ok(!r.lines.some((l) => /failed:/.test(l)), text);
+  assert.equal(fs.readFileSync(path.join(a, '.claude/skills/tsh-alpha/SKILL.md'), 'utf8'), 'mine');
+  assert.equal(fs.readFileSync(path.join(a, '.claude/skills/tsh-beta/SKILL.md'), 'utf8'), 'new version');
+});
+
+test('commit position: up to date, behind, ahead of HEAD (second branch) and unreachable', () => {
+  const { source, commit, git } = gitSource();
+  const home = tmp(), behind = tmp(), equal = tmp(), ahead = tmp(), unknown = tmp();
+  const go = (args, h = home) => run(args, { home: h, source, quiet: true });
+  const install = (p, h) => go(['--tools', 'claude', '--scope', 'project', '--project-dir', p], h);
+  install(behind);
+  install(unknown);
+  const mf = path.join(unknown, '.claude/skills', MANIFEST);
+  fs.writeFileSync(mf, JSON.stringify({ ...JSON.parse(fs.readFileSync(mf, 'utf8')), sourceCommit: 'f'.repeat(40) }));
+  commit();
+  install(equal);
+  git('checkout', '-q', '-b', 'side');
+  commit();
+  install(ahead);
+  const home2 = tmp(), ahead2 = tmp();
+  install(ahead2, home2);
+  git('checkout', '-q', '-');
+  const r = go(['--list']);
+  const text = r.lines.join('\n');
+  assert.match(rowOf(r, behind), /1 commit behind$/, text);
+  assert.match(rowOf(r, equal), /up to date$/, text);
+  assert.match(rowOf(r, ahead), /[0-9a-f]{7}\s+ahead or diverged$/, text);
+  assert.match(rowOf(r, unknown), /unknown$/, text);
+  // an install ahead of HEAD is not up to date: --list gives the refresh hint for it
+  const only = go(['--list'], home2);
+  assert.match(rowOf(only, ahead2), /ahead or diverged$/, only.lines.join('\n'));
+  assert.ok(only.lines.includes(`Refresh with: node scripts/install.mjs --update --scope project --project-dir ${ahead2}`), only.lines.join('\n'));
+  assert.ok(!only.lines.includes('All installs are up to date.'));
+  // --update-all decides by the real file differences, as for any other install
+  const preview = go(['--update-all'], home2);
+  assert.match(rowOf(preview, ahead2), /ahead or diverged\s+no changes$/, preview.lines.join('\n'));
+});
+
+test('dry runs show the backup folder as a literal <timestamp> placeholder', () => {
+  const { home, source, go } = env();
+  go(['--tools', 'claude']);
+  fs.writeFileSync(path.join(home, '.claude/skills/tsh-alpha/SKILL.md'), 'my edit');
+  changeSource(source);
+  const want = 'Backups would go to: ~/.tsh-ai-collections-backup/<timestamp>/ (originals are kept under their absolute path)';
+  assert.ok(go(['--update', '--dry-run']).lines.includes(want));
+  const verbose = go(['--update', '--dry-run', '--verbose']);
+  assert.ok(verbose.lines.some((l) => /^would move .*tsh-alpha -> ~\/\.tsh-ai-collections-backup\/<timestamp>\/.*tsh-alpha \(edited locally\)$/.test(l)), verbose.lines.join('\n'));
+  const { go: bulk } = bulkScenario();
+  assert.ok(bulk(['--update-all']).lines.includes(want));
+  assert.ok(!exists(backupRoot(home)));
+});
+
+test('an installed file replaced by a dangling symlink does not stop --update; it is backed up', () => {
+  const { home, go } = env();
+  go(['--tools', 'claude']);
+  const f = path.join(home, '.claude/skills/tsh-alpha/SKILL.md');
+  fs.rmSync(f);
+  fs.symlinkSync(path.join(home, 'nowhere'), f);
+  const r = go(['--update']);
+  assert.equal(r.code, 0, r.lines.join('\n'));
+  assert.equal(fs.readFileSync(f, 'utf8'), 'skill tsh-alpha');
+  const [stamp] = fs.readdirSync(backupRoot(home));
+  assert.ok(fs.lstatSync(path.join(backupRoot(home), stamp, f)).isSymbolicLink(), 'the edited entry is in the backup');
+  assert.ok(r.lines.some((l) => /\[edited locally\]/.test(l)), r.lines.join('\n'));
+});
+
+test('--forget-missing with an unwritable or garbled registry warns once, leaves the file untouched and exits 1', () => {
+  const { home, go, project } = bulkEnv();
+  const gone = project();
+  project();
+  fs.rmSync(gone, { recursive: true });
+  const f = registryPath(home);
+  const before = fs.readFileSync(f, 'utf8');
+  let reads = 0;
+  const garbled = { ...fs, readFileSync(p, ...a) { if (String(p) === f && reads++ > 0) return '{garbled'; return fs.readFileSync(p, ...a); } };
+  for (const fsx of [failRegistryRename, garbled]) {
+    const r = go(['--forget-missing'], { fs: fsx });
+    const text = r.lines.join('\n');
+    assert.equal(r.code, 1, text);
+    assert.equal(r.lines.filter((l) => /^Warning: could not rewrite the install registry .*left it unchanged/.test(l)).length, 1, text);
+    assert.ok(!r.lines.some((l) => /^Forgot/.test(l)), text);
+    assert.equal(fs.readFileSync(f, 'utf8'), before);
+    assert.deepEqual(fs.readdirSync(path.dirname(f)), ['installs.json'], 'no temp file left behind');
+  }
+});
+
+test('a registry entry without valid tools is judged by the manifests of every tool dir, not dropped as missing', () => {
+  const { home, go, project } = bulkEnv();
+  const p = project(), q = project(), gone = project();
+  fs.rmSync(gone, { recursive: true });
+  const reg = readReg(home);
+  for (const e of reg.installs) e.tools = e.path === q ? ['vim'] : [];
+  fs.writeFileSync(registryPath(home), JSON.stringify(reg));
+  const list = go(['--list']);
+  assert.match(rowOf(list, p), /project\s+-\s+copy\s+[0-9a-f]{7}\s+up to date$/, list.lines.join('\n'));
+  assert.match(rowOf(list, q), /up to date$/, list.lines.join('\n'));
+  assert.match(rowOf(list, gone), /missing$/, list.lines.join('\n'));
+  const r = go(['--forget-missing']);
+  assert.ok(r.lines.includes('Forgot 1 missing install:'), r.lines.join('\n'));
+  assert.deepEqual(readReg(home).installs.map((e) => e.path).sort(), [p, q].sort());
+});
+
+test('--help aligns the --dry-run line with the other options', () => {
+  const lines = run(['--help'], { quiet: true }).lines[0].split('\n');
+  const col = (flag) => { const l = lines.find((x) => x.startsWith(`  ${flag}`)); return l.length - l.slice(2 + flag.length).trimStart().length; };
+  assert.equal(col('--dry-run'), col('--force'));
 });
