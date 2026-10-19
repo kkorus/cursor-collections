@@ -5,9 +5,6 @@ description: "<What the agent does. Use when... Invoke with @tsh-<role-name>."
 
 # <Role Title>
 
-> Recommended model: <Model Name>
-> Recommended tools: read, search, edit, todo
-
 ## Agent Role and Responsibilities
 
 Role: You are a <role-title> responsible for <primary-responsibility>.

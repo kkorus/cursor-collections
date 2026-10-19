@@ -88,5 +88,7 @@ Skip for: adding alerts, creating dashboards, configuring log retention, adding 
 
 **Does NOT handle** (redirect to):
 - Application code instrumentation → coordinate with software engineer
-- Infrastructure provisioning → `.cursor/skills/internal/tsh-implement-terraform/SKILL.md`
-- CI/CD pipelines → `.cursor/skills/internal/tsh-implement-pipeline/SKILL.md`
+- Infrastructure provisioning → `tsh-implement-terraform` skill
+- CI/CD pipelines → `tsh-implement-pipeline` skill
+
+Each redirect above names a skill reference, not a location — resolve it with the `tsh-resolving-skill-references` resolution order: the project skill collection, then the installed skills root (flat, no layer segment), then a search by name; internal skills are **read**, not invoked, and a skill that cannot be located is a **stop and ask the user**, never a redirect you drop.

@@ -31,11 +31,17 @@ Think of this workflow as a **relay race**. Each phase produces a deliverable �
 - **Agent:** Engineering Manager (orchestrates specialized agents)
 - **Command:** `/tsh-implement <JIRA_ID or description>`
 - Automatically handles the full development cycle:
-  1. **Research** — Delegates to Context Engineer to gather context from Jira, Figma, and codebase. Asks for user confirmation before proceeding.
-  2. **Plan** — Delegates to Architect to create a structured implementation plan. Asks for user confirmation before proceeding.
-  3. **Implement** — Delegates to Software Engineer, Prompt Engineer, DevOps Engineer, or E2E Engineer based on task type.
+  1. **Research** — Delegates to Context Engineer to gather context from Jira, Figma, and codebase. You review the research document; this review is a quality checkpoint, not a separate authorization gate.
+  2. **Plan** — Delegates to Architect to create a structured implementation plan. The Architect invokes the Plan Reviewer once per plan lifecycle, then runs its own plan-authoring approval gate (`Approve plan`, `I have comments`) and records your literal decision in the plan. That recorded approval is what authorizes implementation.
+  3. **Implement** — Delegates to the owning specialist per task: Plan Implementor by default for actionable, low-risk plan seams, Software Engineer for complex non-UI work, UI Engineer for Figma/UI, E2E Engineer for end-to-end tests, DevOps Engineer for infrastructure/CI/CD/observability, Prompt Engineer for LLM prompts, or Technical Writer for repository documentation.
 - Tracks progress, runs quality checks after each task, and auto-triggers code review.
 - **Produces:** Research document, implementation plan, and concrete code modifications.
+
+The command accepts a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Two distinct user-facing gates exist, and neither substitutes for the other. The normal one is the Architect's plan-authoring gate (`Approve plan`, `I have comments`), which fires immediately after the review event settles and writes your decision into the plan's `## Human Approval` record. The Engineering Manager's gate (`Approve current plan`, `Request changes`, `Stop`) is fail-closed recovery only: the manager validates the persisted record first and reuses a valid current-revision approval — including one the Architect recorded — without asking you again, and presents its three choices only when no valid record exists or after a material revision. Intermediate research and plan reviews inform you but are not authorization gates on their own. Full Flow is the only implementation route, and it requires a valid current-revision Human approval before the first file-changing delegation. A `tsh-plan-reviewer` `APPROVED` verdict is Reviewer approval only and is not permission to implement.
+
+Recording that plan-authoring approval also ends the **authoring discussion** — the discussion in which the plan was authored, reviewed, and approved. There the Engineering Manager reports the exact plan path, the current `Plan Revision`, the persisted `Decision Timestamp`, and the review path when present, names implementation as the next step, and delegates no file change. You start a new discussion to implement, and the manager reuses the unchanged persisted record there without presenting a duplicate approval gate. The boundary is a lifecycle stop, not an approval-validity criterion: an invalid or missing record still fails closed, and a material revision still requires renewed Human approval. One path is excluded — when reviewer readiness rests on the initial-plan low-risk automated-review exemption, the Architect's plan-authoring gate never ran, so the manager's gate is the only user-facing gate and there is no authoring discussion to close.
+
+Before any file change, the execution owner validates the Human Approval record from the referenced plan on disk. If validation fails, the owner fails closed, names the exact failed field, condition, or file, and asks the user in chat for guided recovery on every entry path, spelling out the options: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. The user's answer selects a next step but is never itself Human approval.
 
 ### 3. Review
 
@@ -53,7 +59,7 @@ import SdlcDiagram from '@site/src/components/SdlcDiagram';
 ## Human Review at Every Step
 
 :::warning Important
-Each step requires your review and verification. Open the generated documents, go through them carefully, and iterate as many times as needed until the output looks correct. AI assistance does not replace human judgment — treat each output as a draft that needs your approval before proceeding.
+Each step requires your review and verification. Open the generated documents, go through them carefully, and give feedback when something needs to change. AI assistance does not replace human judgment. Reviewing research and draft plans keeps quality high, but what authorizes or halts execution is the plan approval gate: normally the Architect's `Approve plan` / `I have comments`, and the Engineering Manager's `Approve current plan` / `Request changes` / `Stop` only as fail-closed recovery when no valid current-revision approval exists. Treat other reviews as checkpoints, not confirmation-to-continue rituals, and reserve your input for real ambiguity or blockers rather than a generic "continue?" prompt.
 :::
 
 ## Workflow Variants

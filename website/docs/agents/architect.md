@@ -9,6 +9,12 @@ title: Architect
 
 The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Plan Reviewer before implementation begins.
 
+The Architect owns plan revisions and records only the user's literal Human approval response; it never infers consent from context or from Reviewer approval. A `tsh-plan-reviewer` `APPROVED` verdict is Reviewer approval only and leaves Human approval pending. Both **Start Implementation** and **Start Infrastructure Implementation** pass through the Engineering Manager, which validates the persisted Human Approval record for the exact current plan revision and reuses it rather than asking again; its own gate runs only as fail-closed recovery when no valid record exists. Neither handoff directly authorizes file-changing work.
+
+The Architect presents and records Human Approval in two situations: unconditionally at its own plan-authoring gate (`Approve plan` / `I have comments`) immediately after a settled review event, and when the Engineering Manager delegates a narrowly scoped update of the plan's `## Human Approval` record. Execution owners, not the Architect, validate the persisted Human Approval record from disk before editing.
+
+Recording plan-authoring Human approval ends the authoring discussion. Implementation starts in a new discussion, where the unchanged persisted approval can be reused without asking for approval twice.
+
 ## Responsibilities
 
 - Designing the overall architecture of the solution (components, interactions, data flow).
@@ -44,7 +50,8 @@ Each technical specification includes:
 
 ## Skills Loaded
 
-- `tsh-architecture-designing` — Solution design, components, data flows, implementation plan creation.
+- `tsh-architecture-designing` — Solution design, components, data flows.
+- `tsh-creating-implementation-plans` — Implementation plan template, structure, and DoD rules.
 - `tsh-codebase-analysing` — Analyze current architecture, components, and patterns.
 - `tsh-implementation-gap-analysing` — Focus the plan on necessary changes without duplicating existing work.
 - `tsh-technical-context-discovering` — Establish project conventions and patterns before designing.
@@ -58,10 +65,20 @@ Each technical specification includes:
 - `tsh-implementing-observability` — Monitoring architecture, SLO frameworks, alerting, distributed tracing.
 - `tsh-engineering-prompts` — LLM prompt architecture: prompt template strategy, system prompt design, few-shot vs zero-shot decisions.
 
+## Pre-Submission Self-Check and Review Loop
+
+Before submitting a plan, the Architect runs a pre-submission self-check against the same six `BLOCKER` categories used by the Plan Reviewer: materially invalid architecture; security, privacy, or authentication risk; unsupported irreversible or high-cost decisions; critical integration, data, migration, rollout, or rollback failure; an execution-critical unresolved decision; and material contradiction with research or an omitted requirement.
+
+After creating or revising a plan, the Architect invokes `tsh-plan-reviewer` once per plan lifecycle. Every `BLOCKER` finding must be closed by an architect correction or a recorded explicit evidence-based resolution or justification — never by omission or an unexplained downgrade — and the Architect never approves a plan while a blocker remains. `.plan-review.md` is append-only and never overwritten.
+
+A returned verdict is revision-bound only when its `reviewed-plan-revision` equals the current `Plan Revision`. A mismatch, `unknown`, or absent value is treated identically as not revision-bound: the Architect rejects the verdict and appends a reconciliation entry to `.plan-review.md`.
+
+If an unresolved `BLOCKER` remains after disposition, the Architect asks the user in chat which of exactly two options to take, naming both in prose: `stop here` or `custom guidance`. `stop here` ends the lifecycle with a closing `.plan-review.md` entry; `custom guidance` follows the supplied instruction. A new review happens only through an explicitly user-directed new review event, and the Architect never silently continues or approves while a blocker remains.
+
 ## Handoffs
 
-After creating the plan, the Architect hands off to:
+After creating the plan, the Architect can hand off to:
 
-- **Plan Reviewer** — The Engineering Manager automatically invokes the [Plan Reviewer](./plan-reviewer) to validate the produced `.plan.md` before implementation begins. If `REVISIONS NEEDED` with BLOCKERs, the plan is returned to the Architect for revision.
-- **Software Engineer** → `/tsh-implement` (standard implementation, after plan is approved)
-- **Software Engineer** → `/tsh-implement` (frontend implementation with Figma verification via internal UI prompt, after plan is approved)
+- **Internal plan review loop** → the Architect invokes the [Plan Reviewer](./plan-reviewer) as a nested subagent after creating or revising a plan, following the self-check and review loop described above. This loop only ever settles Reviewer approval; it never grants or implies Human approval.
+- **Engineering Manager** → `/tsh-implement` (`Start Implementation`) once the plan is Reviewer-ready and the Architect's own plan-authoring gate (`Approve plan` / `I have comments`) has recorded Human Approval, which the manager may reuse in the new discussion; on the low-risk-exemption path the plan-authoring gate does not run and the manager's gate is the only user-facing gate
+- **Engineering Manager** → `Start Infrastructure Implementation` for infrastructure work, through the same Human approval gate

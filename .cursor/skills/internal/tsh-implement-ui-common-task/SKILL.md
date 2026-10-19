@@ -5,7 +5,9 @@ disable-model-invocation: true
 ---
 # tsh-implement-ui-common-task
 
-> **PREREQUISITE**: This skill extends `.cursor/skills/internal/tsh-implement-common-task/SKILL.md`. You MUST read and follow **all steps** from that base workflow first. This skill adds UI-specific behaviors on top — it does not remove or replace any base workflow steps.
+> **PREREQUISITE**: This skill extends the `tsh-implement-common-task` skill. You MUST read and follow **all steps** from that base workflow first. This skill adds UI-specific behaviors on top — it does not remove or replace any base workflow steps.
+>
+> That name is a skill reference, not a location — resolve it with the `tsh-resolving-skill-references` resolution order: the project skill collection, then the installed skills root (flat, no layer segment), then a search by name; the base workflow is **read**, not invoked, and if it cannot be located you **stop and ask the user** rather than proceeding with the UI-specific behaviors alone.
 
 Implement the UI feature according to the **research context** and **implementation plan**, using Figma designs as the source of truth for visual implementation.
 
@@ -30,6 +32,7 @@ Always treat the **research** and **plan** files as the single source of truth f
     - Figma URLs and design references in `Task details`.
     - If present, a structured "Design References" subsection mapping views/components to Figma URLs or node IDs.
 - Use these Figma URLs as the **default source** for all `figma` calls during implementation.
+- Before the first UI code edit for a Figma-backed component, resolve the exact relevant Figma node/view and inspect it through at least one real `figma/*` call. Finding the URL in the plan is not enough by itself; do not start writing UI code until that read has happened.
 
 ### When Figma link is missing
 
@@ -57,6 +60,7 @@ Before step 6 of the base workflow (starting implementation), ensure:
 - The local development server is running.
 - You can access the page you're implementing (authenticated if needed).
 - You have identified all relevant Figma URLs from the research/plan files.
+- You have already inspected the exact Figma node/view for the component you are about to implement through a real `figma/*` call.
 - You understand the design system tokens and components available in the project.
 
 ---

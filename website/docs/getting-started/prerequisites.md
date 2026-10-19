@@ -44,3 +44,11 @@ node --version    # 18+
 python --version  # 3.10+
 uvx --version     # install via: pip install uv
 ```
+
+## Additional Requirement for Figma-backed UI Verification
+
+If you plan to use `/tsh-implement` or `/tsh-review-ui` on UI work backed by Figma, make sure the machine running Cursor can execute `playwright-cli`. The UI capture step uses Playwright CLI to collect the ACTUAL artifacts that the reviewer compares against Figma.
+
+- Preferred: `npx playwright-cli`
+- Fallback: `npm install -g @playwright/cli@latest`
+- You also need the target app running locally and must be able to provide the exact full dev server URL when the workflow asks for it.

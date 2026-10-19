@@ -8,20 +8,33 @@ title: Plan Reviewer
 **File:** `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md`  
 **Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
-The Plan Reviewer (`tsh-plan-reviewer`) is an internal sub-agent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing.
+The Plan Reviewer (`tsh-plan-reviewer`) is an internal sub-agent that runs a lightweight final pre-implementation reality check on implementation plans before code is written. It answers one question: is there a credible, evidence-backed reason this plan will fail badly, be unsafe, or cause expensive rework? A short `APPROVED` is the expected common outcome.
+
+Its `APPROVED` result is **Reviewer approval** only. It reports automated readiness and never grants Human approval or permission to implement; the Engineering Manager must still obtain Human approval of the exact current plan revision before the first file-changing delegation.
+
+The reviewer is non-implementing and does not validate or record the execution precondition. Execution owners validate the persisted Human Approval record before editing; Reviewer approval remains distinct and never authorizes implementation.
 
 ## Responsibilities
 
-- Stress-testing the plan against the research context to expose likely failure modes.
+- Checking the plan against the research context for material architecture, security, and execution risk.
 - Checking that referenced files, functions, classes, integrations, and patterns actually exist in the codebase.
 - Surfacing hidden assumptions, sequencing traps, dependency order issues, and migration or data risks.
 - Challenging integration boundaries, rework risk, and false confidence in test coverage.
-- Producing a structured approval or revision report for the Engineering Manager.
+- Producing a structured approval or revision report for the Architect.
 
 ## What It Produces
 
 - A failure-oriented review report with a binary verdict, top risks, assumptions, rework triggers, and any blocking gaps.
-- The report is saved as `{task-name}.plan-review.md` alongside the plan in `specifications/<task-name>/`.
+- The report is saved as `{task-name}.plan-review.md` alongside the plan in `specifications/<task-name-or-id>/`, with the reviewed `Plan Revision` recorded in the report header.
+- The returned assessment carries a `reviewed-plan-revision` attribute holding the integer `Plan Revision` read verbatim from the plan's `## Human Approval` table; if it cannot be read, the reviewer returns `REVISIONS NEEDED` with `reviewed-plan-revision="unknown"`.
+- The returned assessment carries `architect-action-required="false"` on `APPROVED` and `architect-action-required="true"` on `REVISIONS NEEDED`.
+- The returned `short summary` is fenced to the verdict, the single highest-signal reason, and the blocker/warning/suggestion counts; it never mentions human approval, user consent, or execution authorization.
+
+## Blocker Criteria
+
+`BLOCKER` eligibility is limited to exactly six high-level categories: materially invalid architecture; security, privacy, or authentication risk; unsupported irreversible or high-cost decisions; critical integration, data, migration, rollout, or rollback failure; an execution-critical unresolved decision; and material contradiction with research or an omitted requirement. No other category is a `BLOCKER`. `WARNING` and `SUGGESTION` findings are non-blocking and never escalate merely because they repeat.
+
+Each finding states the violated criterion, evidence, consequence, and minimum correction — the reviewer never redesigns the plan. An unresolved `BLOCKER` closes only through an architect correction or a recorded explicit evidence-based resolution or justification, never through omission or an unexplained downgrade. The reviewer never approves a plan while a `BLOCKER` remains, and every review is appended to `{task-name}.plan-review.md` as part of its append-only history.
 
 ```text
 specifications/
@@ -35,7 +48,7 @@ specifications/
 
 | Severity | Definition | Action Required |
 | --- | --- | --- |
-| **BLOCKER** | Credible execution risk likely to cause failure, major rework, unsafe rollout, or materially wrong outcome | Plan MUST be revised before implementation |
+| **BLOCKER** | Credible execution risk matching one of the six canonical blocker categories above | Plan MUST be revised before implementation |
 | **WARNING** | Meaningful weakness or assumption that could cause delays or local rework | Should be addressed but does not automatically block |
 | **SUGGESTION** | Lower-signal concern with practical value | Nice-to-have only |
 
@@ -49,15 +62,14 @@ specifications/
 
 ## Skills Loaded
 
-- `tsh-architecture-designing` — Evaluate architectural shape, phase coherence, and trade-offs.
+- `tsh-creating-implementation-plans` — Verify plan template, structure, and definition-of-done compliance.
 - `tsh-codebase-analysing` — Verify plan references against the actual codebase.
-- `tsh-technical-context-discovering` — Check project conventions and existing patterns.
+- `tsh-technical-context-discovering` — Check pattern consistency against established conventions.
 - `tsh-implementation-gap-analysing` — Compare what exists with what the plan proposes.
-- `tsh-sql-and-database-understanding` — When the plan includes database schema, migration, or query changes.
 
 ## Invocation
 
-Delegated by the [Engineering Manager](./engineering-manager) via the Cursor **Task** tool (not intended for direct `@tsh-plan-reviewer` use). Load `.cursor/skills/agents/tsh-plan-reviewer/SKILL.md` when validating a plan.
+The [Architect](./architect) directly invokes the Plan Reviewer as a nested subagent via the Cursor **Task** tool after creating or revising a plan, with one invocation per plan lifecycle (not intended for direct `@tsh-plan-reviewer` use); the Engineering Manager is not part of the review loop. Load the `tsh-plan-reviewer` agent skill when validating a plan.
 
 ## Handoffs
 
@@ -68,6 +80,7 @@ flowchart LR
   PlanReviewer -->|"REVISIONS NEEDED"| Architect
 ```
 
-- **APPROVED** → Engineering Manager presents the plan and a separate chat summary; `*.plan-review.md` stays unchanged.
-- **REVISIONS NEEDED with BLOCKERs** → Engineering Manager delegates back to Architect with the review report. Max 3 iterations before escalating to the user.
-- **Plan already approved and unchanged** → Re-validation is skipped.
+- **APPROVED** → the Architect reports the finished plan to the Engineering Manager; `*.plan-review.md` stays unchanged.
+- **REVISIONS NEEDED with BLOCKERs** → the Architect writes a disposition for every eligible BLOCKER and corrects the plan; the reviewer is never re-invoked automatically.
+- The Architect accepts a verdict only when its `reviewed-plan-revision` matches the current `Plan Revision`; a mismatch, `unknown`, or absent value is rejected and logged as a reconciliation entry in `.plan-review.md` without re-invoking the reviewer.
+- If an unresolved BLOCKER remains after disposition, the Architect asks the user in chat which of exactly two options to take, naming both in prose: `stop here` or `custom guidance`. A new review happens only through an explicitly user-directed new review event. `APPROVED` remains Reviewer approval only, never Human approval.

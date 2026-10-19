@@ -3,59 +3,37 @@ sidebar_position: 4
 title: /tsh-implement
 ---
 
-# /tsh-implement
-
 **Agent:** Engineering Manager  
 **File:** `.cursor/skills/commands/tsh-implement/SKILL.md`
 
-Orchestrates the implementation of a feature by delegating tasks from the plan to specialized agents.
+A thin trigger that starts implementation delivery. It routes execution to the [Engineering Manager](../../agents/engineering-manager) agent and hands off to the canonical orchestration workflow — it does not define that workflow inline.
 
 ## Usage
 
 ```text
-/tsh-implement <JIRA_ID or task description>
+/tsh-implement <JIRA_ID, task description, *.research.md, or *.plan.md>
 ```
+
+The four primary inputs are a task description, a Jira ID, a standalone `*.research.md` file, and a `*.plan.md` implementation plan. If a research or plan companion is missing, the workflow prepares it; it never authorizes implementation without a current actionable plan.
 
 ## What It Does
 
-1. Reviews the current state of the task — checks what's already done, gathers missing context via Context Engineer, creates a plan via Architect if missing.
-2. **Validates the plan** (Full Implementation Flow only) — Invokes the **Plan Reviewer** to stress-test failure modes, hidden assumptions, and rework risks. Returns plan to Architect if BLOCKERs found (max 3 iterations). Quick flow skips this because no `.plan.md` is produced. Presents approved plan to user for confirmation.
-3. Reviews the implementation plan and feature context thoroughly.
-4. Creates a **todo for every task** in the plan — each task gets its own tracked item.
-5. Delegates codebase analysis to the **Architect** agent to establish project conventions and patterns (if technical context is missing from the plan).
-6. Processes each task in plan order, delegating based on task type:
-   - **`[CREATE]` / `[MODIFY]`** → delegates to **Software Engineer** (app code), **DevOps Engineer** (infrastructure), or **E2E Engineer** (tests).
-   - **`[REUSE]`** → executes as described in the task definition (e.g., UI verification via **UI Reviewer**).
-7. After each task, updates plan checkboxes and runs quality checks (tsc, lint, build).
-8. Asks for confirmation before deviating from the plan.
-9. Documents all changes in the plan's Changelog section.
-10. **Automatically runs Code Reviewer** at the end if no review phase is defined.
+The command routes to the Engineering Manager, which loads the `tsh-orchestrating-implementation` skill and starts at **Step 0** of that workflow. From there, the skill — not the command — owns:
 
-## How Delegation Works
+- **Step 0 execution todos** — creates the todos needed for delivery before any delegation begins.
+- **Step 1 Full Flow establishment and planning readiness** — Full Flow is the only implementation route; no alternative route may be offered, recommended, accepted, or honored as an override.
+- **Full Flow** — planning readiness, plan review, todo and UI inventory, upfront execution plan, delegated execution routing, and the UI-verification and code-review gates. For app-code tasks specifically, Plan Implementor is the default for actionable, low-risk seams and Software Engineer is the exception for complex non-UI work. Any Figma or UI-verification involvement always brings in the UI-verification gate, even when the rest of the change looks narrow.
 
-The Engineering Manager automatically delegates each task to the right agent based on the plan:
-
-| Task Type | Agent |
-|---|---|
-| Plan validation | Plan Reviewer |
-| Backend / general code | Software Engineer |
-| Frontend with Figma | Software Engineer |
-| E2E tests | E2E Engineer |
-| Infrastructure (Kubernetes, Terraform, CI/CD, observability) | DevOps Engineer |
-| UI verification | UI Reviewer |
-| LLM application prompts | Prompt Engineer |
+Full Flow requires Human approval of the exact current plan revision before the first file-changing delegation. The automated `tsh-plan-reviewer` `APPROVED` verdict is Reviewer approval only; it is not permission to implement.
 
 ## Key Behaviors
 
-- **Orchestrates, never implements** — Delegates all coding to specialized agents.
-- **Strictly follows the plan** — No deviations unless explicitly approved.
-- **Tracks progress with todos** — Each plan task gets its own tracked item.
-- **Runs quality checks after each task** — Ensures nothing breaks as implementation progresses.
-- **Auto-triggers Code Reviewer** — Ensures every implementation gets reviewed.
+- **Thin trigger** — contains no workflow steps; the workflow lives in `tsh-orchestrating-implementation`.
+- **Routes to one seat** — always hands off to the Engineering Manager. Model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact.
+- **Starts at Step 0** — execution todos are created first, then Step 1 establishes Full Flow as the only implementation route inside the skill.
 
 ## Output
 
-- Code changes applied by delegated agents as specified in the plan.
-- Updated plan checkboxes showing completion status.
-- Changelog entries for any modifications.
-- Code review findings from the automatic `tsh-code-reviewer` run.
+- Code changes applied by delegated specialist agents.
+- Updated plan checkboxes and Changelog entries.
+- Code review findings from the delegated `tsh-code-reviewer` run.

@@ -8,7 +8,7 @@ title: Cursor Artifact Reviewer (internal)
 **File:** `.cursor/skills/agents/tsh-cursor-artifact-reviewer/SKILL.md`
 **Type:** Internal delegate-only worker (`disable-model-invocation: true`)
 
-Review specialist that evaluates Cursor customization artifacts (`SKILL.md`, `/SKILL.md`, `.mdc rules`) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
+Review specialist that evaluates Cursor customization artifacts (`SKILL.md`, `.mdc` rules) against best practices, workspace consistency, and structural correctness. Returns structured review findings categorized by severity — read-only, does not modify files.
 
 ## Responsibilities
 

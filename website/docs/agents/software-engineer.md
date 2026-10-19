@@ -7,11 +7,15 @@ title: Software Engineer
 
 **File:** `.cursor/skills/agents/tsh-software-engineer/SKILL.md`
 
-The Software Engineer agent implements software solutions based on provided requirements and technical designs. It executes against implementation plans created by the Architect.
+The Software Engineer agent is the **exception**-route implementor for complex **non-UI** software solutions based on provided requirements and technical designs. It executes against implementation plans created by the Architect; `tsh-plan-implementor` is the DEFAULT executor for actionable, low-risk plan seams, and UI work belongs to `tsh-ui-engineer`.
+
+Before any file change, validate from disk a plan whose current Human Approval record satisfies exactly `Human Decision=APPROVED`, `Approved Revision=current Plan Revision`, and a valid ISO 8601 UTC `Decision Timestamp` ending in `Z`. Fail closed when a field is missing, stale, mismatched, inferred, based only on Reviewer approval, or when the plan cannot be located or read; retry an unreadable or ambiguous reference once and resolve relative paths against the workspace root. Name the exact failed field, condition, or file, then ask the user in chat which next step to take — on every entry path, including direct selection as the primary chat agent — spelling out the options: point at the correct plan path, obtain Human approval for the existing plan, start plan preparation, or, when delegated, hand back to `tsh-engineering-manager`. Continue only from the user's explicit choice, which is never Human approval.
+
+Model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact. The agent skill declares no model, so no model name is published here.
 
 ## Responsibilities
 
-- Implementing code changes following the plan step by step.
+- Implementing non-UI code changes following the plan step by step.
 - Writing clean, efficient, and maintainable code.
 - Following best practices and coding standards.
 - Adhering to security considerations and quality assurance guidelines from the plan.
@@ -24,35 +28,27 @@ The Software Engineer agent implements software solutions based on provided requ
 - **No dead code** — Does not create unused functions or future-only code.
 - **No unnecessary files** — Focus on delivering required changes efficiently.
 - **Well-documented** — Includes comments and documentation for future maintainability.
+- **Never wipes the working tree** — Does not discard, revert, stash, or clean uncommitted changes outside the delegated task; treats them as intentional and reports blockers instead.
 
 ## Tool Access
 
 | Tool                      | Usage                                                                       |
 | ------------------------- | --------------------------------------------------------------------------- |
-| **Atlassian**             | Search for task requirements and related context (search only)              |
 | **Context7**              | Search API documentation, find solutions to errors, research best practices |
-| **Figma**                 | Extract design specifications for frontend tasks                            |
-| **Playwright**            | Verify UI implementation by interacting with the running application        |
 | **Sequential Thinking**   | Implement complex algorithms, debug issues, plan refactoring                |
 | **Terminal**              | Run build tools, tests, linters, and scripts                                |
 | **File Read/Edit/Search** | Read, modify, and search workspace files                                    |
-| **Terminal commands**      | Execute VS Code commands and preview in browser                             |
 | **Sub-agents**            | Delegate subtasks to specialized agents                                     |
 | **Todo**                  | Track implementation progress with structured checklists                    |
+| **Ask Questions**         | Clarify genuine implementation ambiguity within a Human-approved current plan revision — never used to seek permission to proceed without a valid plan |
 
 ## Skills Loaded
 
 - `tsh-technical-context-discovering` — Establish project conventions and patterns before implementing.
 - `tsh-implementation-gap-analysing` — Verify what exists vs what needs to be built.
 - `tsh-codebase-analysing` — Understand existing architecture for complex features.
-- `tsh-implementing-frontend` — Component patterns, composition, design tokens, Figma-to-code workflow.
-- `tsh-implementing-forms` — Schema validation, field composition, error handling, multi-step form flows.
-- `tsh-writing-hooks` — Custom hooks: naming, composition, stable returns, effect cleanup, testing.
-- `tsh-ensuring-accessibility` — WCAG 2.1 AA compliance: semantic HTML, ARIA, keyboard navigation, focus management.
-- `tsh-optimizing-frontend` — Code splitting, memoization, bundle size, rendering optimization, memory management.
-- `tsh-ui-verifying` — Tolerances and structure checklist for Figma verification.
 - `tsh-sql-and-database-understanding` — SQL queries, database schemas, migrations, ORM patterns.
-- `tsh-engineering-prompts` — LLM prompt design: structure patterns, optimization, security, templates.
+- `tsh-implementing-backend` — REST and GraphQL APIs, CRUD endpoints, data handling, authentication, and service integration.
 
 ## Handoffs
 

@@ -28,16 +28,17 @@ The Engineering Manager identifies that no implementation plan exists and delega
 2. **Analyzes tech stack** — Identifies domain-specific best practices.
 3. **Verifies current implementation** — Searches the codebase for existing components, functions, and utilities related to the feature.
 4. **Understands project standards** — Reviews `*.mdc rules` files.
-5. **Prepares implementation plan** — Creates detailed phases with code changes.
+5. **Prepares implementation plan** — Uses `tsh-creating-implementation-plans` to structure the plan with phases, tasks, and the owned `plan.example.md` template.
 6. **Defines tasks** — Each task has a clear title, description, action type (`[CREATE]`/`[MODIFY]`/`[REUSE]`), and definition of done checklist.
 7. **Addresses security** — Includes security considerations.
 8. **Defines testing** — Guidelines for validation.
 9. **Controls scope** — Only plans changes for THIS task; documents improvements separately.
-10. **Supports validation** — The Engineering Manager sends the finished plan to the Plan Reviewer before implementation begins.
+10. **Supports validation** — The Architect invokes the Plan Reviewer as a nested subagent before handing the finished plan back for implementation.
 
 ## Skills Loaded
 
-- `tsh-architecture-designing` — Architecture design process and plan template.
+- `tsh-architecture-designing` — Architecture design process.
+- `tsh-creating-implementation-plans` — Plan template, structure, and definition-of-done rules.
 - `tsh-codebase-analysing` — Analyze existing codebase.
 - `tsh-implementation-gap-analysing` — Verify what exists vs what needs to be built.
 - `tsh-technical-context-discovering` — Understand project conventions and patterns.
@@ -45,7 +46,7 @@ The Engineering Manager identifies that no implementation plan exists and delega
 
 ## Output
 
-A `.plan.md` file placed in `specifications/<task-name>/`:
+A `.plan.md` file placed in `specifications/<task-name-or-id>/`:
 
 ```text
 specifications/
@@ -57,7 +58,7 @@ specifications/
 
 The plan includes checklist-style phases, tasks with `[CREATE]`/`[MODIFY]`/`[REUSE]` action types, acceptance criteria, security considerations, and testing guidelines.
 
-After the plan is produced, the Engineering Manager automatically invokes the [Plan Reviewer](../../agents/plan-reviewer) to validate it. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
+After the plan is produced, the Architect invokes the [Plan Reviewer](../../agents/plan-reviewer) to validate it, once per plan lifecycle. The review report is saved alongside the plan as `{task-name}.plan-review.md`.
 
 :::tip
 Review both the plan and the review report. Confirm scope, phases, and acceptance criteria before starting implementation.

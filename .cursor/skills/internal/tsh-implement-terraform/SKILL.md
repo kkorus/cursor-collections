@@ -93,6 +93,8 @@ Skip for: adding resources to existing modules, updating versions, fixing bugs, 
 ## Scope
 
 **Does NOT handle** (redirect to):
-- CI/CD pipelines for Terraform → `.cursor/skills/internal/tsh-implement-pipeline/SKILL.md`
-- Kubernetes workload configuration → `.cursor/skills/internal/tsh-deploy-kubernetes/SKILL.md`
-- Monitoring infrastructure → `.cursor/skills/internal/tsh-implement-observability/SKILL.md`
+- CI/CD pipelines for Terraform → `tsh-implement-pipeline` skill
+- Kubernetes workload configuration → `tsh-deploy-kubernetes` skill
+- Monitoring infrastructure → `tsh-implement-observability` skill
+
+Each redirect above names a skill reference, not a location — resolve it with the `tsh-resolving-skill-references` resolution order: the project skill collection, then the installed skills root (flat, no layer segment), then a search by name; internal skills are **read**, not invoked, and a skill that cannot be located is a **stop and ask the user**, never a redirect you drop.
