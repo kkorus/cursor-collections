@@ -52,22 +52,51 @@ test('implementation-flows keeps the Quick flow and has no Phase Gates', () => {
   assert.ok(flows.includes('always uses the Full flow'));
 });
 
-// Protocol test: the documented predicate applied to the fixture records.
-const TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
-const isValid = ({ decision, approvedRevision, planRevision, timestamp }) =>
-  decision === 'APPROVED' && approvedRevision === planRevision && TIMESTAMP.test(timestamp);
+// Protocol tests: assert on the protocol text and the fixture table, not on a copy of the predicate.
+const PRECONDITION = 'src/partials/human-approval-precondition.md';
 
-test('protocol: the fixture records are classified by the documented predicate', () => {
-  const rows = read(`${EM}/references/plan-approval.md`).split('\n').filter((l) => l.startsWith('| Record:'));
-  assert.equal(rows.length, 4);
-  const results = rows.map((row) => {
-    const [, example, verdict] = row.split('|').map((c) => c.trim());
-    const decision = /decision `?PENDING/.test(example) ? 'PENDING' : 'APPROVED';
-    const stale = /`Approved Revision` 1, `Plan Revision` 2/.test(example);
-    const ts = /timestamp `([^`]+)`/.exec(example)?.[1] ?? '2026-10-26T10:00:00Z';
-    const record = { decision, approvedRevision: stale ? 1 : 2, planRevision: 2, timestamp: ts };
-    return { verdict, valid: isValid(record) };
-  });
-  assert.deepEqual(results.map((r) => r.valid), [true, false, false, false]);
-  assert.deepEqual(results.map((r) => r.verdict.startsWith('valid')), [true, false, false, false]);
+test('protocol: the fixture records state their verdict next to the documented validity rule', () => {
+  const approval = read(`${EM}/references/plan-approval.md`);
+  const rows = approval.split('\n').filter((l) => l.startsWith('| Record:')).map((l) => l.split('|').map((c) => c.trim()));
+  assert.deepEqual(rows.map((r) => r[2].split(' ')[0]), ['valid', 'not', 'not', 'not']);
+  assert.ok(rows[0][1].includes('revision equals `Plan Revision`'));
+  assert.ok(/`Approved Revision` equals the plan's `Plan Revision`/.test(read(PRECONDITION)));
+  assert.ok(/ISO 8601 UTC ending with `Z`/.test(read(PRECONDITION)));
+});
+
+test('protocol: a material revision goes review then gate, with capped gate re-asks and no dead end', () => {
+  const approval = read(`${EM}/references/plan-approval.md`);
+  const skill = read(`${EM}/SKILL.md`);
+  assert.equal(count(approval, 'There is no automatic re-review'), 0);
+  assert.ok(approval.includes('run the plan review loop again, then open the gate'));
+  assert.ok(approval.includes('at most 3 times per plan'));
+  assert.ok(approval.includes('`custom guidance` means'));
+  assert.ok(skill.includes('Every delegation counts as one iteration'));
+  assert.ok(skill.includes('An override is not an approval'));
+  assert.ok(skill.includes('`PLAN_REVISION` is never omitted'));
+  // the executor side does not evaluate the review revision; the manager does, before the gate
+  assert.ok(read(PRECONDITION).includes('Do not evaluate `REVIEWED_PLAN_REVISION`'));
+});
+
+test('protocol: the precondition triggers on executing a plan only and requires PLAN_REVISION', () => {
+  const pre = read(PRECONDITION);
+  assert.ok(pre.includes('EXECUTES a plan'));
+  assert.ok(pre.includes('read-only context'));
+  assert.equal(count(pre, 'names any `*.plan.md` path'), 0);
+  assert.ok(pre.includes('A `PLAN:` line without `PLAN_REVISION:` is not valid'));
+});
+
+test('protocol: legacy plans reach the gate and only PENDING and APPROVED exist', () => {
+  const reviewing = read('src/skills/tsh-reviewing-plans/SKILL.md');
+  assert.ok(reviewing.includes('implicit revision 1'));
+  assert.ok(read(`${EM}/references/plan-approval.md`).includes('implicit 1'));
+  assert.ok(read('src/partials/plan-governance.md').includes('The only values of `Human Decision` are `PENDING` and `APPROVED`'));
+  for (const f of ['src/agents/tsh-architect.md', 'src/skills/tsh-designing-architecture/assets/plan.template.md', `${EM}/references/plan-approval.md`]) {
+    assert.ok(!/STOPPED|CHANGES_REQUESTED/.test(read(f)), f);
+  }
+});
+
+test('protocol: UI-only mode says where the task slug and the verification dir come from', () => {
+  assert.ok(read(`${EM}/SKILL.md`).includes('derive `<task>` from the user\'s request as a short kebab-case slug'));
+  assert.ok(read('src/skills/tsh-review-ui/SKILL.md').includes('only when the user gave one'));
 });

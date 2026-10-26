@@ -390,6 +390,14 @@ test('unprefixed legacy names: category folder and old-layout symlinks are retir
   const bk = path.join(home, '.tsh-ai-collections-backup');
   const [stamp] = fs.readdirSync(bk);
   assert.ok(exists(path.join(bk, stamp, cs, 'workflows/playwright-cli/SKILL.md')), 'category copy is backed up');
+  // a live symlink to a non-legacy target stays, and a rerun changes nothing
+  fs.mkdirSync(path.join(project, 'elsewhere/playwright-cli'), { recursive: true });
+  fs.mkdirSync(path.join(project, '.agents/skills'), { recursive: true });
+  fs.symlinkSync(path.join(project, 'elsewhere/playwright-cli'), path.join(project, '.agents/skills/playwright-cli'));
+  run(['--migrate-legacy', '--project-dir', project], { home, source, quiet: true, now: () => new Date('2026-05-05T05:05:06Z') });
+  assert.ok(fs.lstatSync(path.join(project, '.agents/skills/playwright-cli')).isSymbolicLink(), 'live non-legacy symlink kept');
+  assert.ok(exists(path.join(project, '.claude/skills/playwright-cli/SKILL.md')));
+  assert.ok(exists(path.join(cs, 'workflows/other/SKILL.md')));
 });
 
 test('invalid unprefixed content is a UsageError', () => {

@@ -97,8 +97,8 @@ test('approval protocol: the architect records only on request, the partial name
   assert.doesNotMatch(architect, /Approve plan|I have comments/);
   const partial = read('src/partials/human-approval-precondition.md');
   assert.match(partial, /`PLAN: <path>` and `PLAN_REVISION: <n>`/);
-  assert.match(partial, /names any `\*\.plan\.md` path/);
-  assert.match(partial, /refers to a plan file/);
+  assert.match(partial, /EXECUTES a plan/);
+  assert.match(partial, /read-only context/);
   assert.match(partial, /Delegated mode:\*\* never ask\. Return `BLOCKED`/);
   assert.match(partial, /return `BLOCKED` and name the missing line/);
 });
