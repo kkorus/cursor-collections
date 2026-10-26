@@ -23,6 +23,10 @@ A broad and shallow audit of infrastructure for security gaps, cost waste indica
 3. If the audit finds something that needs re-architecture, the decision goes to the Architect and back to the DevOps Engineer.
 4. Saves the report to `specifications/infrastructure-audit-<yyyy-mm-dd>.md` and shows you the path, the executive summary and the top priorities.
 
+## Secrets gate
+
+The security part of the audit is governed by the `tsh-managing-secrets` skill. If that skill cannot be loaded, the command stops and asks you: either make it available, or re-scope the audit to exclude security (the report then says so).
+
 ## Suggested next steps
 
 `/tsh-implement` with the finding numbers to fix them. Application code security belongs to `/tsh-review`. The command itself fixes nothing.

@@ -132,12 +132,14 @@ This page shows how teams integrate TSH AI Collections into their daily routines
 | Step | What Happens |
 |---|---|
 | **1. Figma extraction** | The agent reads exact design specs from Figma MCP — spacing values, color tokens, typography, component variants. |
-| **2. Implementation** | Code is written following the `tsh-implementing-frontend` skill — semantic HTML, design system tokens, a11y patterns. |
-| **3. Automated verification loop** | The UI Reviewer subagent verifies the result automatically (the same check as `/tsh-review-ui`). Playwright captures the running app; Figma MCP provides expected values. A structured PASS/FAIL diff table is generated. |
-| **4. Auto-fix cycle** | If FAIL, the agent fixes mismatches and re-verifies — up to 5 iterations — until the component passes or escalates. |
+| **2. Implementation** | The UI Engineer writes code following the `tsh-implementing-frontend` skill — semantic HTML, design system tokens, a11y patterns. |
+| **3. Automated verification loop** | The UI Capture Worker captures the running app with `playwright-cli`, and the UI Reviewer compares it with the expected values it fetched through the Figma MCP (the same check as `/tsh-review-ui`). A structured PASS/FAIL diff table is generated. Where a check cannot run, the result is `VERIFICATION NOT RUN`, never a silent pass. |
+| **4. Auto-fix cycle** | If FAIL, the UI Engineer fixes mismatches and the loop captures and re-verifies — up to 5 iterations — until the component passes or escalates. |
 
-**Key commands & agents:** `/tsh-implement` → Engineering Manager → Software Engineer + UI Reviewer  
-**Key skills:** `tsh-implementing-frontend`, `tsh-verifying-ui`, `tsh-discovering-technical-context`
+**Setup:** install `playwright-cli` and, for pages behind a login, export the `TSH_UI_LOGIN_*` variables before starting your tool; see [Prerequisites](./prerequisites#figma-backed-ui-verification).
+
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → UI Engineer + UI Capture Worker + UI Reviewer  
+**Key skills:** `tsh-implementing-frontend`, `tsh-verifying-ui`, `tsh-using-playwright-cli`, `tsh-discovering-technical-context`
 
 **Value:** Design-to-code accuracy reaches 95–99%. Design QA feedback rounds are reduced by 60–80%. Accessibility compliance is built in from the start, not bolted on after review.
 

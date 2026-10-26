@@ -8,7 +8,7 @@ title: Architect
 **Source:** `src/agents/tsh-architect.md`  
 **Kind:** subagent, model tier `deep`, read-write access
 
-The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Plan Reviewer before implementation begins.
+The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications. The Engineering Manager has the plan reviewed by the Plan Reviewer and asks you for approval before implementation begins; the Architect itself never asks you to approve.
 
 ## Responsibilities
 
@@ -17,6 +17,14 @@ The Architect agent designs technical solutions, system architecture, and detail
 - Ensuring solutions align with project requirements, best practices, and quality standards.
 - Defining security considerations and quality assurance guidelines.
 - Collaborating with Business Analysts to clarify ambiguities.
+- Running a pre-submission self-check of the plan against the six BLOCKER categories of the plan review before handing it back.
+- Keeping the `## Human Approval` record of the plan: it writes the record only for the delegated `TASK: record_human_approval`, which carries your verbatim answer, and bumps `Plan Revision` and resets the record to `PENDING` when a revision is material.
+
+## Human approval
+
+The Architect never asks you to approve a plan, in any mode. The approval gate (approve, comment or stop) belongs to the Engineering Manager and opens after the plan review loop settles. The manager then sends the Architect a delegated `TASK: record_human_approval` with your verbatim answer, and the Architect records it in the `## Human Approval` table of the plan (`Human Decision`, `Approved Revision`, `Decision Timestamp`, `Plan Revision`). When a legacy plan has no such section, the Architect creates it as `PENDING` and then records the decision.
+
+When you run the Architect directly (`/tsh-architect`), it only reports that approval is pending and points you to `/tsh-implement`, which runs the gate. The plan lives in `specifications/<task-name-or-id>/`.
 
 ## What It Produces
 

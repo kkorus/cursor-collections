@@ -5,7 +5,7 @@ title: Standard Flow
 
 # Standard Flow
 
-The standard workflow is used for backend and fullstack tasks. The Engineering Manager (an orchestrator that runs in your main conversation) coordinates the full cycle: research → plan → plan validation → implement → review. It delegates each step to a subagent, and the subagents report back with a status block instead of asking you questions directly.
+The standard workflow is used for backend and fullstack tasks. The Engineering Manager (an orchestrator that runs in your main conversation) coordinates the full cycle: research → plan → plan validation → approval gate → implement → review. It delegates each step to a subagent, and the subagents report back with a status block instead of asking you questions directly.
 
 ## Step-by-Step Command Sequence
 
@@ -29,7 +29,7 @@ The Engineering Manager automatically handles the full development cycle:
 - **Delegated to:** Architect
 - **What it does:** Creates a multi-step implementation plan grouped into phases and tasks aligned with your repo structure.
 - **What it produces:** A `.plan.md` file with checklist-style phases that can be executed by specialized agents.
-- **Your action:** Wait for the plan validation phase to complete before reviewing. If the plan reviewer asks for revisions, the Engineering Manager sends the review back to the Architect.
+- **Your action:** Wait for the plan validation phase to complete before reviewing. If the plan reviewer asks for revisions, the Engineering Manager sends the review back to the Architect. The Architect never asks you to approve the plan itself.
 
 #### Plan Validation Phase (internal)
 
@@ -38,15 +38,22 @@ The Engineering Manager automatically handles the full development cycle:
 - **What it produces:** A `.plan-review.md` file alongside the plan with verdict (`APPROVED` or `REVISIONS NEEDED`) and structured findings. The review and revision loop runs at most 3 iterations; after that, or with unresolved blockers, the Engineering Manager stops and lets you decide.
 - **Your action:** Review the implementation plan and review report together. Confirm scope, phases, and acceptance criteria.
 
+#### Approval gate
+
+- **Owner:** Engineering Manager (main conversation)
+- **What it does:** Once the review loop settles, the manager checks that the `REVIEWED_PLAN_REVISION` of the last review equals the `Plan Revision` of the plan, then asks you to choose `Approve plan`, `I have comments` or `Stop`. It is the only gate of plan-based work. The manager has the Architect record your answer in the `## Human Approval` section of the plan (`TASK: record_human_approval`).
+- **Approval precondition:** every executor (Software Engineer, Plan Implementor, UI Engineer, E2E Engineer, DevOps Engineer, Prompt Engineer, Technical Writer) validates the approval record of the plan before it changes any file, and stops if the record is missing, pending or stale. A plan that has no approval section (a legacy plan) is treated as unapproved and gated once. Work without a plan (the Quick flow, `/tsh-implement <description>`, `/tsh-debug`) has no gate.
+- **Your action:** Choose `Approve plan`, add comments, or stop. A material change to the plan later resets the approval and the manager asks again.
+
 #### Implementation Phase
 
-- **Delegated to:** Software Engineer, Prompt Engineer, DevOps Engineer, E2E Engineer (based on task type)
+- **Delegated to:** Plan Implementor (default for actionable, low-risk non-UI tasks), Software Engineer (complex or exceptional non-UI work), UI Engineer (any UI task), Prompt Engineer, DevOps Engineer, E2E Engineer, Technical Writer (based on task type)
 - **What it does:** Executes the plan by delegating to specialized agents. Tracks progress and runs quality checks after each task.
 - **What it produces:** Concrete code modifications applied by delegated agents.
 - **Your action:** Review code changes after each phase. Test functionality. Verify against the plan.
 
 :::tip
-If a `.research.md` or `.plan.md` file already exists for the task, the Engineering Manager skips that phase and proceeds directly to the next step. If a `.plan.md` is already approved and unchanged since the last review, the plan validation step is skipped.
+If a `.research.md` or `.plan.md` file already exists for the task, the Engineering Manager skips that phase and proceeds directly to the next step. If a `.plan.md` is already reviewed and unchanged since the last review, the plan validation step is skipped; the approval record is reused while it is valid.
 :::
 
 ### 2. Review
@@ -70,7 +77,7 @@ If a `.research.md` or `.plan.md` file already exists for the task, the Engineer
    ↳ 🧱 Engineering Manager delegates to Architect for planning
    ↳ 🧪 Engineering Manager delegates to Plan Reviewer for plan validation
    ↳ 📖 Review the implementation plan and review summary
-   ↳ ✅ Confirm the approved plan before implementation begins
+   ↳ ✅ Choose Approve plan at the one approval gate
    ↳ 💻 Engineering Manager delegates implementation to specialized agents
    ↳ 📖 Review code changes after each phase
    ↳ ✅ Test functionality, verify against plan
@@ -97,4 +104,4 @@ Every task in an implementation plan is labeled with one of three action types. 
 | **MODIFY** | Change existing code | "Update the `getUsers` endpoint to support pagination" |
 | **REUSE** | Use existing code as-is, no changes needed | "Reuse the existing `AuthMiddleware` for the new route" |
 
-These labels are assigned during the **Plan** phase by the Architect agent. During the **Implement** phase, the Software Engineer agent uses them to understand what needs to be built from scratch, what needs careful modification of existing logic, and what can be leveraged without changes.
+These labels are assigned during the **Plan** phase by the Architect agent. During the **Implement** phase, the implementing agent (Plan Implementor, Software Engineer or UI Engineer) uses them to understand what needs to be built from scratch, what needs careful modification of existing logic, and what can be leveraged without changes.

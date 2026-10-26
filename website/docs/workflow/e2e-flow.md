@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 title: E2E Testing Flow
 ---
 
@@ -16,7 +16,7 @@ For features that need end-to-end test coverage, use the E2E testing workflow. T
    ↳ ✅ Identify critical paths that need E2E coverage
    ↳ 🧱 Engineering Manager delegates to Architect for planning
    ↳ 📖 Review plan – confirm test scenarios and acceptance criteria
-   ↳ ✅ Ensure E2E testing is included in the plan
+   ↳ ✅ Ensure E2E testing is included in the plan, then choose Approve plan at the approval gate
    ↳ 🧪 Engineering Manager delegates E2E tasks to the E2E Engineer agent
    ↳ 📖 Implements Page Objects, test files, and fixtures
    ↳ ✅ Run tests locally, verify they pass
@@ -30,10 +30,10 @@ E2E test implementation is handled by the Engineering Manager as part of the sta
 
 ## What the E2E Engineer Does
 
-When delegated to by the Engineering Manager, the E2E Engineer:
+When delegated to by the Engineering Manager, the E2E Engineer first validates the approved plan record (when the work is plan-based), and then:
 
 - Analyzes the application, designs test scenarios, and implements Page Objects.
-- Uses **Playwright MCP** for real-time browser interaction and test verification.
+- Uses the **Playwright MCP** for real-time browser interaction and test verification. (The `playwright` MCP is for interactive and E2E use only; UI-versus-Figma verification uses `playwright-cli` instead.)
 - Follows BDD-style scenarios with proper Arrange-Act-Assert structure.
 - Maps acceptance criteria to test scenarios.
 - Verifies tests pass consistently **(3+ consecutive passes)** in headless mode before committing.

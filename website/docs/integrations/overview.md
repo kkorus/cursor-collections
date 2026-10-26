@@ -16,10 +16,10 @@ The Model Context Protocol allows AI agents to call external tools as part of th
 | Server | Type | Purpose | Used By |
 |---|---|---|---|
 | [Atlassian](./atlassian) | HTTP | Jira & Confluence integration | BA, Architect, CR, CE |
-| [Figma](./figma) | HTTP | Design extraction and verification | BA, Architect, SE, UI Reviewer, CR, E2E |
-| [Context7](./context7) | stdio | Library documentation search | Architect, SE, CR, UI Reviewer, E2E, Plan Reviewer, Prompt Engineer, Researcher, DevOps |
-| [Playwright](./playwright) | stdio | Browser automation and UI testing | SE, UI Reviewer, E2E |
-| [Sequential Thinking](./sequential-thinking) | stdio | Structured reasoning for complex problems | BA, Architect, SE, CR, E2E, UI Reviewer, CE, Plan Reviewer, Prompt Engineer, DevOps |
+| [Figma](./figma) | HTTP | Design extraction and verification | BA, Architect, UI Engineer, UI Reviewer, CR, E2E |
+| [Context7](./context7) | stdio | Library documentation search | Architect, SE, UI Engineer, CR, UI Reviewer, E2E, Plan Reviewer, Prompt Engineer, Researcher, DevOps |
+| [Playwright](./playwright) | stdio | Interactive browser automation and E2E test exploration | E2E (and ad hoc use) |
+| [Sequential Thinking](./sequential-thinking) | stdio | Structured reasoning for complex problems | BA, Architect, SE, UI Engineer, CR, E2E, UI Reviewer, CE, Plan Reviewer, Prompt Engineer, DevOps |
 | [PDF Reader](./pdf-reader) | stdio | PDF document extraction | BA, CE, Architect |
 | [AWS API](./aws-api) | stdio | AWS infrastructure automation and resource management | DevOps |
 | [AWS Documentation](./aws-documentation) | stdio | AWS service documentation and reference | DevOps |
@@ -38,6 +38,10 @@ All servers are defined once in `src/mcp/servers.json` and generated for each to
 | Codex | `.codex/config.toml` | `[mcp_servers.<name>]` |
 
 The installer does not write MCP configuration. See [MCP Setup](../getting-started/mcp-setup) for how to merge the generated file into your own config (note that Cursor expects `mcpServers`, not `servers`).
+
+## MCP versus `playwright-cli`
+
+The `playwright` MCP server is for interactive exploration and E2E work. Figma UI verification does **not** use it: the UI Capture Worker collects the evidence with the `playwright-cli` command line, which is a command to install on your machine (`npx playwright-cli` or `npm install -g @playwright/cli@latest`), not an MCP server. See [Prerequisites](../getting-started/prerequisites) and the [Playwright page](./playwright).
 
 ## Server Types
 

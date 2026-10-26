@@ -7,7 +7,7 @@ title: Implementing Frontend
 
 **Skill name:** `tsh-implementing-frontend`  
 **Source:** `src/skills/tsh-implementing-frontend/`  
-**Used by:** Software Engineer, `tsh-implement-task` (step)
+**Used by:** UI Engineer, `tsh-implement-task` (step)
 
 Frontend component patterns, composition, design token integration, barrel file organization, error handling, and Figma-to-code workflow.
 
@@ -15,6 +15,7 @@ Frontend component patterns, composition, design token integration, barrel file 
 
 ## What it covers
 
+- Step 0: fetch and review the Figma design through the `figma` MCP (node, layout, spacing, typography, colors, dimensions, variants, states) before any code. A missing design is `NEEDS_INPUT` in delegated mode. This is separate from the post-implementation verification of [`tsh-verifying-ui`](./verifying-ui).
 - Implementation Process
 - State Decision Framework
 - Barrel File Guidelines

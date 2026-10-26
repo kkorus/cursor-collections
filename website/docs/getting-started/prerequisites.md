@@ -47,3 +47,25 @@ Some MCP servers need extra tooling. Install only what you use.
 python --version  # 3.10+
 uvx --version
 ```
+
+## Figma-backed UI verification
+
+The UI verification loop (`/tsh-implement` with a Figma URL, and `/tsh-review-ui`) needs extra setup. Skip this section if you do not verify UI against Figma.
+
+- **`playwright-cli`.** The UI Capture Worker captures the running app with this command. Run it through `npx playwright-cli` or install it globally with `npm install -g @playwright/cli@latest`. It is a command, not an MCP server; the `playwright` MCP stays for interactive and E2E use.
+- **The Figma MCP**, authorized in your tool (see [MCP Setup](./mcp-setup)).
+- **A running app and its full URL**, for example `http://localhost:5173/dashboard`. You confirm the exact URL once and it is used unchanged for the whole loop.
+
+### Pages behind a login
+
+The worker never reads `.env` files and never prints the environment. It gets credentials only from variables in the environment of the shell that launched your tool, named `TSH_UI_LOGIN_<FIELD>`. The common ones are:
+
+```bash
+export TSH_UI_LOGIN_EMAIL='...'
+export TSH_UI_LOGIN_USERNAME='...'
+export TSH_UI_LOGIN_PASSWORD='...'   # TSH_UI_LOGIN_PASSWORD
+```
+
+Export them **before** you start your tool, in the same shell. A running tool cannot receive new environment variables, and a GUI-launched application (for example Cursor started from the dock) does not see exports from your shell: start it from a shell where the variables are exported, which means restarting it. Whether the variables reach the capture worker in each tool is **not yet verified** for Codex and is listed in [Supported Tools](./supported-tools).
+
+For single sign-on or multi-factor login, use the default instead: log in once in a headed (visible) browser session and the worker reuses the saved session state. If the variables are missing, the worker asks you for the exact names instead of continuing. Use a dedicated test account, never a personal one.

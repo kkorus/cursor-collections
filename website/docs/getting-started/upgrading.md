@@ -11,6 +11,7 @@ This release renames the product (formerly Cursor Collections) to **TSH AI Colle
 
 - The old version told you to link or copy skills into `~/.cursor/skills/` (from the `agents/`, `workflows/`, `commands/` and `internal/` category folders). The new layout never installs there. Skills go to `.agents/skills` or `.claude/skills`, and agents to `.cursor/agents`, `.claude/agents` or `.codex/agents`. See [Installation](./installation).
 - Many skills, agents and commands were renamed, merged or removed, and there are **no aliases**. The full old to new name table is in the [Changelog](/changelog).
+- `playwright-cli` was installed by the earlier version as a flat, unprefixed entry. The new layout ships it as the `tsh-using-playwright-cli` knowledge skill, so the installer now retires an old unprefixed `playwright-cli` entry (a symlink into the old layout, a dangling symlink, or a copy in a category folder; a real directory of that name that you created yourself is left alone). The `playwright-cli` command itself is not part of the collection; install it as described in [Prerequisites](./prerequisites#figma-backed-ui-verification).
 - The old persona skills (`tsh-architect`, `tsh-software-engineer` and so on) are now real subagents. An old skill with the same name would shadow the new subagent, so it must be removed.
 
 ## One-command upgrade
@@ -39,12 +40,13 @@ To run only the cleanup and install nothing, use `--migrate-legacy` (combine it 
 
 ## What the legacy cleanup removes or backs up
 
-The cleanup runs before every install and update. It touches only entries whose names start with `tsh-`; your own skills are never modified.
+The cleanup runs before every install and update. It touches only entries whose names start with `tsh-` and the exact unprefixed name `playwright-cli`; your own skills are never modified.
 
 | Found | Action |
 |---|---|
 | Any `tsh-*` entry directly under `~/.cursor/skills/` or `<project>/.cursor/skills/` | Symlinks are removed. Real directories are moved to the backup. |
 | Copied category folders (`agents/`, `commands/`, `workflows/`, `internal/`) under those two folders that contain `tsh-*` entries | Reported, and the `tsh-*` entries inside are moved to the backup. |
+| An unprefixed `playwright-cli` entry in the old category folders, or a symlink named `playwright-cli` into the old layout (or dangling) in a skills folder | Symlinks are removed. Real directories in a category folder are moved to the backup. |
 | In the new skill folders (`~/.agents/skills`, `~/.claude/skills` and project equivalents): a dangling symlink, a symlink into the old category layout, or an entry whose name is listed in `scripts/legacy-names.json` | Symlinks are removed. Real directories are moved to the backup. |
 
 **Backup location:** `~/.tsh-ai-collections-backup/<timestamp>/`, with every entry stored under its original absolute path (for example `<timestamp>/Users/you/.cursor/skills/tsh-architect`). Backups of project-scope entries also go to this folder in your home directory. Nothing is hard-deleted. If you edited an old skill, your copy is there. Category folders that are empty after the cleanup are removed; folders that still hold other files stay.
@@ -95,4 +97,5 @@ Each install and update is recorded in `~/.tsh-ai-collections/installs.json`, a 
 | `/tsh-analyze-aws-costs`, `/tsh-analyze-gcp-costs` | `/tsh-analyze-cloud-costs` (takes `aws` or `gcp` as the first argument) |
 
 - The MCP file fixed a wrong key for Cursor (`servers` is now `mcpServers`). Re-merge the generated MCP file, see [MCP Setup](./mcp-setup).
+- The approval flow changed: plan-based work now has one approval gate run by the Engineering Manager, and a plan without an approval record is gated once. See the [Standard Flow](../workflow/standard-flow#approval-gate).
 - Restart your tool so it rediscovers skills and agents.
