@@ -69,3 +69,64 @@ test('agents with access read-only are never told to write files', () => {
   assert.match(modes, /If your role can write files/);
   assert.match(modes, /If your role is read-only, never write files/);
 });
+
+const srcMd = () => files('src').filter((f) => f.endsWith('.md'));
+const holdersOf = (text) => srcMd().filter((f) => read(f).includes(text));
+
+test('the plan template carries the plan contract sections and the three gap-analysis terms', () => {
+  const plan = read('src/skills/tsh-designing-architecture/assets/plan.template.md');
+  for (const pattern of ['## Human Approval', '## Wildly Important Goal', '**UI Verification Status**', '**Stop Rule**', '**Verification**', '### To Be Created', '### To Be Modified', '### To Be Reused']) {
+    assert.ok(plan.includes(pattern), `plan template lacks ${pattern}`);
+  }
+  assert.ok(plan.endsWith('\n'));
+});
+
+test('the approval and version-control partials exist once and hold their distinctive sentences once', () => {
+  const approval = 'src/partials/human-approval-precondition.md';
+  const vcs = 'src/partials/version-control-safety.md';
+  assert.deepEqual(holdersOf('A reviewer verdict of APPROVED is not human approval.'), [approval]);
+  assert.deepEqual(holdersOf('Never run `git clean`'), [vcs]);
+  const text = read(approval);
+  for (const token of ['PLAN_REVISION', 'Approved Revision', 'REVIEWED_PLAN_REVISION', '*.plan.md']) assert.ok(text.includes(token), `precondition lacks ${token}`);
+  for (const rel of [approval, vcs]) assert.doesNotMatch(read(rel), /delegate to|spawn|subagent/i, rel);
+});
+
+test('approval protocol: the architect records only on request, the partial names the triggers and the BLOCKED branch', () => {
+  const architect = read('src/agents/tsh-architect.md');
+  assert.ok(architect.includes('record_human_approval'));
+  assert.doesNotMatch(architect, /Approve plan|I have comments/);
+  const partial = read('src/partials/human-approval-precondition.md');
+  assert.match(partial, /`PLAN: <path>` and `PLAN_REVISION: <n>`/);
+  assert.match(partial, /names any `\*\.plan\.md` path/);
+  assert.match(partial, /refers to a plan file/);
+  assert.match(partial, /Delegated mode:\*\* never ask\. Return `BLOCKED`/);
+  assert.match(partial, /return `BLOCKED` and name the missing line/);
+});
+
+test('tsh-reviewing-plans is the only src file listing the blocker categories', () => {
+  const phrase = 'No safety proof';
+  assert.deepEqual(holdersOf(phrase), ['src/skills/tsh-reviewing-plans/SKILL.md']);
+  const skill = read('src/skills/tsh-reviewing-plans/SKILL.md');
+  assert.ok(skill.includes('REVIEWED_PLAN_REVISION'));
+  assert.ok(read('src/agents/tsh-plan-reviewer.md').includes('REVIEWED_PLAN_REVISION'));
+  for (const rel of srcMd()) assert.doesNotMatch(read(rel), /<plan-review-report/, rel);
+});
+
+test('plan-governance exists once with its two headings and is included by tsh-designing-architecture', () => {
+  const rel = 'src/partials/plan-governance.md';
+  const seam = 'A task is an actionable low-risk seam when it lists its `Files`';
+  assert.deepEqual(holdersOf(seam), [rel]);
+  const text = read(rel);
+  assert.ok(text.includes('## Seam definition') && text.includes('## Material and non-material changes'));
+  assert.doesNotMatch(text, /<!-- include:/);
+  assert.ok(read('src/skills/tsh-designing-architecture/SKILL.md').includes('<!-- include: plan-governance -->'));
+});
+
+test('legacy-names.json lists the upstream port names and a valid unprefixed list', () => {
+  const j = JSON.parse(read('scripts/legacy-names.json'));
+  assert.equal(j.renamed['tsh-orchestrating-implementation'], 'tsh-engineering-manager');
+  for (const n of ['tsh-creating-implementation-plans', 'tsh-resolving-skill-references']) assert.ok(j.deleted.includes(n), n);
+  for (const n of ['tsh-plan-implementor', 'tsh-technical-writer', 'tsh-ui-engineer', 'tsh-ui-capture-worker']) assert.ok(j.nowSubagents.includes(n), n);
+  assert.deepEqual(j.unprefixed, ['playwright-cli']);
+  assert.ok(Array.isArray(j.unprefixed) && j.unprefixed.every((n) => /^[a-z0-9-]+$/.test(n)));
+});
