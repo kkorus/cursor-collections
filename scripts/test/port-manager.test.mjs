@@ -61,7 +61,7 @@ test('protocol: the fixture records state their verdict next to the documented v
   assert.deepEqual(rows.map((r) => r[2].split(' ')[0]), ['valid', 'not', 'not', 'not']);
   assert.ok(rows[0][1].includes('revision equals `Plan Revision`'));
   assert.ok(/`Approved Revision` equals the plan's `Plan Revision`/.test(read(PRECONDITION)));
-  assert.ok(/ISO 8601 UTC ending with `Z`/.test(read(PRECONDITION)));
+  assert.ok(/ISO 8601 UTC timestamp ending with `Z`/.test(read(PRECONDITION)));
 });
 
 test('protocol: a material revision goes review then gate, with capped gate re-asks and no dead end', () => {
