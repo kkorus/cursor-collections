@@ -17,7 +17,7 @@ Audit the project's infrastructure for security gaps, cost waste indicators and 
 - `tsh-delivering-infrastructure` - its audit report template and the severity scale
 - `tsh-analyzing-codebase` - reviewing IaC files, CI/CD configuration and documentation coverage
 - `tsh-optimizing-cloud-cost` - unused resources, rightsizing and reservation findings
-- `tsh-managing-secrets` - secrets audit criteria and exposure risk
+- `tsh-managing-secrets` - secrets audit criteria and exposure risk. This skill is a gate for the security section: if it cannot be loaded, stop and ask the user, or re-scope the audit to exclude security and say so in the report
 
 ## Workflow
 
