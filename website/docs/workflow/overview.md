@@ -32,8 +32,9 @@ Think of this workflow as a **relay race**. Each phase produces a deliverable �
 - **Command:** `/tsh-implement <JIRA_ID or description>`
 - Automatically handles the full development cycle:
   1. **Research** — Delegates to Context Engineer to gather context from Jira, Figma, and codebase. Asks for user confirmation before proceeding.
-  2. **Plan** — Delegates to Architect to create a structured implementation plan, then to Plan Reviewer to validate it. Asks for user confirmation before proceeding.
-  3. **Implement** — Delegates to Software Engineer, Prompt Engineer, DevOps Engineer, or E2E Engineer based on task type.
+  2. **Plan** — Delegates to Architect to create a structured implementation plan, then to Plan Reviewer to validate it (maximum 3 review iterations).
+  3. **Approval gate** — The one gate of plan-based work: after the review settles, the manager asks you to choose `Approve plan`, `I have comments` or `Stop`, and has the Architect record your answer in the plan. Executors refuse to change files without a valid approval record.
+  4. **Implement** — Delegates to the Plan Implementor (default for actionable, low-risk non-UI tasks), Software Engineer (complex non-UI work), UI Engineer (any UI task), Prompt Engineer, DevOps Engineer, E2E Engineer or Technical Writer based on task type. UI tasks with a Figma reference run through the [UI verification loop](./ui-verification-flow).
 - Tracks progress, runs quality checks after each task, and auto-triggers code review.
 - **Produces:** Research document, implementation plan, and concrete code modifications.
 
@@ -49,7 +50,7 @@ Think of this workflow as a **relay race**. Each phase produces a deliverable �
 The same model applies in Cursor, Claude Code and Codex:
 
 - **Commands** (`/tsh-implement`, `/tsh-review`, ...) are the entry points you type. A command either loads an orchestrator or starts one subagent.
-- **Orchestrators** (Engineering Manager, Business Analyst, AI Customization Orchestrator) run in your main conversation. They can ask you questions, keep the human gates and own every loop.
+- **Orchestrators** (Engineering Manager, Business Analyst, AI Customization Orchestrator) run in your main conversation. They can ask you questions, keep the human gate and own every loop. The Architect never asks you to approve a plan.
 - **Subagents** are leaves. They run in delegated mode, never ask you anything and never delegate further. When they need input, they return a `STATUS` block (`DONE`, `NEEDS_INPUT`, `NEEDS_ARCHITECT_DECISION` or `BLOCKED`), and the orchestrator asks you or delegates to the Architect, then re-delegates. An orchestrator re-delegates at most 3 times per agent per task before it escalates to you.
 - **Knowledge skills** (`tsh-implementing-frontend`, `tsh-reviewing-code`, ...) are loaded by name by whichever agent needs them.
 
@@ -73,5 +74,6 @@ The full lifecycle has specialized variants for different task types:
 
 - **[Workshop Analysis Flow](./workshop-flow)** — Explore workshop context with `/tsh-explore-materials` or convert materials into Jira-ready epics and stories with `/tsh-analyze-materials`.
 - **[Standard Flow](./standard-flow)** — Backend/fullstack tasks using `/tsh-implement` → `/tsh-review` (research and planning happen internally).
-- **[Frontend Flow](./frontend-flow)** — UI tasks with Figma verification using `/tsh-implement` (which internally runs the `tsh-orchestrate-ui-verification` step) and `/tsh-review-ui`.
+- **[Frontend Flow](./frontend-flow)** — UI tasks with Figma verification using `/tsh-implement` (the UI Engineer implements; the manager runs the capture and review loop) and `/tsh-review-ui`.
+- **[UI Verification Flow](./ui-verification-flow)** — The capture, review and fix loop that proves UI matches Figma.
 - **[E2E Testing Flow](./e2e-flow)** — End-to-end test creation delegated by the Engineering Manager to the E2E Engineer via `/tsh-implement`.

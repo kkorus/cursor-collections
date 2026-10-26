@@ -51,9 +51,9 @@ Server names that contain dots, such as `awslabs.aws-api-mcp-server`, are writte
 | MCP Server | Purpose | Used By |
 |------------|---------|---------|
 | **Atlassian** | Access Jira issues and Confluence pages | Business Analyst, Context Engineer, Architect, Engineering Manager, Code Reviewer |
-| **Figma** | Pull design details, components, and variables | Software Engineer (UI), UI Reviewer |
+| **Figma** | Pull design details, components, and variables | UI Engineer, UI Reviewer |
 | **Context7** | Semantic search in external documentation | All agents |
-| **Playwright** | Browser automation and E2E testing | Software Engineer, E2E Engineer, UI Reviewer |
+| **Playwright** | Interactive browser automation and UI debugging, E2E testing | E2E Engineer (and ad hoc use) |
 | **Sequential Thinking** | Advanced reasoning for complex analysis | All agents (for complex tasks) |
 | **AWS API** | Live AWS infrastructure inspection | DevOps Engineer |
 | **AWS Documentation** | AWS service documentation lookup | DevOps Engineer |
@@ -117,12 +117,16 @@ args = [ "-y", "@upstash/context7-mcp@latest", "--api-key", "YOUR_API_KEY_HERE" 
 
 Do not commit a real key to a shared repository.
 
+:::note UI verification does not use the Playwright MCP
+Figma UI verification captures the running app with the `playwright-cli` command, not with this MCP server. Install `playwright-cli` as described in [Prerequisites](./prerequisites#figma-backed-ui-verification). The Figma MCP is still needed, because the UI Reviewer fetches the design through it.
+:::
+
 ## Authentication Requirements
 
 - **Atlassian** — Requires Atlassian account authentication. The HTTP MCP endpoint handles OAuth automatically via your browser.
 - **Figma** — Requires Figma account access. The HTTP MCP endpoint handles authentication via your browser.
 - **Context7** — Works without an API key (with rate limits). Optional API key for higher limits.
-- **Playwright** — No authentication required. Runs locally via npx.
+- **Playwright** — No authentication required. Runs locally via npx. (`playwright-cli` for UI verification is a separate command, see [Prerequisites](./prerequisites#figma-backed-ui-verification).)
 - **Sequential Thinking** — No authentication required. Runs locally via npx.
 - **AWS MCPs** — Requires AWS credentials configured locally (`aws configure` or environment variables).
 - **GCP MCPs** — Requires GCP credentials configured locally (`gcloud auth application-default login`).

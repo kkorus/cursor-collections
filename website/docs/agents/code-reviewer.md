@@ -18,6 +18,7 @@ The Code Reviewer agent performs structured code reviews against the implementat
 - Verifying **testing** — appropriate tests covering necessary scenarios.
 - Ensuring **documentation** — well-documented code with comments.
 - Checking **acceptance criteria** — verifying each item from the plan's checklist.
+- Flagging **N+1** patterns (a query or remote call inside a loop over results) as part of the performance and scalability review.
 
 ## Review Process
 

@@ -8,7 +8,7 @@ title: Plan Reviewer
 **Source:** `src/agents/tsh-plan-reviewer.md`  
 **Kind:** subagent, model tier `deep`, read-write access
 
-The Plan Reviewer (`tsh-plan-reviewer`) is a subagent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing.
+The Plan Reviewer (`tsh-plan-reviewer`) is a subagent that stress-tests implementation plans before code is written. It challenges the plan for likely failure modes, hidden assumptions, sequencing traps, integration mismatches, migration and data risks, and false confidence in testing. It is a lightweight final reality check: `APPROVED` is the common outcome once the Architect has done its self-check.
 
 ## Responsibilities
 
@@ -17,6 +17,12 @@ The Plan Reviewer (`tsh-plan-reviewer`) is a subagent that stress-tests implemen
 - Surfacing hidden assumptions, sequencing traps, dependency order issues, and migration or data risks.
 - Challenging integration boundaries, rework risk, and false confidence in test coverage.
 - Producing a structured approval or revision report for the Engineering Manager.
+- Applying the six BLOCKER categories defined in the [`tsh-reviewing-plans`](../skills/reviewing-plans) skill; a finding outside them is a WARNING at most.
+- Stating `REVIEWED_PLAN_REVISION` (the `Plan Revision` of the plan it reviewed) in the report, so the Engineering Manager can check that the verdict belongs to the current plan.
+
+:::info Reviewer approval is not human approval
+An `APPROVED` verdict means the plan is sound to review. It does not authorize implementation. Only the human approval record of the plan, written after you choose `Approve plan`, does.
+:::
 
 ## What It Produces
 
@@ -33,7 +39,7 @@ specifications/
 
 ## How It Works
 
-You do not start the Plan Reviewer with a command. [`/tsh-implement`](../commands/implement) runs the Engineering Manager, which delegates to the Plan Reviewer after the Architect creates or updates a `.plan.md` file. If the plan is already approved and unchanged since the last review, the review is skipped. The Quick flow produces no plan, so it has nothing to review.
+You do not start the Plan Reviewer with a command. [`/tsh-implement`](../commands/implement) runs the Engineering Manager, which delegates to the Plan Reviewer after the Architect creates or updates a `.plan.md` file. If the plan is already reviewed and unchanged since the last review, the review is skipped. The Quick flow produces no plan, so it has nothing to review.
 
 1. Reads the research file first, so the review is grounded in the original requirements.
 2. Reads the plan file and checks every task, phase, and definition of done.
@@ -79,6 +85,6 @@ flowchart LR
   PlanReviewer -->|"REVISIONS NEEDED"| Architect
 ```
 
-- **`APPROVED`**: the Engineering Manager gives you a short chat summary and asks for confirmation to implement. The `*.plan-review.md` file stays unchanged.
+- **`APPROVED`**: the Engineering Manager checks that `REVIEWED_PLAN_REVISION` equals the `Plan Revision` of the plan (on a mismatch it does not open the gate and re-runs the review or asks you), then opens the one approval gate. The `*.plan-review.md` file stays unchanged.
 - **`REVISIONS NEEDED` with BLOCKERs**: the Engineering Manager sends the report back to the Architect and reviews the revised plan again. After 3 iterations it stops and lets you decide.
-- **Plan already approved and unchanged**: the review is skipped.
+- **Plan already reviewed and unchanged**: the review is skipped.

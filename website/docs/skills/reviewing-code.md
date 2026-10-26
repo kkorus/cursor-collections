@@ -13,6 +13,10 @@ Structured code review of an implementation against a plan or, without a plan, a
 
 **Use when** reviewing implementations, running quality gates, verifying code against a plan, or doing a post-implementation review.
 
+## What it checks beyond the basics
+
+The review also looks for **N+1** query and call patterns (a query or remote call inside a loop over results), and when the plan has executor tasks it checks the work against the plan's definition of done.
+
 ## What it covers
 
 - Code Review Process

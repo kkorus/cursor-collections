@@ -91,6 +91,25 @@ Conversion progress:
 - [ ] Step 9: Update cross-references in other artifacts
 ```
 
+## Porting a PR (not a fresh conversion)
+
+Use this when the Copilot-based repository changed after an earlier conversion and you bring those changes over, instead of converting an artifact from scratch.
+
+1. List the changed artifacts of the source range and map each one to its target in `src/` with the tables above. Skip changes that only touch wording the neutral source already replaced.
+2. Apply the semantic change onto the neutral source (`src/skills/`, `src/agents/`, `src/partials/`). Do not copy the file from the other repository, and do not merge it with git.
+3. A model recommendation in a prompt or agent is not carried as text. Fold it into the agent's `model-tier` (or drop it for a command).
+4. Run `npm run generate`, then `npm run check`, and fix every finding without baseline entries.
+
+## Divergence from upstream
+
+The neutral source deliberately differs from a Copilot-based repository, and a port keeps these differences:
+
+- Agents never delegate. Where the upstream agent called another agent, the orchestrator performs that delegation.
+- Skills are referenced by name only, never by path or by an installed skill location.
+- Wording is tool-neutral: no tool names, tool syntax or model names in `src/`.
+- Models are expressed as `model-tier`, and permissions as `access`, `shell` and `requires-mcp`.
+- A change that only exists for the other layout (paths, category folders, resolver skills) has no counterpart and is skipped.
+
 ## Post-Conversion Checks
 
 1. **Names resolve:** every skill, agent and command named in the converted body exists; `routes-to` resolves.

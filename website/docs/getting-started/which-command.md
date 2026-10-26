@@ -15,7 +15,7 @@ You only ever type **commands**: the 16 entries that start with `/tsh-`. Everyth
 | Fix a bug with a reproduction and a regression test | `/tsh-debug <description of the bug>` |
 | Ask an architecture question and keep the decision as a record | `/tsh-ask <question>` |
 | Review my changes against a plan or the diff | `/tsh-review` |
-| Check a built UI against its Figma design | `/tsh-review-ui` |
+| Check a built UI against its Figma design (one capture and one review, no fixes) | `/tsh-review-ui` |
 | Restructure code without changing its behavior | `/tsh-refactor <scope>` |
 | Audit code quality (dead code, duplication) | `/tsh-audit-codebase` |
 | Write a Conventional Commits message and commit | `/tsh-commit` |

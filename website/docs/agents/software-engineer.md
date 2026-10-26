@@ -8,7 +8,7 @@ title: Software Engineer
 **Source:** `src/agents/tsh-software-engineer.md`  
 **Kind:** subagent, model tier `deep`, read-write access
 
-The Software Engineer agent implements software solutions based on provided requirements and technical designs. It executes against implementation plans created by the Architect.
+The Software Engineer agent implements **NON-UI** application code (backend, API, database, business logic) based on provided requirements and technical designs. It is the exception route for complex work: the [Plan Implementor](./plan-implementor) is the default executor for actionable, low-risk plan tasks, and rendered UI belongs to the [UI Engineer](./ui-engineer).
 
 ## Responsibilities
 
@@ -18,6 +18,7 @@ The Software Engineer agent implements software solutions based on provided requ
 - Adhering to security considerations and quality assurance guidelines from the plan.
 - Reviewing own code to ensure it meets requirements.
 - Communicating with the Architect when ambiguities arise.
+- Handling plan tasks that fail the Engineering Manager's seam test, refactor-mode tasks and plan-less work such as `/tsh-debug` fixes.
 
 ## Key Behaviors
 
@@ -25,12 +26,15 @@ The Software Engineer agent implements software solutions based on provided requ
 - **No dead code** — Does not create unused functions or future-only code.
 - **No unnecessary files** — Focus on delivering required changes efficiently.
 - **Well-documented** — Includes comments and documentation for future maintainability.
+- **Does not broaden the task** — Does not invent details the plan does not contain.
+- **Never wipes the working tree** — It follows the version control safety rules and does not discard changes it did not make.
+- **Needs an approved plan for plan-based work** — Before any file change it validates the `## Human Approval` record of the plan. Work without a plan is not affected. See [Approval precondition](../workflow/standard-flow#approval-gate).
 
 ## Tool access
 
 - **Read-write.**
 - **Leaf agent.** It never delegates to other agents.
-- **MCP servers:** Context7, Figma, Playwright, Sequential Thinking.
+- **MCP servers:** Context7, Sequential Thinking.
 
 ## Skills loaded
 
@@ -39,12 +43,6 @@ The Software Engineer agent implements software solutions based on provided requ
 - `tsh-analyzing-implementation-gaps` - Compare a plan with the current state to find implementation gaps
 - `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
 - `tsh-designing-databases` - SQL and database design: schemas, indexing, queries, ORMs
-- `tsh-implementing-frontend` - Frontend components, design tokens and Figma-to-code
-- `tsh-implementing-forms` - Form architecture, validation and accessible patterns
-- `tsh-writing-hooks` - Custom React hook patterns
-- `tsh-ensuring-accessibility` - WCAG accessibility: semantic HTML, ARIA, keyboard, contrast
-- `tsh-optimizing-frontend` - Frontend rendering, bundle and memory optimization
-- `tsh-verifying-ui` - UI verification criteria and report format against Figma
 - `tsh-implementing-backend` - Backend patterns: APIs, auth, testing, integrations
 - `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 

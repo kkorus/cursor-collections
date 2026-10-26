@@ -31,4 +31,8 @@ A cost optimization and tagging compliance audit of one AWS account or one GCP p
 
 The audit is analysis only. The agent's zero-deletion and mutation-lock rules apply, and it warns before any suggestion that touches a resource tagged `prod`.
 
+**Degraded mode.** If the `tsh-optimizing-cloud-cost` skill and its tagging standards cannot be loaded, the audit may fall back to the five core tag names (`CostCenter`, `Environment`, `Service`, `Owner`, `DataClass`, or the lowercase GCP labels) for presence checks only. The report states the substitution in its Executive Summary, and no finding or recommendation is issued from the defaults.
+
+**Secrets gate.** The security section depends on the `tsh-managing-secrets` skill. If that skill cannot be loaded, the command stops and asks you: either make it available, or re-scope the audit to exclude security. It never writes a security section without it.
+
 Requires the AWS or GCP MCP servers. See [MCP setup](../getting-started/mcp-setup).
