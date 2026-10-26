@@ -62,13 +62,13 @@ When your caller passes you a plan review, give each BLOCKER exactly one disposi
 
 ## Human approval record
 
-You never ask the user for plan approval, in any mode. The engineering manager asks and sends you `TASK: record_human_approval` with the verbatim answer of the user. Only for that task you write the `## Human Approval` table of the plan: `APPROVED` sets `Approved Revision` to the current `Plan Revision` and `Decision Timestamp` to the current UTC time in ISO 8601 with a trailing `Z`; `CHANGES_REQUESTED` is recorded before you edit anything. If a legacy plan has no such section, create it with `PENDING` and then record the decision. Never paraphrase or infer consent. Never write an approval into the plan-review file, and never write a reviewer verdict into the table.
+You never ask the user for plan approval, in any mode. The engineering manager asks and sends you `TASK: record_human_approval` with the verbatim answer of the user. Only for that task you write the `## Human Approval` table of the plan: `APPROVED` sets `Approved Revision` to the current `Plan Revision` and `Decision Timestamp` to the current UTC time in ISO 8601 with a trailing `Z`; The task carries `PLAN_REVISION: <n>`. If a legacy plan has no such section, create it with `Plan Revision` equal to that value (1 when the plan has none), `PENDING`, and then record the decision. The only values of `Human Decision` are `PENDING` and `APPROVED`. Never paraphrase or infer consent. Never write an approval into the plan-review file, and never write a reviewer verdict into the table.
 
 When you are run directly, report "approval pending" and end with "Suggested next steps": run `/tsh-implement`, which reviews the plan and asks for approval.
 
 ## Material revision
 
-When you revise a plan, apply the Plan governance definition of the preloaded `tsh-designing-architecture` skill. A material revision bumps `Plan Revision`, sets the approval to `PENDING` and is logged in the Changelog. A non-material one keeps the approval.
+When you revise a plan, apply the Plan governance definition of the preloaded `tsh-designing-architecture` skill. A material revision bumps `Plan Revision`, sets the approval to `PENDING` and is logged in the Changelog. A non-material one keeps `Plan Revision`. After a revision requested through comments, leave the record `PENDING` unless it was a valid `APPROVED` and the revision is non-material. Report to the manager every change you made and your classification; the manager decides the final classification. When you revise a legacy plan that has no `## Human Approval` section, create it as `PENDING` with the implicit revision 1 (2 when your revision is material).
 
 When the engineering manager asks you for a decision (`DECISION_NEEDED`), answer with a recorded decision.
 

@@ -114,7 +114,7 @@ playwright-cli screenshot --filename=page.png
 playwright-cli pdf --filename=page.pdf
 ```
 
-Always pass `--filename` with an explicit path when the file is evidence. Without it, files land in `.playwright-cli/` with a timestamp name.
+Check the `screenshot` help for the full-page flag (not yet verified which one exists). Always pass `--filename` with an explicit path when the file is evidence. Without it, files land in `.playwright-cli/` with a timestamp name.
 
 ### Tabs
 
@@ -164,12 +164,12 @@ Logging in, credential handling, origin checks and session reuse are governed by
 
 ### Restricted use
 
-While a session is authenticated, tracing, video recording and request mocking are forbidden, and so is free-form `run-code`. The exception is the fixed, reviewed snippets stored in this skill's `assets/`:
+For a credentialed capture the worker follows the allow-list of the authenticated-capture reference of `tsh-verifying-ui`: commands outside it (also `eval` that reads cookies or storage, `cookie-*`, `localstorage-*`, `sessionstorage-*`, `requests`, `console`, `pdf`, `--persistent`, `--profile`, bare `state-save`) are forbidden. Tracing, video recording and request mocking are forbidden while a session is authenticated, and free-form `run-code` is forbidden at any time in such a flow. The exception is the fixed, reviewed snippets stored in this skill's `assets/`:
 
 - `assets/stabilize.snippet.md` - emulates reduced motion and waits for the load state and network idle.
 - `assets/screenshot-fallback.snippet.md` - full-page screenshot to the given filename, only when the plain `screenshot` command fails.
 
-Read the snippet through this skill and paste its single code block verbatim as the `run-code` argument. Do not edit, extend or compose snippets. Each starts with a version line `// snippet: <name> v<N>`; a changed snippet bumps `<N>`. Snippets have no environment access, no network and no caller-supplied code. See [running-code.md](references/running-code.md) for the general (non-authenticated) use of `run-code`.
+Read the snippet through this skill and paste its single code block verbatim as the `run-code` argument. Do not edit, extend or compose snippets. Each starts with a version line `// snippet: <name> v<N>`; a changed snippet bumps `<N>`. Unmodified snippets have no environment access, no network and no caller-supplied code; the only substitution (the screenshot path) is charset-checked first. See [running-code.md](references/running-code.md) for the general (non-authenticated) use of `run-code`.
 
 ## Network
 
@@ -212,6 +212,8 @@ playwright-cli highlight --hide
 `run-code`, `tracing-*`, `video-*` and `route` are not allowed while a session is authenticated (see Restricted use).
 
 ## Raw output
+
+Command output can echo what you typed: `fill` and `type` print the generated code with the value, and a snapshot may show a filled field. For secrets use `--raw` and discard stdout and stderr (`>/dev/null 2>&1`); never copy the output of a `fill`, `type` or `run-code` step into replies, reports or files.
 
 The global `--raw` option strips page status, generated code, and snapshot sections from the output, returning only the result value. Use it to pipe command output into other tools or to write it to a file. Commands that don't produce output return nothing.
 

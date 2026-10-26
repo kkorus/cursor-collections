@@ -92,7 +92,7 @@ Every finding states four things: the criterion it breaks (the category for a BL
 - `APPROVED` is allowed only when there is no BLOCKER and no unresolved `Open` question. Warnings may remain when they are local and do not gate the start of implementation. A short `APPROVED` report is a normal outcome.
 - `REVISIONS NEEDED` is required when any BLOCKER exists.
 - Never approve a plan with BLOCKER findings.
-- The verdict is bound to one plan revision: read `Plan Revision` verbatim from the `Human Approval` table of the plan and record it as `Reviewed Plan Revision` in the report and return it to the caller as `REVIEWED_PLAN_REVISION`. If the plan has no readable `Plan Revision`, record `unknown`, which forces `REVISIONS NEEDED`.
+- The verdict is bound to one plan revision: read `Plan Revision` verbatim from the `Human Approval` table of the plan (or from the `Plan Revision` row of Task Details when the plan has no such section), record it as `Reviewed Plan Revision` in the report and return it to the caller as `REVIEWED_PLAN_REVISION`. A legacy plan with no `Human Approval` section and no `Plan Revision` row has the implicit revision 1: record `1`, and do not raise a finding or force `REVISIONS NEEDED` for the missing section; the manager creates it at the first gate. If the revision is present but unreadable or the two places disagree, record `unknown`, which forces `REVISIONS NEEDED`.
 - Never state or evaluate human approval. A reviewer verdict is not a human decision.
 
 ## Workflow

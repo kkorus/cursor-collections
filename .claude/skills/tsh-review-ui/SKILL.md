@@ -17,7 +17,7 @@ Pass along these inputs (the contract is owned by the manager):
 - `UI_TASKS`: the component or section names (one entry per component)
 - `FIGMA_URLS`: one Figma URL per component
 - `DEV_SERVER_URL`: the full dev server URL, confirmed by the user
-- `UI_VERIFICATION_DIR`: the verification root; each component gets its own sub-root `<component-slug>/iteration-<n>/`, handed on as `ITERATION_DIR`
+- `UI_VERIFICATION_DIR`: only when the user gave one; otherwise the manager derives `<task>` from the request and uses `<specs>/<task>/ui-verification`. Each component gets its own sub-root `<component-slug>/iteration-<n>/`, handed on as `ITERATION_DIR`
 - `SINGLE_PASS: true`
 
 The arguments are the Figma URL, the running dev server URL and optionally the component or section name. If one is missing, ask the user before delegating; never guess the dev server URL.

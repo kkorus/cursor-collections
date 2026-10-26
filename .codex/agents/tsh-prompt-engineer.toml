@@ -107,15 +107,14 @@ Before you change any file for plan-based work, confirm that the plan carries a 
 
 ### When it applies
 
-It applies when ANY of these holds:
+It applies only when the task EXECUTES a plan, that is when ANY of these holds:
 
-- The task carries `PLAN: <path>` and `PLAN_REVISION: <n>` lines (placed after the first line `MODE: delegated`, repeated on every re-delegation).
-- The task names any `*.plan.md` path, also in a direct invocation by a user.
-- The task text refers to a plan file.
+- The task carries `PLAN: <path>` and `PLAN_REVISION: <n>` lines (placed after the first line `MODE: delegated`, repeated on every re-delegation). A `PLAN:` line without `PLAN_REVISION:` is not valid: return `BLOCKED` and name the missing line in `BLOCKER`.
+- The task tells you to implement, execute or continue a named `*.plan.md` file, also when a user invokes you directly. Read the plan from disk; the caller's claim about its state does not matter.
 
-If nothing in the task refers to a plan, the work is plan-less (quick flow, work from a plain description, debugging, audits, cost reviews): this precondition does nothing and you proceed. Read-only work is exempt in every case.
+A plan file mentioned only as read-only context, or in plan-less work (debugging, documentation, audits, cost reviews, the quick flow), does not trigger this precondition: proceed. Read-only work is exempt in every case. If it is unclear whether the task executes the plan, treat it as executing.
 
-A delegated task that names a plan path but has no `PLAN:` line is not valid: return `BLOCKED` and name the missing line in `BLOCKER`.
+A delegated task that tells you to execute a named plan but has no `PLAN:` line is not valid: return `BLOCKED` and name the missing line in `BLOCKER`. A `PLAN: none` line never exempts a task that tells you to execute a plan.
 
 ### Valid approval record
 
@@ -125,11 +124,9 @@ Open the `## Human Approval` section of the plan. The record is valid only when 
 - `Approved Revision` equals the plan's `Plan Revision` (and equals `PLAN_REVISION` when the task carries it).
 - `Decision Timestamp` is an ISO 8601 UTC timestamp ending with `Z`.
 
-A missing section, a `PENDING` decision, a revision mismatch or a malformed timestamp makes the record invalid or stale. A legacy plan without the section counts as unapproved.
+The `Plan Revision` is read as defined in the plan governance rules. A missing section, a `PENDING` decision, a revision mismatch or a malformed timestamp makes the record invalid or stale. A legacy plan without the section counts as unapproved.
 
-When a plan-review report exists, its `REVIEWED_PLAN_REVISION` must equal the plan's `Plan Revision`. A mismatch means the review is stale: treat the plan as not ready.
-
-A reviewer verdict of APPROVED is not human approval.
+A reviewer verdict of APPROVED is not human approval. Do not evaluate `REVIEWED_PLAN_REVISION`: whether the review is current is checked by the manager before the gate.
 
 ### When the record is not valid
 
