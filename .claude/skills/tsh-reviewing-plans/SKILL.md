@@ -43,51 +43,62 @@ Probe every domain on every review, even when the conclusion is that no issue wa
 
 | Severity | Definition | Action required |
 | --- | --- | --- |
-| **BLOCKER** | A credible execution risk likely to cause implementation failure, major rework, unsafe rollout, a broken migration or a materially wrong outcome | The plan must be revised |
-| **WARNING** | A meaningful weakness or assumption that could cause delays, defects or local rework but can be managed during implementation | Should be addressed; does not block |
+| **BLOCKER** | Exactly one of the six categories below | The plan must be revised |
+| **WARNING** | Any other meaningful weakness or assumption that could cause delays, defects or local rework but can be managed during implementation | Should be addressed; does not block |
 | **SUGGESTION** | A lower-signal concern worth noting only when it has practical value | Nice to have; does not affect approval |
+
+The six BLOCKER categories. This skill is the only place that lists them:
+
+1. Requirement or scope contradiction: the plan contradicts a requirement or the scope of the research or the task.
+2. Architecture or technology choice that contradicts the research or the project instructions, without a recorded justification.
+3. Security or data-loss risk without mitigation.
+4. No safety proof: a risky change (migration, backfill, destructive operation, broad refactor) with no test, check or fallback that would show it is safe.
+5. Unexecutable task: a missing seam, a circular dependency, or an `Open` question that implementation cannot proceed without.
+6. Irreversible step without rollback.
+
+Everything else is a WARNING or a SUGGESTION, never a BLOCKER.
 
 ### Execution-critical open decisions
 
-Treat an unresolved open decision as a **BLOCKER** when it sits on the critical path or locks in downstream work: implementation cannot safely start, parallel work cannot proceed, or the eventual choice will force broad rework. Examples:
-
-- Provider or vendor selection required before onboarding, messaging or notifications can start
-- An unresolved stack, platform or framework choice that affects the implementation structure
-- An unresolved auth, privacy or security rule that changes behavior, permissions or data exposure
-- An unresolved integration contract, dependency boundary or migration prerequisite needed before execution
-
-Review such a decision as a blocker unless the plan proves it is genuinely deferred off the critical path.
+An unresolved open decision on the critical path is a category 5 BLOCKER: implementation cannot safely start, parallel work cannot proceed, or the eventual choice forces broad rework. Examples: a provider or vendor choice required before the work can start, an unresolved stack or framework choice, an unresolved auth, privacy or security rule, an unresolved integration contract or migration prerequisite. It is not a blocker only when the plan proves the decision is deferred off the critical path.
 
 ### Carry-forward and escalation
 
-If a previous review raised an execution-critical issue and the revised plan still leaves it unresolved, carry it forward explicitly. It must not silently disappear. If it survives several iterations without real closure, consider raising its severity, because repeated non-resolution increases delivery risk.
+If a previous review raised a BLOCKER and the revised plan still leaves it unresolved, carry it forward explicitly. It must not silently disappear. A finding closed by a recorded justification stays visible in the history table.
 
 ### Failure-oriented standards
 
-Flag a plan that shows:
+Flag a plan that shows these as WARNING, unless the problem fits one of the six categories:
 
 - Unverified assumptions about existing files, interfaces, ownership, data shape or runtime behavior
 - Sequencing that needs an impossible order, risky coordination or unsafe partial states
 - Integration points that are underspecified or inconsistent with the real codebase abstractions
-- Migration, backfill or rollback steps that could damage data integrity or trap the team in one-way changes
 - Test or rollout plans that can pass while critical production risks remain untested
 
 ### Over-engineering
 
-**BLOCKER** when the plan creates abstractions used only once (for example a `BaseRepository` for one implementation), introduces patterns absent from the codebase without justification, generalizes for hypothetical requirements that are not in the research, adds utilities for logic used in one place, adds needless indirection layers, or proposes heavyweight patterns for simple work, and any of these materially raises execution or coordination risk.
+Over-engineering is a WARNING, never a BLOCKER: abstractions used only once, patterns absent from the codebase without justification, generalization for requirements that are not in the research, needless indirection. Name the simpler alternative.
 
-**WARNING** when the same result needs fewer files or simpler patterns and the extra complexity is survivable, or when an interface may be useful later but is not yet justified.
+### Ineligible concerns
+
+These are never findings, at any severity: grep syntax of a check, counts of diff hunks, style, conformance to the plan template, bookkeeping of the `Files` lines, wording, documentation sync and the verbosity of reports.
+
+### Finding discipline
+
+Every finding states four things: the criterion it breaks (the category for a BLOCKER), the evidence (plan section or file), the consequence if ignored and the minimum correction. A finding without evidence is dropped.
 
 ## Approval Guidance
 
-- `APPROVED` is allowed only when no unresolved execution-critical open decision remains. Warnings may remain only when they are local, non-blocking and do not gate the start of implementation or lock in high-cost downstream choices.
-- `REVISIONS NEEDED` is required when the strongest findings show the team is likely to hit preventable failure, major rework or unsafe execution.
+- `APPROVED` is allowed only when there is no BLOCKER and no unresolved `Open` question. Warnings may remain when they are local and do not gate the start of implementation. A short `APPROVED` report is a normal outcome.
+- `REVISIONS NEEDED` is required when any BLOCKER exists.
 - Never approve a plan with BLOCKER findings.
+- The verdict is bound to one plan revision: read `Plan Revision` verbatim from the `Human Approval` table of the plan and record it as `Reviewed Plan Revision` in the report and return it to the caller as `REVIEWED_PLAN_REVISION`. If the plan has no readable `Plan Revision`, record `unknown`, which forces `REVISIONS NEEDED`.
+- Never state or evaluate human approval. A reviewer verdict is not a human decision.
 
 ## Workflow
 
-1. **Read the research file** (`.research.md`) to understand the requirements, acceptance criteria and constraints the plan must address. Read it first, so the challenge is grounded in the intended outcome.
-2. **Read the plan file** (`.plan.md`): architecture, phases, tasks and definitions of done.
+1. **Read the research file** (`.research.md`) first, to understand the requirements, acceptance criteria and constraints the plan must address, so the challenge is grounded in the intended outcome.
+2. **Read the plan file** (`.plan.md`): architecture, phases, tasks and definitions of done. Note the `Plan Revision`. If any row of Open Questions is `Open`, that is a category 5 BLOCKER: stop the analysis passes, still write the report with the verdict `REVISIONS NEEDED`.
 3. **Challenge-domains pass**: attack the most consequential decisions domain by domain. State for each domain whether an issue was found. Pay special attention to stack choices that deviate from the research or prior iterations.
 4. **Failure-modes pass**: find the strongest reasons the plan may fail or cause major rework: integration mismatches, unsafe migrations, coordination traps, weak rollout strategies, brittle task breakdowns.
 5. **Hidden-assumptions pass**: identify assumptions that are unproven in this repository (files, abstractions, contracts, environment behavior, team coordination, data shape).
@@ -95,14 +106,14 @@ Flag a plan that shows:
 7. **Sequencing-and-feasibility pass**: order-of-operations traps, risky migrations, rollback gaps, coordination issues, test and rollout blind spots.
 8. **Execution-critical decision gate**: before the verdict, check explicitly for unresolved provider, vendor, stack, framework, auth, privacy, security, integration-contract or migration-prerequisite decisions on the critical path.
 9. **Decision and revision history**: build a `Decision and Revision History` table on every review, including iteration 1. On later iterations, read the existing report first and update the same table. Prefer appending rows; update a row only when that keeps the table clearer. Use compact `Status` values such as `open`, `changed`, `resolved`, `kept` or `dropped`. If an issue is downgraded or dropped, say why in the row.
-10. **Write the report and the verdict**: save the full report with the template in [assets/plan-review.template.md](assets/plan-review.template.md). Do not reduce the saved artifact to a short verdict memo. Return the verdict and the report path to the caller.
+10. **Write the report and the verdict**: save the full report with the template in [assets/plan-review.template.md](assets/plan-review.template.md). Do not reduce the saved artifact to a short verdict memo. Return the verdict, the reviewed plan revision and the report path to the caller. You may add advisory notes after the findings; they never change the verdict.
 
 ## Review Requirements
 
 - Target 5-10 substantive findings when the evidence supports them. If fewer are found, state why the plan appears unusually robust.
 - Attribute at least 2-3 findings to the challenge-domains pass when the evidence supports them.
 - Do not pad the report with cosmetic, wording or style-only notes, and do not fall back to generic quality audits.
-- Treat unexplained deviations from research context or established direction as likely BLOCKERS until justified.
+- Treat an unexplained deviation from the research or the project instructions as a category 2 BLOCKER until justified.
 - Address every challenge domain, even if only with "no issue detected".
 - Justify explicitly any downgrade or removal of a previously raised high-signal issue.
 - Never modify the plan and never suggest scope expansion; stay inside the defined task scope.

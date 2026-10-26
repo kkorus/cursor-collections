@@ -66,14 +66,41 @@ For UI work follow the best UI/UX patterns (Atomic Design, accessibility pattern
 
 **Step 5: Create the implementation plan document**
 
+Before you hand the plan over, load the `tsh-reviewing-plans` skill by name and check your own plan against its blocker categories.
+
 Save the plan following [assets/plan.template.md](assets/plan.template.md). Do not add or remove sections from the template, and follow its structure and naming conventions. Save it at the path the caller gave you. Without one, use `<specs>/<task>/<task>.plan.md`, where `<task>` is the Jira ID or a short kebab-case task name and `<specs>` is resolved by the "Resolve the Project Output Locations" step of the `tsh-discovering-technical-context` skill.
 
 ## Planning rules
 
-- **Phases and tasks**: divide the plan into small phases. Each phase is a checklist with a place to mark finished tasks. After a phase, only fast checks are run to verify progress: unit and integration tests, static analysis, linters, formatting check and the project build.
-- **Tasks**: give each task a clear title, a description, an action type (`[CREATE]`, `[MODIFY]` or `[REUSE]`) and a definition of done as a checkbox list. A definition of done must not include deployment steps, manual QA steps, or anything a code reviewer cannot verify from the code (for example "tests failed before the change").
-- **Code review phase**: the plan ends with a code review phase, performed by the `tsh-code-reviewer` subagent, which follows the `tsh-reviewing-code` skill. Pass the E2E execution to that agent as part of its task and do not run those tests yourself. Do not include instructions for pushing code or for reviewing in the repository (pull request steps); the review phase itself is required.
-- **UI verification**: for features with UI based on Figma designs, follow each UI implementation task with a `[REUSE]` UI verification task for the `tsh-ui-reviewer` subagent, which follows the `tsh-verifying-ui` skill. Include the Figma URL in every verification task. Do not verify from the software engineer level; the engineering manager runs the verify-fix loop. Non-visual tasks need no verification task.
+- **Phases and tasks**: divide the plan into small phases. Each phase has a `Goal`, a `Description` and a `Verification` line of fast checks (unit and integration tests, static analysis, linters, formatting check and the project build), and a checklist with a place to mark finished tasks.
+- **Tasks**: give each task a clear title, a description, an action type (`[CREATE]`, `[MODIFY]` or `[REUSE]`), a `Files` line (each file marked create, modify or reuse; a modified file created earlier names that task), a `Stop Rule` and a definition of done as a checkbox list. A definition of done has at least one check a reviewer can verify: a runnable command copied verbatim from Technical Context for code tasks, a grep-style assertion for docs and config tasks. It must not include deployment steps, manual QA steps, or anything a code reviewer cannot verify from the code (for example "tests failed before the change").
+- **Executable slots gate**: no angle-bracket placeholder and no assumed-default command (for example `npm test` when Technical Context does not say so) may remain in a Verification, Definition of Done or Files slot.
+- **Open Questions gate**: a plan is not dispatchable while any Open Questions row is `❓ Open`. Resolve it, or ask the user, before the plan goes to review.
+- **No real code**: the plan holds no implementation code. Pseudo-code is allowed only for a genuinely complicated algorithm; signatures, types and API shapes are allowed when they clarify a task boundary.
+- **Human Approval**: every plan has a `## Human Approval` section. You record only the literal decision of the user when your task is `record_human_approval`, and never infer consent from silence, praise or a reviewer verdict (never infer it). A legacy plan without the section gets one, starting as `PENDING`.
+- **Plan governance**: mark per task whether it is an actionable low-risk seam, and classify every revision of an approved plan, by the definitions below.
+
+## Seam definition
+
+A task is an actionable low-risk seam when it lists its `Files`, has a runnable Definition of Done command and a Stop Rule, has no open question, touches at most 5 files, and involves no new architecture decision, public API, schema or migration, auth or security, concurrency or cross-cutting change.
+
+## Material and non-material changes
+
+A revision of an approved plan is **material** when it:
+
+- adds or removes a task,
+- changes the `Files` scope of a task,
+- changes a Definition of Done command or an acceptance criterion,
+- adds a dependency or technology,
+- changes the solution approach,
+- makes a security-relevant change.
+
+A revision is **non-material** when it is a typo fix, a rewording, a checkbox tick, a Changelog addition, or a clarification that changes no task, no `Files` and no Definition of Done.
+
+A material revision bumps `Plan Revision`, resets the human approval to `PENDING` and is logged in the Changelog. A non-material revision keeps the approval.
+
+- **Code review phase**: the plan ends with a code review phase, performed through the engineering manager by the `tsh-code-reviewer` subagent, which follows the `tsh-reviewing-code` skill. Pass the E2E execution to that agent as part of its task and do not run those tests yourself. Do not include instructions for pushing code or for reviewing in the repository (pull request steps); the review phase itself is required.
+- **UI verification**: for features with UI based on Figma designs, follow each UI implementation task with a `[REUSE]` UI verification task that carries the Figma URL and a `UI Verification Status` block (component, iterations used, final status `PASSED`, `ESCALATED` or `VERIFICATION NOT RUN`). The engineering manager runs the verify-fix loop (capture worker, `tsh-ui-reviewer`, fixes by `tsh-ui-engineer`, at most 5 iterations) with the `tsh-orchestrate-ui-verification` skill. Non-visual tasks need no verification task.
 - **LLM prompts**: for features with LLM application prompts (system prompts, RAG templates, tool-calling instructions, classification or extraction prompts), add a `[REUSE]` prompt engineering task delegated to the `tsh-prompt-engineer` subagent. Separate the prompt design from the application code. Include the use case, the target model and any existing drafts in the task description.
 - **Scope control**: plan only changes specific to THIS task. Do not plan prerequisite work (assume it is done) and do not plan features outside the requirements; list them in the Improvements section.
 - **Avoid duplication**: never plan components, functions or utilities that already exist. Plan to reuse or modify them.

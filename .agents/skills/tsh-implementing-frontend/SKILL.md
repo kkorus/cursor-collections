@@ -37,6 +37,7 @@ Use the checklist below and track progress:
 
 ```
 Progress:
+- [ ] Step 0: Fetch and review Figma design
 - [ ] Step 1: Gather design context
 - [ ] Step 2: Plan component structure
 - [ ] Step 3: Implement components
@@ -44,9 +45,17 @@ Progress:
 - [ ] Step 5: Verify implementation
 ```
 
+**Step 0: Fetch and review Figma design**
+
+This is design intake before any code, distinct from the post-implementation verification of Step 5.
+
+- Resolve the Figma node from the supplied URL (file key and node id) and fetch it through `figma`: export the node image and extract layout, spacing, typography, colors, dimensions, variants and states.
+- Review what you fetched before writing markup, layout or styles. Never open figma.com in a browser to get the design.
+- A missing Figma link or an unresolvable node is a blocker: in delegated mode return `NEEDS_INPUT` asking for the link; if `figma` is unavailable return `BLOCKED`. In interactive mode ask the user. Do not implement UI from guesses.
+
 **Step 1: Gather design context**
 
-- Extract specs from Figma (via MCP tool if available). Identify components, spacing, typography, colors, and interaction states.
+- Use the specs fetched in Step 0. Identify components, spacing, typography, colors, and interaction states.
 - Map every Figma value to an existing design token in the codebase:
   1. Extract the raw value from Figma (e.g., `#3B82F6`, `16px`).
   2. Search the codebase for a matching token.

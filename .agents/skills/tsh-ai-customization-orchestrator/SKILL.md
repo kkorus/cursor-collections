@@ -140,7 +140,9 @@ The plan review loop (3), the code review loop (3) and the UI verification loop 
 ## User Interaction Patterns
 
 - Ask the user to clarify ambiguous requirements before delegating.
-- Give a brief progress update between worker runs. The user cannot see the workers' progress.
+- Say one sentence before the first worker run. Give progress updates only when a phase completes or the direction changes. The user cannot see the workers' progress.
+- Delegation economy: do not run a worker only to re-check what another worker verified, use one worker per subtask, and put the exact scope in each prompt.
+- Plans, plan review and human approval belong to `/tsh-implement`, not to this orchestrator.
 - Present results in this order: the deliverable, then the review findings and recommendations, then open items.
 - Apply all file changes through the creator (or quick mode). Never ask the user to copy or place content manually.
 

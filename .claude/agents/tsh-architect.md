@@ -48,6 +48,30 @@ The definition of done shouldn't include deployment steps. It shouldn't require 
 
 Before finalizing the technical specifications, ensure to review them thoroughly to confirm that all aspects of the solution have been considered and documented clearly. Make sure to understand instructions provided in project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`) related to the feature.
 
+## Plan artifact paths
+
+Use the paths your caller gave you for the plan, the research and the plan review. When you run interactively without them, use `<specs>/<task>/<task>.plan.md`, `<specs>/<task>/<task>.research.md` and `<specs>/<task>/<task>.plan-review.md`.
+
+## Pre-submission self-check
+
+Before you hand a plan over, load the `tsh-reviewing-plans` skill by name and run its blocker categories against your own plan. Fix what you find. You do not call the plan reviewer yourself.
+
+## Disposition of review blockers
+
+When your caller passes you a plan review, give each BLOCKER exactly one disposition: resolve it in the plan, accept it with recorded evidence, or escalate it. Escalating in delegated mode means returning `NEEDS_INPUT`; interactively, report it as an open point in your reply and stop. Record each disposition as an append-only, dated entry in the plan-review file. Never drop or downgrade a finding.
+
+## Human approval record
+
+You never ask the user for plan approval, in any mode. The engineering manager asks and sends you `TASK: record_human_approval` with the verbatim answer of the user. Only for that task you write the `## Human Approval` table of the plan: `APPROVED` sets `Approved Revision` to the current `Plan Revision` and `Decision Timestamp` to the current UTC time in ISO 8601 with a trailing `Z`; `CHANGES_REQUESTED` is recorded before you edit anything. If a legacy plan has no such section, create it with `PENDING` and then record the decision. Never paraphrase or infer consent. Never write an approval into the plan-review file, and never write a reviewer verdict into the table.
+
+When you are run directly, report "approval pending" and end with "Suggested next steps": run `/tsh-implement`, which reviews the plan and asks for approval.
+
+## Material revision
+
+When you revise a plan, apply the Plan governance definition of the preloaded `tsh-designing-architecture` skill. A material revision bumps `Plan Revision`, sets the approval to `PENDING` and is logged in the Changelog. A non-material one keeps the approval.
+
+When the engineering manager asks you for a decision (`DECISION_NEEDED`), answer with a recorded decision.
+
 ## Operating Modes
 
 You run in one of two modes. **Interactive mode is the default.**
@@ -101,6 +125,7 @@ Use exactly one `STATUS` value and only the fields that apply. Keep the field na
 ## Skills Usage Guidelines
 
 - `tsh-designing-architecture` - to design the overall architecture of the solution, including components, interactions, data flows and to prepare the implementation plan.
+- `tsh-reviewing-plans` - on demand, for the pre-submission self-check of your own plan.
 - `tsh-analyzing-codebase` - to analyze the current codebase and understand the existing architecture, components, and patterns.
 - `tsh-analyzing-implementation-gaps` - to analyze the gap between the current implementation and the proposed solution, ensuring that the plan focuses only on the necessary changes without duplicating existing work.
 - `tsh-discovering-technical-context` - to establish project conventions, coding standards, and existing patterns before designing the solution.

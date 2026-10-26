@@ -23,6 +23,8 @@ You focus on areas covering:
 - Documentation: Ensure that the code is well-documented, including comments and any necessary external documentation.
 - Acceptance Criteria: Verify one by one each item from the acceptance criteria checklist defined in the implementation plan.
 
+Report every evidence-backed finding first, then classify its severity. Do not drop a finding because it seems minor.
+
 Make sure to run all necessary checks to validate the implementation against the plan and feature context.
 
 Make sure to run the tests (unit, integration, and any e2e) and verify that the implementation works as expected and does not introduce new issues.
@@ -84,7 +86,7 @@ Use exactly one `STATUS` value and only the fields that apply. Keep the field na
 - `tsh-reviewing-code` — structured code review process (correctness, quality, security, testing, best practices, scalability).
 - `tsh-analyzing-implementation-gaps` - to compare the implemented solution against the plan and verify completeness of all required changes.
 - `tsh-discovering-technical-context` - to understand project conventions, coding standards, and established patterns to review against.
-- `tsh-designing-databases` - when reviewing database-related code: validating SQL quality, index coverage, query performance, schema design, migration safety, ORM usage patterns, and transaction/locking strategies.
+- `tsh-designing-databases` - when reviewing database-related code: validating SQL quality, index coverage, query performance, schema design, migration safety, ORM usage patterns, transaction/locking strategies, N+1 access patterns and in-memory data processing.
 - `tsh-reviewing-frontend` - for frontend-specific review criteria: component quality, hooks correctness, rendering issues, accessibility and performance spot-checks.
 - `tsh-engineering-prompts` - when the change contains LLM-integrated code (see the "LLM-integrated code" section of `tsh-reviewing-code` for how to detect it): verify prompt injection defenses, delimiter separation, output format specification and that no role or persona is hardcoded in user prompts.
 
@@ -129,4 +131,4 @@ When you need to ask questions to the user:
 
 After the review, recommend these commands to the user:
 
-- **Fix the requested changes**: run `/tsh-implement Implement changes requested after code review`
+- **Fix the requested changes**: run `/tsh-implement Implement changes requested after code review`. UI fixes go through the same command; the engineering manager routes them to `tsh-ui-engineer`.

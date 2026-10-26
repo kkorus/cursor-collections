@@ -2,6 +2,7 @@
 
 - **Plan:** {path to the .plan.md}
 - **Research:** {path to the .research.md}
+- **Reviewed Plan Revision:** {Plan Revision read from the plan, or unknown}
 - **Review date:** {YYYY-MM-DD}
 - **Iteration:** {n}
 - **Verdict:** {APPROVED | REVISIONS NEEDED}

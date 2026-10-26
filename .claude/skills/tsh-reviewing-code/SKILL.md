@@ -52,7 +52,7 @@ Compare what was built with the task description and the plan. Look not only at 
 
 **Step 4: Verify that the necessary tests exist**
 
-All critical paths must be covered by a combination of unit, integration and e2e tests.
+All critical paths must be covered by a combination of unit, integration and e2e tests. Code that crosses a service boundary (database, queue, external API, HTTP endpoint) needs an integration test; unit tests with mocks alone do not cover it. Report a missing integration test as a `warning`.
 
 **Step 5: Run the quality gates**
 
@@ -60,7 +60,11 @@ Find and run the unit tests, the integration tests and the e2e tests, and make s
 
 **Step 6: Verify the best practices**
 
-Check that the solution follows the project standards and practices like SOLID, SRP, DDD, DRY, KISS and Atomic Design. It must not be over-engineered, and the cognitive complexity should stay low.
+Check that the solution follows the project standards and practices like SOLID, SRP, DDD, DRY, KISS and Atomic Design. It must not be over-engineered, and the cognitive complexity should stay low. Also look for these anti-patterns and report each one found:
+
+- N+1 queries or calls inside loops
+- in-memory pagination, filtering or aggregation of data the database could handle
+- missing integration tests at service boundaries (see Step 4)
 
 **Step 7: Validate security**
 
@@ -76,7 +80,7 @@ With a plan: go through the definition of done of each task and the acceptance c
 
 **Step 10: Report the findings**
 
-Write the findings in the format below. With a plan, add them to the end of the plan file in a new section named "Code Review Findings" and add a changelog entry saying that a code review was performed. Give the caller a short summary with the counts per severity.
+Report every evidence-backed finding first, then classify its severity. Write the findings in the format below. With a plan, add them to the end of the plan file in a new section named "Code Review Findings" and add a changelog entry saying that a code review was performed. Give the caller a short summary with the counts per severity.
 
 ## No plan available
 

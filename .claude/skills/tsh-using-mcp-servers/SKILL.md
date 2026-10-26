@@ -51,4 +51,5 @@ Load only the reference files for the servers you are about to use.
 ## Connected Skills
 
 - `tsh-discovering-technical-context` — for finding the project conventions before asking a documentation server
-- `tsh-verifying-ui` — for the Figma and Playwright verification procedure
+- `tsh-verifying-ui` — for the Figma verification procedure with CLI capture
+- `tsh-using-playwright-cli` — for the `playwright-cli` command line used to capture UI evidence

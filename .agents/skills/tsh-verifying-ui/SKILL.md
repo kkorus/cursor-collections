@@ -1,75 +1,95 @@
 ---
 name: tsh-verifying-ui
-description: UI verification criteria, tolerances, and report format for comparing implementations against Figma designs. Use when verifying UI components, reviewing Figma vs implementation, or running /tsh-review-ui.
-compatibility: "Requires MCP servers: figma, playwright"
+description: UI verification criteria, tolerances, and report format for comparing implementations against Figma designs. Use when verifying UI components, reviewing Figma vs implementation, capturing UI evidence, or running /tsh-review-ui.
+compatibility: "Requires MCP servers: figma"
 metadata:
-  short-description: UI verification criteria and report format against Figma
+  short-description: UI verification criteria, CLI capture and report format against Figma
 user-invocable: false
 ---
 <!-- Generated from src/skills/tsh-verifying-ui/SKILL.md by scripts/generate.mjs. Do not edit. -->
 
 # Verifying UI
 
-Verification process, criteria, and tolerances for comparing UI implementations against Figma designs.
+Verification process, criteria, and tolerances for comparing UI implementations against Figma designs. The design is fetched by the reviewer through `figma`; the running implementation is captured by the capture worker with `playwright-cli` into files on disk; the reviewer compares the two.
+
+> **Default to asking when anything is off.** Every blocker named in this skill (missing Figma link, login redirect, wrong page, missing or partial artifacts, unconfirmed URL, tool error) is an example of one rule: when you cannot run a real, complete verification against the full evidence, because something is missing, broken, ambiguous or unexpected, stop and ask. Do not guess, improvise a workaround, fabricate values or proceed on partial evidence. In delegated mode, ask by returning `NEEDS_INPUT` with `QUESTIONS` (or `BLOCKED` for a tool failure nobody can answer); in interactive mode, ask the user.
+
+## Roles
+
+| Role | Does | Never does |
+| --- | --- | --- |
+| Capture worker (`tsh-ui-capture-worker`) | Step 3: writes the three ACTUAL artifacts with `playwright-cli` | Judges the UI, fetches Figma images, reads code as evidence |
+| Reviewer (`tsh-ui-reviewer`) | Steps 2, 4, 5: fetches EXPECTED from `figma`, reads the ACTUAL files it is given, reports | Captures, authenticates, writes files, fixes code |
 
 ## Verification Process
-
-Use the checklist below and track your progress:
 
 ```
 Progress:
 - [ ] Step 1: Validate inputs
-- [ ] Step 2: Get EXPECTED from Figma
-- [ ] Step 3: Get ACTUAL from implementation
+- [ ] Step 2: Get EXPECTED from Figma (reviewer only)
+- [ ] Step 3: Get ACTUAL from the implementation (capture worker)
 - [ ] Step 4: Compare using verification categories
 - [ ] Step 5: Generate report
 ```
 
 **Step 1: Validate inputs**
 
-Before starting verification, confirm:
+Confirm before starting:
 
-- Figma URL is available for the component/section being verified
-- Dev server URL is **confirmed by the user** (when the caller passed a confirmed URL, use it):
-  - Check the project configuration (`package.json` scripts, `.env`, `vite.config`, `next.config`, etc.) for the configured port
-  - **MANDATORY**: Unless the caller passed a confirmed URL, ask the user to confirm on the first verification in a session the dev server URL (e.g., "I detected port 3001 from package.json — is the frontend app running at http://localhost:3001?"). **Do not guess** from running processes, `ps`, `netstat`, or `lsof` output — multiple services may run on different ports and you cannot reliably distinguish frontend from backend.
-  - Use the **user-confirmed** URL for all subsequent verifications in the same session
-- Dev server is running and the **target page** is accessible at that URL:
-  - Navigate to the specific page URL using `playwright`
-  - If the page **redirects to a login/authentication screen**: raise it as a blocker — "The page redirected to [login URL]. How should I authenticate? Please provide credentials, a session token, or tell me how to bypass authentication for local development."
-  - If the page shows **unexpected content** (error page, blank page, different route): raise it as a blocker — "The page at [URL] shows [description]. Is this the correct URL for [component name]?"
-  - **Do not proceed with verification if you cannot see the expected component.** Raise the blocker.
-- If any input is missing or any blocker is encountered, raise it with the blocker policy of your role (ask the user, or in delegated mode return the question in your status). Do not proceed, do not fall back to code-level review, do not skip the verification step
+- A Figma URL (file key and node id) for the component or section being verified.
+- The dev server URL is a **user-confirmed or caller-supplied full URL**, used unchanged for the whole session. Never discover it from project configuration, running processes, port scans or `package.json`; never normalize it, swap ports or start a server. Without one, ask the user to confirm the exact full URL.
+- The artifact directory for this pass (`ITERATION_DIR`, see Artifact directory contract) when the caller passes one.
+- Record the origin (scheme, host, port) of the confirmed URL once; it is the session's **authorized origin** and travels with the URL to every capture pass.
+- Anything else missing or unexpected (login redirect, error page, wrong route, component not found) is a blocker to raise, never something to work around. Authentication is governed by the [authenticated-capture reference](references/authenticated-capture.md); never bypass, seed, inject or fake a signed-in state.
 
 **Step 2: Get EXPECTED from Figma**
 
-Use the Figma design tool to extract the design specifications:
+Reviewer only: the capture worker never exports Figma images in the default flow. EXPECTED comes only from `figma`; never open a `figma.com` URL in a browser and never screenshot the Figma web app.
 
-- Layer hierarchy and component structure
-- Layout direction, alignment, spacing
-- Frame widths relative to page — these determine whether containers should be narrow/centered or full-width
-- Typography, colors, radii, shadows
-- Component variants and states
+1. Resolve the node from the Figma URL (file key and node id). If it cannot be resolved, return `VERIFICATION NOT RUN` with the reason and ask.
+2. Fetch the node image and the design data through `figma`: layer hierarchy, layout direction, alignment, spacing, frame width (the capture viewport width), typography, colors, radii, shadows, variants and states.
+3. Record the Figma node id and its version or last-modified value as fetched in this iteration, so a design change in the middle of a loop becomes visible.
 
-**Step 3: Get ACTUAL from implementation**
+If `figma` is unavailable or the node cannot be fetched, that is a blocker: `VERIFICATION NOT RUN`, never a comparison against memory or code.
 
-Use the browser automation tool to capture the running implementation. You MUST collect **all three** types of data — a verification that skips any type is incomplete:
+**Step 3: Get ACTUAL from the implementation**
 
-1. **Structure & content** — element hierarchy, order, grouping (via accessibility snapshot)
-2. **Actual rendered dimensions** — computed widths, heights, paddings, margins, gaps of every major container (via JavaScript evaluation of computed styles). This is the most commonly missed step — without it you cannot detect sizing/layout differences.
-3. **Visual appearance** — full-page screenshot for side-by-side comparison with the design. If your role can write files, save screenshots with the browser tool to the task's specifications folder (default `specifications/<task-id>/screenshots/`, or the location the caller passed) with descriptive filenames including the component name and iteration number (e.g., `establishment-details-form-iteration-1.png`). If your role is read-only, do not save them; just capture and inspect them.
+The capture worker collects, with `playwright-cli`, all three artifacts into the explicit `ITERATION_DIR` (flow, stabilization and exit codes in [cli-capture-flow.md](references/cli-capture-flow.md)):
 
-> **CRITICAL**: The accessibility tree does NOT contain CSS dimensions. A full-width container and a narrow centered container produce identical accessibility trees. If you only collected structure without measuring actual rendered dimensions, your verification is INVALID — mark confidence as LOW and report what's missing.
+1. `a11y-snapshot.yml` - structure and content (element hierarchy, order, grouping).
+2. `computed-styles.json` - rendered dimensions: computed widths, heights, paddings, margins and gaps of every major container.
+3. `actual.png` - full-page screenshot.
+
+> **CRITICAL**: The accessibility tree does NOT contain CSS dimensions. A full-width container and a narrow centered one produce identical trees. Without measured computed styles the verification is invalid.
+
+Capture is mechanical evidence collection. The reviewer reads the three files (opening `actual.png` as an image). If any of the three is missing, stale or unreadable, or the reviewer cannot open the image in the host tool, the result is `VERIFICATION NOT RUN` with the reason; never PASS, never a partial or LOW-confidence verdict in its place, never code reading as a substitute.
 
 **Step 4: Compare using verification categories**
 
-Compare EXPECTED (Figma) against ACTUAL (implementation) following the Verification Order and Categories below. The Figma design is the **source of truth** for every comparison. When in doubt, the design wins.
-
-**IMPORTANT**: Complete ALL verification categories in a single pass. Do not stop after finding differences in one category — continue through every category and collect every difference. The report must contain ALL differences found across all categories so the engineer can fix them all at once, minimizing verification iterations.
+Compare EXPECTED against ACTUAL following the Verification Order and Categories below. The Figma design is the source of truth. Complete ALL categories in a single pass: record for each either the concrete differences or an evidence-backed "no differences". A report that lists one issue when more exist wastes an iteration.
 
 **Step 5: Generate report**
 
-Produce a structured report following the Report Format below. Include exact values from both Figma and implementation for every difference found.
+Produce the report in the Report Format below with exact values from both sides for every difference.
+
+## Artifact directory contract
+
+The caller (the engineering manager, which owns artifact paths) passes `ITERATION_DIR`:
+
+```text
+<UI_VERIFICATION_DIR>/<component-slug>/iteration-<N>/
+  actual.png
+  computed-styles.json
+  a11y-snapshot.yml
+```
+
+The default `UI_VERIFICATION_DIR` is `<specs>/<task>/ui-verification`, where `<specs>` is the project's specifications directory. Rules:
+
+- `<component-slug>` and any `VERIFICATION_ID` are single path segments, never paths. Refuse a value containing `/`, `\`, a `..` segment, a leading `~`, an absolute path or a newline instead of sanitizing it; such a value can arrive from a generated plan, so it is untrusted input.
+- A caller-supplied directory is accepted only if it resolves inside the specifications tree after normalization (resolving `.`, `..` and symlinks); refuse any other path outright.
+- The directory must be git-ignored before any authenticated capture (see the authenticated-capture reference), because it holds screenshots of a possibly authenticated application.
+- Freshness: the caller deletes the three ACTUAL files before each capture, so existence means freshness. Artifacts are never left in `.playwright-cli/` or the working directory.
+- The reviewer is read-only; it returns its report in the reply. The caller persists it if needed.
 
 ## Verification Order
 
@@ -155,31 +175,67 @@ Measure computed styles for every dimension check (see the accessibility-tree no
 | **Major**    | Dimensions off by >2px, wrong colors/typography    | Must fix before merge             |
 | **Minor**    | 1-2px browser rendering variance                   | Acceptable, document if recurring |
 
+## Content/data/state clarification gate
+
+If structure, layout, dimensions, visual styling and component usage are otherwise acceptable and the remaining differences are limited to content, data or state that may plausibly vary by environment, seed data, locale or user state, do not treat them as automatic defects:
+
+1. Summarize the remaining differences clearly.
+2. Ask (`QUESTIONS` in delegated mode) whether they are intentionally environment-specific or the UI should match Figma exactly.
+3. Keep the result `FAIL` and list them under `Clarification Needed`, not under fixes, until the user confirms. A FAIL with open questions is a normal `DONE` for the agent.
+4. If the mismatch also changes structure, layout or visual fidelity, report that underlying defect normally.
+
+## PASS Gate (strict)
+
+Do not report `PASS` on "looks close", on a partial review, or to end a loop early. Report `PASS` only when ALL hold:
+
+- `actual.png`, `computed-styles.json` and `a11y-snapshot.yml` for THIS pass exist in `ITERATION_DIR`, and EXPECTED was fetched from `figma` in this pass.
+- Every category satisfies its tolerance and severity rules; no Critical or Major finding remains. Only genuine 1-2px rendering variance may remain, as Minor.
+- Structure and Layout have zero differences, each backed by a cited fact from `a11y-snapshot.yml` or measured layout evidence.
+- Dimensions and Spacing are within tolerance, each backed by a cited value from `computed-styles.json`.
+- Exact-match visual properties (colors, typography, matching radii, shadows, backgrounds) have zero unresolved differences.
+- Components show correct variants, design tokens and states.
+- `actual.png` has been compared side by side with the EXPECTED image.
+
+Otherwise the result is `FAIL`, or `VERIFICATION NOT RUN` when evidence is missing.
+
+## VERIFICATION NOT RUN
+
+A pre-verification blocker state, not a pass and not a clean fail. Use it, with a stated reason, when: a required artifact is missing, stale or blocked; the page is unreachable, redirects to login without a usable login path, or shows unexpected content; the Figma node cannot be resolved or fetched; or the reviewer cannot open image files in the host tool (an outcome of the UI spike for tools where it was not verified). It costs no iteration of the verify-fix loop. When the cause is the reviewer being unable to open images, repeating the capture does not help: the loop stops and asks the user. Rerun on fresh artifacts once the blocker is resolved.
+
+## Second-failure stop rule
+
+After a second failing call of the same tool (capture command, `figma` fetch, image read) stop and report the blocker with its resolution guidance instead of retrying a third time.
+
+## Re-verify After Fix
+
+After any fix prompted by a finding, discard the stale artifacts, collect a fresh capture and run a fresh pass before deciding PASS or FAIL. Never reuse pre-fix evidence or assume the fix worked.
+
 ## Verification Checklist
 
 Before reporting PASS:
 
-- [ ] Verified ENTIRE page (scrolled from top to bottom)
-- [ ] All sections from Figma are present in implementation
-- [ ] Container hierarchy matches Figma layers
-- [ ] Flex/grid direction is correct
-- [ ] Alignment (justify/align) matches design
-- [ ] Element order matches design
-- [ ] No extra/missing wrapper elements that change layout
-- [ ] Actual computed container widths measured (not inferred from accessibility tree)
-- [ ] Full-page screenshot taken and visually compared against Figma
+- [ ] Verified the ENTIRE page (full-page screenshot, scrolled top to bottom)
+- [ ] All sections from Figma are present in the implementation
+- [ ] Container hierarchy, flex/grid direction, alignment and element order match
+- [ ] No extra or missing wrapper elements that change layout
+- [ ] Computed container widths measured (not inferred from the accessibility tree)
+- [ ] Colors, typography, radii, shadows and backgrounds match (exact)
+- [ ] Correct component variants, design tokens and states
+- [ ] No unresolved Critical or Major finding in any category
+- [ ] `actual.png` compared against the EXPECTED image
 
 ## Report Format
 
-Write the report with the template in [assets/ui-verification-report.template.md](assets/ui-verification-report.template.md). List ALL differences found across ALL verification categories, including lower-severity items when critical ones exist, so the engineer can fix everything in one iteration.
+Write the report with the template in [assets/ui-verification-report.template.md](assets/ui-verification-report.template.md). Every section is required, even for `VERIFICATION NOT RUN`; write `UNKNOWN` for values that cannot be determined. List ALL differences across ALL categories, including lower-severity items when critical ones exist, so the engineer can fix everything in one iteration. The report records the Figma node id and version, the Sources, the Artifact Directory and the Artifact Status.
 
 **Confidence levels:**
 
-- **HIGH** — Both Figma and implementation data complete, comparison is reliable
-- **MEDIUM** — Some values couldn't be extracted, manual review recommended
-- **LOW** — Tool errors occurred, manual verification required before making changes
+- **HIGH** - EXPECTED and ACTUAL data are complete; the comparison is reliable
+- **MEDIUM** - some values could not be extracted; manual review recommended
+- **LOW** - some values inside otherwise complete artifacts could not be extracted reliably; manual review recommended. Missing required ACTUAL artifacts are never LOW: they are `VERIFICATION NOT RUN`.
 
 ## Connected Skills
 
 - `tsh-implementing-frontend` - for implementing fixes following design system patterns
-- `tsh-discovering-technical-context` - for understanding project's design token conventions
+- `tsh-discovering-technical-context` - for understanding the project's design token conventions
+- `tsh-using-playwright-cli` - command reference used by the capture worker
