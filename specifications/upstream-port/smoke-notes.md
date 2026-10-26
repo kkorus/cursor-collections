@@ -22,3 +22,25 @@ No FAIL. Observations, none blocking:
 3. Scenario 2: the architect's revision of a legacy plan added a `Plan Revision | 1` row to Task Details in addition to the Human Approval table. Harmless, but the template keeps Plan Revision only in `## Human Approval`.
 4. Scenario 6: the capture worker refuses an unauthenticated capture when the artifact root is not git-ignored (rule from `tsh-verifying-ui` authenticated-capture). Intended for login captures; it also fires for plain captures. File: the `tsh-verifying-ui` capture-flow reference, if this should apply only to authenticated captures.
 5. Print mode limits: a worker that needs a Bash pattern outside `--allowedTools` stops with `NEEDS_INPUT`/`BLOCKED`; this was a harness limit, not a product defect.
+
+## Re-run on 8b67737
+
+Fresh scratch consumer installed from the current checkout (21 agents, 65 skills), `claude` 2.1.308 print mode, 10 model runs. Scenarios 2, 3, 5, 6, 7 and e ran in parallel in one tree, so some traces show stray files created by the (e) run; the verdicts are unaffected.
+
+| # | Scenario | Expected | Result | Evidence |
+|---|---|---|---|---|
+| 1 | Valid approval (2 = 2) | No second question, routed to `tsh-plan-implementor`, file change | PASS | "valid approval record (revision 2) ... reusing it without asking again"; `Agent subagent_type=tsh-plan-implementor` with `PLAN:` and `PLAN_REVISION: 2`; `src/sub.js`, `src/sub.test.js` written. The manager first ran a plan review (no report on disk). |
+| 2 | Legacy plan, no `## Human Approval` | Gate reached once, no project file changed | PASS | Reviewer returned APPROVED for "revision 1 (implicit)" in one pass, no architect revision loop; gate "1. Approve plan 2. I have comments 3. Stop". No `src/` change before the answer. |
+| 3 | Stale approval (2 vs 3) | Gated, not executed | PASS | "The existing approval record is stale ... I'm not reusing it", gate with 3 options, no implementor call. |
+| 4 | `/tsh-debug`, no plan | No gate, software engineer fixes | PASS (see 7) | `Agent tsh-software-engineer` (`CALLER: tsh-debug`), no gate, `mul` fixed. |
+| 5 | Direct `--agent tsh-plan-implementor` on stale plan | Refuses with options, no change | PASS | "approval record is not valid ... four options: 1. Point you at a plan ... 4. Stop"; no file changed. |
+| 6 | `/tsh-review-ui`, no server, no `playwright-cli` | `VERIFICATION NOT RUN`, never PASS | PASS | "Verdict for add-page: VERIFICATION NOT RUN ... not a pass ... playwright-cli isn't installed"; reviewer not called. |
+| 7 / a | `/tsh-debug` that mentions a plan file as read-only context | Not blocked | PASS | Delegated to `tsh-software-engineer` with no `PLAN:` line; fix applied; no approval gate. |
+| b | Legacy plan reaches the gate; Plan Revision 1 recorded at the first gate | Gate, then record | PASS | Gate shown with "Plan Revision: 1 (implicit ...)". After "Approve plan": architect `TASK: record_human_approval` wrote `Plan Revision 1 / APPROVED / Approved Revision 1 / 2026-10-26T15:25:05Z`; implementor then ran. |
+| c | "I have comments" with a non-material change | Gate re-asked | PASS | Second `--resume` turn: architect edited only the Task 1.1 description plus a Changelog row, classified non-material, "Approval gate (re-ask 1 of 3) ... Plan Revision: 1" with the three options. |
+| d | `/tsh-implement <plan path>` | No Quick/Full question | PASS | Skill args "plan path given: Full flow, ask nothing"; no flow question in scenarios 1, 2 and 3. |
+| e | Executor invoked directly with `PLAN:` and no `PLAN_REVISION:` | `BLOCKED` naming the missing line | FAIL (2 of 2 runs) | Prompt `MODE: delegated / PLAN: specifications/ok/ok.plan.md / TASK: Implement Task 1.1`. `tsh-plan-implementor` (haiku tier) answered "The approval is valid", wrote `src/sub.js` and `src/sub.test.js`, returned `STATUS: DONE`. |
+
+### FAILs
+
+- **e**: the rule exists in `src/partials/human-approval-precondition.md` ("A `PLAN:` line without `PLAN_REVISION:` is not valid: return BLOCKED"), but the fast-tier executor validated the approval record and skipped the header check. Probable cause: the header check is a sub-bullet inside "When it applies", after the model has already decided the plan is approved. Fix in `src/partials/human-approval-precondition.md` (make "check the task header first, before opening the plan" a numbered first step, with the BLOCKED text), then regenerate; if it persists, strengthen the top of `src/agents/tsh-plan-implementor.md`.

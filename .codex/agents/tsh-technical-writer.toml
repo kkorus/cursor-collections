@@ -91,6 +91,12 @@ Treat the working tree as you found it. Other work, yours or the user's, may be 
 
 Before you change any file for plan-based work, confirm that the plan carries a valid human approval. Read the plan from disk; never trust the caller's statement that it is approved.
 
+### Procedure (in this order)
+
+1. **Check the task header first, before you open the plan.** If the task carries a `PLAN:` line but no `PLAN_REVISION:` line, or tells you to execute a named plan but has no `PLAN:` line, stop now: return `BLOCKED` and name the missing line in `BLOCKER` (in interactive mode, name it and ask for it). A valid plan record does not make up for a missing header line.
+2. Read the plan from disk and check the `## Human Approval` record as described in "Valid approval record".
+3. Only when both checks pass, start the work. Otherwise follow "When the record is not valid".
+
 ### When it applies
 
 It applies only when the task EXECUTES a plan, that is when ANY of these holds:
