@@ -82,7 +82,7 @@ List of existing components, functions, utilities that will be reused as they ar
 | Decision Timestamp | -                       |
 | Note               | <optional-concise-note> |
 
-<!-- Approval protocol. This table is the only record of human approval of the exact current plan revision; never store it in the plan-review file. `Human Decision` is one of PENDING, APPROVED, CHANGES_REQUESTED, STOPPED. `Decision Timestamp` is ISO 8601 UTC ending in `Z`. An approval is valid only when `Human Decision` is APPROVED, `Approved Revision` equals `Plan Revision` and the timestamp is valid. The architect records only the literal answer of the user, never an inferred consent. A material change bumps `Plan Revision`, sets `Human Decision` to PENDING, clears `Approved Revision` and is logged in the Changelog. Checkbox ticks and progress notes do not invalidate an approval. -->
+<!-- Approval protocol. This table is the only record of human approval of the exact current plan revision; never store it in the plan-review file. `Human Decision` is PENDING or APPROVED. `Decision Timestamp` is ISO 8601 UTC ending in `Z`. An approval is valid only when `Human Decision` is APPROVED, `Approved Revision` equals `Plan Revision` and the timestamp is valid. The architect records only the literal answer of the user, never an inferred consent. A material change bumps `Plan Revision`, sets `Human Decision` to PENDING, sets `Approved Revision` to `-` and is logged in the Changelog. Checkbox ticks and progress notes do not invalidate an approval. -->
 
 ## Technical Context
 
