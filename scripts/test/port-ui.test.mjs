@@ -1,6 +1,6 @@
 // Group G3 (UI verification stack) tests over the real source tree. Hard-coded expected values.
-// Covers tasks 4.1a, 4.1b, 4.2, 4.4 and 4.7. The assertions for the capture worker (4.3), the reviewer (4.5)
-// and the orchestrate-ui-verification contract tokens (4.6) are added with those gated tasks.
+// Covers tasks 4.1a to 4.7: playwright-cli skill, verifying-ui, the three UI agents, the orchestrate-ui-verification
+// contract tokens, the command and the supporting skills.
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -166,5 +166,65 @@ test('traps: no literal old skills path and no removed names in the UI stack', (
     for (const removed of ['tsh-resolving-skill-references', 'tsh-orchestrating-implementation', 'tsh-creating-implementation-plans']) {
       assert.ok(!text.includes(removed), `${f} contains ${removed}`);
     }
+  }
+});
+
+test('tsh-ui-capture-worker: fast tier, shell, no MCP, rendered haiku and no Agent tool', () => {
+  const a = model.agents.find((x) => x.name === 'tsh-ui-capture-worker');
+  assert.equal(a.data['model-tier'], 'fast');
+  assert.equal(a.data.access, 'read-write');
+  assert.equal(a.data.shell, true);
+  assert.equal(a.data['requires-mcp'], undefined);
+  assert.deepEqual(a.data['preload-skills'], ['tsh-using-playwright-cli', 'tsh-verifying-ui']);
+  const claude = rendered.get('.claude/agents/tsh-ui-capture-worker.md');
+  assert.match(claude, /^model: haiku$/m);
+  assert.match(claude, /disallowedTools:\n {2}- Agent\n/);
+});
+
+test('tsh-ui-capture-worker: hardening one-liners, never-lines for .env, no judgment, no removed names', () => {
+  const body = model.agents.find((x) => x.name === 'tsh-ui-capture-worker').body;
+  for (const part of ['printenv', 'never read any', 'chmod 600', 'check-ignore', 'form `action`', 'ITERATION_DIR', 'AUTH_FIELDS', 'not yet verified', 'NEEDS_INPUT', 'BLOCKED']) {
+    assert.ok(body.includes(part), `worker lacks ${part}`);
+  }
+  assert.ok(body.includes('TSH_UI_LOGIN_<FIELD>'));
+  assert.ok(!body.includes('NEEDS_ARCHITECT_DECISION`:'), 'worker must not define an architect decision status');
+  for (const line of body.split('\n').filter((l) => l.includes('.env'))) assert.match(line, /never/i, line);
+  for (const banned of ['delegate to', 'spawn', 'subagent', '.cursor/skills/']) assert.ok(!body.includes(banned), `worker contains ${banned}`);
+});
+
+test('tsh-ui-reviewer: figma without playwright, read-only, VERIFICATION NOT RUN rules', () => {
+  const a = model.agents.find((x) => x.name === 'tsh-ui-reviewer');
+  assert.deepEqual(a.data['requires-mcp'], ['context7', 'figma', 'sequential-thinking']);
+  assert.equal(a.data.access, 'read-only');
+  assert.equal(a.data.shell, false);
+  assert.equal(a.data['model-tier'], 'deep');
+  for (const [path, text] of rendered) {
+    if (!path.includes('tsh-ui-reviewer')) continue;
+    assert.ok(!/playwright/i.test(text), `${path} mentions playwright`);
+  }
+  assert.match(rendered.get('.codex/agents/tsh-ui-reviewer.toml'), /sandbox_mode = "read-only"/);
+  for (const part of ['VERIFICATION NOT RUN', 'ITERATION_DIR', 'ARTIFACTS: none', 'Confidence', 'node id', 'version or last-modified', 'No `PASS` while any Critical or Major', 'second failing call', 'cannot open `actual.png`']) {
+    assert.ok(a.body.includes(part), `reviewer lacks ${part}`);
+  }
+  assert.ok(!a.body.includes('called by'));
+});
+
+test('tsh-orchestrate-ui-verification: contract tokens with expected counts, no software-engineer', () => {
+  const t = skill('tsh-orchestrate-ui-verification').body;
+  for (const token of ['tsh-ui-capture-worker', 'tsh-ui-reviewer', 'tsh-ui-engineer', 'SINGLE_PASS', 'UI_TASKS', 'FIGMA_URLS', 'DEV_SERVER_URL', 'UI_VERIFICATION_DIR', 'ITERATION_DIR', '<component-slug>', 'VERIFICATION NOT RUN', 'ESCALATED']) {
+    assert.ok(count(t, token) >= 1, `orchestrate skill lacks ${token}`);
+  }
+  assert.ok(!t.includes('tsh-software-engineer'));
+  assert.equal(count(t, 'ITERATION_DIR` = `<UI_VERIFICATION_DIR>/<component-slug>/iteration-<n>/`'), 1);
+  assert.match(t, /stop the loop and ask the user/);
+  assert.match(skill('tsh-orchestrate-ui-verification').data.description, /\/tsh-review-ui/);
+});
+
+test('the manager and the orchestrate skill agree on the UI-only contract names', () => {
+  const em = skill('tsh-engineering-manager').body;
+  const orch = skill('tsh-orchestrate-ui-verification').body;
+  for (const token of ['UI_TASKS', 'FIGMA_URLS', 'DEV_SERVER_URL', 'UI_VERIFICATION_DIR', 'SINGLE_PASS: true', 'ITERATION_DIR', '<component-slug>/iteration-<n>/']) {
+    assert.ok(em.includes(token), `manager lacks ${token}`);
+    assert.ok(orch.includes(token.replace('/iteration-<n>/', '')), `orchestrate skill lacks ${token}`);
   }
 });
