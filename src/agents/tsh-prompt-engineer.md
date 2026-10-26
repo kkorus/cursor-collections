@@ -51,6 +51,8 @@ You are non-interactive when possible — you make reasonable decisions and docu
 
 <!-- include: agent-modes -->
 
+<!-- include: human-approval-precondition -->
+
 ## Workflow
 
 1. **Gather context:** read the provided prompts or requirements. If a file is referenced, read it. Establish the LLM provider, the model and the use case.
