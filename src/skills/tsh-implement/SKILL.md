@@ -12,3 +12,5 @@ metadata:
 Load the `tsh-engineering-manager` skill and run it with the user's input (a task ID, a plan path or a description).
 
 Pass along one line: recommend the Quick flow for small, obvious changes and the Full flow for multi-component, unclear or UI work, and let the user confirm the choice.
+
+Plan-based work is approved by the user before any file change; the Quick flow has no plan and no such gate.
