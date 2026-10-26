@@ -77,3 +77,15 @@ If you want to discuss a design and your tool does not keep a subagent conversat
 - **Jira writes by BA workers.** On Claude Code, the BA workers are denied the MCP server named `atlassian`. This does not match an Atlassian connector added through claude.ai, see [MCP Setup](./mcp-setup).
 - **Codex is not yet verified.** The Codex output (`.agents/skills`, `.codex/agents/*.toml`, `.codex/config.toml`) follows the Codex documentation, but it has not been run in a real Codex session. Open questions: whether hyphenated agent names load, how the skill listing is truncated, and how `MODE: delegated` arrives in a spawned agent. Project-level `.codex/config.toml` and `.codex/agents` load only in trusted projects.
 - **Status blocks may be one line.** In Cursor, a subagent's `STATUS:` block can arrive on a single line. The callers do not depend on line breaks.
+
+## UI verification status
+
+Measured 2026-10-26 in headless runs:
+
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
+
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.

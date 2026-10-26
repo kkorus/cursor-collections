@@ -56,3 +56,15 @@ Pre-verification blockers cost no iteration of the verify-fix loop and end in `V
 ## Optional: Figma image on disk
 
 The default flow has the reviewer fetch EXPECTED itself through `figma`. A file-based variant exists upstream: a shared `figma-expected.png` written next to the iteration directories by a worker that has the design tool. It is enabled only if the host can write a Figma export to disk, which was not verified; it is not implemented here. Do not save any browser, login or error screenshot under that name.
+
+## Verification status per tool
+
+Measured 2026-10-26 in headless runs.
+
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
+
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.

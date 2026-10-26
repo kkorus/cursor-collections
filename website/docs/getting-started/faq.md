@@ -126,6 +126,20 @@ If the variables are missing the worker asks for the exact names instead of cont
 
 It means the UI check could not be completed on trustworthy evidence, so it says nothing about whether the UI matches the design. Typical causes are a missing or stale capture, a Figma node that cannot be reached, a login the worker could not complete, or a host that cannot open the screenshot images. It is never treated as a pass and it does not use up one of the 5 iterations. The Engineering Manager shows you the reason and asks what to do: fix the cause (start the app, export the login variables, authorize the Figma MCP) and run it again, or verify manually. Which tools can open the images is listed in [Supported Tools](./supported-tools); Codex is not yet verified.
 
+**Which tools have been verified for UI verification?**
+
+Measured 2026-10-26 in headless runs:
+
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
+
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.
+
+See [Supported Tools](./supported-tools).
+
 ## Cursor
 
 These answers describe Cursor behavior. Claude Code and Codex differ, and no equivalent claim is made for them here.

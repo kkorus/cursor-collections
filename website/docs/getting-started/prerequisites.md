@@ -69,3 +69,15 @@ export TSH_UI_LOGIN_PASSWORD='...'   # TSH_UI_LOGIN_PASSWORD
 Export them **before** you start your tool, in the same shell. A running tool cannot receive new environment variables, and a GUI-launched application (for example Cursor started from the dock) does not see exports from your shell: start it from a shell where the variables are exported, which means restarting it. Whether the variables reach the capture worker in each tool is **not yet verified** for Codex and is listed in [Supported Tools](./supported-tools).
 
 For single sign-on or multi-factor login, use the default instead: log in once in a headed (visible) browser session and the worker reuses the saved session state. If the variables are missing, the worker asks you for the exact names instead of continuing. Use a dedicated test account, never a personal one.
+
+### Verified status per tool
+
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
+
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.
+
+See [Supported Tools](./supported-tools).

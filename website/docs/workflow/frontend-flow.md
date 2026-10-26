@@ -60,6 +60,18 @@ The full description is on the [UI Verification Flow](./ui-verification-flow) pa
 - Escalates after 5 failed iterations with a detailed report.
 - Produces a **UI Verification Summary** before handing off to code review, which starts only after the UI gate closes.
 
+## Verified status per tool
+
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
+
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.
+
+See [Supported Tools](../getting-started/supported-tools).
+
 ## Required Skills
 
 The frontend flow loads these specialized skills:
