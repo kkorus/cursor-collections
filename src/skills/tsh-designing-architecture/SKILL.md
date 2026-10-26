@@ -76,7 +76,7 @@ Save the plan following [assets/plan.template.md](assets/plan.template.md). Do n
 - **Executable slots gate**: no angle-bracket placeholder and no assumed-default command (for example `npm test` when Technical Context does not say so) may remain in a Verification, Definition of Done or Files slot.
 - **Open Questions gate**: a plan is not dispatchable while any Open Questions row is `❓ Open`. Resolve it, or ask the user, before the plan goes to review.
 - **No real code**: the plan holds no implementation code. Pseudo-code is allowed only for a genuinely complicated algorithm; signatures, types and API shapes are allowed when they clarify a task boundary.
-- **Human Approval**: every plan has a `## Human Approval` section. You record only the literal decision of the user when your task is `record_human_approval`, and never infer consent from silence, praise or a reviewer verdict (never infer it). A legacy plan without the section gets one, starting as `PENDING`.
+- **Human Approval**: every plan has a `## Human Approval` section. You record only the literal decision of the user when your task is `record_human_approval`, and never infer consent from silence, praise or a reviewer verdict (never infer it). A legacy plan without the section gets one, starting as `PENDING` with the implicit `Plan Revision` 1.
 - **Plan governance**: mark per task whether it is an actionable low-risk seam, and classify every revision of an approved plan, by the definitions below.
 
 <!-- include: plan-governance -->
