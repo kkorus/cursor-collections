@@ -47,7 +47,9 @@ There is no plan to tick off and no Changelog to update in this case.
 
 ## UI tasks (Figma)
 
-Apply this section when the task implements UI from Figma designs. The design is the source of truth for the visual result.
+Apply this section when the task implements UI from Figma designs; skip this section for non-UI work. The design is the source of truth for the visual result.
+
+**Hard gate.** Before the first UI edit, resolve the exact Figma node and inspect it through a real Figma tool call. A URL in the plan is not enough. In delegated mode, if the node cannot be resolved or inspected, return `NEEDS_INPUT` naming the component.
 
 Also load:
 
