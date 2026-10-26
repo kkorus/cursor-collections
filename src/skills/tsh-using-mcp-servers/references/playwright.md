@@ -1,6 +1,8 @@
 # playwright
 
-Browser automation through the Playwright MCP server.
+Browser automation through the Playwright MCP server, for interactive exploration and E2E locator discovery.
+
+Not used for Figma UI verification (see `tsh-using-playwright-cli` and `tsh-verifying-ui`).
 
 ## When to use
 
