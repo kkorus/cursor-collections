@@ -20,11 +20,11 @@ Most teams use AI for code completion. **TSH AI Collections turns AI into an end
 
 | Capability | Count | Description |
 |---|---|---|
-| **Subagents** | 17 | 12 specialists (Architect, Software Engineer, Code Reviewer, DevOps Engineer, ...) plus 5 internal Business Analyst workers |
+| **Subagents** | 21 | 16 specialists (Architect, Plan Implementor, Software Engineer, UI Engineer, Technical Writer, Code Reviewer, DevOps Engineer, ...) plus 5 internal Business Analyst workers |
 | **Orchestrators** | 3 | Engineering Manager, Business Analyst and AI Customization Orchestrator. They run in your main conversation and delegate to subagents |
 | **Slash commands** | 16 | See [Commands Overview](./commands/overview) — `/tsh-explore-materials`, `/tsh-analyze-materials`, `/tsh-implement`, `/tsh-review`, `/tsh-ask`, `/tsh-debug`, `/tsh-refactor`, `/tsh-commit`, `/tsh-create-custom-*`, and more |
-| **Knowledge skills** | 41 | Processing Transcripts, Extracting Tasks, Designing Architecture, Reviewing Code, Verifying UI, Writing E2E Tests, Implementing Backend, Implementing Frontend, Designing Databases, Implementing CI/CD, Kubernetes, Terraform Modules, and more |
-| **Internal steps** | 2 | `tsh-implement-task` and `tsh-orchestrate-ui-verification`, loaded by the Engineering Manager, not run by you |
+| **Knowledge skills** | 43 | Processing Transcripts, Extracting Tasks, Designing Architecture, Reviewing Code, Verifying UI, Writing E2E Tests, Implementing Backend, Implementing Frontend, Designing Databases, Implementing CI/CD, Kubernetes, Terraform Modules, and more |
+| **Internal steps** | 3 | `tsh-implement-task`, `tsh-orchestrate-ui-verification` and `tsh-write-documentation`, loaded by the Engineering Manager or an agent, not run by you |
 | **MCP Integrations** | 11 | Atlassian, Figma, Context7, Playwright, Sequential Thinking, PDF Reader, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage |
 | **Structured Workflows** | 5 | Standard Flow, UI Flow, E2E Testing Flow, Workshop Analysis Flow, AI Customization Flow |
 

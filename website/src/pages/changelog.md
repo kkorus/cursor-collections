@@ -12,6 +12,49 @@ The canonical source for this changelog is [CHANGELOG.md](https://github.com/kko
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-10-26
+
+Ports the upstream main changes (Copilot repository) into the multi-tool layout. Three upstream workflow skills were merged or dropped; see the migration table below.
+
+### Added
+
+- Four subagents: `tsh-plan-implementor` (executes exactly one actionable low-risk plan task), `tsh-technical-writer` (README, CHANGELOG, in-repo docs and the docs site), `tsh-ui-engineer` (UI and Figma-driven implementation) and `tsh-ui-capture-worker` (captures the running app as evidence for the reviewer).
+- Three skills: `tsh-using-playwright-cli` and `tsh-writing-documentation` (knowledge skills) and `tsh-write-documentation` (internal step of the technical writer).
+- One plan approval gate in `tsh-engineering-manager` (`Approve plan` / `I have comments` / `Stop`) with a `## Human Approval` record in the plan. Agents that change files check the record first (human approval precondition); the architect never asks the user and writes the record only when the manager delegates it.
+- Task routing in the engineering manager: `tsh-plan-implementor` for actionable low-risk tasks, `tsh-software-engineer` for complex non-UI work, `tsh-ui-engineer` for UI, plus the E2E, DevOps, prompt and technical-writer engineers.
+- UI verification by files: the capture worker stores screenshot, computed styles and accessibility snapshot per component and iteration with `playwright-cli`; the reviewer fetches the design from Figma. New references in `tsh-verifying-ui` for the capture flow and for authenticated capture (credentials only from `TSH_UI_LOGIN_<FIELD>` variables, headed login as the default for single sign-on). Unopenable images or an unreachable design give `VERIFICATION NOT RUN`, and the loop asks the user.
+- Installer: retires a leftover flat `playwright-cli` skill entry and the old names of the ported artifacts (`scripts/legacy-names.json`).
+- Website pages for the new agents and skills, the UI verification flow and an FAQ; cross-group contract tests (`port-contracts`, `port-agents`, `port-manager`, `port-ui`).
+- README: the Cursor-scoped table "Recommended Thinking Effort Settings".
+
+### Changed
+
+- `/tsh-review-ui` now routes to `tsh-engineering-manager` in a UI-only mode: one capture and one review per component, no fixes, no plan, no gate.
+- `tsh-software-engineer` is limited to complex non-UI work; UI work moved to `tsh-ui-engineer`.
+- `tsh-ui-reviewer` is read-only and reads the captured files; `tsh-orchestrate-ui-verification` captures before every review (up to 5 fix iterations).
+- `tsh-reviewing-plans` is the single home of the plan-review categories; `tsh-designing-architecture` carries the plan contract, and the plan template gained approval, goal and dispatch-gate sections.
+- The `playwright` MCP server is for interactive use and E2E tests; UI verification uses the `playwright-cli` command.
+- Counts: 21 subagents, 3 orchestrators, 16 commands, 3 internal steps and 43 knowledge skills (65 skills in total).
+
+### Known limits
+
+- Credential worker: the capture worker runs on the `fast` tier and expands `TSH_UI_LOGIN_*` values inside its login commands. A weaker model handling credentials is a residual risk that the hardening rules reduce but do not remove; use a dedicated test account.
+- A GUI-launched Cursor does not inherit shell exports (documented caveat, not measured). Start the tool from a shell where the variables are exported.
+- Measured in headless runs on 2026-10-26: the reviewer opens PNG files in Claude Code and in Cursor, and the capture worker sees a shell-exported variable in both. Not measured: Codex (CLI not installed), the Figma MCP design fetch by the reviewer (needs an authenticated Figma MCP), and the `playwright-cli` worker flow (`playwright-cli` not installed on the build machine).
+- Upstream PR #74 was reviewed and is not applicable to this layout.
+
+### Migration table
+
+Old name to new name for the artifacts ported in this release.
+
+<!-- migration-table -->
+| Old name | New name |
+|---|---|
+| `tsh-orchestrating-implementation` | `tsh-engineering-manager` |
+| `playwright-cli` | `tsh-using-playwright-cli` |
+| `tsh-creating-implementation-plans` | `tsh-designing-architecture` |
+| `tsh-resolving-skill-references` | removed |
+
 ## 2026-10-04
 
 ### Breaking changes

@@ -5,14 +5,14 @@ title: Commands Overview
 
 # Commands Overview
 
-TSH AI Collections includes **16 slash commands** that trigger specific workflow actions across the full product lifecycle, plus 2 internal steps that commands and orchestrators load. Commands are skills with `type: command`. They are generated for Cursor, Claude Code and Codex and are available as `/tsh-<name>` in Cursor and Claude Code. The Codex invocation syntax is not yet verified.
+TSH AI Collections includes **16 slash commands** that trigger specific workflow actions across the full product lifecycle, plus 3 internal steps that commands and orchestrators load. Commands are skills with `type: command`. They are generated for Cursor, Claude Code and Codex and are available as `/tsh-<name>` in Cursor and Claude Code. The Codex invocation syntax is not yet verified.
 
 ## How commands work
 
 A command is a thin entry point. It contains no domain knowledge. It does one of three things:
 
-- **Loads an orchestrator skill** that runs in the main conversation and delegates to subagents (`/tsh-implement`, `/tsh-refactor`, `/tsh-analyze-materials`, `/tsh-explore-materials`, `/tsh-create-custom-*`).
-- **Delegates to one subagent** (`/tsh-review`, `/tsh-review-ui`, `/tsh-audit-infrastructure`, `/tsh-analyze-cloud-costs`), or investigates in the main thread and delegates the work (`/tsh-ask`, `/tsh-debug`, `/tsh-audit-codebase`).
+- **Loads an orchestrator skill** that runs in the main conversation and delegates to subagents (`/tsh-implement`, `/tsh-refactor`, `/tsh-review-ui`, `/tsh-analyze-materials`, `/tsh-explore-materials`, `/tsh-create-custom-*`).
+- **Delegates to one subagent** (`/tsh-review`, `/tsh-audit-infrastructure`, `/tsh-analyze-cloud-costs`), or investigates in the main thread and delegates the work (`/tsh-ask`, `/tsh-debug`, `/tsh-audit-codebase`).
 - **Runs standalone** in the main thread (`/tsh-commit`).
 
 Commands are hidden from automatic model invocation, so they run only when you type them. Everything after the command name is passed as the input.
@@ -38,7 +38,7 @@ Commands are hidden from automatic model invocation, so they run only when you t
 | Command | Routes to | Description |
 |---------|-----------|-------------|
 | [/tsh-review](./review) | Code Reviewer | Review an implementation against the plan, or the current diff |
-| [/tsh-review-ui](./review-ui) | UI Reviewer | Single-pass Figma versus implementation comparison |
+| [/tsh-review-ui](./review-ui) | Engineering Manager (orchestrator), UI-only mode | Single-pass Figma versus implementation comparison: capture, then review, no fixes |
 | [/tsh-audit-codebase](./audit-codebase) | Architect (fan-out per layer) | Code quality audit: dead code, duplication, improvements |
 
 ### Developer utilities
@@ -73,6 +73,7 @@ Internal steps are not commands you type. Orchestrators load them by name. Curso
 |------|-----------|-------------|
 | [tsh-implement-task](./internal/implement-task) | Software Engineer (delegated by the Engineering Manager) | Implement a feature from a plan or a task description |
 | [tsh-orchestrate-ui-verification](./internal/orchestrate-ui-verification) | Engineering Manager | The verify-fix loop for UI tasks with Figma designs |
+| [tsh-write-documentation](./internal/write-documentation) | Technical Writer | Write or update documentation for a task or a plan scope |
 
 ## Delegation via /tsh-implement
 
@@ -83,8 +84,10 @@ When you run [`/tsh-implement`](./implement), the [Engineering Manager](../agent
 | Research | [Context Engineer](../agents/context-engineer) |
 | Planning | [Architect](../agents/architect) |
 | Plan validation | [Plan Reviewer](../agents/plan-reviewer) |
-| Backend and general code | [Software Engineer](../agents/software-engineer) (with `tsh-implement-task`) |
-| Frontend with Figma | Software Engineer, then [UI Reviewer](../agents/ui-reviewer) in a loop (`tsh-orchestrate-ui-verification`) |
+| Actionable low-risk tasks | [Plan Implementor](../agents/plan-implementor) (with `tsh-implement-task`) |
+| Complex or exceptional non-UI code | [Software Engineer](../agents/software-engineer) (with `tsh-implement-task`) |
+| Frontend, with Figma | [UI Engineer](../agents/ui-engineer), then [UI Capture Worker](../agents/ui-capture-worker) and [UI Reviewer](../agents/ui-reviewer) in a loop (`tsh-orchestrate-ui-verification`) |
+| Documentation | [Technical Writer](../agents/technical-writer) |
 | E2E tests | [E2E Engineer](../agents/e2e-engineer) |
 | LLM application prompts | [Prompt Engineer](../agents/prompt-engineer) |
 | Kubernetes, Terraform, CI/CD, observability | [DevOps Engineer](../agents/devops-engineer) |

@@ -14,10 +14,10 @@ Status legend: **tested** means it was observed in a real run during development
 | Artifact | Cursor | Claude Code | Codex |
 |---|---|---|---|
 | Skills (knowledge skills, commands, orchestrators, internal steps) | `.agents/skills/` | `.claude/skills/` | `.agents/skills/` |
-| Subagents (17) | `.cursor/agents/*.md` | `.claude/agents/*.md` | `.codex/agents/*.toml` |
+| Subagents (21) | `.cursor/agents/*.md` | `.claude/agents/*.md` | `.codex/agents/*.toml` |
 | MCP servers (11) | `.cursor/mcp.json` | `.mcp.json` | `.codex/config.toml` |
 
-The collection has 41 knowledge skills, 16 commands, 3 orchestrators and 2 internal steps (62 skills in total), plus 17 subagents. See [Installation](./installation) for which folders the installer fills for each tool combination.
+The collection has 43 knowledge skills, 16 commands, 3 orchestrators and 3 internal steps (65 skills in total), plus 21 subagents. See [Installation](./installation) for which folders the installer fills for each tool combination.
 
 Subagent models are chosen by tier. Claude Code gets `opus`, `sonnet` or `haiku`, and Codex gets `gpt-5.4` (high or medium reasoning) or `gpt-5.4-mini` (Codex models: not yet verified). Cursor subagents inherit your selected model.
 

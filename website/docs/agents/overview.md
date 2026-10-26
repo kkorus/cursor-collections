@@ -5,7 +5,7 @@ title: Agents Overview
 
 # Agents Overview
 
-TSH AI Collections provides **17 subagents** and **3 orchestrator skills** that together form an AI product engineering team covering the full delivery lifecycle, from product ideation through development, infrastructure and quality assurance. The same roles are generated for Cursor, Claude Code and Codex from one source in `src/`.
+TSH AI Collections provides **21 subagents** and **3 orchestrator skills** that together form an AI product engineering team covering the full delivery lifecycle, from product ideation through development, infrastructure and quality assurance. The same roles are generated for Cursor, Claude Code and Codex from one source in `src/`.
 
 ## Subagents, orchestrators and skills
 
@@ -67,10 +67,14 @@ At most one delegation level exists. Commands and orchestrators run in the main 
                      ├─ tsh-context-engineer   (research)
                      ├─ tsh-architect          (plan)
                      ├─ tsh-plan-reviewer      (plan review, max 3 iterations)
-                     ├─ tsh-software-engineer  (app code)
+                     ├─ tsh-plan-implementor   (actionable low-risk tasks)
+                     ├─ tsh-software-engineer  (complex non-UI code)
+                     ├─ tsh-ui-engineer        (UI code)
+                     ├─ tsh-ui-capture-worker  (UI capture evidence)
                      ├─ tsh-devops-engineer    (infrastructure)
                      ├─ tsh-e2e-engineer       (E2E tests)
                      ├─ tsh-prompt-engineer    (LLM prompts)
+                     ├─ tsh-technical-writer   (documentation)
                      ├─ tsh-ui-reviewer        (Figma verification loop)
                      └─ tsh-code-reviewer      (final review)
 
@@ -80,7 +84,7 @@ At most one delegation level exists. Commands and orchestrators run in the main 
                            └─ tsh-ai-customization-reviewer
 ```
 
-Some commands route straight to one agent: `/tsh-ask` and `/tsh-audit-codebase` to the Architect, `/tsh-debug` to the Software Engineer, `/tsh-review` to the Code Reviewer, `/tsh-review-ui` to the UI Reviewer, and `/tsh-audit-infrastructure` and `/tsh-analyze-cloud-costs` to the DevOps Engineer. See the [commands overview](../commands/overview).
+Some commands route straight to one agent: `/tsh-ask` and `/tsh-audit-codebase` to the Architect, `/tsh-debug` to the Software Engineer, `/tsh-review` to the Code Reviewer, `/tsh-review-ui` to the Engineering Manager (UI-only mode: capture worker, then UI Reviewer), and `/tsh-audit-infrastructure` and `/tsh-analyze-cloud-costs` to the DevOps Engineer. See the [commands overview](../commands/overview).
 
 :::note Known limitation
 Claude Code hides internal and orchestrator skills from its `/` menu. Cursor hides them in the CLI but not yet in the IDE (according to a Cursor developer), and Codex is not yet verified. In every tool the model may still list them, so it could auto-invoke one. The descriptions of these skills start with "Internal step of ..." to discourage that. See [Supported tools](../getting-started/supported-tools).
@@ -102,7 +106,10 @@ Claude Code hides internal and orchestrator skills from its `/` menu. Cursor hid
 | [Architect](./architect) | deep, read-write | Designs solutions, creates implementation plans |
 | [Plan Reviewer](./plan-reviewer) | deep, read-write | Stress-tests implementation plans before implementation starts |
 | [Engineering Manager](./engineering-manager) | Orchestrator skill | Orchestrates implementation by delegating to subagents |
-| [Software Engineer](./software-engineer) | deep, read-write | Implements code against the plan |
+| [Plan Implementor](./plan-implementor) | fast, read-write | Executes exactly one actionable low-risk plan task inside its listed files |
+| [Software Engineer](./software-engineer) | deep, read-write | Implements complex or exceptional non-UI work against the plan |
+| [UI Engineer](./ui-engineer) | balanced, read-write | Implements UI and Figma-driven work: components, forms, hooks, accessibility |
+| [Technical Writer](./technical-writer) | fast, read-write | Writes README, CHANGELOG, in-repo docs and the docs site |
 | [Prompt Engineer](./prompt-engineer) | deep, read-write | Designs, optimizes and secures LLM application prompts |
 
 ### Infrastructure and DevOps
@@ -116,7 +123,8 @@ Claude Code hides internal and orchestrator skills from its `/` menu. Cursor hid
 | Agent | Tier / access | Role |
 |-------|---------------|------|
 | [Code Reviewer](./code-reviewer) | balanced, read-write | Reviews code quality, security and correctness |
-| [UI Reviewer](./ui-reviewer) | deep, read-only | Verifies that the UI matches the Figma design |
+| [UI Capture Worker](./ui-capture-worker) | fast, read-write | Captures the running app with `playwright-cli` as evidence for the reviewer |
+| [UI Reviewer](./ui-reviewer) | deep, read-only | Verifies that the UI matches the Figma design using the captured files |
 | [E2E Engineer](./e2e-engineer) | fast, read-write | Creates and maintains Playwright E2E tests |
 
 ### AI customization

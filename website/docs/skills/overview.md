@@ -5,7 +5,7 @@ title: Skills Overview
 
 # Skills Overview
 
-TSH AI Collections includes **41 knowledge skills**: modules that provide specialized domain expertise, structured processes and quality templates. They encode tested best practices for every phase of the product lifecycle.
+TSH AI Collections includes **43 knowledge skills**: modules that provide specialized domain expertise, structured processes and quality templates. They encode tested best practices for every phase of the product lifecycle.
 
 The same skills are installed for Cursor, Claude Code and Codex from one neutral source (`src/skills/`). Cursor and Codex read them from `.agents/skills/`, Claude Code from `.claude/skills/`. Agents load a skill when its description matches the current task. You can also ask for one by name in chat. Codex behavior is not yet verified.
 
@@ -43,7 +43,7 @@ Skills reference each other by name, never by path. Commands, orchestrators and 
 | [tsh-analyzing-codebase](./analyzing-codebase) | Analyze a codebase: dependencies, business logic, duplications | Architect, BA Analysis Worker, Context Engineer, DevOps Engineer, Plan Reviewer, Software Engineer, `/tsh-analyze-cloud-costs`, `/tsh-ask`, `/tsh-audit-codebase`, `/tsh-audit-infrastructure`, `/tsh-create-custom-agent`, `/tsh-create-custom-command`, `/tsh-create-custom-rules`, `/tsh-create-custom-skill` |
 | [tsh-analyzing-implementation-gaps](./analyzing-implementation-gaps) | Compare a plan with the current state to find implementation gaps | Architect, Code Reviewer, Plan Reviewer, Software Engineer, `tsh-implement-task` (step) |
 | [tsh-designing-databases](./designing-databases) | SQL and database design: schemas, indexing, queries, ORMs | Architect, Code Reviewer, Plan Reviewer, Software Engineer, `tsh-implement-task` (step) |
-| [tsh-implementing-frontend](./implementing-frontend) | Frontend components, design tokens and Figma-to-code | Software Engineer, `tsh-implement-task` (step) |
+| [tsh-implementing-frontend](./implementing-frontend) | Frontend components, design tokens and Figma-to-code | UI Engineer, `tsh-implement-task` (step) |
 | [tsh-implementing-react](./implementing-react) | React hooks, effects, memoization and safe rendering | any agent |
 | [tsh-implementing-forms](./implementing-forms) | Form architecture, validation and accessible patterns | Software Engineer |
 | [tsh-writing-hooks](./writing-hooks) | Custom React hook patterns | Software Engineer |
@@ -73,7 +73,7 @@ Skills reference each other by name, never by path. Commands, orchestrators and 
 |-------|-------------|---------|
 | [tsh-reviewing-code](./reviewing-code) | Structured code review: correctness, security, quality | Code Reviewer, Prompt Engineer, `/tsh-audit-codebase`, Engineering Manager (orchestrator), `/tsh-review` |
 | [tsh-reviewing-frontend](./reviewing-frontend) | Frontend code review criteria and anti-patterns | Code Reviewer |
-| [tsh-verifying-ui](./verifying-ui) | UI verification criteria and report format against Figma | Software Engineer, UI Reviewer, `tsh-orchestrate-ui-verification` (step), `/tsh-review-ui` |
+| [tsh-verifying-ui](./verifying-ui) | UI verification criteria and report format against Figma | UI Engineer, UI Capture Worker, UI Reviewer, `tsh-orchestrate-ui-verification` (step), `/tsh-review-ui` |
 | [tsh-writing-e2e-tests](./writing-e2e-tests) | Playwright E2E testing patterns and CI readiness | E2E Engineer |
 
 ### Collection authoring and tooling
@@ -86,6 +86,8 @@ Skills reference each other by name, never by path. Commands, orchestrators and 
 | [tsh-creating-rules](./creating-rules) | Placement, fields and templates for project instructions and rules | AI Customization Creator, AI Customization Reviewer, AI Customization Orchestrator (orchestrator), `/tsh-create-custom-rules` |
 | [tsh-migrating-copilot-customizations](./migrating-copilot-customizations) | Convert Copilot customizations to the neutral source or native files | any agent |
 | [tsh-committing](./committing) | Draft Conventional Commits messages from git changes | `/tsh-commit` |
+| [tsh-using-playwright-cli](./using-playwright-cli) | Drive a browser with the `playwright-cli` command and capture evidence | UI Capture Worker |
+| [tsh-writing-documentation](./writing-documentation) | Craft rules for README, CHANGELOG, in-repo docs and docs-site pages | Technical Writer |
 | [tsh-using-mcp-servers](./using-mcp-servers) | When and how to use the collection's MCP servers | Architect, Code Reviewer, Context Engineer, DevOps Engineer, E2E Engineer, Prompt Engineer, Software Engineer, Business Analyst (orchestrator) |
 
 ## Loading Priority
