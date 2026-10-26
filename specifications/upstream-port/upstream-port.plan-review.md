@@ -125,3 +125,66 @@ All 15 owner decisions are respected except B2 (architect gate in interactive mo
 ## Verdict
 
 REVISIONS NEEDED - four blockers: the central UI-evidence assumption is unproven and its spike comes last (B1), the plan contradicts the single-gate decision (B2), the per-group gates cannot pass as specified (B3), and the final `-s ours` merge can silently swallow unported upstream commits (B4). The ledger is complete and the counts, naming, listing budget and schema checks hold.
+
+---
+
+# Iteration 2
+
+- **Plan:** specifications/upstream-port/upstream-port.plan.md (revision of 2026-10-26 after review 1; 50 tasks)
+- **Review date:** 2026-10-26
+- **Iteration:** 2
+- **Reviewed Plan Revision:** unknown (still no `## Human Approval` section in this plan)
+- **Verdict:** REVISIONS NEEDED
+- **Findings:** 1 blocker, 6 warnings, 3 suggestions
+
+## Resolution of iteration 1 findings
+
+| Finding | State | Evidence in the plan |
+| --- | --- | --- |
+| B1 Figma image on disk unproven, spike last | Mostly resolved | Design item 4 "Default (no Figma image on disk)": the reviewer fetches EXPECTED through `figma`; Task 4.0 is the first, gating G3 task. Residual loophole: see W2-1 |
+| B2 architect asks the gate | Resolved | Design item 1 "The architect never asks the user, in any mode"; Task 2.4 DoD `grep -c -E "Approve plan\|I have comments" ... prints 0` |
+| B3 per-group gates unattainable | Resolved | Execution model "Per-group verification (must pass in isolation)": only `lint` and own tests; Wave 0 "commit includes the regenerated trees"; cross-group assertions in S1.3. I checked each group's preloads and `routes-to` resolve inside the group or to existing artifacts: yes |
+| B4 unpinned merge | Resolved | Task Details "Upstream pin ... 3232199e..."; Task S4.1 fetch-compare-stop, merge by SHA, PR must be a merge commit. DoD `git diff HEAD~1 HEAD --stat` empty is the correct property of `-s ours`. Residual: W2-6 |
+| W1 installer | Resolved | Task 2.7 covers category folders and flat symlinks in `.cursor/skills`, `.claude/skills`, `.agents/skills`, real directories untouched, validated names. Code check: `SKILL_DIRS` is only `.agents/skills`, `.claude/skills` and `.cursor/skills` has its own loop, so the change goes in two places; about 25 lines plus `isDangling`/`LEGACY_LINK_RE` reuse is realistic and the 40-line stop rule is sound. Names are only compared; a bad `unprefixed` raises `UsageError`, which would stop every install on a typo, but a test covers it |
+| W2 six categories | Resolved | Tasks 2.2, 2.3, 2.4: one home (`tsh-reviewing-plans`), the architect loads it by name, DoD counts 1 file |
+| W3 approval gaps | Resolved in text | Phase Gates deleted (Task 5.1 DoD `grep -c "## Phase Gates"` = 0), equality check (Task 1.1, 5.2), legacy rule, one definition of material changes. The location of that definition is a new problem: B2-1 |
+| W4 seam / UI-only ownership | Resolved in naming | Seam in `task-routing.md`; contract names `UI_TASKS`, `FIGMA_URLS`, `DEV_SERVER_URL`, `UI_VERIFICATION_DIR`, `SINGLE_PASS` are spelled identically in design item 4, Tasks 4.6, 4.7, 5.1 and S1.3 (d). Gaps: W2-4, B2-1 |
+| W5 / W6 credentials | Resolved except one conflict | Design item 7 (a)-(g), `AUTH_FIELDS`, headed-login default, restart caveat. Conflict: W2-3 |
+| W7 trigger | Resolved | Design item 2 (three triggers, `BLOCKED` for a plan path without `PLAN:` lines) |
+| W8 sizing / DoD | Resolved | 4.1a/b, 6.2a-e, S1.1-S1.4 split; DoDs are per-token checks with hard-coded counts; protocol fixtures in Task 5.5 |
+| W9 traps | Resolved | Execution model "Traps every group must respect"; ledger rows for the 11 extra pages; S2.2 scripted counts |
+
+Ledger re-check: Task 0.2 plus the grouped-pattern sentence make the 117-path coverage mechanical; I re-ran the token check against the pinned SHA, still 0 unmatched.
+
+## New findings
+
+### BLOCKERS
+
+**B2-1. The architect and the plan authors are told to apply two definitions that live in another skill's private file (Design items 1 and 3; Tasks 2.2, 2.4, 5.2; `AGENTS.md` "No cross-skill file references").**
+- Evidence: the material vs non-material definition lives only in `tsh-engineering-manager/references/plan-approval.md` and the seam definition only in `.../task-routing.md`. Task 2.4 makes the architect "apply the definition in the manager's `plan-approval` reference by name", and Task 2.2 makes plan authors cite the seam definition "BY NAME ONLY". A reference file is not loadable by name (only skills are); the only loadable unit is the whole `tsh-engineering-manager` orchestrator, which is an internal step meant for the main thread, not for a leaf agent. Lint and tests cannot catch this: Task 2.8 and S1.3 check only that sentences exist.
+- Failure scenario: the architect classifies a revision without the definition (or loads the whole orchestrator into a leaf agent), so material changes are mis-classified; either approval is not reset after a material edit (executors then run on an unapproved revision) or every edit resets it and the user is re-asked constantly. The seam marks in plans are invented per run, so routing to `tsh-plan-implementor` vs `tsh-software-engineer` becomes arbitrary.
+- Fix: move both definitions into one Wave 0 partial (for example `src/partials/plan-change-rules.md`, G1-owned, committed with the others) and include it in the architect, `tsh-designing-architecture` and the manager's references via the include mechanism; keep one-copy tests. G4 still owns the routing behavior, not the text duplication.
+
+### WARNINGS
+
+**W2-1. The spike gate can pass with no result (Task 4.0 DoD, Stop Rule, Open Question 1).** The DoD accepts "not run: <reason>" in every cell, and the Stop Rule fires only when (1) FAILS in all three tools. An automated worker cannot drive the Cursor IDE or Codex, so all cells may read "not run" and the gate passes vacuously (the same loophole as iteration 1 B1). Failure path is otherwise complete: the artifacts (counts 21/3/16/3/43) do not depend on the outcome, because the agents, skills and docs ship in every case; only documentation and the `VERIFICATION NOT RUN` text vary per tool. Fix: require a measured PASS/FAIL for Claude Code at least on (1) and (3); mark Cursor/Codex "unverified" in the docs when "not run"; add an outcome rule for item (4) (variables not visible gives `NEEDS_INPUT`).
+
+**W2-2. Spike outcomes require edits outside G3's ownership and arrive after the parallel groups started (Task 4.0 outcomes, Execution model).** The outcome text says "document in `tsh-verifying-ui` and the website"; the website belongs to G5, which runs in parallel and writes the same behavior (Tasks 6.2c-6.3) without the result. Fix: G5 writes the tool-neutral wording now ("where the host cannot open images the result is `VERIFICATION NOT RUN`"); a short S1 task applies the per-tool table from `ui-spike.md` to the website pages.
+
+**W2-3. The credential hardening forbids `run-code` while authenticated, but the capture itself uses it (design item 7 (b), Task 4.1a "Restricted use").** The upstream flow stabilizes with `playwright-cli run-code ... emulateMedia ... waitForLoadState` and uses a `run-code` screenshot fallback; those steps happen after login. As written, an authenticated capture can neither stabilize nor fall back. Fix: allow a fixed, reviewed snippet (no environment access, no network, no user-supplied text) in `cli-capture-flow.md`, or specify the substitutes (`eval`, the screenshot command with `--filename`), and keep the ban on free-form `run-code`.
+
+**W2-4. UI-only contract has one verification root for a list of components (design item 4, Tasks 4.6, 4.7, 5.1).** `UI_TASKS` and `FIGMA_URLS` are lists, `UI_VERIFICATION_DIR` is singular, and no task says who creates the default (`<specs>/<task>/ui-verification`), how it is split per component, or how `ARTIFACT_DIR` is derived. Two components share `iteration-<N>/` and overwrite each other. Fix: state "one sub-root per component, `UI_VERIFICATION_DIR/<component-slug>/`" and the default in the contract text owned by G4; add it to the S1.3 (d) assertion.
+
+**W2-5. Test mechanics: agent `requires-mcp` is not in the rendered agent files (`scripts/lib/render-agents.mjs` renders no MCP list; only skills get a `compatibility` line).** Tasks 3.7, 4.3 ("no MCP entry"), 4.4 ("MCP list exactly ..."), 4.5, 4.8 and S1.3 (g) say they use `renderAgents` output. Those assertions are impossible or vacuous on rendered text. Fix: say these checks read `loadSource(REPO_ROOT).agents[].data['requires-mcp']` and the rendered files only for model, `disallowedTools`, sandbox and body text. (Node 22 and 26 are not a problem: the tests use `node:test`, `loadSource` and `renderAgents` only, and the hard-coded counts 21/3/16/3/43 and the 7 executors, 2 version-control agents and 14 others in S1.3 agree with the task list.)
+
+**W2-6. `merge --ff-only port/upstream` fails if the branch moved (Task S4.1, Task 0.1).** The plan, this review and the spike file are committed on `refactor/unified-agent-structure` while `port/upstream` already exists (HEAD is already past the recorded base). Fix: Task 0.1 creates `port/upstream` after the last planning commit and states that nothing else lands on the refactor branch during the port, or S4 uses a plain merge instead of fast-forward.
+
+### SUGGESTIONS
+
+1. Parallelism realism (50 tasks, 5 groups): G3 is a serial chain (4.0 then 11 tasks) and G5 has 12 documentation tasks, so the critical path is G3; S1.4 failures after the merge have no named owner. Give the parent an explicit "fix seam findings" budget and allow G5 to start 6.3 and 6.4 before G3 finishes (they already do).
+2. The capture worker preloads `tsh-verifying-ui`, which still describes `figma` steps; add one sentence that the worker never exports Figma images in the default flow.
+3. Reviewer re-fetches EXPECTED on every iteration; record the node version or last-modified in the report so a design change mid-loop is visible.
+
+## Verdict
+
+REVISIONS NEEDED - all four iteration 1 blockers are resolved and no iteration 1 warning is left open, but the revision introduces one blocker: the architect (and plan authors) are told to apply the material-change and seam definitions that sit in a file of another skill they cannot load (B2-1). Six warnings remain (W2-1 to W2-6), all cheap to fix; after B2-1 is fixed the plan can be approved on the next iteration.
