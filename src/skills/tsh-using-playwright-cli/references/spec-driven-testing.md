@@ -278,7 +278,7 @@ Rehearse the corrected interaction with `playwright-cli` — the generated code 
 
 Edit the test file: update the locator, assertion, step order, or inputs to match the corrected behaviour. Stop the background debug run. Rerun the single test to confirm green.
 
-Never skip hooks or add sleeps as a fix. Never use `networkidle` in authored test code — assertions auto-wait and retry, so there is nothing for it to settle. (One-shot evidence capture outside the test suite is a different mechanism; `tsh-ui-verifying` governs that path and allows a bounded, non-fatal `networkidle` there.)
+Never skip hooks or add sleeps as a fix. Never use `networkidle` in authored test code — assertions auto-wait and retry, so there is nothing for it to settle. (One-shot evidence capture outside the test suite is a different mechanism; `tsh-verifying-ui` governs that path and allows a bounded, non-fatal `networkidle` there.)
 
 ### 3.4 Reconcile with the spec
 
