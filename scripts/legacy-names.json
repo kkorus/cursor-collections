@@ -21,7 +21,8 @@
     "tsh-review-codebase": "tsh-audit-codebase",
     "tsh-analyze-aws-costs": "tsh-analyze-cloud-costs",
     "tsh-implement-common-task": "tsh-implement-task",
-    "tsh-implement-ui": "tsh-orchestrate-ui-verification"
+    "tsh-implement-ui": "tsh-orchestrate-ui-verification",
+    "tsh-orchestrating-implementation": "tsh-engineering-manager"
   },
   "deleted": [
     "tsh-cursor-engineer",
@@ -34,7 +35,9 @@
     "tsh-implement-terraform",
     "tsh-implement-ui-common-task",
     "tsh-plan",
-    "tsh-research"
+    "tsh-research",
+    "tsh-creating-implementation-plans",
+    "tsh-resolving-skill-references"
   ],
   "nowSubagents": [
     "tsh-architect",
@@ -53,6 +56,13 @@
     "tsh-ba-formatting-worker",
     "tsh-ai-customization-researcher",
     "tsh-ai-customization-creator",
-    "tsh-ai-customization-reviewer"
+    "tsh-ai-customization-reviewer",
+    "tsh-plan-implementor",
+    "tsh-technical-writer",
+    "tsh-ui-engineer",
+    "tsh-ui-capture-worker"
+  ],
+  "unprefixed": [
+    "playwright-cli"
   ]
 }
