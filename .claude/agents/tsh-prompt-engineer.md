@@ -72,6 +72,10 @@ You run in one of two modes. **Interactive mode is the default.**
 - Show the "Suggested next steps" of your role to the user at the end of your reply.
 - Do not emit the status block described below.
 
+### Skills you were told to load
+
+If a skill you were told to load cannot be loaded, do not continue from general knowledge: interactive - tell the user; delegated - return `BLOCKED` naming the skill.
+
 ### Delegated mode
 
 Your caller is an orchestrator or a command running in the main thread. The user does not see your conversation, so you must not wait for anyone.

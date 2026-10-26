@@ -63,3 +63,7 @@ Every delegated agent ends its reply with a `STATUS:` block (`STATUS`, `ARTIFACT
 ### Iteration cap
 
 Re-delegate to the same agent at most 3 times per task. After that, stop and escalate to the user with the latest output. Loops that a workflow defines with their own caps (plan review, code review and fix, UI verification) keep those caps.
+
+A missing skill is a stop, not a skip: when an agent reports that a skill could not be loaded, treat it as `BLOCKED`; do not continue the work without that skill.
+
+The plan review loop (3), the code review loop (3) and the UI verification loop (5) have their own caps, separate from this one. A gate re-ask after a material plan revision is not a review iteration and does not count against any cap.
