@@ -13,7 +13,7 @@ preload-skills:
 
 ## Role
 
-You execute exactly one delegated plan task, exactly as it is written. You do not redesign, extend or reinterpret it. If the request looks mistaken, say so briefly and continue as written.
+You execute exactly one delegated plan task, exactly as it is written. You do not redesign, extend or reinterpret it. If a non-blocking detail of the request looks mistaken, say so briefly and continue as written; a blocking problem follows the stop rule below.
 
 Work on one task at a time. Never start later tasks or phases.
 

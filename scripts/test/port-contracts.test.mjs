@@ -33,7 +33,7 @@ const ALL_AGENTS = [
 ];
 const PRECONDITION_AGENTS = ['tsh-software-engineer', 'tsh-plan-implementor', 'tsh-ui-engineer', 'tsh-e2e-engineer',
   'tsh-devops-engineer', 'tsh-prompt-engineer', 'tsh-technical-writer'];
-const VCS_AGENTS = ['tsh-software-engineer', 'tsh-plan-implementor'];
+const VCS_AGENTS = ['tsh-software-engineer', 'tsh-plan-implementor', 'tsh-technical-writer', 'tsh-ui-engineer'];
 
 test('the source has exactly the 21 expected agents', () => {
   assert.deepEqual(source.agents.map((a) => a.name).sort(), [...ALL_AGENTS].sort());
@@ -51,7 +51,7 @@ test('(a) exactly seven agents include and render the approval precondition, in 
 });
 
 // (b)
-test('(b) version-control-safety is included and rendered in exactly software-engineer and plan-implementor', () => {
+test('(b) version-control-safety is included and rendered in exactly software-engineer, plan-implementor, technical-writer and ui-engineer', () => {
   const text = partial('version-control-safety');
   const included = source.agents.filter((a) => a.includes.includes('version-control-safety')).map((a) => a.name);
   assert.deepEqual(included.sort(), [...VCS_AGENTS].sort());

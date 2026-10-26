@@ -50,8 +50,8 @@ test('the approval precondition is absent from the code reviewer', () => {
   }
 });
 
-test('version-control-safety is rendered in exactly the two coding agents', () => {
+test('version-control-safety is rendered in exactly the four file-writing agents', () => {
   const withVcs = [...source.agents].map((a) => a.data.name)
     .filter((name) => count(claude(name), VCS) === 1);
-  assert.deepEqual(withVcs.sort(), ['tsh-plan-implementor', 'tsh-software-engineer']);
+  assert.deepEqual(withVcs.sort(), ['tsh-plan-implementor', 'tsh-software-engineer', 'tsh-technical-writer', 'tsh-ui-engineer']);
 });

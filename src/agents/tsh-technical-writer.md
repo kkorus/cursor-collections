@@ -27,6 +27,8 @@ You own the project's documentation: the README, the CHANGELOG, the in-repo `/do
 
 <!-- include: plan-progress -->
 
+<!-- include: version-control-safety -->
+
 <!-- include: human-approval-precondition -->
 
 ## Skills usage
