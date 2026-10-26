@@ -272,20 +272,32 @@ function flushRetired(ctx) {
 
 // ---------- legacy cleanup (D3, B1, N1) ----------
 
-export function loadLegacyNames(ctx) {
+function readLegacyJson(ctx) {
   const f = path.join(ctx.source, 'scripts', 'legacy-names.json');
   let raw;
   try { raw = ctx.fs.readFileSync(f, 'utf8'); } catch (e) {
     throw new UsageError(`Cannot read ${f}: ${e.code || e.message}. The legacy cleanup needs scripts/legacy-names.json (is --source a complete checkout?).`);
   }
-  let j;
-  try { j = JSON.parse(raw); } catch (e) { throw new UsageError(`${f} is not valid JSON: ${e.message}`); }
+  try { return JSON.parse(raw); } catch (e) { throw new UsageError(`${f} is not valid JSON: ${e.message}`); }
+}
+
+export function loadLegacyNames(ctx) {
+  const j = readLegacyJson(ctx);
   const names = new Set([
     ...Object.keys(j.renamed || {}),
     ...(j.deleted || []),
     ...(j.nowSubagents || []),
   ]);
   return names;
+}
+
+// Names without the tsh- prefix that the old layout left behind (for example playwright-cli).
+export function loadUnprefixedNames(ctx) {
+  const list = readLegacyJson(ctx).unprefixed ?? [];
+  if (!Array.isArray(list) || !list.every((n) => typeof n === 'string' && /^[a-z0-9-]+$/.test(n))) {
+    throw new UsageError('scripts/legacy-names.json: "unprefixed" must be an array of names matching ^[a-z0-9-]+$.');
+  }
+  return new Set(list);
 }
 
 function sourceSkillNames(ctx) {
@@ -298,6 +310,7 @@ const LEGACY_LINK_RE = /[\\/]\.cursor[\\/]skills[\\/](agents|commands|workflows|
 
 export function cleanupLegacy(ctx) {
   const legacyNames = loadLegacyNames(ctx);
+  const unprefixed = loadUnprefixedNames(ctx);
   const current = sourceSkillNames(ctx);
   const roots = [ctx.home];
   if (ctx.projectDir) roots.push(ctx.projectDir);
@@ -316,10 +329,20 @@ export function cleanupLegacy(ctx) {
         const st = lstat(ctx, p);
         if (!st || !st.isDirectory()) continue;
         for (const m of listDir(ctx, p)) {
-          if (m.startsWith(PREFIX)) hit(path.join(p, m), `legacy: category folder ${n}/ under .cursor/skills`);
+          if (m.startsWith(PREFIX) || unprefixed.has(m)) hit(path.join(p, m), `legacy: category folder ${n}/ under .cursor/skills`);
         }
         // the old layout's category folder is empty now: remove it, never one that still holds other files
         if (!ctx.dry && listDir(ctx, p).length === 0) ctx.fs.rmdirSync(p);
+      }
+    }
+    // (b2): unprefixed leftovers are retired in the flat dirs only as symlinks into the old layout or dangling ones
+    for (const d of ['.cursor/skills', ...SKILL_DIRS]) {
+      for (const n of unprefixed) {
+        const p = path.join(root, d, n);
+        const st = lstat(ctx, p);
+        if (!st || !st.isSymbolicLink()) continue;
+        const target = ctx.fs.readlinkSync(p);
+        if (isDangling(ctx, p) || LEGACY_LINK_RE.test(target) || LEGACY_LINK_RE.test(path.resolve(path.dirname(p), target))) hit(p, `legacy: unprefixed ${n} left by the old layout`);
       }
     }
     // (c): other target skills dirs

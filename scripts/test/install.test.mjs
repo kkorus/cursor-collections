@@ -362,6 +362,45 @@ test('legacy cleanup does not treat current skill names as legacy even if listed
   assert.ok(!exists(path.join(project, '.cursor/skills/tsh-whatever')));
 });
 
+const UNPREFIXED = { ...LEGACY, unprefixed: ['playwright-cli'] };
+
+test('unprefixed legacy names: category folder and old-layout symlinks are retired, real directories and others stay', () => {
+  const home = tmp();
+  const source = makeSource({ legacy: UNPREFIXED });
+  const cs = path.join(home, '.cursor/skills');
+  put(home, '.cursor/skills/workflows/playwright-cli/SKILL.md', 'old copy');
+  put(home, '.cursor/skills/workflows/other/SKILL.md', 'not ours');
+  // a flat symlink into the old layout
+  fs.mkdirSync(path.join(home, '.claude/skills'), { recursive: true });
+  fs.symlinkSync(path.join(cs, 'workflows/playwright-cli'), path.join(home, '.claude/skills/playwright-cli'));
+  // a dangling symlink elsewhere
+  fs.mkdirSync(path.join(home, '.agents/skills'), { recursive: true });
+  fs.symlinkSync(path.join(home, 'gone-target'), path.join(home, '.agents/skills/playwright-cli'));
+  // a real directory with the same name in a project dir, and an unrelated skill
+  const project = tmp();
+  put(project, '.claude/skills/playwright-cli/SKILL.md', 'created by the playwright installer');
+  put(project, '.claude/skills/my-skill/SKILL.md', 'mine');
+  run(['--migrate-legacy', '--project-dir', project], { home, source, quiet: true, now: () => new Date('2026-05-05T05:05:05Z') });
+  assert.ok(!exists(path.join(cs, 'workflows/playwright-cli')), 'category folder entry retired');
+  assert.ok(exists(path.join(cs, 'workflows/other/SKILL.md')));
+  assert.ok(!exists(path.join(home, '.claude/skills/playwright-cli')), 'old-layout symlink retired');
+  assert.ok(!exists(path.join(home, '.agents/skills/playwright-cli')), 'dangling symlink retired');
+  assert.ok(exists(path.join(project, '.claude/skills/playwright-cli/SKILL.md')), 'real directory left alone');
+  assert.ok(exists(path.join(project, '.claude/skills/my-skill/SKILL.md')));
+  const bk = path.join(home, '.tsh-ai-collections-backup');
+  const [stamp] = fs.readdirSync(bk);
+  assert.ok(exists(path.join(bk, stamp, cs, 'workflows/playwright-cli/SKILL.md')), 'category copy is backed up');
+});
+
+test('invalid unprefixed content is a UsageError', () => {
+  for (const bad of ['playwright-cli', ['../x'], ['a/b'], [1], { a: 1 }]) {
+    const home = tmp(), project = tmp();
+    const source = makeSource({ legacy: { ...LEGACY, unprefixed: bad } });
+    assert.throws(() => run(['--migrate-legacy'], { home, cwd: project, source, quiet: true }),
+      (e) => e instanceof UsageError && /unprefixed/.test(e.message), JSON.stringify(bad));
+  }
+});
+
 test('missing legacy-names.json is a clear error', () => {
   const home = tmp(), project = tmp();
   const source = makeSource({ legacy: null });

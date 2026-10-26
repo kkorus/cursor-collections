@@ -52,6 +52,7 @@ Reference other skills by name ("load the `tsh-<name>` skill"). Never by path: n
 - Commands and internal steps: `tsh-<verb>[-<object>]`, imperative (`tsh-implement`, `tsh-implement-task`).
 - Agents and orchestrators: `tsh-<role>`, noun (`tsh-architect`, `tsh-engineering-manager`).
 - No skill name may equal an agent name; `routes-to` must resolve.
+- The `tsh-` prefix applies to skill directory names and agent file names; support files under `references/`, `assets/`, `scripts/` are named for their topic.
 - Tool-neutral wording: no tool-specific syntax (`@tsh-...` mentions, "Task tool", model names) in `src/`.
 - `SKILL.md` is at most 500 lines; descriptions of `skill` and `command` types contain "Use when"; each skill has `metadata.short-description` (max 120 chars).
 
