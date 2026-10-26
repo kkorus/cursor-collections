@@ -47,6 +47,8 @@ A UI or layout change is not verified because it compiles or passes type checks.
 
 <!-- include: agent-modes -->
 
+<!-- include: version-control-safety -->
+
 <!-- include: human-approval-precondition -->
 
 ## Skills Usage Guidelines
