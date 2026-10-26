@@ -1,30 +1,28 @@
 ---
 name: tsh-review-ui
-description: Single-pass UI verification comparing implementation against Figma design. Use when the user types /tsh-review-ui, asks to verify a UI component, or wants to compare the running app against Figma. Routes to the tsh-ui-reviewer agent.
+description: Single-pass UI verification comparing implementation against Figma design. Use when the user types /tsh-review-ui, asks to verify a UI component, or wants to compare the running app against Figma. Routes to the engineering manager (UI-only mode).
 type: command
-routes-to: tsh-ui-reviewer
+routes-to: tsh-engineering-manager
 argument-hint: "<figma-url> <dev-url> [component]"
 metadata:
   short-description: Verify a UI implementation against its Figma design
 ---
 # /tsh-review-ui
 
-Delegate to the `tsh-ui-reviewer` subagent. Perform a single verification pass comparing the current implementation against the Figma design. Report all differences found — do not fix code.
+Load the `tsh-engineering-manager` skill and run it in UI-only mode: one capture and one review per component, no fixes, no plan, no gate.
 
-Arguments: the Figma URL, the running dev server URL and optionally the component or section name. Pass them to the subagent. If one is missing, ask the user before delegating.
+Pass along these inputs (the contract is owned by the manager):
 
-## Workflow
+- `UI_TASKS`: the component or section names (one entry per component)
+- `FIGMA_URLS`: one Figma URL per component
+- `DEV_SERVER_URL`: the full dev server URL, confirmed by the user
+- `UI_VERIFICATION_DIR`: the verification root; each component gets its own sub-root `<component-slug>/iteration-<n>/`, handed on as `ITERATION_DIR`
+- `SINGLE_PASS: true`
 
-The subagent loads the `tsh-verifying-ui` skill (process, criteria, tolerances, severity definitions, report format) and follows its 5-step verification process:
+The arguments are the Figma URL, the running dev server URL and optionally the component or section name. If one is missing, ask the user before delegating; never guess the dev server URL.
 
-1. Validate inputs (Figma URL + running dev server)
-2. Get EXPECTED from Figma via `figma`
-3. Get ACTUAL from implementation via `playwright` — structure, actual rendered dimensions, and visual screenshot
-4. Compare following the skill's verification categories and tolerances
-5. Generate structured report following the skill's report format
+Rules:
 
-The Figma design is the **source of truth** for every comparison. When in doubt, the design wins.
-
-**Enumerate ALL differences in a single pass.** Do not stop at the first critical finding — complete every verification category (Structure, Layout, Dimensions, Visual, Components) and report every difference found. The goal is to give the engineer a complete list so all fixes can be applied at once, minimizing the number of verify-fix iterations.
-
-<!-- include: caller-status-handling -->
+- Never fix code. Report every difference found, across all verification categories, so all fixes can be applied at once.
+- The verdict is never empty: `PASS`, `FAIL` or `VERIFICATION NOT RUN`.
+- Report `VERIFICATION NOT RUN`, with the reason, when artifacts or tools are missing (capture could not run, the image cannot be opened, the Figma node cannot be fetched). It is never a pass.
