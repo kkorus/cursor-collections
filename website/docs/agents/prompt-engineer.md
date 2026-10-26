@@ -29,7 +29,7 @@ This agent handles **LLM application prompts** (prompts consumed by LLM APIs at 
 
 ## Approved plan precondition
 
-For plan-based work, the agent validates the plan's `## Human Approval` record before it changes any file: it needs an approved plan whose approved revision equals the current `Plan Revision`. Without a valid record it does not start: interactive mode offers you the options (point it at the right plan, request approval through `/tsh-implement`, go back to `/tsh-architect`, or stop) and never records an approval itself; delegated mode returns `BLOCKED` and names the failed condition. Work without a plan is not affected. See the [approval gate](../workflow/standard-flow#approval-gate).
+For plan-based work, the agent validates the plan's `## Human Approval` record before it changes any file: it needs an approved plan whose approved revision equals the current `Plan Revision`. Without a valid record it does not start: interactive mode offers you the options (point it at the right plan, request approval through `/tsh-implement`, go back to the Architect for a plan revision, or stop) and never records an approval itself; delegated mode returns `BLOCKED` and names the failed condition. Work without a plan is not affected. See the [approval gate](../workflow/standard-flow#approval-gate).
 
 ## Tool access
 

@@ -20,7 +20,7 @@ The Plan Implementor is a strict single-task worker. It executes exactly one del
 
 ## Approved plan precondition
 
-For plan-based work, the agent validates the plan's `## Human Approval` record before it changes any file: the decision must be `APPROVED`, the approved revision must equal the current `Plan Revision`, and the decision timestamp must be valid. Without a valid record it does not start: in interactive mode it offers you the options (point it at the right plan, request approval through `/tsh-implement`, go back to `/tsh-architect`, or stop) and never records an approval itself; in delegated mode it returns `BLOCKED` and names the failed field or condition. Work without a plan is not affected. See the [approval gate](../workflow/standard-flow#approval-gate).
+For plan-based work, the agent validates the plan's `## Human Approval` record before it changes any file: the decision must be `APPROVED`, the approved revision must equal the current `Plan Revision`, and the decision timestamp must be valid. Without a valid record it does not start: in interactive mode it offers you the options (point it at the right plan, request approval through `/tsh-implement`, go back to the Architect for a plan revision, or stop) and never records an approval itself; in delegated mode it returns `BLOCKED` and names the failed field or condition. Work without a plan is not affected. See the [approval gate](../workflow/standard-flow#approval-gate).
 
 ## Statuses
 

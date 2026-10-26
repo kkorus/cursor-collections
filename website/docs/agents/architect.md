@@ -24,7 +24,7 @@ The Architect agent designs technical solutions, system architecture, and detail
 
 The Architect never asks you to approve a plan, in any mode. The approval gate (approve, comment or stop) belongs to the Engineering Manager and opens after the plan review loop settles. The manager then sends the Architect a delegated `TASK: record_human_approval` with your verbatim answer, and the Architect records it in the `## Human Approval` table of the plan (`Human Decision`, `Approved Revision`, `Decision Timestamp`, `Plan Revision`). When a legacy plan has no such section, the Architect creates it as `PENDING` and then records the decision.
 
-When you run the Architect directly (`/tsh-architect`), it only reports that approval is pending and points you to `/tsh-implement`, which runs the gate. The plan lives in `specifications/<task-name-or-id>/`.
+When you run the Architect directly (for example with `claude --agent tsh-architect`, or by asking for the Architect subagent in Cursor), it only reports that approval is pending and points you to `/tsh-implement`, which runs the gate. The plan lives in `specifications/<task-name-or-id>/`.
 
 ## What It Produces
 
