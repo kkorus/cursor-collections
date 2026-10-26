@@ -12,7 +12,7 @@ Generate Playwright test code automatically as you interact with the browser.
 ## How It Works
 
 Every action you perform with `playwright-cli` generates corresponding Playwright TypeScript code.
-This code appears in the output and can be copied directly into your test files.
+This code appears in the output and can be copied directly into your test files. The output contains the values you filled in, so it is never used for credentials: a credential fill is run in the raw form with output discarded (see the authenticated-capture reference of `tsh-verifying-ui`), and its output is never copied into replies, reports or files.
 
 ## Example Workflow
 
@@ -29,6 +29,8 @@ playwright-cli fill e1 "user@example.com"
 # Ran Playwright code:
 # await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
 
+# Secrets: the output below echoes the value. For credentials use
+# `playwright-cli --raw fill <ref> "$VAR" >/dev/null 2>&1` and never copy this output anywhere.
 playwright-cli fill e2 "password123"
 # Ran Playwright code:
 # await page.getByRole('textbox', { name: 'Password' }).fill('password123');

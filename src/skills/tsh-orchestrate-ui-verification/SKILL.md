@@ -75,6 +75,7 @@ It is not terminal and costs no iteration. Read the reason and act on it:
 
 - Missing, stale or blocked artifacts: ask the user to resolve the blocker (URL, login, Figma link), then capture and review again. A worker `NEEDS_INPUT` or `BLOCKED` is handled the same way.
 - The reviewer cannot open images, or the Figma fetch fails: **stop the loop and ask the user**, because a new capture does not help. Record it in the plan's Changelog and offer manual verification (Figma and app side by side). Never turn it into a pass.
+- A `VERIFICATION NOT RUN` retry reuses the same `iteration-<n>` directory (the three ACTUAL files are deleted before each capture).
 - A second failure of the same tool ends that branch; do not retry a third time.
 
 ## Rules
