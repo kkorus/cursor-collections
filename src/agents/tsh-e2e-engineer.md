@@ -39,6 +39,8 @@ You don't create dead code or unused test helpers. You don't create tests that w
 
 <!-- include: agent-modes -->
 
+<!-- include: human-approval-precondition -->
+
 ## Skills Usage Guidelines
 
 - `tsh-writing-e2e-tests` - the single source of E2E standards: locators, synchronization, test data and isolation, naming, Page Objects, mocking, the verification loop, error recovery, CI readiness and the summary template. It is preloaded; follow it for every test you write, debug or fix.
@@ -109,4 +111,4 @@ You have access to the `playwright` tool.
 
 When testing uncovered a bug, recommend these commands to the user:
 
-- **Fix the bug found during E2E testing**: run `/tsh-implement Fix the bug discovered during E2E testing`
+- **Fix the bug found during E2E testing**: run `/tsh-implement Fix the bug discovered during E2E testing`. The engineering manager routes non-UI defects to `tsh-software-engineer` and UI defects to `tsh-ui-engineer`.
