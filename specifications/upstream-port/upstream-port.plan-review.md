@@ -188,3 +188,55 @@ Ledger re-check: Task 0.2 plus the grouped-pattern sentence make the 117-path co
 ## Verdict
 
 REVISIONS NEEDED - all four iteration 1 blockers are resolved and no iteration 1 warning is left open, but the revision introduces one blocker: the architect (and plan authors) are told to apply the material-change and seam definitions that sit in a file of another skill they cannot load (B2-1). Six warnings remain (W2-1 to W2-6), all cheap to fix; after B2-1 is fixed the plan can be approved on the next iteration.
+
+---
+
+# Iteration 3 (final)
+
+- **Plan:** specifications/upstream-port/upstream-port.plan.md (revision 3, 53 tasks)
+- **Review date:** 2026-10-26
+- **Iteration:** 3
+- **Reviewed Plan Revision:** unknown (no `## Human Approval` section yet; the manager gate adds it)
+- **Verdict:** APPROVED
+- **Findings:** 0 blockers, 4 warnings, 3 suggestions
+
+## Resolution of iteration 2 findings
+
+| Finding | State | Evidence in the plan |
+| --- | --- | --- |
+| B2-1 definitions in another skill's file | Resolved | Task 1.1b creates `src/partials/plan-governance.md` (Wave 0, G1) with `## Seam definition` and `## Material and non-material changes`; Task 2.2 and Task 5.1 add `<!-- include: plan-governance -->`; Task 2.4: "apply the `plan-governance` definition that the preloaded `tsh-designing-architecture` includes". Loader verified (`scripts/lib/load-source.mjs`): `parseDoc` resolves `INCLUDE_LINE` for SKILL.md and agent bodies only, a partial that itself holds an include marker throws, and skills' `body` is the expanded text that `render-skills` writes. The partial contains no marker, so it is legal. The include lands in exactly the two intended skills; the architect gets it through its preloaded skill |
+| W2-1 spike loophole | Resolved | Task 4.0: measured PASS/FAIL for Claude Code and Cursor, Codex alone may be "unverified: CLI not installed"; gate (a), Stop Rule on Claude Code; Open Question 1 |
+| W2-2 ownership of per-tool docs | Resolved | Task 4.0 last sentence "G3 and G5 write tool-neutral wording; the per-tool table ... is applied in Task S1.5" |
+| W2-3 `run-code` conflict | Resolved | Task 4.1a "fixed, reviewed snippets stored in the skill (`assets/stabilize.snippet.js`, `assets/screenshot-fallback.snippet.js`)"; Task 4.1b DoD greps them for `process.env`/`fetch`/`require` |
+| W2-4 per-component roots | Mostly resolved | Design item 4 layout `<UI_VERIFICATION_DIR>/<component-slug>/iteration-<n>/`, `ITERATION_DIR`, default owned by the manager (Task 5.1, 4.3). Gap: W3-1 |
+| W2-5 MCP assertions | Resolved | Tasks 3.7, 4.3, 4.4, 4.5, 4.8, S1.3 (g) read `requires-mcp` from `loadSource` data |
+| W2-6 fast-forward | Resolved | Task 0.1 (commit planning artifacts, then branch) and Task S4.1 (`--ff-only`, documented `--no-ff` fallback). The sequence ff, fetch-compare, `merge -s ours <pinned SHA>` is correct; `git diff HEAD~1 HEAD --stat` is empty in both variants because the first parent is the port tip |
+
+## Checks of the revision
+
+- (a) Line limits: lint `max-lines` counts the raw `SKILL.md` text, so the include marker costs one line; the manager's planned 260 lines and the architecture skill's 140 are far below the 500 limit even after expansion. `reference-toc` and `no-tool-syntax` also scan the partial (owner null), which holds plain text only.
+- (b) Snippets: `skill-layout` checks only top-level entries of the skill directory (`SKILL.md`, `references`, `assets`, `scripts`), so `assets/*.snippet.js` is accepted; `markdownFiles` selects only `.md` support files, so `reference-toc`, `no-tool-syntax` and `check-refs` never read a `.js` file (the DoD greps are the only check, which is acceptable), and `render-skills` copies every support file as a buffer. The plan's fallback to `.snippet.md` is also accepted.
+- (c) Sequencing: S1.1 merge, S1.2 generate, S1.3 test, S1.4 gates, S1.5 per-tool table, S1.6 fix-forward, S2, S3, S4 is coherent.
+- (d) 53 tasks in 5 groups: realistic only because G3 is named the serial critical path and fix-forward has a budget of two rounds.
+
+## New findings
+
+### WARNINGS
+
+**W3-1. Contract names are asserted where the tasks do not ask for them (Tasks 4.6, 4.7 versus S1.3 (d)).** S1.3 (d) requires `ITERATION_DIR` and the `<component-slug>` layout in the manager, the orchestrate skill and `tsh-review-ui`, but Task 4.6 (and its DoD token list) and Task 4.7 mention neither; only Tasks 4.3 and 5.1 do. The test will fail at S1.4 and cost a fix-forward round. Fix: add both names to Task 4.6, 4.7 and the 4.6 DoD list.
+
+**W3-2. Task 4.0 cannot be started from the plan alone.** It needs a Figma file and node URL, an authenticated Figma MCP in both `claude` and `cursor-agent`, a reachable test page (dev URL), a login-free route or a stated test account, and an installed `playwright-cli`. None is named, and a missing prerequisite stops the critical path (Stop Rule). Fix: list the prerequisites and say who supplies them (the owner), and allow the independent G3 tasks (4.1a/b, 4.4, 4.7 Step 0, 4.2 skeleton) to start while the spike runs.
+
+**W3-3. "Copies a snippet verbatim" has no addressable source at run time (Task 4.1a).** The worker cannot know the installed path of `assets/*.snippet.js` in each tool, and path references are forbidden. Fix: make the `.snippet.md` fenced-block form (read through the skill, pasted verbatim) the primary form instead of a fallback, and keep the DoD greps.
+
+**W3-4. S1.5 changes `src` but does not say to regenerate.** Its DoD "gates of S1.4 green again" implies `generate --check`, but no step runs `npm run generate` and commits the trees (same for each S1.6 round). Fix: state "regenerate and commit generated trees" in S1.5 and S1.6.
+
+### SUGGESTIONS
+
+1. S1.3 (e) "render in exactly two outputs": there are two skills times two skill trees (`.agents`, `.claude`), so write "two skills, in both trees".
+2. 4.2/4.5: the reviewer re-fetches EXPECTED each iteration; the new `Figma node id / version` report field covers it, no action.
+3. Hard-code in the snippet DoD the version comment format so the worker/test can detect an edited snippet.
+
+## Verdict
+
+APPROVED - every blocker and warning of iterations 1 and 2 is resolved in the text, the loader, lint and render code accept the partial include and the snippet files, and the S1 to S4 sequence is correct. The four remaining warnings are cheap clarifications that should be folded into the tasks before dispatch; none of them prevents an engineer from starting implementation.
