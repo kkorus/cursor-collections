@@ -12,7 +12,7 @@
 
 ## What This Repo Provides
 
-One neutral source (`src/`) is rendered into the native format of each tool: 16 slash commands, 3 orchestrators, 17 subagents, 41 knowledge skills and 11 MCP server definitions. The content is the same in every tool.
+One neutral source (`src/`) is rendered into the native format of each tool: 16 slash commands, 3 orchestrators, 21 subagents, 3 internal steps, 43 knowledge skills (65 skills in total) and 11 MCP server definitions. The content is the same in every tool.
 
 ### Product Ideation – Requirements & Planning
 
@@ -24,14 +24,14 @@ One neutral source (`src/`) is rendered into the native format of each tool: 16 
 
 - **Commands** – `/tsh-implement` (research, planning, implementation and review in one flow), `/tsh-refactor`, `/tsh-debug`, `/tsh-ask`
 - **Orchestrator** – `tsh-engineering-manager`
-- **Subagents** – `tsh-context-engineer`, `tsh-architect`, `tsh-software-engineer`, `tsh-prompt-engineer`, `tsh-devops-engineer`
-- **Skills** – `tsh-designing-architecture`, `tsh-discovering-technical-context`, `tsh-analyzing-implementation-gaps`, `tsh-analyzing-codebase`, `tsh-implementing-frontend`, `tsh-implementing-backend`, `tsh-designing-databases` and more (see [Knowledge skills](#knowledge-skills-41))
+- **Subagents** – `tsh-context-engineer`, `tsh-architect`, `tsh-plan-implementor`, `tsh-software-engineer`, `tsh-ui-engineer`, `tsh-prompt-engineer`, `tsh-devops-engineer`, `tsh-technical-writer`
+- **Skills** – `tsh-designing-architecture`, `tsh-discovering-technical-context`, `tsh-analyzing-implementation-gaps`, `tsh-analyzing-codebase`, `tsh-implementing-frontend`, `tsh-implementing-backend`, `tsh-designing-databases` and more (see [Knowledge skills](#knowledge-skills-43))
 
 ### Quality – Review & Testing
 
 - **Commands** – `/tsh-review`, `/tsh-review-ui`, `/tsh-audit-codebase`
-- **Subagents** – `tsh-code-reviewer`, `tsh-ui-reviewer`, `tsh-e2e-engineer`, `tsh-plan-reviewer`
-- **Skills** – `tsh-reviewing-code`, `tsh-verifying-ui`, `tsh-writing-e2e-tests`, `tsh-reviewing-plans`, `tsh-reviewing-frontend`
+- **Subagents** – `tsh-code-reviewer`, `tsh-ui-reviewer`, `tsh-ui-capture-worker`, `tsh-e2e-engineer`, `tsh-plan-reviewer`
+- **Skills** – `tsh-reviewing-code`, `tsh-verifying-ui`, `tsh-using-playwright-cli`, `tsh-writing-e2e-tests`, `tsh-reviewing-plans`, `tsh-reviewing-frontend`
 
 ### Infrastructure
 
@@ -42,6 +42,7 @@ One neutral source (`src/`) is rendered into the native format of each tool: 16 
 ### Developer Utilities
 
 - **Commands** – `/tsh-commit` ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with mandatory approval before `git commit`)
+- **Documentation** – the Engineering Manager hands README, CHANGELOG and docs-site tasks to `tsh-technical-writer`; skills `tsh-writing-documentation` (craft rules) and the internal step `tsh-write-documentation`
 
 ### AI Customization – Extending the Toolchain
 
@@ -51,7 +52,7 @@ One neutral source (`src/`) is rendered into the native format of each tool: 16 
 
 ### MCP integrations
 
-Atlassian, Figma, Context7, Playwright, Sequential Thinking, PDF Reader, AWS (API, documentation) and GCP (gcloud, observability, storage).
+Atlassian, Figma, Context7, Playwright (interactive use and E2E), Sequential Thinking, PDF Reader, AWS (API, documentation) and GCP (gcloud, observability, storage).
 
 ---
 
@@ -128,10 +129,24 @@ These target paths are the ones the installer prints. The user-scope paths for C
 | **Atlassian** | Jira and Confluence access for `/tsh-implement`, `/tsh-review` and the BA flow |
 | **Figma** | Pull design details for UI implementation and verification |
 | **Context7** | Semantic search in external docs and knowledge bases |
-| **Playwright** | Browser automation for UI verification and E2E tests |
+| **Playwright** | Interactive browser use and E2E tests. UI verification captures use the `playwright-cli` command instead (see [UI verification](#ui-verification-with-figma)) |
 | **Sequential Thinking** | Advanced reasoning for complex problem analysis |
 | **AWS / GCP** | Infrastructure audit and cost optimization |
 | **PDF Reader** | Extract content from PDF documents |
+
+---
+
+## Recommended Thinking Effort Settings (Cursor)
+
+Cursor subagents inherit the model of your session, so the thinking effort is the lever you control. In the Cursor model picker, select each model below, choose its recommended thinking effort, and repeat for every model. Once configured, the setting is active for that model in your current Cursor profile.
+
+| Model | Recommended thinking effort |
+| --- | --- |
+| GPT-5.6 Sol | medium (default) |
+| GPT-5.6 Terra | medium/high |
+| GPT-5.6 Luna | high/xhigh |
+| Sonnet 5 | high (default) |
+| MAI-Code-1-Flash | high |
 
 ---
 
@@ -161,7 +176,7 @@ Claude Code: typing the name of a hidden skill (for example `tsh-implement-task`
 | `/tsh-debug` | Reproduce, isolate the root cause, fix, verify with regression tests |
 | `/tsh-ask` | Research a question and save the answer as an ADR in `specifications/decisions/` |
 | `/tsh-review` | Structured code review (PASS / BLOCKER / SUGGESTION) |
-| `/tsh-review-ui` | Compare the running app (Playwright) against Figma |
+| `/tsh-review-ui` | Compare the running app against Figma, in one pass and without fixing code; routed through the engineering manager (capture worker, then reviewer) |
 | `/tsh-audit-codebase` | Whole-repository audit; writes `code-quality-report.md` |
 | `/tsh-audit-infrastructure` | Infrastructure audit |
 | `/tsh-analyze-cloud-costs <aws\|gcp> <profile\|project> <region>` | Cloud cost analysis |
@@ -180,9 +195,9 @@ Claude Code: typing the name of a hidden skill (for example `tsh-implement-task`
 2. You review the research document and confirm
 3. Architect creates a step-by-step implementation plan
 4. Plan Reviewer validates the plan and returns it if BLOCKERs are found (up to 3 iterations)
-5. You review the plan and the review report and approve
-6. Software Engineer implements phase by phase
-7. UI tasks: each component is verified against Figma, up to 5 fix iterations
+5. The Engineering Manager opens the single approval gate (`Approve plan` / `I have comments` / `Stop`); implementation starts only from a recorded approval
+6. Tasks are routed by type: Plan Implementor for actionable low-risk tasks, Software Engineer for complex non-UI work, UI Engineer for UI, plus the E2E, DevOps, Prompt and Technical Writer engineers
+7. UI tasks: each component is captured and verified against Figma, up to 5 fix iterations
 8. Code Reviewer runs the final quality check
 
 ### New feature from a description (no Jira)
@@ -200,6 +215,12 @@ Same flow, but context comes from your codebase instead of Jira.
 /tsh-review Review the recent changes to the payment module
 /tsh-review-ui
 ```
+
+### UI verification with Figma
+
+`/tsh-implement` verifies UI tasks that have a Figma design in a loop run by the Engineering Manager. The UI Engineer implements, the UI Capture Worker captures the running app (screenshot, computed styles, accessibility snapshot) with the `playwright-cli` command, and the UI Reviewer fetches the design from Figma and compares it with that evidence. A review never runs without a fresh capture. `/tsh-review-ui` runs one capture and one review per component and never fixes code.
+
+Prerequisites: the `playwright-cli` command (`npx playwright-cli`, or `npm install -g @playwright/cli@latest`), the Figma MCP, and a running app with its full URL. For a page behind a login, export `TSH_UI_LOGIN_<FIELD>` variables in the shell that starts your tool. Where the screenshots cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN`. See the [UI Verification Flow](website/docs/workflow/ui-verification-flow.md) and [Prerequisites](website/docs/getting-started/prerequisites.md).
 
 ### Workshop transcript to Jira backlog
 
@@ -249,19 +270,23 @@ Subagents are leaf workers (one delegation level). Orchestrators run in the main
 | `tsh-ai-customization-orchestrator` | orchestrator | Coordinates research, creation and review of customization artifacts |
 | `tsh-context-engineer` | subagent | Gather requirements from Jira, Confluence, Figma and the codebase |
 | `tsh-architect` | subagent | Solution architecture and step-by-step implementation plans |
-| `tsh-software-engineer` | subagent | Implement backend, frontend, APIs and data layers |
+| `tsh-plan-implementor` | subagent (delegated only) | Execute exactly one actionable low-risk plan task inside its listed files |
+| `tsh-software-engineer` | subagent | Implement complex or exceptional non-UI work: backend, APIs, data layers, bug fixes |
+| `tsh-ui-engineer` | subagent | Implement UI and Figma-driven work: components, forms, hooks, accessibility |
+| `tsh-ui-capture-worker` | subagent (delegated only) | Capture the running app with `playwright-cli` as evidence for the UI reviewer |
+| `tsh-technical-writer` | subagent | Write README, CHANGELOG, in-repo docs and docs-site pages |
 | `tsh-prompt-engineer` | subagent | Design, optimize and audit LLM application prompts |
 | `tsh-devops-engineer` | subagent | Cloud infrastructure, CI/CD, Kubernetes, Terraform |
 | `tsh-e2e-engineer` | subagent | Playwright end-to-end tests |
 | `tsh-code-reviewer` | subagent | Structured code review |
-| `tsh-ui-reviewer` | subagent | Figma vs. Playwright comparison, PASS/FAIL verdict |
+| `tsh-ui-reviewer` | subagent | Compare Figma with the captured evidence: PASS, FAIL or VERIFICATION NOT RUN |
 | `tsh-plan-reviewer` | subagent (delegated only) | Validate implementation plans: APPROVED or REVISIONS NEEDED |
 | `tsh-ba-transcript-worker`, `tsh-ba-analysis-worker`, `tsh-ba-extraction-worker`, `tsh-ba-quality-worker`, `tsh-ba-formatting-worker` | subagents (delegated only) | BA phases: transcript, analysis, extraction, quality, Jira formatting |
 | `tsh-ai-customization-researcher`, `tsh-ai-customization-creator`, `tsh-ai-customization-reviewer` | subagents (delegated only) | Research, creation and review for customization tasks |
 
 Subagents work in interactive mode by default. When a task starts with `MODE: delegated` they do not ask questions and end with a `STATUS` block for the caller.
 
-## Knowledge skills (41)
+## Knowledge skills (43)
 
 Loaded by name by agents when relevant. No manual invocation needed.
 
@@ -273,10 +298,10 @@ Loaded by name by agents when relevant. No manual invocation needed.
 | **Frontend** | tsh-implementing-frontend, tsh-implementing-react, tsh-implementing-forms, tsh-ensuring-accessibility, tsh-reviewing-frontend, tsh-optimizing-frontend, tsh-writing-hooks |
 | **Infrastructure** | tsh-delivering-infrastructure, tsh-implementing-terraform-modules, tsh-implementing-kubernetes, tsh-implementing-ci-cd, tsh-implementing-observability, tsh-managing-secrets, tsh-optimizing-cloud-cost, tsh-designing-multi-cloud-architecture |
 | **Quality** | tsh-reviewing-code, tsh-reviewing-plans, tsh-verifying-ui, tsh-writing-e2e-tests, tsh-debugging, tsh-refactoring |
-| **Tooling** | tsh-committing, tsh-using-mcp-servers |
+| **Tooling** | tsh-committing, tsh-using-mcp-servers, tsh-using-playwright-cli, tsh-writing-documentation |
 | **AI Customization** | tsh-creating-agents, tsh-creating-skills, tsh-creating-commands, tsh-creating-rules, tsh-migrating-copilot-customizations |
 
-The orchestrators and the two internal steps (`tsh-implement-task`, `tsh-orchestrate-ui-verification`) are skills as well; they are loaded by commands and are hidden from the `/` menu where the tool supports it.
+The orchestrators and the three internal steps (`tsh-implement-task`, `tsh-orchestrate-ui-verification`, `tsh-write-documentation`) are skills as well; they are loaded by commands and are hidden from the `/` menu where the tool supports it.
 
 ---
 
