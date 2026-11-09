@@ -1,6 +1,6 @@
 ---
 name: tsh-designing-multi-cloud-architecture
-description: Design multi-cloud architectures using a decision framework to select and integrate services across AWS, Azure, and GCP. Use when designing multi-cloud strategies, migrating between cloud providers, selecting cloud services for a workload, avoiding vendor lock-in, or leveraging best-of-breed services from multiple providers.
+description: Designs multi-cloud architectures using a decision framework to select and integrate services across AWS, Azure, and GCP. Use when designing multi-cloud strategies, migrating between cloud providers, selecting cloud services for a workload, avoiding vendor lock-in, or leveraging best-of-breed services from multiple providers.
 type: skill
 metadata:
   short-description: Choose and integrate services across AWS, Azure and GCP

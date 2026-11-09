@@ -55,6 +55,7 @@ Reference other skills by name ("load the `tsh-<name>` skill"). Never by path: n
 - The `tsh-` prefix applies to skill directory names and agent file names; support files under `references/`, `assets/`, `scripts/` are named for their topic.
 - Tool-neutral wording: no tool-specific syntax (`@tsh-...` mentions, "Task tool", model names) in `src/`.
 - `SKILL.md` is at most 500 lines; descriptions of `skill` and `command` types contain "Use when"; each skill has `metadata.short-description` (max 120 chars).
+- Descriptions of artifacts the model sees (`skill`, `internal`, `orchestrator`, agents) are written in the third person ("Designs ...", not "Design ..."), say what the artifact does and when to use it, and stay under 1024 characters; the lint rule `description-person` flags a leading imperative verb. Commands are exempt from that rule because the model never sees their description.
 
 ## Support-file layout
 

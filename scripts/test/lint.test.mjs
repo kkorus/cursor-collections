@@ -41,6 +41,10 @@ const cases = [
   ['reference-toc', add({ 'src/skills/tsh-reviewing-code/references/long.md': lines(120) }),
     add({ 'src/skills/tsh-reviewing-code/references/long.md': `# Long\n\n## Contents\n\n- a\n\n## A\n${lines(120, '')}` })],
   ['description-trigger', edit(SKILL, { description: 'Reviews code changes.' }), null],
+  ['description-person', edit(SKILL, { description: 'Review code changes. Use when reviewing a change.' }),
+    edit(SKILL, { description: 'Reviews code changes. Use when reviewing a change.' })],
+  ['description-person', edit(AGENT, { description: 'Analyze code changes. Use when reviewing a change.' }),
+    edit(AGENT, { description: 'Review specialist that evaluates code. Use when reviewing a change.' })],
   ['no-path-refs', withBody(SKILL, '\nLoad [x](../tsh-other/SKILL.md).\n'), withBody(SKILL, '\nLoad [x](references/checklist.md).\n')],
   ['no-path-refs', withBody(SKILL, '\nRead `.cursor/skills/workflows/tsh-x/SKILL.md`.\n'), null],
   ['no-path-refs', withBody(SKILL, '\nUse read_file on references/deep/x.md.\n'), null],
@@ -80,6 +84,11 @@ for (const [rule, violate, clean] of cases) {
     assert.deepEqual(good.filter((f) => f.rule === rule), []);
   });
 }
+
+test('description-person does not apply to commands (the model never sees their description)', () => {
+  const found = findingsFor(edit('src/skills/tsh-review/SKILL.md', { description: 'Review a change set. Use when asked.' })(sourceFiles()));
+  assert.deepEqual(found.filter((f) => f.rule === 'description-person'), []);
+});
 
 test('description-length is a warning only (exit 0)', () => {
   const root = makeRoot(edit(SKILL, { description: `${'x'.repeat(520)} Use when long.` })(sourceFiles()));

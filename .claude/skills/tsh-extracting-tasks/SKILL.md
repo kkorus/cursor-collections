@@ -1,6 +1,6 @@
 ---
 name: tsh-extracting-tasks
-description: Identify and structure epics and user stories from workshop materials (cleaned transcripts, Figma designs, codebase analysis, and other documents). Produces a business-oriented task breakdown with dependencies, assumptions, and open questions. Use when turning workshop materials into a structured epic and story breakdown.
+description: Identifies and structures epics and user stories from workshop materials (cleaned transcripts, Figma designs, codebase analysis, and other documents). Produces a business-oriented task breakdown with dependencies, assumptions, and open questions. Use when turning workshop materials into a structured epic and story breakdown.
 metadata:
   short-description: Extract epics and user stories from workshop materials
 user-invocable: false

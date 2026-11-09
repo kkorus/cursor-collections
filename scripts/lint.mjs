@@ -45,6 +45,20 @@ const DELEGATION_WORDS = /\b(delegate to|spawn\w*|subagents?)\b/gi;
 const DELEGATION_ALLOW = ['tsh-ai-customization-researcher', 'tsh-ai-customization-creator',
   'tsh-ai-customization-reviewer', 'tsh-prompt-engineer'];
 const LINK = /\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+// Descriptions of model-visible artifacts are written in the third person ("Designs ..."), because they are
+// injected into the system prompt. A bare imperative verb at the start is flagged; "<Verb> specialist ..." is a noun phrase.
+const IMPERATIVE_VERBS = new Set(['analyze', 'answer', 'apply', 'audit', 'build', 'check', 'clean', 'collect', 'compare',
+  'convert', 'create', 'debug', 'define', 'design', 'discover', 'document', 'draft', 'ensure', 'execute', 'explain',
+  'explore', 'extract', 'find', 'fix', 'format', 'gather', 'generate', 'guide', 'handle', 'help', 'identify', 'implement',
+  'make', 'manage', 'migrate', 'optimize', 'orchestrate', 'perform', 'plan', 'process', 'produce', 'provide', 'refactor',
+  'research', 'resolve', 'review', 'run', 'search', 'summarize', 'test', 'transform', 'turn', 'update', 'use', 'validate',
+  'verify', 'write']);
+function imperativeStart(description) {
+  const words = description.trim().split(/\s+/);
+  const first = (words[0] ?? '').replace(/[^A-Za-z]/g, '').toLowerCase();
+  if (!IMPERATIVE_VERBS.has(first) || /^specialist\b/i.test(words[1] ?? '')) return null;
+  return words[0];
+}
 
 /** @returns {{ findings: object[], notes: string[] }} */
 export function lintModel(model) {
@@ -78,6 +92,10 @@ export function lintModel(model) {
       add('description-trigger', file, 'description');
     }
     if (description.length > DESCRIPTION_WARN) add('description-length', file, 'description', { message: `${description.length} chars` });
+    if (data.type !== 'command') { // commands are not model-invocable: their description never reaches the model
+      const verb = imperativeStart(description);
+      if (verb) add('description-person', file, verb);
+    }
     const short = data.metadata?.['short-description'];
     if (typeof short !== 'string' || short.length > SHORT_DESCRIPTION_MAX) {
       add('short-description', file, 'metadata.short-description');
@@ -96,6 +114,8 @@ export function lintModel(model) {
     if (typeof data.description === 'string' && data.description.length > DESCRIPTION_WARN) {
       add('description-length', file, 'description', { message: `${data.description.length} chars` });
     }
+    const agentVerb = typeof data.description === 'string' ? imperativeStart(data.description) : null;
+    if (agentVerb) add('description-person', file, agentVerb);
     if (!agent.includes.includes('agent-modes')) add('agent-contract', file, 'agent-modes');
     if (!DELEGATION_ALLOW.includes(agent.name)) {
       for (const m of agent.rawBody.matchAll(DELEGATION_WORDS)) {

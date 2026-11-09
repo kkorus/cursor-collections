@@ -1,6 +1,6 @@
 ---
 name: tsh-using-playwright-cli
-description: Use when driving a browser through the `playwright-cli` command line, to open pages, interact with elements by snapshot refs, read computed styles and the accessibility snapshot, manage named sessions and storage state, and capture screenshots, snapshots and computed styles as evidence.
+description: Drives a browser through the `playwright-cli` command line to open pages, interact with elements by snapshot refs, read computed styles and the accessibility snapshot, manage named sessions and storage state, and capture screenshots as evidence. Use when a task needs a real browser session driven from the shell, for example capturing UI evidence.
 type: skill
 metadata:
   short-description: Drive a browser with the playwright-cli command line and capture UI evidence

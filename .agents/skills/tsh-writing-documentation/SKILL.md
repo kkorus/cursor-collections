@@ -1,6 +1,6 @@
 ---
 name: tsh-writing-documentation
-description: Craft rules for writing accurate, scannable project documentation such as README, CHANGELOG, in-repo docs and docs-site pages. Use when writing or updating documentation, documenting a feature after implementation, or reviewing a documentation change.
+description: Rules for crafting accurate, scannable project documentation such as README, CHANGELOG, in-repo docs and docs-site pages. Use when writing or updating documentation, documenting a feature after implementation, or reviewing a documentation change.
 metadata:
   short-description: Write accurate, scannable project documentation
 user-invocable: false

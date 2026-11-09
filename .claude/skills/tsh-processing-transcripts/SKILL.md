@@ -1,6 +1,6 @@
 ---
 name: tsh-processing-transcripts
-description: Clean raw workshop or meeting transcripts from small talk, filler words, and off-topic tangents. Extract and structure business-relevant content into a standardized format with discussion topics, key decisions, action items, and open questions. Use when a raw transcript needs cleaning before analysis.
+description: Cleans raw workshop or meeting transcripts of small talk, filler words, and off-topic tangents. Extracts and structures business-relevant content into a standardized format with discussion topics, key decisions, action items, and open questions. Use when a raw transcript needs cleaning before analysis.
 metadata:
   short-description: Clean and structure raw workshop transcripts
 user-invocable: false
