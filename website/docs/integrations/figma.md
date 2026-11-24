@@ -27,6 +27,7 @@ Provides access to Figma designs for extracting specifications, verifying UI imp
 | **Software Engineer** | Extracting exact design values for frontend implementation |
 | **UI Reviewer** | Getting EXPECTED state for comparison (primary verification tool) |
 | **Code Reviewer** | Verifying frontend implementation matches design specifications |
+| **Context Engineer** | Gathering design context for a task |
 | **E2E Engineer** | Understanding expected UI behavior, extracting labels for locator strategies |
 
 ## Configuration
@@ -42,7 +43,7 @@ Provides access to Figma designs for extracting specifications, verifying UI imp
 
 ## Authentication
 
-Connects to the Figma cloud API via HTTP. Requires the Figma desktop app to be running in Dev Mode for design extraction.
+Connects to the remote Figma MCP server (`https://mcp.figma.com/mcp`) over HTTP. Authorize the server in your tool on first use; no desktop app is required.
 
 ## Official Documentation
 

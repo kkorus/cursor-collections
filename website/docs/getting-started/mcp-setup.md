@@ -5,34 +5,55 @@ title: MCP Setup
 
 # MCP Setup
 
-To unlock the full workflow (Jira, Figma, code search, browser automation), configure the MCP (Model Context Protocol) servers. Cursor Collections provides a ready-to-use template in `.cursor/mcp.json`.
+To unlock the full workflow (Jira, Figma, code search, browser automation), configure the MCP (Model Context Protocol) servers. TSH AI Collections provides a ready-to-use template for each tool, generated from one source (`src/mcp/servers.json`).
 
-## Installation Options
+The installer does **not** write MCP configuration. It prints the generated file to merge for each tool. Merge the entries into your existing config, so you keep servers you already have.
 
-### Option 1: User Profile (Recommended)
+## Per-tool setup
 
-This enables the MCP tools globally across all your projects.
+| Tool | Generated file in the repository | User scope (all projects) | Project scope |
+|---|---|---|---|
+| **Cursor** | `.cursor/mcp.json` | `~/.cursor/mcp.json` | `<project>/.cursor/mcp.json` |
+| **Claude Code** | `.mcp.json` | `~/.claude.json`, key `mcpServers` | `<project>/.mcp.json` |
+| **Codex** | `.codex/config.toml` | `~/.codex/config.toml` | `<project>/.codex/config.toml` |
 
-1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`)
-2. Navigate to **MCP**
-3. Click **Add MCP Server**
-4. Copy the contents of [`.cursor/mcp.json`](https://github.com/kkorus/cursor-collections/blob/main/.cursor/mcp.json) from this repository
+:::caution Not yet verified
+The user-scope locations for Claude Code (`~/.claude.json`) and Codex (`~/.codex/config.toml`) are the paths the installer prints. They have not been confirmed in a real install yet. If a server does not show up, check the tool's own MCP documentation.
+:::
 
-### Option 2: Workspace Configuration
+### Cursor
 
-Use this if you want to enable these tools only for a specific project.
+1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`) and go to **MCP**.
+2. Merge the `mcpServers` entries of [`.cursor/mcp.json`](https://github.com/kkorus/cursor-collections/blob/main/.cursor/mcp.json) into `~/.cursor/mcp.json` (all projects) or into your project's `.cursor/mcp.json`.
 
-1. Copy the `.cursor/mcp.json` file from this repository.
-2. Paste it into the `.cursor` folder of your target project (e.g., `my-project/.cursor/mcp.json`).
+The top-level key must be `mcpServers`. An earlier version of this repository used `servers`, which is wrong; see [Upgrading](./upgrading).
+
+### Claude Code
+
+Merge the entries of [`.mcp.json`](https://github.com/kkorus/cursor-collections/blob/main/.mcp.json) into your project's `.mcp.json`, or add servers one by one with `claude mcp add` (see the [Claude Code MCP docs](https://code.claude.com/docs/en/mcp)). Claude Code asks you to approve servers from a project `.mcp.json` the first time. Remote servers need `"type": "http"`, which the generated file already sets.
+
+:::info Keep the server name `atlassian`
+The business analyst sub-workers must not write to Jira. For Claude Code, that is enforced by denying the tools of the MCP server named `atlassian`. If you add Atlassian as a claude.ai connector instead, Claude Code names its tools `mcp__claude_ai_<server>__*`, and the deny does not match them. The exact connector name is not yet verified. Use the generated `.mcp.json` entry named `atlassian`.
+:::
+
+### Codex
+
+Merge the tables of [`.codex/config.toml`](https://github.com/kkorus/cursor-collections/blob/main/.codex/config.toml) into `~/.codex/config.toml`, or into `<project>/.codex/config.toml`.
+
+:::warning Trusted projects only
+Codex loads a project-level `.codex/config.toml` (and `.codex/agents`) **only in trusted projects**. Trust the project in Codex first, or use the user-level file.
+:::
+
+Server names that contain dots, such as `awslabs.aws-api-mcp-server`, are written with quoted table keys (`[mcp_servers."awslabs.aws-api-mcp-server"]`). Whether Codex accepts them is not yet verified.
 
 ## MCP Server Reference
 
 | MCP Server | Purpose | Used By |
 |------------|---------|---------|
 | **Atlassian** | Access Jira issues and Confluence pages | Business Analyst, Context Engineer, Architect, Engineering Manager, Code Reviewer |
-| **Figma** | Pull design details, components, and variables | Software Engineer (UI), UI Reviewer |
+| **Figma** | Pull design details, components, and variables | UI Engineer, UI Reviewer |
 | **Context7** | Semantic search in external documentation | All agents |
-| **Playwright** | Interactive browser automation and UI debugging | Software Engineer, E2E Engineer |
+| **Playwright** | Interactive browser automation and UI debugging, E2E testing | E2E Engineer (and ad hoc use) |
 | **Sequential Thinking** | Advanced reasoning for complex analysis | All agents (for complex tasks) |
 | **AWS API** | Live AWS infrastructure inspection | DevOps Engineer |
 | **AWS Documentation** | AWS service documentation lookup | DevOps Engineer |
@@ -45,7 +66,7 @@ Use this if you want to enable these tools only for a specific project.
 
 Once you've copied the configuration, here's what to do:
 
-1. **Start using Cursor Agent** — open Agent chat and send a message. Cursor will start the MCP servers automatically when a tool is needed.
+1. **Start a chat** — open Agent chat in Cursor, or start Claude Code or Codex, and send a message. The tool starts the MCP servers when a tool call needs them.
 2. **Authenticate when prompted** — for **Atlassian** and **Figma**, your browser may open asking you to log in and authorize access. Follow the prompts.
 3. **(Optional) Add a Context7 API key** — Context7 works out of the box with rate limits. For higher limits, see [Configuring Context7 API Key](#configuring-context7-api-key) below.
 
@@ -55,26 +76,23 @@ That's it — no extra commands or manual wiring needed.
 
 To confirm all MCP servers are running correctly:
 
-1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`).
-2. Navigate to **MCP**.
-3. Confirm each configured server appears in the list with a **connected** or **running** status. You should see all 11 servers from [MCP Server Reference](#mcp-server-reference) above (Atlassian, Figma, Context7, Playwright, Sequential Thinking, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage, PDF Reader).
-4. Send a test message in Agent chat that uses an MCP tool (for example, ask the agent to look up a Jira issue or search Context7 documentation) and confirm the tool call succeeds.
+1. **Cursor:** open **Cursor Settings → MCP**. **Claude Code:** run `/mcp`. **Codex:** run `codex mcp list` (not yet verified).
+2. Confirm each configured server appears in the list with a **connected** or **running** status. You should see all 11 servers from [MCP Server Reference](#mcp-server-reference) above (Atlassian, Figma, Context7, Playwright, Sequential Thinking, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage, PDF Reader).
+3. Send a test message in Agent chat that uses an MCP tool (for example, ask the agent to look up a Jira issue or search Context7 documentation) and confirm the tool call succeeds.
 
-If any server shows an error or disconnected status, restart Cursor or check the [Authentication Requirements](#authentication-requirements) section below.
-
-:::note UI Verification Setup
-MCP setup is only part of the Figma-backed UI verification workflow. EXPECTED still comes from Figma MCP, but ACTUAL capture is produced by `tsh-ui-capture-worker` through Playwright CLI artifacts. To use that flow, keep the target app running, confirm the exact full dev server URL when asked, and make sure `playwright-cli` is available (`npx playwright-cli` or a global install).
-:::
+If any server shows an error or disconnected status, restart your tool or check the [Authentication Requirements](#authentication-requirements) section below.
 
 ## Configuring Context7 API Key
 
 To get higher rate limits, provide a Context7 API key. Get your key at [context7.com/dashboard](https://context7.com/dashboard).
 
-Modify your `mcp.json` to use the `--api-key` argument:
+Add the `--api-key` argument to the `context7` entry.
+
+Cursor (`mcp.json`) and Claude Code (`.mcp.json`):
 
 ```json
 {
-  "servers": {
+  "mcpServers": {
     "context7": {
       "type": "stdio",
       "command": "npx",
@@ -89,12 +107,26 @@ Modify your `mcp.json` to use the `--api-key` argument:
 }
 ```
 
+Codex (`config.toml`):
+
+```toml
+[mcp_servers.context7]
+command = "npx"
+args = [ "-y", "@upstash/context7-mcp@latest", "--api-key", "YOUR_API_KEY_HERE" ]
+```
+
+Do not commit a real key to a shared repository.
+
+:::note UI verification does not use the Playwright MCP
+Figma UI verification captures the running app with the `playwright-cli` command, not with this MCP server. Install `playwright-cli` as described in [Prerequisites](./prerequisites#figma-backed-ui-verification). The Figma MCP is still needed, because the UI Reviewer fetches the design through it.
+:::
+
 ## Authentication Requirements
 
 - **Atlassian** — Requires Atlassian account authentication. The HTTP MCP endpoint handles OAuth automatically via your browser.
 - **Figma** — Requires Figma account access. The HTTP MCP endpoint handles authentication via your browser.
 - **Context7** — Works without an API key (with rate limits). Optional API key for higher limits.
-- **Playwright** — No authentication required. Runs locally via npx.
+- **Playwright** — No authentication required. Runs locally via npx. (`playwright-cli` for UI verification is a separate command, see [Prerequisites](./prerequisites#figma-backed-ui-verification).)
 - **Sequential Thinking** — No authentication required. Runs locally via npx.
 - **AWS MCPs** — Requires AWS credentials configured locally (`aws configure` or environment variables).
 - **GCP MCPs** — Requires GCP credentials configured locally (`gcloud auth application-default login`).

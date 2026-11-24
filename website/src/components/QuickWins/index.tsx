@@ -24,7 +24,7 @@ const useCases: UseCase[] = [
     trackLabel: 'Development',
     title: 'Single-Session Context Gathering',
     problem:
-      'Requirements live in Jira, designs in Figma, documentation in Confluence, code in GitHub. Developers constantly context-switch to gather information. MCP integrations bring all context into a single Copilot chat session.',
+      'Requirements live in Jira, designs in Figma, documentation in Confluence, code in GitHub. Developers constantly context-switch to gather information. MCP integrations bring all context into a single chat session.',
     time: '~3 min vs 30–60 min',
   },
   {
@@ -32,7 +32,7 @@ const useCases: UseCase[] = [
     trackLabel: 'Quality',
     title: 'Automated Code Review',
     problem:
-      'Multi-dimensional review checking acceptance criteria, security, performance, database patterns, and coding standards. Clear PASS/BLOCKER/SUGGESTION verdicts on every run.',
+      'Multi-dimensional review checking acceptance criteria, security, performance, database patterns, and coding standards. Findings rated critical, warning or suggestion, ending in a verdict: No critical findings or Critical findings must be fixed.',
     time: '~5 min',
   },
   {
@@ -56,7 +56,7 @@ const useCases: UseCase[] = [
     trackLabel: 'Development',
     title: 'Onboarding New Team Members',
     problem:
-      'New developers spend days understanding the codebase, conventions, and task requirements before they can contribute. The /tsh-implement prompt triggers the Engineering Manager, which automatically delegates to the Context Engineer to gather context from Jira, Confluence, Figma, and the codebase. It then delegates to the Architect to create a step-by-step implementation path — within minutes, not days.',
+      'New developers spend days understanding the codebase, conventions, and task requirements before they can contribute. The /tsh-implement command loads the Engineering Manager, which automatically delegates to the Context Engineer to gather context from Jira, Confluence, Figma, and the codebase. It then delegates to the Architect to create a step-by-step implementation path — within minutes, not days.',
     time: '~5 min per task',
   },
   {
@@ -92,7 +92,7 @@ export default function QuickWins(): React.JSX.Element {
         <div className={styles.useCasesHeader}>
           <h2>Core use cases</h2>
           <p>
-            Every use case has dedicated agents, prompts, and workflows — not
+            Every use case has dedicated agents, commands, and workflows — not
             generic AI assistance.
           </p>
         </div>

@@ -6,25 +6,27 @@ title: Introduction
 
 # Introduction
 
-**Cursor Collections** is an AI-powered product engineering framework that helps teams build wonderful products — covering the full lifecycle from product ideation through development to quality assurance.
+**TSH AI Collections** is an AI-powered product engineering framework that helps teams build wonderful products — covering the full lifecycle from product ideation through development to quality assurance.
 
-Built by [The Software House](https://tsh.io) and validated across 50+ AI-powered projects. Designed for **Cursor AI IDE**.
+Built by [The Software House](https://tsh.io) and validated across 50+ AI-powered projects. Works with **Cursor**, **Claude Code** and **Codex** — see [Supported Tools](./getting-started/supported-tools).
 
 ## The Problem
 
 According to Gartner, only **10% of software engineers** see meaningful productivity improvement from AI tools. The gap isn't the technology — it's the lack of structure, specialization, and repeatable workflows around it.
 
-Most teams use AI for code completion. **Cursor Collections turns AI into an end-to-end product engineering partner** — from converting a workshop transcript into a Jira backlog, through architecture design and implementation, to automated code review and E2E testing.
+Most teams use AI for code completion. **TSH AI Collections turns AI into an end-to-end product engineering partner** — from converting a workshop transcript into a Jira backlog, through architecture design and implementation, to automated code review and E2E testing.
 
 ## What It Provides
 
 | Capability | Count | Description |
 |---|---|---|
-| **Agent skills** | 25 | 13 user-facing agents plus 12 internal delegate-only workers |
-| **Slash commands** | 17 | See [Commands Overview](./prompts/overview) — `/tsh-explore-materials`, `/tsh-analyze-materials`, `/tsh-implement`, `/tsh-review`, `/tsh-ask`, `/tsh-debug`, `/tsh-refactor`, `/tsh-commit`, customization commands, and more |
-| **Workflow skills** | 39 | Transcript Processing, Task Extraction, Architecture Design, Code Review, UI Verification, E2E Testing, Backend Implementation, Frontend Implementation, SQL Engineering, CI/CD, Kubernetes, Terraform, and more |
-| **MCP Integrations** | 11 | Atlassian, Figma Dev Mode, Context7, Playwright, Sequential Thinking, PDF Reader, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage |
-| **Structured Workflows** | 5 | Standard Flow, UI Flow, E2E Testing Flow, Workshop Analysis Flow, Cursor Customization Flow |
+| **Subagents** | 21 | 16 specialists (Architect, Plan Implementor, Software Engineer, UI Engineer, Technical Writer, Code Reviewer, DevOps Engineer, ...) plus 5 internal Business Analyst workers |
+| **Orchestrators** | 3 | Engineering Manager, Business Analyst and AI Customization Orchestrator. They run in your main conversation and delegate to subagents |
+| **Slash commands** | 16 | See [Commands Overview](./commands/overview) — `/tsh-explore-materials`, `/tsh-analyze-materials`, `/tsh-implement`, `/tsh-review`, `/tsh-ask`, `/tsh-debug`, `/tsh-refactor`, `/tsh-commit`, `/tsh-create-custom-*`, and more |
+| **Knowledge skills** | 43 | Processing Transcripts, Extracting Tasks, Designing Architecture, Reviewing Code, Verifying UI, Writing E2E Tests, Implementing Backend, Implementing Frontend, Designing Databases, Implementing CI/CD, Kubernetes, Terraform Modules, and more |
+| **Internal steps** | 3 | `tsh-implement-task`, `tsh-orchestrate-ui-verification` and `tsh-write-documentation`, loaded by the Engineering Manager or an agent, not run by you |
+| **MCP Integrations** | 11 | Atlassian, Figma, Context7, Playwright, Sequential Thinking, PDF Reader, AWS API, AWS Documentation, GCP Gcloud, GCP Observability, GCP Storage |
+| **Structured Workflows** | 5 | Standard Flow, UI Flow, E2E Testing Flow, Workshop Analysis Flow, AI Customization Flow |
 
 ## Key Benefits
 
@@ -52,8 +54,8 @@ Most teams use AI for code completion. **Cursor Collections turns AI into an end
 | UI doesn't match Figma | `/tsh-implement` — automated Figma verification loop | ~20 min |
 | Inconsistent code reviews | `/tsh-review PROJ-123` — structured multi-dimensional review | ~5 min |
 | Flaky or missing E2E tests | `/tsh-implement` — Engineering Manager delegates to E2E Engineer | ~10 min |
-| Technical debt piling up | `/tsh-review-codebase` — full quality analysis with action plan | ~15 min |
-| Cloud costs out of control | `/tsh-analyze-aws-costs` or `/tsh-analyze-gcp-costs` — cost optimization audit | ~10 min |
+| Technical debt piling up | `/tsh-audit-codebase` — full quality analysis with action plan | ~15 min |
+| Cloud costs out of control | `/tsh-analyze-cloud-costs` — AWS or GCP cost optimization audit | ~10 min |
 | Infrastructure security gaps | `/tsh-audit-infrastructure` — security and best practices audit | ~15 min |
 
 ## How It Works
@@ -71,7 +73,9 @@ Each phase produces a documented artifact that feeds the next, ensuring nothing 
 ## Next Steps
 
 - [Prerequisites](./getting-started/prerequisites) — Check requirements.
-- [Installation](./getting-started/installation) — Install for Cursor.
+- [Installation](./getting-started/installation) — Install for Cursor, Claude Code or Codex.
+- [Supported Tools](./getting-started/supported-tools) — Invocation syntax and known limits per tool.
+- [Upgrading](./getting-started/upgrading) — Coming from an earlier version.
 - [MCP Setup](./getting-started/mcp-setup) — Connect Jira, Figma, and other tools.
 - [Workflow Overview](./workflow/overview) — Understand the full delivery lifecycle.
 - [Use Cases](./use-cases) — See real problems the framework solves.

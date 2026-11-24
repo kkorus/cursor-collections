@@ -3,85 +3,76 @@ sidebar_position: 4
 title: Engineering Manager
 ---
 
-**File:** `.cursor/skills/agents/tsh-engineering-manager/SKILL.md`
+# Engineering Manager (orchestrator)
 
-The Engineering Manager is the orchestration seat for implementation delivery. It defines **WHO** does the work — persona, delegation boundaries, ambiguity handling, and tool discipline — and never writes product code itself. The actual workflow mechanics (planning readiness, execution routing, and quality gates) live in the `tsh-orchestrating-implementation` skill, not in the agent.
+**Source:** `src/skills/tsh-engineering-manager/SKILL.md`  
+**Kind:** orchestrator skill (runs in the main thread)
 
-Model selection is a session-level concern in Cursor — it is handled per worker at delegation time and is not bound by the artifact. High-leverage decisions are escalated to the **Architect**.
+The Engineering Manager is an orchestrator skill, not a subagent. [`/tsh-implement`](../commands/implement) and [`/tsh-refactor`](../commands/refactor) load it in the main conversation, so it can ask you questions and run the one approval gate for plan-based work. It does not write code. It decides what happens next, delegates each step to a subagent with full context, checks the result and keeps the plan up to date.
 
-The Engineering Manager owns the user-facing execution-authorization recovery gate. A valid current-revision `APPROVED` record is the authorization basis regardless of which gate recorded it, including the Architect's plan-authoring gate; automated Reviewer approval is not permission to implement. The manager first validates the persisted `## Human Approval` record and silently reuses a valid one. Only when no valid record exists does it present exactly `Approve current plan`, `Request changes`, or `Stop` as fail-closed recovery, never as a second normal authorization. The Architect may record the literal response in the plan, but may not infer, paraphrase, or manufacture consent. A material revision after Human approval halts delegation and requires renewed Human approval, with no automatic reviewer invocation; a new review event happens only through an explicitly user-directed new review event.
+Because subagents start with a clean context, every delegation names the input files by explicit path and starts with `MODE: delegated`. Each subagent answers with a `STATUS` block (`DONE`, `NEEDS_INPUT`, `NEEDS_ARCHITECT_DECISION` or `BLOCKED`). The manager asks you the questions of a `NEEDS_INPUT` status and delegates again with your answers. Delegation goes one level deep: the subagents never delegate further.
 
-The manager presents Human Approval at the gate but never writes the record itself — it has no direct document-editing tools, so recording the user's literal response is always a narrowly scoped delegation to the Architect. Execution owners separately validate the persisted record from disk before any edit. A delegated owner's recovery question can offer handing work back to the manager, but that hand-back is not the only recovery path.
+## Flows
 
-When the Architect records plan-authoring Human approval, that authoring discussion ends before delivery. The manager reports the exact plan path, current revision, persisted timestamp, and review path when available, names implementation as the next step in a new discussion, and stops before file-changing delegation; the unchanged persisted record is reused there without a duplicate approval gate.
+The manager recommends a flow and lets you confirm or override it.
 
-## How to Use
+| Flow | When | Steps |
+|---|---|---|
+| **Quick** | Bug fixes, small self-contained features, config changes, added tests | Implement, quality checks, code review in diff mode (no plan file) |
+| **Full** | Multi-component features, unclear requirements, architectural changes, UI work with Figma | Research, plan, plan review, implementation per task, UI verification, E2E tests, code review |
+| **Refactor** | Entered from `/tsh-refactor`; behavior must not change | Plan with `Behavior-preserving: yes`, characterization tests first, atomic steps, review (uses the `tsh-refactoring` skill) |
 
-The Engineering Manager works from two entry points:
+Plan-based work has exactly one gate. After the plan review loop settles, the manager checks that the `REVIEWED_PLAN_REVISION` of the last review equals the `Plan Revision` of the plan and asks you to choose `Approve plan`, `I have comments` or `Stop`. The manager then has the Architect record your answer (`TASK: record_human_approval`) and re-reads the record before each file-changing delegation. A legacy plan without an approval record is treated as unapproved and gated once. A material change to the plan halts file-changing delegation and asks again.
 
-- **Directly** — invoke the agent in chat with a task description, Jira ID, standalone `*.research.md` file, or `*.plan.md` implementation plan.
-- **Via [`/tsh-implement`](../prompts/public/implement)** — the command routes to the agent; model selection is handled per worker at delegation time and is not bound by the artifact.
+## Delegation
 
-For any request whose intent is to deliver implementation changes, the agent loads the `tsh-orchestrating-implementation` skill and starts at **Step 0** (creating the execution todos). Information-only, advisory-only, and standalone review- or research-only requests do not trigger the workflow.
+| Subagent | Handles | When |
+|---|---|---|
+| [Context Engineer](./context-engineer) | Requirements and context (research file) | The task lacks the information needed for a plan |
+| [Architect](./architect) | Plan, plan revisions, technical context, architecture decisions | The plan is missing, incomplete or needs revision |
+| [Plan Reviewer](./plan-reviewer) | Plan stress-test | After every new or updated plan in the Full flow |
+| [Plan Implementor](./plan-implementor) | One actionable, low-risk plan task (non-UI) | Default executor for non-UI application code that passes the seam test |
+| [Software Engineer](./software-engineer) | Complex or exceptional non-UI code, refactor tasks, plan-less fixes | A task fails the seam test, or the Plan Implementor asked for an architect decision twice |
+| [UI Engineer](./ui-engineer) | Rendered UI, Figma-backed components and UI fix passes | Any UI task, regardless of complexity |
+| [UI Capture Worker](./ui-capture-worker) | Evidence of the running UI | Before every UI review, inside the UI verification loop |
+| [E2E Engineer](./e2e-engineer) | End-to-end tests | The plan has E2E test tasks |
+| [DevOps Engineer](./devops-engineer) | Infrastructure, CI/CD, observability, secrets | A task changes infrastructure (uses `tsh-delivering-infrastructure`) |
+| [Prompt Engineer](./prompt-engineer) | LLM application prompts | The plan contains prompt work |
+| [Technical Writer](./technical-writer) | README, CHANGELOG, `/docs`, docs site | The plan contains documentation work |
+| [UI Reviewer](./ui-reviewer) | Figma verification | After each capture of a UI task with a Figma reference, through [`tsh-orchestrate-ui-verification`](../commands/internal/orchestrate-ui-verification) |
+| [Code Reviewer](./code-reviewer) | Final review | After implementation and the UI gate, or when the plan defines no review phase |
 
-## Workflow Skill
+## Loops the manager owns
 
-All workflow mechanics are owned by a single canonical skill:
+- **Plan review** (maximum 3 iterations): the Plan Reviewer returns `APPROVED` or `REVISIONS NEEDED`, bound to a plan revision. On `REVISIONS NEEDED` the Architect must resolve every BLOCKER, then the plan is reviewed again. After 3 iterations, or with unresolved BLOCKERs, the manager stops and lets you decide.
+- **Implementation to review**: tasks run in plan order with one todo per task. After each code task the manager runs static analysis, the build and the tests. After the review, `critical` and `warning` findings go to you before anything changes.
+- **UI verification**: UI Engineer implements, the UI Capture Worker captures the running UI, the UI Reviewer compares it with Figma, and the UI Engineer fixes the differences, with at most 5 iterations per component. `VERIFICATION NOT RUN` does not consume an iteration. See [`tsh-orchestrate-ui-verification`](../commands/internal/orchestrate-ui-verification).
 
-- `tsh-orchestrating-implementation` — execution todos (Step 0), Full Flow establishment and planning readiness (Step 1), todo protocol, upfront execution plan, delegated execution routing, and review/UI-verification gates.
+## Routing
 
-### Step 0 — Start with Todos
+Which agent receives a task is decided by the routing rules of the manager: non-UI application code goes to the Plan Implementor when the task is an actionable, low-risk seam and to the Software Engineer otherwise; any UI task goes to the UI Engineer; E2E, infrastructure, prompts and documentation go to their specialists. Work without a plan (the Quick flow, `/tsh-implement <description>`, `/tsh-debug`) needs no approval record.
 
-The skill begins by creating the Full Flow todos: one todo per plan task, per review event, per `[REUSE]` UI verification item, and per final gate.
+## UI-only mode
 
-### Step 1 — Establish Full Flow and Assess Planning Readiness
+[`/tsh-review-ui`](../commands/review-ui) loads the manager in UI-only mode: for each component it runs one capture and one review (a single pass), with no fixes, no iteration cap, no plan and no approval gate. The manager asks you for any missing component name, Figma URL or full dev server URL before it delegates.
 
-Full Flow is the only implementation-orchestration route, and no alternative route may be offered, recommended, accepted, or honored as an override. Planning readiness covers research, plan, open questions, Technical Context, reviewer readiness, and Human approval state. Any Figma or UI-verification involvement always brings in the UI-verification gate, even when the rest of the change looks narrow.
+## Artifacts
 
-## Architect Consultation
+The manager owns the artifact naming. `<specs>` is `specifications/` unless the project instructions say otherwise.
 
-The agent escalates to the **Architect** when:
+| Artifact | Path |
+|---|---|
+| Research | `<specs>/<task>/<task>.research.md` |
+| Plan | `<specs>/<task>/<task>.plan.md` |
+| Plan review | `<specs>/<task>/<task>.plan-review.md` |
+| UI verification evidence | `<specs>/<task>/ui-verification/<component>/iteration-<n>/` |
 
-- Requirements, constraints, or acceptance criteria are ambiguous or internally inconsistent.
-- The plan leaves material technical decisions unresolved.
-- Task ownership spans architecture, platform, backend, frontend, or prompt concerns.
-- An unexpected issue, tradeoff, or design conflict surfaces.
-- It is unclear whether a shortcut is acceptable, or one reasoning pass is not enough to defend the next step.
+## Tool access
 
-## Delegation Roster
+- **Atlassian** - only when you give a Jira key or a Confluence page.
+- **Sequential Thinking** - when the delegate choice or the sequencing is not obvious.
+- The manager edits only the plan (checkboxes, Changelog). Everything else goes through subagents.
 
-| Agent | Delegate when |
-| --- | --- |
-| **Plan Implementor** | DEFAULT owner for actionable, low-risk plan seams in a Human-approved app-code task |
-| **Software Engineer** | EXCEPTION owner for complex non-UI application code — API, database, or business logic work the plan flags as needing deeper reasoning |
-| **UI Engineer** | Figma-backed UI and frontend implementation, including the capture-and-review verification loop |
-| **E2E Engineer** | End-to-end test design, mocking strategy, or CI-ready test suites |
-| **DevOps Engineer** | Infrastructure, Terraform, Kubernetes, CI/CD pipelines, or observability |
-| **Architect** | Architectural guidance, codebase analysis, or a missing/incomplete plan |
-| **Code Reviewer** | Reviewing implemented changes against the plan, tests, and acceptance criteria |
-| **UI Reviewer** | Verifying implemented UI against Figma, including `[REUSE]` UI verification tasks |
-| **Context Engineer** | Gathering requirements and context before the Architect can plan |
-| **Prompt Engineer** | Designing, optimizing, or auditing LLM application prompts |
-| **Technical Writer** | Repository documentation — README, CHANGELOG, in-repo `/docs`, or the published documentation site |
+## Suggested next steps
 
-## Tool Access
-
-| Tool | Usage |
-| --- | --- |
-| **Read / Search** | Locate plans, research, and files needed to route work correctly |
-| **Atlassian** | Gather context from Jira/Confluence — only when issue keys or page IDs are provided |
-| **Sequential Thinking** | Resolve non-obvious ownership and assess whether ambiguity needs Architect consultation |
-| **Terminal (execute)** | Run validation, inspection, and quality-gate commands only — never as an editing workaround |
-| **Sub-agents** | Delegate research, planning, implementation, review, and verification |
-| **Todo** | Track multi-step delivery work as the progress-control surface |
-| **Ask Questions** | Resolve real blocking ambiguity — used conditionally, not as a ritual gate |
-
-The agent has **no direct document-editing tools**. Any file, plan, prompt, or product-code change is delegated to the appropriate specialist.
-
-## Key Behaviors
-
-- **Never writes product code** — always delegates implementation to a specialist.
-- **Orchestrates through the skill** — route establishment and execution mechanics come from `tsh-orchestrating-implementation`, not the agent page.
-- **Routes by ownership** — application code, infrastructure, tests, and prompts each go to their owning specialist.
-- **Escalates ambiguity** — consults the Architect rather than guessing when the next step is not defensible.
-- **Confirms conditionally** — asks the user only when a real blocker remains, not at every transition.
+After the review, the manager offers `/tsh-review` for a repeat review, `/tsh-commit` to commit the work and `/tsh-audit-codebase` for a wider quality audit.

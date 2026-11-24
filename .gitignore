@@ -3,7 +3,6 @@ node_modules
 .idea
 .DS_Store
 .playwright-cli
-specifications/
 
 # Docusaurus
 website/build/
@@ -16,6 +15,7 @@ website/node_modules/
 # Local environment files (may contain live credentials)
 .env
 .env.*
+!.env.example
 
 # Playwright storage-state / authenticated-session artifacts
 auth.json
@@ -23,3 +23,9 @@ auth.json
 *auth-state.json
 *session.json
 storage-state-*.json
+
+# Local tool state
+.claude/settings.local.json
+.codex/*
+!.codex/agents/
+!.codex/config.toml

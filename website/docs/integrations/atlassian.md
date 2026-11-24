@@ -26,8 +26,6 @@ Provides integration with Jira and Confluence for gathering requirements, task c
 | **Architect** | Extending understanding of technical requirements from Jira/Confluence |
 | **Code Reviewer** | Verifying requirements and context documented in Jira/Confluence |
 | **Context Engineer** | Gathering task requirements from Jira and Confluence, searching for related issues |
-| **E2E Engineer** | Searching for related test requirements and context |
-| **Software Engineer** | Searching for task requirements and related context |
 
 ## Configuration
 

@@ -5,7 +5,7 @@ title: Use Cases
 
 # Use Cases
 
-Nine scenarios where Cursor Collections changes how work actually gets done.
+Nine scenarios where TSH AI Collections changes how work actually gets done.
 
 ---
 
@@ -15,7 +15,7 @@ Nine scenarios where Cursor Collections changes how work actually gets done.
 
 You've just run a discovery workshop. The transcript is a mess of raw ideas, half-formed requirements, and branching conversations. Turning that into a well-structured, ticket-ready backlog normally takes a BA a day or two, if you have one. If you don't, it falls to a developer or PM, and it shows.
 
-The Business Analyst agent processes the raw materials end-to-end. It can start with exploration, then drafts an intent brief before extraction begins. Epics and user stories are extracted with acceptance criteria, edge cases, and dependencies surfaced. A 10-pass quality review checks for missing entity lifecycles, error states, notification gaps, and off-happy-path scenarios. Nothing reaches Jira without passing Gate 0, Gate 1, Gate 1.5, and Gate 2, and the synced issues are verified afterward.
+The Business Analyst orchestrator processes the raw materials end-to-end. It can start with exploration, then drafts an intent brief before extraction begins. Epics and user stories are extracted with acceptance criteria, edge cases, and dependencies surfaced. A 10-pass quality review checks for missing entity lifecycles, error states, notification gaps, and off-happy-path scenarios. Nothing reaches Jira without passing Gate 0, Gate 1, Gate 1.5, and Gate 2, and the synced issues are verified afterward.
 
 **~15 min vs 1–2 days**
 
@@ -25,7 +25,7 @@ The Business Analyst agent processes the raw materials end-to-end. It can start 
 
 Backlogs accumulate debt. Stories that made sense six months ago are now vague. Acceptance criteria were never written. Dependencies were assumed, not documented. Grooming sessions spend half their time reconstructing intent rather than improving work.
 
-The Business Analyst agent's Import Mode fetches existing Jira issues, converts them to a local format, and runs the same quality review used for new workshop outputs. Each suggested improvement is presented individually for accept or reject. Approved changes can then be pushed back to Jira and verified against the live issues before the baseline is refreshed.
+The Business Analyst's Import Mode fetches existing Jira issues, converts them to a local format, and runs the same quality review used for new workshop outputs. Each suggested improvement is presented individually for accept or reject. Approved changes can then be pushed back to Jira and verified against the live issues before the baseline is refreshed.
 
 **~10 min per epic**
 
@@ -47,7 +47,7 @@ The Context Engineer agent gathers context from Jira, Confluence, Figma, and the
 
 The information needed to implement any feature lives across four tools at minimum. Developers spend 30–60 minutes per task reconstructing context that already exists — just in different places.
 
-MCP integrations (Atlassian, Figma, Context7, Playwright, PDF Reader) bring every source into a single Cursor chat session. The Context Engineer agent synthesises them into one research document. You start implementing with full context already assembled.
+MCP integrations (Atlassian, Figma, Context7, Playwright, PDF Reader) bring every source into a single chat session in Cursor, Claude Code or Codex. The Context Engineer agent synthesises them into one research document. You start implementing with full context already assembled.
 
 **~3 min vs 30–60 min**
 
@@ -57,7 +57,7 @@ MCP integrations (Atlassian, Figma, Context7, Playwright, PDF Reader) bring ever
 
 Frontend implementations drift from Figma. Wrong spacing, wrong colour variants, wrong component state. The defects are caught in QA - which means a developer context-switches back to a ticket they thought was done, fixes it, and waits for another review cycle.
 
-The UI Reviewer agent runs an automated verification loop (up to 5 iterations) that compares Figma MCP output against Playwright CLI capture artifacts collected from the running app. You get a structured PASS/FAIL report with exact pixel deltas before the code ever reaches a human reviewer.
+The Engineering Manager runs an automated verification loop (up to 5 iterations): the UI Capture Worker captures the running app with Playwright CLI, and the UI Reviewer compares that capture against Figma specs fetched through the Figma MCP. You get a structured PASS/FAIL report with exact pixel deltas before the code ever reaches a human reviewer. Where a check cannot run, the result is `VERIFICATION NOT RUN`, never a silent pass.
 
 **~20 min per component · 95–99% design accuracy**
 
@@ -69,7 +69,7 @@ The UI Reviewer agent runs an automated verification loop (up to 5 iterations) t
 
 Every team has conventions that exist in someone's head. Senior developers catch violations in review. Juniors don't always know what to look for. The result is review comments that relitigate the same issues across every PR, and inconsistent codebases that get harder to maintain over time.
 
-The Code Reviewer agent enforces tested best practices automatically - the same ones encoded in TSH's production skills (`tsh-technical-context-discovering`, `tsh-code-reviewing`, `tsh-implementing-frontend`). The `/tsh-review-codebase` prompt runs a repository-wide pass detecting dead code, duplications, and anti-patterns.
+The Code Reviewer agent enforces tested best practices automatically - the same ones encoded in TSH's production skills (`tsh-discovering-technical-context`, `tsh-reviewing-code`, `tsh-implementing-frontend`). The `/tsh-audit-codebase` command runs a repository-wide pass detecting dead code, duplications, and anti-patterns.
 
 **~5 min per review**
 
@@ -118,6 +118,6 @@ The DevOps Engineer agent covers the full infrastructure lifecycle:
 
 Generic AI tools don't know your codebase conventions, your internal tooling, or your team's specific way of working. That gap shows up as suggestions you have to discard, context you have to re-explain every session, and patterns that don't fit.
 
-The Cursor Engineer and Cursor Orchestrator agents help you encode your team's domain knowledge into the framework itself — custom agents, skills, prompts, and instructions that persist across sessions. The `/tsh-create-custom-*` commands guide the process: research the domain, create the artifact, review for consistency with the existing framework.
+The AI Customization Orchestrator and its creator, researcher and reviewer subagents help you encode your team's domain knowledge into the framework itself — custom agents, skills, commands, and rules that persist across sessions. The `/tsh-create-custom-*` commands guide the process: research the domain, create the artifact, review for consistency with the existing framework.
 
 **~15 min per custom artifact**

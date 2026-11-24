@@ -1,81 +1,48 @@
 ---
-sidebar_position: 5.1
+sidebar_position: 18
 title: UI Engineer
 ---
 
-**File:** `.cursor/skills/agents/tsh-ui-engineer/SKILL.md`
+# UI Engineer Agent
 
-The UI Engineer agent is the specialized implementor for UI and frontend work. It handles design-driven implementation, accessibility, and the verification loop that keeps implementation aligned with the design reference. Non-UI implementation stays with `tsh-software-engineer`.
+**Source:** `src/agents/tsh-ui-engineer.md`  
+**Kind:** subagent, model tier `balanced`, read-write access
 
-Before any file change, including UI implementation or capture/verification-related artifacts, validate from disk a plan whose current Human Approval record satisfies exactly `Human Decision=APPROVED`, `Approved Revision=current Plan Revision`, and a valid ISO 8601 UTC `Decision Timestamp` ending in `Z`. Fail closed when a field is missing, stale, mismatched, inferred, based only on Reviewer approval, or when the plan cannot be located or read; retry an unreadable or ambiguous reference once and resolve relative paths against the workspace root. Name the exact failed field, condition, or file, then ask the user in chat which next step to take — on every entry path, including direct selection as the primary chat agent — spelling out the options: point at the correct plan path, obtain Human approval for the existing plan, start plan preparation, or, when delegated, hand back to `tsh-engineering-manager`. Continue only from the user's explicit choice, which is never Human approval.
+The UI Engineer implements everything that renders: UI components, forms, hooks, accessibility and UI performance, and the visual correctness of all of it. It takes every UI task, regardless of complexity. The [Software Engineer](./software-engineer) and the [Plan Implementor](./plan-implementor) never edit UI.
 
 ## Responsibilities
 
-- Implementing UI and frontend solutions from requirements and design context.
-- Translating Figma designs into working interfaces with the right component, spacing, and state choices.
-- Running the implementation loop: implement, delegate ACTUAL capture to `tsh-ui-capture-worker`, delegate design review to `tsh-ui-reviewer`, then apply fixes and re-capture using the same pinned user-confirmed full URL throughout the session.
-- Applying accessibility, hooks, forms, and frontend performance practices during UI work.
-- Confirming scope by asking the user when the UI task is genuinely ambiguous, and asking the same way for approval-precondition recovery before any file change.
-- Pausing to ask the user when capture or review is blocked by missing Figma input, unknown app URL, auth issues, or failed evidence collection.
-- Limiting the verification loop to 5 iterations before pausing behind a structured user gate.
-- Keeping the UI gate separate from code review until every UI item is verified, escalated, or explicitly acknowledged as blocked.
-- Handoff to review and E2E testing when the UI change is ready for broader validation.
+- Fetch and review the Figma design through the Figma MCP **before** it writes markup, layout or styles. A missing Figma link is `NEEDS_INPUT` in delegated mode; a missing Figma MCP is `BLOCKED`. It never opens figma.com in a browser.
+- Implement the UI following the plan and the project's design system, and run local validation (lint, build, tests).
+- Fix verification findings: a fix pass addresses **all** differences in the report it receives, not only the first.
+- Name the components that need verification and return `DONE`. A clean build is never UI verification, and the agent never claims `PASS`.
 
-## Outputs
+## Key behaviors
 
-- Completed UI components, screens, and frontend refinements.
-- Design-aligned fixes informed by capture artifacts and reviewer feedback.
-- Review-ready UI changes with no speculative non-UI work.
+- The dev server URL is a fixed input; the agent does not discover or change it.
+- It never bypasses, seeds or injects authentication state. Credentials never go into plans, specs or commits.
+- It does not capture or review the UI itself. The Engineering Manager runs the loop around it: the [UI Capture Worker](./ui-capture-worker) captures and the [UI Reviewer](./ui-reviewer) compares. See the [UI Verification Flow](../workflow/ui-verification-flow).
+- Like the other executors, it validates the plan's approval record before changing files in plan-based work; see the [approval gate](../workflow/standard-flow#approval-gate).
 
-## Non-goals
+## Tool access
 
-- Does not own backend, database, infrastructure, or other non-UI implementation.
-- Does not take over `tsh-software-engineer` or `tsh-plan-implementor` scopes.
-- Does not perform the low-level CLI capture step itself when `tsh-ui-capture-worker` is available.
-- Does not broaden beyond the delegated UI task.
+- **Read-write**, with shell access.
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Context7, Figma, Sequential Thinking.
 
-## Tool Access
+## Skills loaded
 
-| Tool                      | Usage                                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------- |
-| **Context7**              | Look up design-system documentation and UI library guidance                        |
-| **Figma**                 | Extract design specifications for UI tasks                                          |
-| **Sequential Thinking**   | Plan complex UI refactors and debug layout or interaction issues                   |
-| **Terminal**              | Run build tools, tests, linters, and scripts                                       |
-| **File Read/Edit/Search** | Read, modify, and search workspace files                                           |
-| **Sub-agents**            | Delegate capture to `tsh-ui-capture-worker` and design review to `tsh-ui-reviewer` |
-| **Todo**                  | Track implementation progress with structured checklists                           |
-| **Ask Questions**         | Clarify genuine UI-task ambiguity and unblock capture or review failures — never used to seek permission to proceed without a valid plan |
+- `tsh-implement-task` (preloaded) - Implement a feature from a plan or a task description
+- `tsh-implementing-frontend` (preloaded) - Component patterns, design tokens and the Figma-to-code workflow
+- `tsh-implementing-forms` - Form architecture, validation and accessible patterns
+- `tsh-writing-hooks` - Custom React hook patterns
+- `tsh-ensuring-accessibility` - Accessibility: semantic HTML, ARIA, keyboard, contrast
+- `tsh-optimizing-frontend` - Frontend rendering, bundle and memory optimization
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-analyzing-implementation-gaps` - Compare a plan with the current state
+- `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
 
-## Skills Loaded
+## Invocation and modes
 
-- `tsh-technical-context-discovering` — Establish project conventions and patterns before implementing.
-- `tsh-implementation-gap-analysing` — Verify what exists vs what needs to be built.
-- `tsh-codebase-analysing` — Understand existing architecture for complex UI work.
-- `tsh-implementing-frontend` — Component patterns, composition, and design-token-aligned UI implementation.
-- `tsh-implementing-forms` — Schema validation, field composition, error handling, and multi-step form flows.
-- `tsh-writing-hooks` — Custom hooks: naming, composition, stable returns, effect cleanup, and testing.
-- `tsh-ensuring-accessibility` — WCAG 2.1 AA compliance, semantic HTML, ARIA, keyboard navigation, and focus management.
-- `tsh-optimizing-frontend` — Rendering optimization, code splitting, memoization, and memory management.
-- `tsh-ui-verifying` — The implement -> capture -> review loop, verification criteria, tolerances, and report expectations.
-
-## How It Works
-
-1. Implement or patch the UI against the current plan and design context.
-2. Delegate mechanical CLI capture to `tsh-ui-capture-worker` using the pinned user-confirmed full URL unchanged.
-3. Delegate design verification to `tsh-ui-reviewer` using the resulting artifacts plus Figma and the same pinned URL.
-4. Apply the reported fixes, then trigger a fresh capture and a fresh verification pass on the new artifacts.
-5. Repeat as needed, up to 5 iterations, or sooner if a blocker requires asking the user.
-6. After the 5-iteration budget is exhausted, pause behind the structured user gate with exactly 3 options: continue-with-N, stop as `ESCALATED`, or custom instruction.
-
-Do not move to code review while any UI item is still open or unverified.
-
-Missing URL, auth, page-state, or capture blockers produce `VERIFICATION NOT RUN` and blocker-resolution work. They do not consume the 5-iteration fix budget.
-
-## Handoffs
-
-After completing implementation, the UI Engineer can hand off to:
-
-- **UI Reviewer** → verify the UI against Figma via the `tsh-review-ui` command skill
-- **Code Reviewer** → `/tsh-review` (review implementation against the plan)
-- **E2E Engineer** → delegated by the Engineering Manager for E2E test creation
+- **Delegated by:** the `tsh-engineering-manager`, for implementation and for fix passes.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).

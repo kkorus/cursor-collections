@@ -9,11 +9,7 @@ title: Playwright
 **Type:** stdio  
 **Package:** `@playwright/mcp@latest`
 
-Provides browser automation capabilities for interactive debugging, exploratory browser work, and E2E-oriented inspection inside Cursor.
-
-:::note UI Verification Flow
-Figma-backed UI verification in `/tsh-implement` does **not** collect ACTUAL evidence through Playwright MCP. That flow uses `tsh-ui-capture-worker`, which writes Playwright CLI artifacts such as `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` to disk for the reviewer.
-:::
+Provides browser automation capabilities for interactive debugging and E2E test work. It is **not** the capture tool of the Figma UI verification loop; that uses the `playwright-cli` command line (see below).
 
 ## Capabilities
 
@@ -27,8 +23,9 @@ Figma-backed UI verification in `/tsh-implement` does **not** collect ACTUAL evi
 
 | Agent | When |
 |---|---|
-| **Software Engineer** | Ad-hoc browser inspection while debugging implementation issues |
 | **E2E Engineer** | Exploring UI to discover locators and understand DOM structure |
+
+Any agent or user may also use it for ad hoc interactive exploration of a running page. The Software Engineer, UI Engineer and UI Reviewer do not use it.
 
 ## Configuration
 
@@ -42,12 +39,20 @@ Figma-backed UI verification in `/tsh-implement` does **not** collect ACTUAL evi
 }
 ```
 
+## Playwright MCP versus `playwright-cli`
+
+| | `playwright` MCP | `playwright-cli` |
+|---|---|---|
+| Kind | MCP server (configured in `mcpServers`, or `[mcp_servers.playwright]` for Codex) | Command-line tool, called from the shell |
+| Used for | Interactive exploration and E2E locator discovery | Figma UI verification capture (screenshot, computed styles, accessibility snapshot) |
+| Used by | E2E Engineer, ad hoc use | UI Capture Worker only |
+| Install | Generated MCP config | `npx playwright-cli` or `npm install -g @playwright/cli@latest` |
+
 ## Prerequisites
 
-- Playwright MCP configured in `mcp.json`.
 - Local development server must be running.
 - Target page must be accessible (authentication handled if needed).
-- For the Figma-backed UI verification loop, `playwright-cli` must also be available to `tsh-ui-capture-worker` (`npx playwright-cli` or a global install).
+- For UI verification you also need `playwright-cli` (see [Prerequisites](../getting-started/prerequisites)).
 
 ## Official Documentation
 
@@ -57,5 +62,5 @@ Figma-backed UI verification in `/tsh-implement` does **not** collect ACTUAL evi
 
 - Primarily operates on the **accessibility tree**, which is often more reliable than visual screenshots for verification.
 - Used for **real-time interaction** — clicking buttons, filling forms, navigating pages.
-- The Figma verification loop pairs Figma MCP (EXPECTED) with `tsh-ui-capture-worker` Playwright CLI artifacts (ACTUAL).
+- In UI verification, the UI Reviewer pairs Figma MCP (EXPECTED) with the capture files that `playwright-cli` produced (ACTUAL); it does not call this MCP server.
 - **Not used for running test suites** — use the terminal for that. Playwright MCP is for interactive exploration and verification.

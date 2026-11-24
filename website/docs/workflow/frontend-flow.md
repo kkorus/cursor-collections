@@ -3,37 +3,27 @@ sidebar_position: 3
 title: Frontend Flow
 ---
 
+# Frontend Flow
+
 For UI-heavy tasks with Figma designs, use the specialized frontend workflow. This extends the standard flow with iterative Figma verification to ensure the implementation matches the design within tolerance.
-
-For a full end-to-end breakdown of the post-implementation verify-fix loop, see **[UI Verification Flow](./ui-verification-flow)**.
-
-Before you start, make sure the target app is already running, be ready to confirm the exact full dev server URL, and ensure `playwright-cli` is available to the UI capture worker (`npx playwright-cli` or a global install).
-
-The frontend route accepts a task description, Jira ID, standalone `*.research.md`, or `*.plan.md`. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Before the first file-changing delegation, the Engineering Manager requires a recorded Human approval of the exact current plan revision — normally the one the Architect wrote at its own plan-authoring gate (`Approve plan`, `I have comments`), which the manager validates and reuses rather than asking again. The manager's `Approve current plan` / `Request changes` / `Stop` gate is fail-closed recovery only, for when no valid current-revision record exists. Automated Reviewer approval is readiness evidence only; it is not permission to implement. A material revision after Human approval halts delegation and requires renewed Human approval, and no Reviewer re-review is invoked automatically; a new review event happens only when the user explicitly directs one.
-
-Recording that plan-authoring approval ends the **authoring discussion** — the discussion in which the plan was authored, reviewed, and approved. The manager reports the exact plan path, the current `Plan Revision`, the persisted `Decision Timestamp`, and the review path when present, names implementation as the next step, and delegates no file change there. UI implementation, capture, and verification all run in a new discussion you start, where the unchanged persisted record is reused without a duplicate approval gate. The boundary is a lifecycle stop, not an approval-validity criterion: invalid or missing states still fail closed, and a material revision still requires renewed Human approval.
-
-On every delegated or direct UI execution-owner entry path, the owner validates the referenced plan from disk before changing implementation or capture/verification-related artifacts. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. The user's response is not Human approval; only Human Approval of the exact current plan revision authorizes implementation.
 
 ## Command Sequence
 
 ```text
 1️⃣ /tsh-implement <JIRA_ID or task description>
    ↳ 🔍 Engineering Manager delegates to Context Engineer for research
-   ↳ 📖 Review research doc – verify Figma links, requirements (quality checkpoint, not an authorization gate)
+   ↳ 📖 Review research doc – verify Figma links, requirements
+   ↳ ✅ Confirm to proceed to planning
    ↳ 🧱 Engineering Manager delegates to Architect for planning
-   ↳ 🧪 Architect invokes the Plan Reviewer once per plan lifecycle
+   ↳ 🧪 Engineering Manager delegates to Plan Reviewer for plan validation
    ↳ 📖 Review plan and review summary – check component breakdown, design references
-   ↳ 🌐 Confirm the exact full dev server URL once and pin it for the authoring discussion
-   ↳ ✅ Architect asks `Approve plan` / `I have comments` and records your decision in the plan
-   ↳ 🛑 Authoring discussion ends here — start a new discussion to implement
-   ↳ 🌐 Implementation discussion re-confirms the exact full dev server URL (the URL does not carry across the discussion boundary automatically)
-   ↳ ✅ Engineering Manager validates that record in the new discussion and reuses it; its `Approve current plan` / `Request changes` / `Stop` gate runs only as recovery
-   ↳ 💻 Engineering Manager delegates UI tasks to UI Engineer only once a valid current-revision approval exists
-   ↳ 📖 Review UI Verification Summary separately from code review
+   ↳ ✅ Confirm the plan aligns with Figma structure, then choose Approve plan
+   ↳ ✅ Confirm the full dev server URL (pinned for the whole loop)
+   ↳ 💻 Engineering Manager delegates UI tasks to the UI Engineer
+   ↳ 📸 Engineering Manager has the UI Capture Worker capture the running UI
+   ↳ 🔄 UI Reviewer compares Figma with the capture; fixes loop until PASS or escalation
+   ↳ 📖 Review code changes and UI Verification Summary
    ↳ ✅ Manually verify critical UI elements in browser
-   ↳ 🔄 Engineering Manager calls /tsh-review-ui in a loop until the UI gate is PASS or reaches the structured post-5-iteration user gate
-   ↳ 🚫 Do not start /tsh-review until the UI gate is closed
 
 2️⃣ /tsh-review       <JIRA_ID or task description>
    ↳ 📖 Review findings – code quality, a11y, performance
@@ -42,45 +32,55 @@ On every delegated or direct UI execution-owner entry path, the owner validates 
 
 ## How the Verification Loop Works
 
-1. The Engineering Manager delegates a UI component implementation to the UI Engineer via the internal `/tsh-implement-ui` prompt.
-2. After the UI Engineer completes, the Engineering Manager calls `/tsh-review-ui` to perform **single-pass verification** (read-only) on fresh live-capture artifacts.
-3. `/tsh-review-ui` uses **Figma MCP** (EXPECTED) + CLI capture artifacts produced through `tsh-ui-capture-worker` (ACTUAL) → returns PASS, FAIL, or VERIFICATION NOT RUN with a diff table or blocker report.
-4. If FAIL → the Engineering Manager delegates the fix to the UI Engineer, then re-captures and re-verifies on the new artifacts before considering the item closed.
-5. Repeats until PASS or max **5 iterations**.
-6. If mismatches remain after 5 iterations, the flow pauses behind a structured user gate with exactly 3 options: continue with an explicit extra iteration count, stop and accept the current state as `ESCALATED`, or provide a custom instruction.
-7. If extra iterations are exhausted and gaps remain, the same structured gate runs again before anything can move to code review.
-8. If capture is blocked by missing URL, auth, unreachable page, wrong page state, or incomplete artifacts, the result is `VERIFICATION NOT RUN`; resolve the blocker and rerun capture without consuming the 5-iteration budget.
+The full description is on the [UI Verification Flow](./ui-verification-flow) page. In short:
+
+1. The Engineering Manager loads the internal `tsh-orchestrate-ui-verification` step, which owns the whole loop, and delegates the UI implementation to the **UI Engineer**.
+2. Before each review the **UI Capture Worker** captures the running app with `playwright-cli` (screenshot, computed styles, accessibility snapshot) at the pinned full URL.
+3. The **UI Reviewer** (read-only) fetches EXPECTED from the Figma MCP, compares it with the capture and returns `PASS`, `FAIL` with a diff table, or `VERIFICATION NOT RUN` with a reason. You can run the same single-pass check yourself with `/tsh-review-ui`.
+4. On `FAIL` the manager sends the full report to the UI Engineer, then captures and reviews again.
+5. This repeats until `PASS` or at most **5 iterations** (then a gate lets you continue, stop as `ESCALATED`, or give custom guidance). `VERIFICATION NOT RUN` does not consume an iteration; where the host cannot open images the loop stops and asks you.
 
 ## What `/tsh-review-ui` Does
 
-- Single-pass, **read-only** verification — does not modify code.
-- Uses **Figma MCP** to extract design specifications (spacing, typography, colors, dimensions).
-- Uses **`tsh-ui-capture-worker` + Playwright CLI artifacts** to capture the current implementation state.
-- Does **not** rely on direct Playwright MCP capture for the ACTUAL side of the comparison.
-- Returns a structured report: **PASS/FAIL/VERIFICATION NOT RUN** + difference table or blocker guidance.
+- Routes to the **engineering manager** in UI-only mode: one capture and one review per component, with no fixes, no iteration cap, no plan and no approval gate. It never modifies code.
+- Asks you for any missing component name, Figma URL or full dev server URL first.
+- The reviewer uses the **Figma MCP** to extract design specifications (spacing, typography, colors, dimensions); the capture worker collects the current implementation state.
+- Returns a structured report: **PASS/FAIL** (or `VERIFICATION NOT RUN`) plus a difference table with exact values.
 - Covers: structure (containers, nesting), dimensions (width, height, spacing), visual (typography, colors, radii), and components (variants, tokens, states).
 
-## What `/tsh-implement-ui` Does
+## What `tsh-orchestrate-ui-verification` Does
 
-:::info Internal Prompt
-`/tsh-implement-ui` is an internal prompt — not invoked directly by users. It is triggered automatically by `/tsh-implement` when the plan contains UI tasks with Figma references.
+:::info Internal step
+`tsh-orchestrate-ui-verification` is an internal step, not a command. The Engineering Manager loads it automatically when `/tsh-implement` reaches UI tasks with Figma references. The Cursor IDE and Codex may still list it in their menus (Cursor supports hiding it in the CLI only); you do not need to run it. See [Supported Tools](../getting-started/supported-tools).
 :::
 
-- Orchestrated by the **Engineering Manager** agent, which delegates to the UI Engineer, UI Capture Worker, and UI Reviewer.
-- Implements UI components following the plan.
-- Runs **iterative verification loop** delegating to the `tsh-ui-reviewer` subagent after each component.
-- **Fixes mismatches** by delegating fixes back to the UI Engineer based on subagent reports, then re-captures and re-verifies on fresh artifacts using the same pinned user-confirmed full URL.
-- After 5 failed iterations, pauses behind a structured user gate with a detailed summary and exactly 3 options: continue with explicit extra iterations, stop and accept as `ESCALATED`, or provide a custom instruction.
-- Produces a **UI Verification Summary** before handoff to code review, but keeps the UI gate separate from code review.
+- Run by the **Engineering Manager** in your main conversation, which delegates to the UI Engineer, the UI Capture Worker and the UI Reviewer one at a time.
+- Enforces the order: no review without a fresh capture.
+- **Fixes mismatches** by delegating them back to the UI Engineer with the full report.
+- Escalates after 5 failed iterations with a detailed report.
+- Produces a **UI Verification Summary** before handing off to code review, which starts only after the UI gate closes.
+
+## Verified status per tool
+
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
+
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.
+
+See [Supported Tools](../getting-started/supported-tools).
 
 ## Required Skills
 
 The frontend flow loads these specialized skills:
 
 - **tsh-implementing-frontend** — Component patterns, design system usage, composition, and performance guidelines.
-- **tsh-ui-verifying** — Verification criteria, tolerances, severity definitions, and what constitutes PASS/FAIL.
-- **tsh-ensuring-accessibility** — WCAG 2.1 AA compliance, semantic HTML, ARIA, keyboard navigation.
-- **tsh-technical-context-discovering** — Project conventions and coding standards.
+- **tsh-verifying-ui** — Verification criteria, tolerances, severity definitions, and what constitutes PASS/FAIL.
+- **tsh-using-playwright-cli** — Command-line browser capture, used by the UI Capture Worker.
+- **tsh-ensuring-accessibility** — WCAG 2.2 AA compliance, semantic HTML, ARIA, keyboard navigation.
+- **tsh-discovering-technical-context** — Project conventions and coding standards.
 
 :::warning Important
 The automated Figma verification loop helps catch visual mismatches, but it does not replace manual review. Always visually inspect the implemented UI in the browser, test interactions, and verify responsive behavior yourself.

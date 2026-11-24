@@ -1,0 +1,18 @@
+{
+  "modelTiers": {
+    "deep": { "cursor": null, "claude": "opus", "codex": { "model": "gpt-5.4", "model_reasoning_effort": "high" } },
+    "balanced": { "cursor": null, "claude": "sonnet", "codex": { "model": "gpt-5.4", "model_reasoning_effort": "medium" } },
+    "fast": { "cursor": null, "claude": "haiku", "codex": { "model": "gpt-5.4-mini" } },
+    "inherit": { "cursor": null, "claude": "inherit", "codex": {} }
+  },
+  "owned": [
+    ".agents/skills/tsh-*",
+    ".claude/skills/tsh-*",
+    ".cursor/agents/tsh-*.md",
+    ".claude/agents/tsh-*.md",
+    ".codex/agents/tsh-*.toml",
+    ".cursor/mcp.json",
+    ".mcp.json",
+    ".codex/config.toml"
+  ]
+}

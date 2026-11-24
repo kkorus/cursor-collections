@@ -6,7 +6,7 @@ title: Quick Wins
 # Quick Wins
 
 :::tip From Theory to Practice
-This page shows how teams integrate Cursor Collections into their daily routines. Each workflow maps a real need to the specific agents, prompts, and skills that address it — organized by the role that benefits the most.
+This page shows how teams integrate TSH AI Collections into their daily routines. Each workflow maps a real need to the specific agents, commands, and skills that address it — organized by the role that benefits the most.
 :::
 
 ---
@@ -19,7 +19,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Manually re-read the transcript, extract action items into a spreadsheet, copy-paste into Jira one by one, miss half the edge cases, and spend the next grooming session fixing vague stories.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-explore-materials <paste transcript or attach materials>   # optional
@@ -32,13 +32,13 @@ This page shows how teams integrate Cursor Collections into their daily routines
 | **2. Transcript processing & analysis** | The raw transcript is cleaned, supporting materials are analyzed, and the existing codebase or backlog baseline is checked when relevant. |
 | **3. Intent brief + Gate 0** | The agent drafts `intent-brief.md`. You review scope, exclusions, and candidate epics before extraction begins. |
 | **4. Task extraction + Gate 1** | Epics and user stories are identified with business-oriented descriptions, acceptance criteria, dependencies, and source traceability. You review the breakdown before it proceeds. |
-| **5. Quality review** | The `tsh-task-quality-reviewing` skill automatically runs Lite or Full review. Full mode covers 10 analysis passes — entity lifecycle completeness, error states, notification gaps, third-party boundaries, platform operations, and more. |
+| **5. Quality review** | The `tsh-reviewing-task-quality` skill automatically runs Lite or Full review. Full mode covers 10 analysis passes — entity lifecycle completeness, error states, notification gaps, third-party boundaries, platform operations, and more. |
 | **6. Gate 1.5 — Accept/reject suggestions** | Each quality improvement is presented individually. You accept what makes sense and reject what doesn't apply. |
 | **7. Jira formatting + Gate 2** | Tasks are formatted per the Jira benchmark template, then reviewed one final time before Jira sync. |
 | **8. Jira sync verification** | After push, the agent reads the issues back, verifies the key fields, and refreshes the continuity baseline for future workshops. |
 
-**Key prompts & agents:** `/tsh-explore-materials` or `/tsh-analyze-materials` → Business Analyst  
-**Key skills:** `tsh-transcript-processing`, `tsh-task-extracting`, `tsh-task-quality-reviewing`, `tsh-jira-task-formatting`, `tsh-codebase-analysing`
+**Key commands & agents:** `/tsh-explore-materials` or `/tsh-analyze-materials` → Business Analyst (orchestrator)  
+**Key skills:** `tsh-processing-transcripts`, `tsh-extracting-tasks`, `tsh-reviewing-task-quality`, `tsh-formatting-jira-tasks`, `tsh-analyzing-codebase`
 
 **Value:** A full discovery workshop is converted into a validated, Jira-ready backlog in a single session instead of days of manual work. The 10-pass quality review catches edge cases and gaps that manual extraction routinely misses — missing error states, notification gaps, incomplete entity lifecycles, and platform operations. Gate 0, Gate 1, Gate 1.5, and Gate 2 keep the backlog reviewable, and the verified Jira sync preserves continuity for later workshops.
 
@@ -50,7 +50,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Start implementing with assumptions. Discover ambiguities halfway through. Go back to the PM. Lose half a sprint.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement PROJ-101
@@ -59,12 +59,12 @@ This page shows how teams integrate Cursor Collections into their daily routines
 | Step | What Happens |
 |---|---|
 | **1. Multi-source aggregation** | The Engineering Manager delegates to the Context Engineer, which pulls context from Jira, Confluence, Figma, and the codebase simultaneously via MCP integrations. |
-| **2. Contradiction detection** | The `tsh-task-analysing` skill cross-references requirements across sources and flags inconsistencies, missing details, and ambiguous language. |
+| **2. Contradiction detection** | The `tsh-analyzing-requirements` skill cross-references requirements across sources and flags inconsistencies, missing details, and ambiguous language. |
 | **3. Open questions list** | The research document includes a structured list of open questions, assumptions that need validation, and risks — ready to send back to the PM. |
 | **4. Scope validation** | The output highlights what’s covered by the ticket and what’s missing, so you can request clarification before writing a single line of code. |
 
-**Key prompts & agents:** `/tsh-implement` → Engineering Manager → Context Engineer  
-**Key skills:** `tsh-task-analysing`, `tsh-codebase-analysing`
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → Context Engineer  
+**Key skills:** `tsh-analyzing-requirements`, `tsh-analyzing-codebase`
 
 **Value:** Ambiguities are surfaced in minutes instead of days. The structured open questions list becomes a communication tool with PMs, reducing back-and-forth by 60–80%.
 
@@ -78,7 +78,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Open dozens of files, grep for function names, read outdated Confluence pages, ask colleagues on Slack, and piece together a mental model over hours.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement PROJ-456
@@ -87,10 +87,10 @@ This page shows how teams integrate Cursor Collections into their daily routines
 | Step | What Happens |
 |---|---|
 | **1. Automatic context gathering** | The Engineering Manager delegates to the Context Engineer, which pulls requirements from Jira, related Confluence docs, and Figma designs via MCP integrations. |
-| **2. Codebase analysis** | The `tsh-codebase-analysing` skill traces dependencies, identifies business logic patterns, and maps the data flow across layers. |
+| **2. Codebase analysis** | The `tsh-analyzing-codebase` skill traces dependencies, identifies business logic patterns, and maps the data flow across layers. |
 | **3. Structured output** | A `.research.md` document is generated with a task summary, identified components, assumptions, open questions, and risks. |
 
-**Key prompts & agents:** `/tsh-implement` → Engineering Manager → Context Engineer   The research document becomes a reusable artifact that helps the entire team — not just you.
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → Context Engineer   The research document becomes a reusable artifact that helps the entire team — not just you.
 
 ---
 
@@ -100,7 +100,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Sketch something in a quick meeting, start coding, discover edge cases mid-sprint, refactor, repeat.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement PROJ-789
@@ -110,10 +110,10 @@ This page shows how teams integrate Cursor Collections into their daily routines
 |---|---|
 | **1. Research phase** | The Engineering Manager delegates to the Context Engineer, which gathers all context — existing architecture, related features, constraints from Jira and Confluence. |
 | **2. Architecture design** | The Engineering Manager delegates to the Architect, which creates a phased implementation plan with CREATE/MODIFY/REUSE labels for every task. |
-| **3. Gap analysis** | The `tsh-architecture-designing` skill evaluates security considerations, scalability, and identifies risks before a single line of code is written. |
-| **4. Database planning** | If the feature involves data changes, the `tsh-sql-and-database-understanding` skill provides schema design patterns, indexing strategies, and migration safety checks. |
+| **3. Gap analysis** | The `tsh-designing-architecture` skill evaluates security considerations, scalability, and identifies risks before a single line of code is written. |
+| **4. Database planning** | If the feature involves data changes, the `tsh-designing-databases` skill provides schema design patterns, indexing strategies, and migration safety checks. |
 
-**Key prompts & agents:** `/tsh-implement` → Engineering Manager → Context Engineer + Architect  , reviewed, and agreed upon before implementation starts. Every task is clearly scoped with action labels (CREATE, MODIFY, REUSE), reducing mid-sprint surprises by 50–70%.
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → Context Engineer + Architect  , reviewed, and agreed upon before implementation starts. Every task is clearly scoped with action labels (CREATE, MODIFY, REUSE), reducing mid-sprint surprises by 50–70%.
 
 ---
 
@@ -123,7 +123,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Eyeball the Figma spec, implement the component, get "doesn't match" feedback in design review, fix, re-submit, repeat 3–5 times.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement PROJ-321
@@ -132,14 +132,14 @@ This page shows how teams integrate Cursor Collections into their daily routines
 | Step | What Happens |
 |---|---|
 | **1. Figma extraction** | The agent reads exact design specs from Figma MCP — spacing values, color tokens, typography, component variants. |
-| **2. Implementation** | Code is written following the `tsh-implementing-frontend` skill — semantic HTML, design system tokens, a11y patterns. |
-| **3. Automated verification loop** | `/tsh-review-ui` is called automatically. `tsh-ui-capture-worker` collects Playwright CLI artifacts from the running app using the confirmed full URL, while Figma MCP provides expected values. A structured PASS/FAIL diff table is generated. |
-| **4. Auto-fix cycle** | If FAIL, the agent fixes mismatches and re-verifies — up to 5 iterations — until the component passes or escalates. |
+| **2. Implementation** | The UI Engineer writes code following the `tsh-implementing-frontend` skill — semantic HTML, design system tokens, a11y patterns. |
+| **3. Automated verification loop** | The UI Capture Worker captures the running app with `playwright-cli`, and the UI Reviewer compares it with the expected values it fetched through the Figma MCP (the same check as `/tsh-review-ui`). A structured PASS/FAIL diff table is generated. Where a check cannot run, the result is `VERIFICATION NOT RUN`, never a silent pass. |
+| **4. Auto-fix cycle** | If FAIL, the UI Engineer fixes mismatches and the loop captures and re-verifies — up to 5 iterations — until the component passes or escalates. |
 
-**Key prompts & agents:** `/tsh-implement` → Engineering Manager → Software Engineer, `/tsh-review-ui` → UI Reviewer  
-**Key skills:** `tsh-implementing-frontend`, `tsh-ui-verifying`, `tsh-technical-context-discovering`
+**Setup:** install `playwright-cli` and, for pages behind a login, export the `TSH_UI_LOGIN_*` variables before starting your tool; see [Prerequisites](./prerequisites#figma-backed-ui-verification).
 
-**Setup note:** For this workflow, the app must already be running locally, you must confirm the exact full dev server URL, and `playwright-cli` must be available to the capture worker.
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → UI Engineer + UI Capture Worker + UI Reviewer  
+**Key skills:** `tsh-implementing-frontend`, `tsh-verifying-ui`, `tsh-using-playwright-cli`, `tsh-discovering-technical-context`
 
 **Value:** Design-to-code accuracy reaches 95–99%. Design QA feedback rounds are reduced by 60–80%. Accessibility compliance is built in from the start, not bolted on after review.
 
@@ -151,7 +151,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Write the migration, run it in staging, hope nothing breaks. Discover missing indexes in production. ORM hides the N+1 query until load testing.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement PROJ-555
@@ -161,11 +161,11 @@ This page shows how teams integrate Cursor Collections into their daily routines
 |---|---|
 | **1. Schema analysis** | The research phase identifies existing tables, relationships, and constraints affected by the change. |
 | **2. Migration planning** | The Architect agent designs the migration with rollback strategies, following naming conventions and normalisation best practices. |
-| **3. Query optimization** | The `tsh-sql-and-database-understanding` skill enforces `EXPLAIN ANALYZE`, proper indexing, join optimization, and parameterized queries. |
+| **3. Query optimization** | The `tsh-designing-databases` skill enforces `EXPLAIN ANALYZE`, proper indexing, join optimization, and parameterized queries. |
 | **4. ORM integration** | Supports TypeORM, Prisma, Doctrine, Eloquent, Entity Framework, Hibernate, and GORM — generating idiomatic code for your stack. |
 
-**Key prompts & agents:** `/tsh-implement` → Engineering Manager → Context Engineer + Architect + Software Engineer  
-**Key skills:** `tsh-sql-and-database-understanding`, `tsh-architecture-designing`, `tsh-technical-context-discovering`
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → Context Engineer + Architect + Software Engineer  
+**Key skills:** `tsh-designing-databases`, `tsh-designing-architecture`, `tsh-discovering-technical-context`
 
 **Value:** Database performance issues are reduced by 40–60%. Migrations are planned with rollback strategies from the start. N+1 queries and missing indexes are caught during implementation, not in production.
 
@@ -179,7 +179,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Skim the diff, check for obvious bugs, approve. Miss the SQL injection, the missing error handling, and the N+1 query.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-review PROJ-789
@@ -189,11 +189,11 @@ This page shows how teams integrate Cursor Collections into their daily routines
 |---|---|
 | **1. Multi-dimensional analysis** | The Code Reviewer agent checks acceptance criteria, security vulnerabilities, reliability, performance, maintainability, and coding standards. |
 | **2. Security scanning** | Missing input validation, exposed secrets, improper error handling, and SQL injection vectors are flagged explicitly. |
-| **3. Database review** | The `tsh-sql-and-database-understanding` skill checks for missing indexes, N+1 queries, improper locking, and migration safety. |
-| **4. Structured verdict** | Findings are categorized as PASS, BLOCKER, or SUGGESTION — with clear explanations and remediation guidance. |
+| **3. Database review** | The `tsh-designing-databases` skill checks for missing indexes, N+1 queries, improper locking, and migration safety. |
+| **4. Structured verdict** | Findings are categorized by severity: `critical` (must fix before merge), `warning` (should fix), or `suggestion` (consider) — with clear explanations and remediation guidance. Each review ends with `No critical findings` or `Critical findings must be fixed` and the counts. |
 
-**Key prompts & agents:** `/tsh-review` → Code Reviewer  
-**Key skills:** `tsh-code-reviewing`, `tsh-sql-and-database-understanding`, `tsh-technical-context-discovering`
+**Key commands & agents:** `/tsh-review` → Code Reviewer  
+**Key skills:** `tsh-reviewing-code`, `tsh-designing-databases`, `tsh-discovering-technical-context`
 
 **Value:** Reviews are consistent, thorough, and documented. Security and performance issues are caught before production. Review cycle time is reduced by 30–50%.
 
@@ -205,7 +205,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Manually cross-reference the Jira ticket, the implementation plan, and your code changes. Hope you didn't miss anything. Find out during QA.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-review PROJ-456
@@ -214,11 +214,11 @@ This page shows how teams integrate Cursor Collections into their daily routines
 | Step | What Happens |
 |---|---|
 | **1. Plan-to-code comparison** | The Code Reviewer agent compares the implementation against the original plan, checking every phase and acceptance criterion. |
-| **2. Gap detection** | The `tsh-implementation-gap-analysing` skill identifies what was planned but not implemented, what was implemented but not planned, and what was partially done. |
+| **2. Gap detection** | The `tsh-analyzing-implementation-gaps` skill identifies what was planned but not implemented, what was implemented but not planned, and what was partially done. |
 | **3. Structured findings** | A review report lists blockers (must fix), suggestions (should fix), and passes — with specific file and line references. |
 
-**Key prompts & agents:** `/tsh-review` → Code Reviewer  
-**Key skills:** `tsh-implementation-gap-analysing`, `tsh-code-reviewing`, `tsh-technical-context-discovering`
+**Key commands & agents:** `/tsh-review` → Code Reviewer  
+**Key skills:** `tsh-analyzing-implementation-gaps`, `tsh-reviewing-code`, `tsh-discovering-technical-context`
 
 **Value:** Rework cycles are reduced by 40–60%. Gaps are caught before QA, not during. Every review is structured and consistent, regardless of who performs it.
 
@@ -230,10 +230,10 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Nobody knows where the dead code is. Duplicate utilities are scattered across packages. "We'll clean it up later" never comes.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
-/tsh-review-codebase
+/tsh-audit-codebase
 ```
 
 | Step | What Happens |
@@ -243,8 +243,8 @@ This page shows how teams integrate Cursor Collections into their daily routines
 | **3. Duplication mapping** | Finds duplicated functions, validation logic, UI components, and copy-pasted blocks that differ only in variable names. |
 | **4. Improvement roadmap** | Generates a prioritized list of improvements — high cyclomatic complexity, SRP violations, excessive `any` types, missing error handling. |
 
-**Key prompts & agents:** `/tsh-review-codebase` → Architect  
-**Key skills:** `tsh-codebase-analysing`, `tsh-technical-context-discovering`
+**Key commands & agents:** `/tsh-audit-codebase` → Architect  
+**Key skills:** `tsh-analyzing-codebase`, `tsh-discovering-technical-context`
 
 **Value:** Technical debt becomes visible and quantifiable. Cleanup is prioritized by impact. Teams can tackle debt systematically with a clear roadmap instead of random ad-hoc fixes.
 
@@ -256,22 +256,22 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Read a stale README, ask teammates for a walkthrough, spend the first week just getting oriented.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
-/tsh-review-codebase
+/tsh-audit-codebase
 # Then pick your first task:
 /tsh-implement PROJ-001
 ```
 
 | Step | What Happens |
 |---|---|
-| **1. Codebase health snapshot** | `/tsh-review-codebase` gives you an immediate understanding of the codebase — its structure, patterns, tech stack, and quality issues. |
-| **2. Convention discovery** | The `tsh-technical-context-discovering` skill identifies project conventions, coding standards, and established patterns — you learn how this team works. |
+| **1. Codebase health snapshot** | `/tsh-audit-codebase` gives you an immediate understanding of the codebase — its structure, patterns, tech stack, and quality issues. |
+| **2. Convention discovery** | The `tsh-discovering-technical-context` skill identifies project conventions, coding standards, and established patterns — you learn how this team works. |
 | **3. Guided first task** | `/tsh-implement` on your first ticket produces a structured research document and step-by-step implementation plan automatically, so you deliver with confidence. |
 
-**Key prompts & agents:** `/tsh-review-codebase` → Architect, `/tsh-implement` → Engineering Manager → Context Engineer + Architect  
-**Key skills:** `tsh-technical-context-discovering`, `tsh-codebase-analysing`, `tsh-architecture-designing`
+**Key commands & agents:** `/tsh-audit-codebase` → Architect, `/tsh-implement` → Engineering Manager → Context Engineer + Architect  
+**Key skills:** `tsh-discovering-technical-context`, `tsh-analyzing-codebase`, `tsh-designing-architecture`
 
 **Value:** Onboarding time is reduced by 40–60%. New developers deliver their first meaningful PR days earlier. They absorb project conventions automatically instead of learning them through review feedback.
 
@@ -285,7 +285,7 @@ This page shows how teams integrate Cursor Collections into their daily routines
 
 **The old way:** Write tests with brittle CSS selectors, fight with timing issues, add `waitForTimeout` hacks, watch tests pass locally but fail in CI.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement Add E2E tests for the checkout flow in PROJ-654
@@ -302,8 +302,8 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 | **3. Test implementation** | Tests follow BDD-style Arrange-Act-Assert structure with dynamic test data (timestamps/UUIDs) — no shared state between tests. |
 | **4. Stability verification** | Tests must pass **3+ consecutive times** in headless mode before being committed. Flaky detection is built into the verification loop. |
 
-**Key prompts & agents:** `/tsh-implement` → Engineering Manager → E2E Engineer  
-**Key skills:** `tsh-e2e-testing`, `tsh-technical-context-discovering`
+**Key commands & agents:** `/tsh-implement` → Engineering Manager → E2E Engineer  
+**Key skills:** `tsh-writing-e2e-tests`, `tsh-discovering-technical-context`
 
 **Value:** E2E test flakiness is reduced by 50–80%. Tests use proper auto-waiting assertions instead of arbitrary timeouts. Page Object patterns make tests maintainable and resistant to UI refactors.
 
@@ -317,10 +317,10 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 
 **The old way:** Export cost reports from the console, manually cross-reference with running resources, build spreadsheets, present them in a meeting, and then nothing changes.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
-/tsh-analyze-aws-costs us-east-1 everything
+/tsh-analyze-cloud-costs aws my-profile us-east-1
 ```
 
 | Step | What Happens |
@@ -329,7 +329,7 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 | **2. Live infrastructure validation** | AWS API MCP queries actual resource usage — identifying orphaned EBS volumes, idle load balancers, and underutilized instances. |
 | **3. Cost report** | A prioritized optimization report is generated with estimated monthly savings and specific CLI or Terraform changes for each recommendation. |
 
-**Key prompts & agents:** `/tsh-analyze-aws-costs` or `/tsh-analyze-gcp-costs` → DevOps Engineer
+**Key commands & agents:** `/tsh-analyze-cloud-costs` → DevOps Engineer
 **Key skills:** `tsh-optimizing-cloud-cost`
 
 **Value:** Uncovers 20–40% potential cost savings. Tagging compliance gaps are identified for proper cost attribution. The hybrid approach (IaC + live API) catches both planned and untracked waste.
@@ -342,7 +342,7 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 
 **The old way:** Copy Terraform from a blog post, skip cost estimation, realize the naming doesn't match your conventions, spend a day refactoring.
 
-**With Cursor Collections:**
+**With TSH AI Collections:**
 
 ```text
 /tsh-implement Create a VPC with public and private subnets for EKS
@@ -357,7 +357,7 @@ When the implementation plan contains E2E test tasks, the Engineering Manager au
 | **3. Implementation** | Infrastructure code is written following project conventions with proper naming, tagging, cost estimation, and safety guardrails. |
 | **4. Safety checks** | `terraform plan`, `--dry-run`, or `validate` is run before any changes. Destructive operations require explicit authorization. |
 
-**Key prompt:** `/tsh-implement` → Engineering Manager delegates to DevOps Engineer
+**Key command:** `/tsh-implement` → Engineering Manager delegates to DevOps Engineer
 **Key skills:** `tsh-implementing-terraform-modules`, `tsh-implementing-kubernetes`, `tsh-implementing-ci-cd`, `tsh-managing-secrets`
 
 **Value:** Infrastructure follows production patterns from day one. Cost estimation is built into every proposal. Safety guardrails prevent accidental destruction. Reusable modules reduce duplication across projects.

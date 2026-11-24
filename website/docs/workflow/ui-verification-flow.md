@@ -3,256 +3,131 @@ sidebar_position: 4
 title: UI Verification Flow
 ---
 
-This page explains the exact post-implementation UI verification loop for Figma-backed UI work. It covers who does what, which artifacts are produced, when the flow blocks, and how the fix -> capture -> review loop closes.
+# UI Verification Flow
 
-This loop is reached through the canonical `/tsh-implement` workflow. A missing research or plan companion triggers preparation and never authorizes implementation without a current actionable plan. Full Flow is the only implementation route, and it requires a recorded Human approval of the exact current plan revision before the first file-changing delegation — normally the one the Architect writes at its own plan-authoring gate (`Approve plan`, `I have comments`), which the Engineering Manager validates and reuses rather than asking again. Automated Reviewer approval is not permission to implement. A material revision after Human approval halts work and requires renewed Human approval before it resumes; no Reviewer re-review is invoked automatically, and a new review event happens only when the user explicitly directs one.
+This page explains the post-implementation UI verification loop for Figma-backed UI work: who does what, which artifacts are produced, when the flow blocks, and how the fix, capture, review loop closes. The loop is owned by the Engineering Manager, which runs in your main conversation. Every agent in it is a leaf that does one job and reports back.
 
-Recording that plan-authoring approval ends the **authoring discussion** — the discussion in which the plan was authored, reviewed, and approved. This loop therefore runs in a new discussion you start, where the unchanged persisted record is reused without a duplicate approval gate. The boundary is a lifecycle stop, not an approval-validity criterion: invalid or missing states still fail closed, and a material revision still requires renewed Human approval.
+The loop is reached through `/tsh-implement`. For plan-based work it starts only after the plan has a valid human approval record (see the [approval gate](./standard-flow#approval-gate)). The same capture and review steps run once, without fixes, when you use [`/tsh-review-ui`](../commands/review-ui).
 
-On every delegated or direct UI execution-owner entry path, the owner validates the referenced plan from disk before changing implementation or capture/verification-related artifacts. If validation fails, it fails closed, names the exact failed field, condition, or file, and asks the user in chat which next step to take, spelling out the recovery choices: point to the correct plan path, obtain Human approval for an existing plan, start plan preparation, or, for a delegated subagent, hand back to `tsh-engineering-manager`. The answer is never Human approval; only Human Approval of the exact current plan revision authorizes implementation.
+## Why this flow exists
 
-:::info Mermaid Rendering
-The diagrams below are authored in Mermaid. They render correctly in GitHub-flavored Markdown and many Markdown viewers. In the current documentation-site configuration, Mermaid support is not enabled yet, so these blocks may appear as code blocks on the published site until Mermaid is enabled there.
-:::
+Build, lint, unit tests and code review do **not** prove that the UI matches Figma. This flow adds a separate UI gate based on:
 
-## Why This Flow Exists
+- **EXPECTED** from the Figma MCP, fetched by the UI Reviewer.
+- **ACTUAL** from a live capture of the running app, collected by the UI Capture Worker with `playwright-cli`.
+- A structured reviewer pass that compares structure, layout, dimensions, visuals and component usage.
 
-Build, lint, unit tests, and code review do **not** prove that the UI matches Figma. This flow exists to enforce a separate UI gate based on:
+An item is done only when the UI gate returns `PASS`, or when you explicitly acknowledge a blocker and the item is marked `ESCALATED`.
 
-- **EXPECTED** from Figma MCP
-- **ACTUAL** from live CLI capture against the running app
-- A structured reviewer pass that compares structure, layout, dimensions, visuals, and component usage
+## The loop
 
-The item is done only when the UI gate returns `PASS`, or when the user explicitly acknowledges a blocker and the item is marked `ESCALATED`.
-
-## User-Friendly Graph
-
-```mermaid
-flowchart TD
-    A[User runs /tsh-implement] --> B[Engineering Manager starts the implementation workflow]
-    B --> C[Research and planning happen if needed]
-    C --> C2[UI inventory captured and Figma reference readiness confirmed]
-    C2 --> D[User confirms the exact full dev server URL]
-    D --> GATE{Architect: plan-authoring approval gate}
-    GATE -- I have comments --> C
-    GATE -- Approve plan --> REC[Approval recorded in the plan]
-    REC --> BOUND[Authoring discussion ends - user starts a new discussion to implement]
-    BOUND --> VAL{Engineering Manager validates the recorded approval}
-    VAL -- Valid for the current revision --> E[UI Engineer implements or updates the UI]
-    VAL -- Missing, stale, or reset --> RGATE{Recovery gate: Approve current plan, Request changes, Stop}
-    RGATE -- Approve current plan --> E
-    RGATE -- Request changes --> C
-    RGATE -- Stop --> STOP[Flow stops, no implementation]
-    E --> F[Code-level validation runs: lint, build, tests]
-    F --> G[Capture Worker opens the running app and collects fresh evidence]
-    G --> H{Was capture successful?}
-    H -- No --> I[Blocker goes back to the orchestrator]
-    I --> J[Orchestrator asks the user what to do]
-    J --> G
-    H -- Yes --> K[UI Reviewer gets Figma EXPECTED and ACTUAL artifacts]
-    K --> L{Review result}
-    L -- PASS --> M[UI gate cleared for this item]
-    L -- FAIL --> N[UI Engineer fixes the reported differences]
-    N --> G
-    L -- VERIFICATION NOT RUN --> I
-    M --> O{Are all UI items cleared?}
-    O -- No --> G
-    O -- Yes --> P[Code review can start]
+```text
+Engineering Manager (main conversation)
+  |
+  |  1. UI Engineer          implements or fixes the UI (never captures or reviews)
+  |  2. Manager              deletes the three ACTUAL files of the iteration
+  |  3. UI Capture Worker    collects actual.png, computed-styles.json, a11y-snapshot.yml
+  |  4. UI Reviewer          fetches EXPECTED from Figma, compares it with the files
+  |
+  +--> PASS                      the item is cleared
+  +--> FAIL                      back to step 1 with the full report (iteration + 1)
+  +--> VERIFICATION NOT RUN      no iteration is consumed; the manager asks you
+  +--> after 5 FAIL iterations   gate: continue N more / stop as ESCALATED / custom
 ```
 
-## Step-by-Step Flow
+Capture always happens before review, and a review always reads the files of the current iteration. Deleting the three ACTUAL files before each capture means that their existence proves they are fresh.
 
-### 1. The Workflow Starts in `/tsh-implement`
+## Step by step
 
-The entrypoint is `/tsh-implement`, which runs the Engineering Manager through the canonical orchestration skill.
+### 1. The workflow starts in `/tsh-implement`
 
-The orchestrator:
+The manager checks whether research and plan artifacts exist, fills the gaps through the Context Engineer and the Architect, runs the plan review and the approval gate, and collects the UI inventory: every UI task with a Figma URL. It then asks you to confirm the **exact full dev server URL**. The URL is a pinned input and is forwarded unchanged to every capture and review pass.
 
-- checks whether research and plan artifacts already exist
-- fills missing context through Context Engineer and Architect when needed
-- captures the UI inventory — every `[REUSE]` UI task and every Figma URL — and confirms Figma reference readiness
-- asks for the **exact full dev server URL** once the UI inventory is non-empty, after UI/Figma readiness is confirmed and before the approval gate
-- stops once the Architect records plan-authoring approval, reporting the exact plan path, current `Plan Revision`, persisted `Decision Timestamp`, and review path when present, and names implementation as the next step in a new discussion — it delegates no file change in the authoring discussion
-- validates the plan's persisted `## Human Approval` record in that new discussion and silently reuses a valid current-revision approval — normally the one the Architect recorded at its plan-authoring gate (`Approve plan`, `I have comments`)
-- presents its own gate — exactly `Approve current plan`, `Request changes`, `Stop` — only as fail-closed recovery, when no valid current-revision record exists or after a material revision; never as a second routine approval
-- delegates UI implementation to the UI Engineer only once a valid current-revision approval exists
+### 2. UI Engineer implements the UI slice
 
-The URL is a **pinned session input**. Once confirmed, it must be forwarded unchanged through every capture and review pass.
+The [UI Engineer](../agents/ui-engineer) fetches and reviews the Figma design before it writes markup, layout or styles, implements the slice and runs local validation (lint, build, tests). A clean build is never UI verification: it names the components that need verification and returns.
 
-### 2. UI Engineer Implements the UI Slice
+### 3. UI Capture Worker collects ACTUAL evidence
 
-The UI Engineer owns implementation work only. It can:
-
-- implement the requested UI changes
-- run local code validation such as lint, build, or tests
-- delegate capture and review after each UI pass
-
-It does **not** close the item just because the code compiles.
-
-### 3. Capture Worker Prepares EXPECTED and Collects ACTUAL Evidence
-
-The Capture Worker is a mechanical evidence collector. It never judges visual correctness.
-
-Before browser capture begins, it must ensure the shared verification root contains the Figma EXPECTED artifact:
-
-- `figma-expected.png` — exported from Figma MCP and saved at `$FIGMA_EXPECTED` before any browser capture starts. If Figma MCP is unavailable or the node cannot be resolved, the result is `VERIFICATION NOT RUN`.
-
-It must then collect all three ACTUAL artifacts into the current iteration directory:
+The [UI Capture Worker](../agents/ui-capture-worker) is a mechanical evidence collector. It never judges visual correctness and never exports a Figma image in the default flow. It writes three artifacts into the iteration directory:
 
 - `actual.png`
 - `computed-styles.json`
 - `a11y-snapshot.yml`
 
-The canonical artifact directory is:
+The layout is one sub-root per component:
 
 ```text
-specifications/<verification-id>/ui-verification/          # $UI_VERIFICATION_DIR
-  figma-expected.png                                       # $FIGMA_EXPECTED
-  iteration-<N>/                                           # $ARTIFACT_DIR
+specifications/<task>/ui-verification/
+  <component-slug>/
+    iteration-<N>/
+      actual.png
+      computed-styles.json
+      a11y-snapshot.yml
 ```
 
-`<verification-id>` is the task ID when available, otherwise a stable page/component slug. Capture, review, and the PASS gate must all use the same `$UI_VERIFICATION_DIR`.
+If even one artifact is missing, the verification is invalid.
 
-> **One Figma component per verification root.** A single `verification-id` maps to exactly one Figma node and one shared `figma-expected.png`. If a plan task covers multiple distinct Figma components, assign each component its own stable slug as its `verification-id` — do not share one root across multiple Figma nodes, because each capture pass would overwrite the previous component's reference image.
+### 4. Authentication and access gates are hard blockers
 
-The capture flow is:
+Nobody in the loop may bypass login or access control. If the page needs a login, the capture worker follows the rules of the [`tsh-verifying-ui`](../skills/verifying-ui) skill: credentials come only from the environment of the launching shell, or from a session you logged in to once in a headed browser. If they are missing, the worker returns `NEEDS_INPUT` and the manager asks you. If the worker notices that an access gate is trivially bypassable, it reports that as a potential security issue and never exploits it. See [Prerequisites](../getting-started/prerequisites) and the [FAQ](../getting-started/faq).
 
-1. export `figma-expected.png` from Figma MCP and save it at `$FIGMA_EXPECTED` (before browser capture)
-2. create the iteration directory
-3. open a named Playwright CLI session
-4. resize to the Figma frame width
-5. go to the pinned full URL
-6. stabilize the render
-7. save screenshot, accessibility snapshot, and computed styles
-8. confirm the files exist in the iteration directory
-9. clean up the session
+### 5. UI Reviewer compares EXPECTED against ACTUAL
 
-If even one required artifact is missing, the verification is invalid.
+The [UI Reviewer](../agents/ui-reviewer) fetches EXPECTED from the Figma MCP, reads the three artifacts and compares them in a fixed order: structure, layout, dimensions, visual, components. This order matters because a visually similar screen can still be structurally wrong. Content, data or state differences come back as clarification questions, not as defects.
 
-### 4. Authentication and Access Gates Are Hard Blockers
+### 6. The reviewer returns one of three states
 
-Neither the orchestrator nor the capture/review workers may bypass login or access control.
+- `PASS` - the item matches Figma within tolerance and no Critical or Major difference remains.
+- `FAIL` - there are actionable differences to fix.
+- `VERIFICATION NOT RUN` - the review could not be done on trustworthy evidence, for example because artifacts are missing or stale, the Figma node cannot be reached, or the host cannot open images. It is never a PASS. It does not consume an iteration; the manager shows you the reason and asks what to do.
 
-If the page requires authentication or a specific access level:
+:::info Tool support
+Where the host cannot open the images, the result is `VERIFICATION NOT RUN` and the loop asks you instead of guessing. Support for opening images and for passing credentials to the capture worker differs per tool and is listed in [Supported Tools](../getting-started/supported-tools).
+:::
 
-- the worker returns a blocker to the caller
-- the caller asks the user how authentication should happen
-- the user must decide the login method and provide what is needed
-- the flow resumes only after the blocker is resolved
+### 7. FAIL starts another iteration
 
-If the worker notices that the gate is trivially bypassable, it must report that as a **potential security vulnerability** in the blocker notes. It may never exploit that weakness.
+The manager passes the full report and the artifact paths to the UI Engineer, which fixes **all** reported differences. Then a new capture and a new review run on fresh files. A low-confidence review pauses before any fix, and that pause is not an iteration either.
 
-### 5. Reviewer Compares EXPECTED Against ACTUAL
+### 8. The 5-iteration limit
 
-The Reviewer is the design judge. It consumes the artifacts the Capture Worker produced — `figma-expected.png` from the shared verification root and `actual.png`, `computed-styles.json`, and `a11y-snapshot.yml` from the current iteration directory.
+After 5 FAIL iterations the manager stops and offers three choices: continue for an explicit number of extra iterations, stop and mark the item `ESCALATED`, or give a custom instruction. `ESCALATED` is recorded only with your explicit acknowledgement.
 
-If `figma-expected.png` is absent from the shared root, the result is `VERIFICATION NOT RUN`.
+### 9. Code review starts after the UI gate clears
 
-### 6. Reviewer Compares in a Fixed Order
+Code review is a separate gate. It starts only after every Figma-backed item is `PASS` or acknowledged as `ESCALATED`. Build success, lint, tests and code review never substitute for UI verification.
 
-The reviewer compares the implementation against Figma in this order:
+## Who produces what
 
-1. Structure
-2. Layout
-3. Dimensions
-4. Visual
-5. Components
-
-It uses:
-
-- multimodal comparison of `figma-expected.png` and `actual.png`
-- `computed-styles.json` for measured sizes and layout values
-- `a11y-snapshot.yml` for structure and grouping
-
-This order matters because a visually similar screen can still be structurally wrong.
-
-### 7. Reviewer Returns One of Three States
-
-The reviewer returns exactly one of these outcomes:
-
-- `PASS` — the item matches Figma within the allowed tolerances
-- `FAIL` — there are actionable mismatches to fix
-- `VERIFICATION NOT RUN` — the review could not be completed on trustworthy evidence
-
-`VERIFICATION NOT RUN` is a blocker state, not a visual verdict.
-
-### 8. FAIL Starts Another Iteration
-
-If the reviewer returns `FAIL`:
-
-1. UI Engineer applies fixes
-2. Capture Worker runs again on a fresh iteration
-3. Reviewer runs again on the fresh artifacts
-
-This loop repeats until:
-
-- the item becomes `PASS`, or
-- the flow reaches the 5-iteration budget and moves to a structured user gate
-
-### 9. The 5-Iteration Limit
-
-After 5 full FAIL iterations, the flow must stop and ask the user what to do next.
-
-The user gate offers:
-
-- continue with an explicit extra iteration count
-- stop and accept the item as `ESCALATED`
-- provide a custom instruction
-
-This prevents infinite loops and keeps the user in control of tradeoffs.
-
-### 10. Code Review Starts Only After the UI Gate Clears
-
-Code review is a separate gate. It starts only after every Figma-backed UI item is either:
-
-- `PASSED`, or
-- explicitly acknowledged as `ESCALATED`
-
-Build success, lint success, tests, and code review do not substitute for UI verification.
-
-## Artifacts and Outputs
-
-### Required Files Per Iteration
-
-```text
-specifications/<verification-id>/ui-verification/   # $UI_VERIFICATION_DIR
-  figma-expected.png                                  # $FIGMA_EXPECTED (shared across iterations)
-  iteration-<N>/                                      # $ARTIFACT_DIR
-    actual.png
-    computed-styles.json
-    a11y-snapshot.yml
-    report.md
-```
-
-### Who Produces What
-
-| Owner               | Input                           | Output                                                                     |
-| ------------------- | ------------------------------- | -------------------------------------------------------------------------- |
-| Engineering Manager | task description, Jira ID, standalone `*.research.md`, or `*.plan.md` | routing, gates, user questions |
-| UI Engineer         | plan + UI task slice            | code changes                                                               |
-| UI Capture Worker   | pinned full URL + Figma URL + iteration dir | `figma-expected.png` (at verification root), `actual.png`, `computed-styles.json`, `a11y-snapshot.yml`, capture summary |
-| UI Reviewer         | verification root + iteration dir           | `PASS`, `FAIL`, or `VERIFICATION NOT RUN` report                           |
+| Owner | Input | Output |
+| --- | --- | --- |
+| Engineering Manager | task, plan, UI inventory, pinned URL | routing, gates, user questions, iteration directories |
+| UI Engineer | plan task, Figma design, report of the previous pass | code changes, list of components to verify |
+| UI Capture Worker | pinned URL, iteration directory, optional credential variable names | the three ACTUAL artifacts and a capture summary |
+| UI Reviewer | Figma URL, iteration directory | `PASS`, `FAIL` or `VERIFICATION NOT RUN` report |
 
 ## Invariants
 
-These rules are never optional:
-
-- When the Architect's plan-authoring gate recorded the approval, implementation runs in a new discussion, never in that authoring discussion.
 - The pinned full dev server URL never changes during the loop.
-- Capture always happens before review.
-- Review always uses fresh artifacts from the current iteration.
-- EXPECTED always comes from Figma MCP.
+- Capture always happens before review, and review uses the files of the current iteration only.
+- EXPECTED always comes from the Figma MCP.
 - Auth and access gates are never bypassed.
 - `VERIFICATION NOT RUN` never counts as `PASS`.
 - Code review never starts before the UI gate clears.
 
-## Source of Truth
+## Verified status per tool
 
-This page summarizes the flow defined in these canonical files:
+| Tool | Reviewer opens PNG files | Capture worker sees a variable exported in the launching shell |
+| --- | --- | --- |
+| Claude Code | verified (2.1.308) | verified |
+| Cursor | verified (cursor-agent 2026.10.22) | verified in the CLI with `--force`; a GUI-launched Cursor does not inherit shell exports (documented caveat, not measured) |
+| Codex | not verified (CLI not installed) | not verified |
 
-- `.cursor/skills/commands/tsh-implement/SKILL.md`
-- `.cursor/skills/workflows/tsh-orchestrating-implementation/SKILL.md`
-- `.cursor/skills/workflows/tsh-ui-verifying/SKILL.md`
-- `.cursor/skills/agents/tsh-ui-engineer/SKILL.md`
-- `.cursor/skills/agents/tsh-ui-capture-worker/SKILL.md`
-- `.cursor/skills/agents/tsh-ui-reviewer/SKILL.md`
+Not yet verified in any tool: the reviewer fetching the design through an authenticated Figma MCP, and the hardened `playwright-cli` worker flow (`playwright-cli` was not installed on the build machine). Where an image cannot be opened or the design cannot be fetched, the result is `VERIFICATION NOT RUN` and the loop asks the user.
+
+See [Supported Tools](../getting-started/supported-tools).
+
+## Source of truth
+
+This page summarizes the canonical definitions in the [`tsh-verifying-ui`](../skills/verifying-ui) skill (criteria, capture flow, report format) and the [`tsh-orchestrate-ui-verification`](../commands/internal/orchestrate-ui-verification) step (the loop).

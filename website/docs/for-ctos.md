@@ -5,11 +5,11 @@ title: For CTOs
 
 # For CTOs
 
-Cursor Collections is an AI product engineering framework used daily by **300+ engineers** at The Software House across **50+ commercial projects** — delivering a **30% average lead time reduction**.
+TSH AI Collections is an AI product engineering framework used daily by **300+ engineers** at The Software House across **50+ commercial projects** — delivering a **30% average lead time reduction**.
 
 :::brand TL;DR:
 - Only 10% of teams see real gains from AI coding tools - the gap is structural, not technological
-- Cursor Collections restructures your delivery workflow around AI, rather than adding AI on top of it
+- TSH AI Collections restructures your delivery workflow around AI, rather than adding AI on top of it
 - 300+ engineers at TSH use it daily across 50+ commercial projects with great result: average lead time down 30%
 - Covers the full lifecycle: discovery workshop → structured backlog → implementation → code review
 - ~$50/person/month vs $100 for Claude Code and $200–300 for Cursor
@@ -22,7 +22,7 @@ Gartner found that only **10% of software engineers** see meaningful productivit
 
 When engineers use AI ad-hoc the results vary by individual. You get pockets of acceleration alongside unchanged delivery speed, inconsistent code quality, and a team that's learned to trust AI selectively and unpredictably.
 
-**Cursor Collections** is a structured response to this problem. It doesn't replace your existing tools or process. It gives AI a consistent place in your delivery workflow with **defined inputs, expected outputs, and human review at every step**.
+**TSH AI Collections** is a structured response to this problem. It doesn't replace your existing tools or process. It gives AI a consistent place in your delivery workflow with **defined inputs, expected outputs, and human review at every step**.
 
 ---
 
@@ -34,7 +34,7 @@ The framework covers three delivery phases:
 
 **Product Ideation**: turning discovery workshops into structured, Jira-ready backlogs. Context gathering that used to take 30–60 minutes takes 3 minutes. Workshop transcripts become fully formed tickets with acceptance criteria, edge cases flagged, and backlog prioritised.
 
-**Development**: implementation guided by agents that understand your codebase, your Figma designs, and your Jira context simultaneously. The context-switching that fragments developer focus is replaced by a structured research-then-plan-then-implement loop.
+**Development**: implementation guided by subagents that understand your codebase, your Figma designs, and your Jira context simultaneously. The context-switching that fragments developer focus is replaced by a structured research-then-plan-then-implement loop.
 
 **Quality**: automated UI verification against Figma specs, security review built into every implementation plan, and E2E test suites generated from acceptance criteria. Quality gates that currently happen late in the cycle move earlier, where they're cheap to fix.
 
@@ -70,7 +70,7 @@ The structured nature of the framework makes it approachable at any level.
 
 ## What adoption looks like
 
-The framework is open source and installs against your existing Cursor AI setup. **There's no new toolchain to procure, no vendor contract, no migration.**
+The framework is open source and installs into the AI coding tools your team already uses: Cursor, Claude Code or Codex. **There's no new toolchain to procure, no vendor contract, no migration.**
 
 A typical rollout at TSH runs in three phases:
 
@@ -78,13 +78,13 @@ A typical rollout at TSH runs in three phases:
 - **First sprint** (week 1–2) — one team runs the full Product Ideation → Development → Quality loop on a real project. Friction points surface and get resolved.
 - **Team-wide adoption** (week 3–4) — framework becomes the default way of working. Leads review output quality, calibrate to project standards.
 
-The framework is designed to be self-explanatory for engineers who already use Cursor AI.
+The framework is designed to be self-explanatory for engineers who already use one of these tools. The [installer](./getting-started/installation) is a single Node script, and [Supported Tools](./getting-started/supported-tools) lists what each tool supports and where the limits are.
 
 ---
 
 ## Why TSH built this in the open
 
-The Software House is a 300-person product engineering firm. We built Cursor Collections to solve our own problem - how to get consistent, high-quality AI-assisted delivery across a large, distributed team working on complex commercial projects.
+The Software House is a 300-person product engineering firm. We built TSH AI Collections to solve our own problem - how to get consistent, high-quality AI-assisted delivery across a large, distributed team working on complex commercial projects.
 
 We open-sourced it because the problem is structural and universal. Every engineering team using AI tools is navigating the same gap between individual capability and team-level consistency. We've done the work to close that gap. Sharing the framework costs us nothing and helps the industry get there faster.
 
@@ -94,7 +94,7 @@ The 30% lead time figure comes from our own delivery data. We have skin in the g
 
 ## Evaluate it for your team
 
-Cursor Collections is MIT-licensed and free.
+TSH AI Collections is MIT-licensed and free.
 
 - Read the full documentation - understand the full framework before committing to anything
 - See it applied to real use cases - nine scenarios across the full delivery lifecycle

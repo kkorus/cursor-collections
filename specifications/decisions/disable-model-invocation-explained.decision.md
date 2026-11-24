@@ -1,5 +1,7 @@
 # Decision: What `disable-model-invocation` means in Cursor skills
 
+> **Superseded (2026-09-27)** by specifications/unified-agent-structure/unified-agent-structure.plan.md (D1/D5/D6)
+
 > **Note (2026-06-04):** Example delegate-only agent `tsh-architect-reviewer` was renamed to `tsh-plan-reviewer`. The flag behavior described here is unchanged.
 
 **Status:** ACCEPTED  

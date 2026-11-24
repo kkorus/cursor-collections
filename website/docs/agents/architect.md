@@ -5,15 +5,10 @@ title: Architect
 
 # Architect Agent
 
-**File:** `.cursor/skills/agents/tsh-architect/SKILL.md`
+**Source:** `src/agents/tsh-architect.md`  
+**Kind:** subagent, model tier `deep`, read-write access
 
-The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications that are validated by the Plan Reviewer before implementation begins.
-
-The Architect owns plan revisions and records only the user's literal Human approval response; it never infers consent from context or from Reviewer approval. A `tsh-plan-reviewer` `APPROVED` verdict is Reviewer approval only and leaves Human approval pending. Both **Start Implementation** and **Start Infrastructure Implementation** pass through the Engineering Manager, which validates the persisted Human Approval record for the exact current plan revision and reuses it rather than asking again; its own gate runs only as fail-closed recovery when no valid record exists. Neither handoff directly authorizes file-changing work.
-
-The Architect presents and records Human Approval in two situations: unconditionally at its own plan-authoring gate (`Approve plan` / `I have comments`) immediately after a settled review event, and when the Engineering Manager delegates a narrowly scoped update of the plan's `## Human Approval` record. Execution owners, not the Architect, validate the persisted Human Approval record from disk before editing.
-
-Recording plan-authoring Human approval ends the authoring discussion. Implementation starts in a new discussion, where the unchanged persisted approval can be reused without asking for approval twice.
+The Architect agent designs technical solutions, system architecture, and detailed implementation plans. It translates business requirements into structured, executable specifications. The Engineering Manager has the plan reviewed by the Plan Reviewer and asks you for approval before implementation begins; the Architect itself never asks you to approve.
 
 ## Responsibilities
 
@@ -22,6 +17,14 @@ Recording plan-authoring Human approval ends the authoring discussion. Implement
 - Ensuring solutions align with project requirements, best practices, and quality standards.
 - Defining security considerations and quality assurance guidelines.
 - Collaborating with Business Analysts to clarify ambiguities.
+- Running a pre-submission self-check of the plan against the six BLOCKER categories of the plan review before handing it back.
+- Keeping the `## Human Approval` record of the plan: it writes the record only for the delegated `TASK: record_human_approval`, which carries your verbatim answer, and bumps `Plan Revision` and resets the record to `PENDING` when a revision is material.
+
+## Human approval
+
+The Architect never asks you to approve a plan, in any mode. The approval gate (approve, comment or stop) belongs to the Engineering Manager and opens after the plan review loop settles. The manager then sends the Architect a delegated `TASK: record_human_approval` with your verbatim answer, and the Architect records it in the `## Human Approval` table of the plan (`Human Decision`, `Approved Revision`, `Decision Timestamp`, `Plan Revision`). When a legacy plan has no such section, the Architect creates it as `PENDING` and then records the decision.
+
+When you run the Architect directly (for example with `claude --agent tsh-architect`, or by asking for the Architect subagent in Cursor), it only reports that approval is pending and points you to `/tsh-implement`, which runs the gate. The plan lives in `specifications/<task-name-or-id>/`.
 
 ## What It Produces
 
@@ -33,52 +36,37 @@ Each technical specification includes:
 4. **Security Considerations** — Security aspects to address during implementation.
 5. **Quality Assurance** — Guidelines for ensuring implementation quality.
 
-## Tool Access
+## Tool access
 
-| Tool                      | Usage                                                                  |
-| ------------------------- | ---------------------------------------------------------------------- |
-| **Atlassian**             | Gather requirements from Jira issues and Confluence pages              |
-| **Context7**              | Evaluate libraries, verify compatibility, search integration patterns  |
-| **Figma**                 | Translate visual requirements into technical specifications            |
-| **PDF Reader**            | Read and extract content from PDF requirement documents                |
-| **Sequential Thinking**   | Design complex architectures, evaluate trade-offs, break down features |
-| **Terminal**              | Run build tools, scripts, and validation commands                      |
-| **File Read/Edit/Search** | Read, modify, and search workspace files                               |
-| **Terminal commands**      | Execute VS Code commands and run tasks                                 |
-| **Sub-agents**            | Delegate subtasks to specialized agents                                |
-| **Todo**                  | Track task progress with structured checklists                         |
+- **Read-write.**
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Atlassian, Context7, Figma, PDF Reader, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-architecture-designing` — Solution design, components, data flows.
-- `tsh-creating-implementation-plans` — Implementation plan template, structure, and DoD rules.
-- `tsh-codebase-analysing` — Analyze current architecture, components, and patterns.
-- `tsh-implementation-gap-analysing` — Focus the plan on necessary changes without duplicating existing work.
-- `tsh-technical-context-discovering` — Establish project conventions and patterns before designing.
-- `tsh-sql-and-database-understanding` — Database schema design, indexing strategies, transaction patterns.
-- `tsh-designing-multi-cloud-architecture` — Cross-provider infrastructure design and service selection across AWS, Azure, and GCP.
-- `tsh-optimizing-cloud-cost` — Cost implications of architectural decisions, pricing model comparison.
-- `tsh-implementing-ci-cd` — CI/CD pipeline design, deployment strategies, delivery workflows.
-- `tsh-implementing-terraform-modules` — IaC structure, Terraform module hierarchy, Terragrunt patterns.
-- `tsh-managing-secrets` — Secrets management, credential rotation, vault integration.
-- `tsh-implementing-kubernetes` — K8s workload configurations, scaling strategies, Helm chart structure.
-- `tsh-implementing-observability` — Monitoring architecture, SLO frameworks, alerting, distributed tracing.
-- `tsh-engineering-prompts` — LLM prompt architecture: prompt template strategy, system prompt design, few-shot vs zero-shot decisions.
+- `tsh-designing-architecture` (preloaded) - Design the architecture and implementation plan for a task
+- `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
+- `tsh-analyzing-implementation-gaps` - Compare a plan with the current state to find implementation gaps
+- `tsh-discovering-technical-context` - Discover project conventions and patterns before coding
+- `tsh-designing-databases` - SQL and database design: schemas, indexing, queries, ORMs
+- `tsh-designing-multi-cloud-architecture` - Choose and integrate services across AWS, Azure and GCP
+- `tsh-optimizing-cloud-cost` - Cloud cost rightsizing, tagging and governance
+- `tsh-implementing-ci-cd` - CI/CD pipeline design and deployment strategies
+- `tsh-implementing-terraform-modules` - Reusable Terraform modules for AWS, Azure and GCP
+- `tsh-managing-secrets` - Secrets storage, rotation and CI/CD authentication
+- `tsh-implementing-kubernetes` - Kubernetes deployments, Helm charts and scaling
+- `tsh-implementing-observability` - Logging, monitoring, alerting and tracing patterns
+- `tsh-engineering-prompts` - LLM prompt patterns: structure, security, evaluation
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 
-## Pre-Submission Self-Check and Review Loop
+## Invocation and modes
 
-Before submitting a plan, the Architect runs a pre-submission self-check against the same six `BLOCKER` categories used by the Plan Reviewer: materially invalid architecture; security, privacy, or authentication risk; unsupported irreversible or high-cost decisions; critical integration, data, migration, rollout, or rollback failure; an execution-critical unresolved decision; and material contradiction with research or an omitted requirement.
+- **Delegated by:** `/tsh-ask` and `/tsh-audit-codebase` (commands running in the main thread) and the `tsh-engineering-manager` (planning and plan revisions). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
 
-After creating or revising a plan, the Architect invokes `tsh-plan-reviewer` once per plan lifecycle. Every `BLOCKER` finding must be closed by an architect correction or a recorded explicit evidence-based resolution or justification — never by omission or an unexplained downgrade — and the Architect never approves a plan while a blocker remains. `.plan-review.md` is append-only and never overwritten.
+## Suggested next steps
 
-A returned verdict is revision-bound only when its `reviewed-plan-revision` equals the current `Plan Revision`. A mismatch, `unknown`, or absent value is treated identically as not revision-bound: the Architect rejects the verdict and appends a reconciliation entry to `.plan-review.md`.
+The agent recommends these commands as text; it never starts them itself.
 
-If an unresolved `BLOCKER` remains after disposition, the Architect asks the user in chat which of exactly two options to take, naming both in prose: `stop here` or `custom guidance`. `stop here` ends the lifecycle with a closing `.plan-review.md` entry; `custom guidance` follows the supplied instruction. A new review happens only through an explicitly user-directed new review event, and the Architect never silently continues or approves while a blocker remains.
-
-## Handoffs
-
-After creating the plan, the Architect can hand off to:
-
-- **Internal plan review loop** → the Architect invokes the [Plan Reviewer](./plan-reviewer) as a nested subagent after creating or revising a plan, following the self-check and review loop described above. This loop only ever settles Reviewer approval; it never grants or implies Human approval.
-- **Engineering Manager** → `/tsh-implement` (`Start Implementation`) once the plan is Reviewer-ready and the Architect's own plan-authoring gate (`Approve plan` / `I have comments`) has recorded Human Approval, which the manager may reuse in the new discussion; on the low-risk-exemption path the plan-authoring gate does not run and the manager's gate is the only user-facing gate
-- **Engineering Manager** → `Start Infrastructure Implementation` for infrastructure work, through the same Human approval gate
+- `/tsh-implement Implement feature according to the plan` to start implementation.
+- `/tsh-implement Implement the infrastructure according to the architectural plan` for infrastructure work; the engineering manager routes those tasks to the DevOps engineer.

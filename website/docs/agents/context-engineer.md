@@ -5,7 +5,8 @@ title: Context Engineer
 
 # Context Engineer Agent
 
-**File:** `.cursor/skills/agents/tsh-context-engineer/SKILL.md`
+**Source:** `src/agents/tsh-context-engineer.md`  
+**Kind:** subagent, model tier `deep`, read-write access
 
 The Context Engineer agent specializes in gathering requirements, analyzing processes, and building detailed context for development tasks.
 
@@ -35,26 +36,26 @@ A `.research.md` document containing:
 - Does not create implementation plans, deployment plans, or test plans.
 - These are provided by the Architect in the next phase.
 
-## Tool Access
+## Tool access
 
-| Tool | Usage |
-|---|---|
-| **Atlassian** | Gather requirements from Jira and Confluence, search for related issues |
-| **Figma** | Review designs, understand functional intent, identify missing states |
-| **PDF Reader** | Read and extract content from PDF requirement documents |
-| **Sequential Thinking** | Analyze complex business rules, identify edge cases, map dependencies |
-| **File Read/Edit/Search** | Read, modify, and search workspace files |
-| **Terminal commands** | Execute VS Code commands and run tasks |
-| **Sub-agents** | Delegate subtasks to specialized agents |
-| **Todo** | Track research progress with structured checklists |
+- **Read-write.**
+- **No shell.** Shell access is denied on Claude Code.
+- **Leaf agent.** It never delegates to other agents.
+- **MCP servers:** Atlassian, Figma, PDF Reader, Sequential Thinking.
 
-## Skills Loaded
+## Skills loaded
 
-- `tsh-task-analysing` — Analyze task descriptions, perform gap analysis, expand context, gather information from multiple sources.
-- `tsh-codebase-analysing` — Analyze existing codebase to identify components and patterns related to the task.
+- `tsh-analyzing-requirements` (preloaded) - Analyze a task and build its context and research document
+- `tsh-analyzing-codebase` - Analyze a codebase: dependencies, business logic, duplications
+- `tsh-using-mcp-servers` - When and how to use the collection's MCP servers
 
-## Handoffs
+## Invocation and modes
 
-After completing research, the Context Engineer hands back to the Engineering Manager, which delegates to:
+- **Delegated by:** the `tsh-engineering-manager` (research phase). In delegated mode the task starts with `MODE: delegated` and the agent ends its reply with a `STATUS` block instead of asking the user.
+- **Direct use:** the agent runs in interactive mode and talks to you. See the invocation table in the [Agents overview](./overview#invoking-an-agent-directly).
 
-- **Architect** → implementation planning (via the internal `tsh-plan` skill)
+## Suggested next steps
+
+The agent recommends these commands as text; it never starts them itself.
+
+- `/tsh-implement Start implementation for the current task` once the context is gathered.
