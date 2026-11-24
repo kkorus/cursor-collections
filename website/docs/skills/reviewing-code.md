@@ -17,6 +17,18 @@ Structured code review of an implementation against a plan or, without a plan, a
 
 The review also looks for **N+1** query and call patterns (a query or remote call inside a loop over results), and when the plan has executor tasks it checks the work against the plan's definition of done.
 
+## Severities
+
+Each finding is classified by severity, indicating the action required:
+
+| Severity | Meaning | Action |
+|---|---|---|
+| `critical` | Bug, security hole, data loss risk or a broken requirement | Must fix before merge |
+| `warning` | Likely problem, missing test, maintainability risk | Should fix |
+| `suggestion` | Improvement that is optional | Consider |
+
+Every review ends with a verdict line: `No critical findings` (no action needed) or `Critical findings must be fixed` (with the counts of critical findings), indicating whether the review is ready to merge or needs remediation.
+
 ## What it covers
 
 - Code Review Process

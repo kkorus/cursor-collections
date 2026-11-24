@@ -32,7 +32,7 @@ const useCases: UseCase[] = [
     trackLabel: 'Quality',
     title: 'Automated Code Review',
     problem:
-      'Multi-dimensional review checking acceptance criteria, security, performance, database patterns, and coding standards. Clear PASS/BLOCKER/SUGGESTION verdicts on every run.',
+      'Multi-dimensional review checking acceptance criteria, security, performance, database patterns, and coding standards. Findings rated critical, warning or suggestion, ending in a verdict: No critical findings or Critical findings must be fixed.',
     time: '~5 min',
   },
   {

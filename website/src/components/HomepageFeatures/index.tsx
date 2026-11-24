@@ -25,7 +25,7 @@ const cards: CardItem[] = [
   },
   {
     icon: <AgentsIcon className={styles.cardIcon} />,
-    title: '17 Subagents and 3 Orchestrators',
+    title: '21 Subagents and 3 Orchestrators',
     description:
       'Architect, Software Engineer, Code Reviewer, UI Reviewer, E2E Engineer, DevOps Engineer, Context Engineer, Prompt Engineer and more, led by the Engineering Manager, Business Analyst and AI Customization orchestrators — each focused on its phase, generated for Cursor, Claude Code and Codex.',
   },

@@ -20,8 +20,6 @@ Run an evidence-based cost optimization and tagging audit of one AWS account or 
 - `tsh-implementing-terraform-modules` (conditional) - when Terraform files exist
 - `tsh-managing-secrets` (gate) - when security findings are in scope. If the skill cannot be loaded, stop and ask the user: either the user makes it available, or the audit is re-scoped to exclude security and the report says so. A security section is never produced without it.
 
-If `tsh-optimizing-cloud-cost` or its tagging standards cannot be loaded after you tried to load it by name, the audit runs in **degraded mode**. The only substitution allowed is the Core 5 tag names, used for presence checks only: AWS `CostCenter`, `Environment`, `Service`, `Owner`, `DataClass`; GCP labels `cost_center`, `environment`, `service`, `owner`, `data_class`. State the substitution in the Executive Summary of the report, and issue no finding, cost estimate or recommendation from these defaults, because the thresholds and checklists that justify findings live in the skill that was not loaded.
-
 ## Workflow
 
 1. **Scope**: read the provider (`aws` or `gcp`), the AWS profile or GCP project, and the region (or "all regions") from the arguments. Ask the user for anything missing before you continue.

@@ -32,10 +32,10 @@ The Code Reviewer agent performs structured code reviews against the implementat
 
 A structured review containing:
 
-- **Pass/Blocker/Suggestion** classification for each finding.
+- Severity classification for each finding: `critical` (must fix before merge), `warning` (should fix), or `suggestion` (consider), ending with a verdict line (`No critical findings` or `Critical findings must be fixed`).
 - Acceptance criteria verification (each item checked individually).
 - Security, reliability, performance, and maintainability analysis.
-- Recommended actions for each blocker.
+- Recommended fix for each finding; `critical` findings must be fixed before merge.
 
 ## Tool access
 

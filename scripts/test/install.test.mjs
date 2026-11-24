@@ -314,6 +314,54 @@ test('--update without any manifest is an error', () => {
   assert.throws(() => go(['--update']), UsageError);
 });
 
+test('a usage error leaves legacy entries untouched and creates no backup', () => {
+  const { home, project, go } = env();
+
+  // Seed legacy entries in home and project
+  put(home, '.cursor/skills/tsh-architect/SKILL.md', 'legacy in home');
+  put(project, '.cursor/skills/tsh-old-gone/SKILL.md', 'legacy in project');
+
+  // go([]) without --tools should throw --tools is required
+  assert.throws(() => go([]), (e) => e instanceof UsageError && /--tools is required/.test(e.message));
+
+  // Verify seeded files still exist
+  assert.ok(exists(path.join(home, '.cursor/skills/tsh-architect/SKILL.md')));
+  assert.ok(exists(path.join(project, '.cursor/skills/tsh-old-gone/SKILL.md')));
+
+  // Verify no backup dir created
+  assert.ok(!exists(path.join(home, '.tsh-ai-collections-backup')));
+
+  // go(['--update']) without a manifest should throw --update found no
+  assert.throws(() => go(['--update']), (e) => e instanceof UsageError && /--update found no/.test(e.message));
+
+  // Verify seeded files still exist
+  assert.ok(exists(path.join(home, '.cursor/skills/tsh-architect/SKILL.md')));
+  assert.ok(exists(path.join(project, '.cursor/skills/tsh-old-gone/SKILL.md')));
+
+  // Verify no backup dir created
+  assert.ok(!exists(path.join(home, '.tsh-ai-collections-backup')));
+
+  // Same with --project-dir in scope: go(['--update', '--project-dir', project])
+  assert.throws(() => go(['--update', '--project-dir', project]), (e) => e instanceof UsageError && /--update found no/.test(e.message));
+
+  // Verify seeded files still exist
+  assert.ok(exists(path.join(home, '.cursor/skills/tsh-architect/SKILL.md')));
+  assert.ok(exists(path.join(project, '.cursor/skills/tsh-old-gone/SKILL.md')));
+
+  // Verify no backup dir created
+  assert.ok(!exists(path.join(home, '.tsh-ai-collections-backup')));
+
+  // And go([]) with --project-dir should also throw
+  assert.throws(() => go(['--project-dir', project]), (e) => e instanceof UsageError && /--tools is required/.test(e.message));
+
+  // Verify seeded files still exist
+  assert.ok(exists(path.join(home, '.cursor/skills/tsh-architect/SKILL.md')));
+  assert.ok(exists(path.join(project, '.cursor/skills/tsh-old-gone/SKILL.md')));
+
+  // Verify no backup dir created
+  assert.ok(!exists(path.join(home, '.tsh-ai-collections-backup')));
+});
+
 test('old-layout fixture: dangling category symlink removed, copied tsh-architect backed up, my-skill untouched', () => {
   const { home, go } = env();
   const cs = path.join(home, '.cursor/skills');

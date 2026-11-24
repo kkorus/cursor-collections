@@ -882,8 +882,7 @@ export function run(argv, opts = {}) {
   }
   if (ctx.dry) ctx.log('[dry-run] no changes will be made');
 
-  cleanupLegacy(ctx);
-  if (o.migrateLegacy) return { code: 0, lines: ctx.lines, ctx, stats: ctx.stats };
+  if (o.migrateLegacy) { cleanupLegacy(ctx); return { code: 0, lines: ctx.lines, ctx, stats: ctx.stats }; }
 
   let tools = o.tools;
   if (o.update && !tools) {
@@ -892,6 +891,8 @@ export function run(argv, opts = {}) {
     ctx.log(`Updating tools from manifests: ${tools.join(', ')}`);
   }
   if (!tools) throw new UsageError('--tools is required (cursor,claude,codex)');
+
+  cleanupLegacy(ctx);
 
   const root = targetRoot(ctx);
   let skipped = 0;

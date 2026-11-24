@@ -129,7 +129,7 @@ export default function SdlcDiagram(): React.JSX.Element {
                 <strong className={styles.cardCmdStrong}>/tsh-review</strong>
               </div>
               <div className={styles.cardDesc}>
-                PASS / BLOCKER / SUGGESTION — security, perf, coding standards
+                critical / warning / suggestion — security, perf, coding standards
               </div>
             </div>
             <div className={styles.card}>

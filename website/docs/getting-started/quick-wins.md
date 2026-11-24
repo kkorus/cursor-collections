@@ -190,7 +190,7 @@ This page shows how teams integrate TSH AI Collections into their daily routines
 | **1. Multi-dimensional analysis** | The Code Reviewer agent checks acceptance criteria, security vulnerabilities, reliability, performance, maintainability, and coding standards. |
 | **2. Security scanning** | Missing input validation, exposed secrets, improper error handling, and SQL injection vectors are flagged explicitly. |
 | **3. Database review** | The `tsh-designing-databases` skill checks for missing indexes, N+1 queries, improper locking, and migration safety. |
-| **4. Structured verdict** | Findings are categorized as PASS, BLOCKER, or SUGGESTION — with clear explanations and remediation guidance. |
+| **4. Structured verdict** | Findings are categorized by severity: `critical` (must fix before merge), `warning` (should fix), or `suggestion` (consider) — with clear explanations and remediation guidance. Each review ends with `No critical findings` or `Critical findings must be fixed` and the counts. |
 
 **Key commands & agents:** `/tsh-review` → Code Reviewer  
 **Key skills:** `tsh-reviewing-code`, `tsh-designing-databases`, `tsh-discovering-technical-context`
